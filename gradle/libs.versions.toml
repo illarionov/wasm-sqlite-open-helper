@@ -1,0 +1,59 @@
+[versions]
+emscripten = "3.1.55"
+spotless = "6.25.0"
+sqlite = "3450100"
+
+androidMinSdk = "21"
+androidCompileSdk = "34"
+
+agp = "8.2.2"
+androidx-room = "2.6.1"
+androidx-test = "1.6.0-alpha05"
+assertk = "0.28.0"
+chicory = "0.0.9"
+detekt = "1.23.5"
+diktat = "2.0.0"
+dokka = "1.9.20"
+graalvm = "23.1.2"
+gradle-maven-publish-plugin = "0.27.0"
+junit-platform-launcher = "1.10.2"
+junit5 = "5.10.2"
+kotlin = "1.9.23"
+kotlinx-binary-compatibility-validator = "0.14.0"
+ksp = "1.9.23-1.0.19"
+
+[libraries]
+androidx-room = { group = "androidx.room", name = "room-ktx", version.ref = "androidx-room" }
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "androidx-room" }
+androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "androidx-room" }
+androidx-room-testing = { group = "androidx.room", name = "room-testing", version.ref = "androidx-room" }
+androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidx-test"}
+assertk = { group = "com.willowtreeapps.assertk", name = "assertk", version.ref = "assertk" }
+chicory = { group = "com.dylibso.chicory", name = "runtime", version.ref = "chicory" }
+graalvm-compiler = { group = "org.graalvm.compiler", name = "compiler", version.ref = "graalvm" }
+graalvm-polyglot-js = { group = "org.graalvm.polyglot", name = "js-community", version.ref = "graalvm" }
+graalvm-polyglot-polyglot = { group = "org.graalvm.polyglot", name = "polyglot", version.ref = "graalvm" }
+graalvm-polyglot-wasm = { group = "org.graalvm.polyglot", name = "wasm-community", version.ref = "graalvm" }
+graalvm-wasm-language = { group = "org.graalvm.wasm", name = "wasm-language", version.ref = "graalvm" }
+junit-bom = { group = "org.junit", name = "junit-bom", version.ref = "junit5" }
+junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junit5" }
+junit-jupiter-api = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit5" }
+junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit5" }
+junit-jupiter-params = { group = "org.junit.jupiter", name = "junit-jupiter-params", version.ref = "junit5" }
+junit-jupiter-vintage-engine = { group = "org.junit.vintage", name = "junit-vintage-engine", version.ref = "junit5" }
+junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher", version.ref = "junit-platform-launcher" }
+kotlin-bom = { group = "org.jetbrains.kotlin", name = "kotlin-bom", version.ref = "kotlin" }
+
+# Dependencies of the included build-logic
+agp-plugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
+agp-plugin-api = { module = "com.android.tools.build:gradle-api", version.ref = "agp" }
+androidx-room-plugin = { group = "androidx.room", name = "androidx.room.gradle.plugin", version.ref = "androidx-room" }
+detekt-formatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "detekt" }
+detekt-plugin = { group = "io.gitlab.arturbosch.detekt", name = "detekt-gradle-plugin", version.ref = "detekt" }
+diktat-plugin = { group = "com.saveourtool.diktat", name = "diktat-gradle-plugin", version.ref = "diktat" }
+dokka-plugin = { group = "org.jetbrains.dokka", name = "dokka-gradle-plugin", version.ref = "dokka" }
+gradle-maven-publish-plugin = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "gradle-maven-publish-plugin" }
+kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+kotlinx-binary-compatibility-validator-plugin = { module = "org.jetbrains.kotlinx.binary-compatibility-validator:org.jetbrains.kotlinx.binary-compatibility-validator.gradle.plugin", version.ref = "kotlinx-binary-compatibility-validator" }
+ksp-plugin = { group = "com.google.devtools.ksp", name = "symbol-processing-gradle-plugin", version.ref = "ksp" }
+spotless-plugin = { group = "com.diffplug.spotless", name = "spotless-plugin-gradle", version.ref = "spotless" }
