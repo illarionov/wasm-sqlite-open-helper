@@ -43,7 +43,7 @@ jobs:
           fetch-depth: 0
 
       - name: Insstall WABT
-        run: apt install wabt
+        run: sudo apt-get install wabt
 
       - name: Install EMSDK
         uses: mymindstorm/setup-emsdk@v14
