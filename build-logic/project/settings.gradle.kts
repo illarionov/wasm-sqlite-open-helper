@@ -20,7 +20,8 @@ dependencyResolutionManagement {
     }
 }
 
-include("multiplatform")
 include("lint")
+include("multiplatform")
+include("sqlite-wasm-build")
 
 rootProject.name = "sqlite-helper-gradle-project-plugins"

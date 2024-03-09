@@ -17,6 +17,10 @@
 - name: CLASS_SHOULD_NOT_BE_ABSTRACT
   enabled: false
 
+# Enabled in Detekt
+- name: CONSTANT_UPPERCASE
+  enabled: false
+
 - name: CUSTOM_GETTERS_SETTERS
   enabled: false
 

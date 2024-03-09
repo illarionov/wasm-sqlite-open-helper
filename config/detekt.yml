@@ -48,7 +48,7 @@ naming:
     allowedPattern: '^(is|has|are)'
   FunctionNaming:
     active: true
-    ignoreAnnotated: ['Composable', 'ParameterizedTest']
+    ignoreAnnotated: ['Composable', 'ParameterizedTest', "Test"]
   NoNameShadowing:
     active: false
   InvalidPackageDeclaration:
