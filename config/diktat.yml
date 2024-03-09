@@ -14,7 +14,13 @@
   enabled: true
   ignoreAnnotated: [ Nested, ParameterizedTest ]
 
+- name: CLASS_NAME_INCORRECT
+  enabled: false
+
 - name: CLASS_SHOULD_NOT_BE_ABSTRACT
+  enabled: false
+
+- name: COMMENT_WHITE_SPACE
   enabled: false
 
 # Enabled in Detekt
@@ -57,12 +63,18 @@
 - name: FLOAT_IN_ACCURATE_CALCULATIONS
   enabled: false
 
+- name: FUNCTION_BOOLEAN_PREFIX
+  enabled: false
+
 - name: FUNCTION_NAME_INCORRECT_CASE
   enabled: false
 
 - name: GENERIC_VARIABLE_WRONG_DECLARATION
   enabled: true
   ignoreAnnotated: [ Rule ]
+
+- name: GENERIC_NAME
+  enabled: false
 
 - name: HEADER_MISSING_IN_NON_SINGLE_CLASS_FILE
   enabled: false
@@ -162,6 +174,9 @@
   enabled: false
 
 - name: WRONG_NEWLINES
+  enabled: false
+
+- name: WRONG_NEWLINES_AROUND_KDOC
   enabled: false
 
 # Clashes with "ArgumentListWrapping" and "Wrapping" from the Detekt rule set

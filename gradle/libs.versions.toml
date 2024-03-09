@@ -1,12 +1,13 @@
 [versions]
 emscripten = "3.1.55"
-spotless = "6.25.0"
 sqlite = "3450100"
 
-androidMinSdk = "21"
+androidMinSdk = "26"
 androidCompileSdk = "34"
 
 agp = "8.2.2"
+androidx-core = "1.12.0"
+androidx-sqlite = "2.4.0"
 androidx-room = "2.6.1"
 androidx-test = "1.6.0-alpha05"
 assertk = "0.28.0"
@@ -20,13 +21,17 @@ junit-platform-launcher = "1.10.2"
 junit5 = "5.10.2"
 kotlin = "1.9.23"
 kotlinx-binary-compatibility-validator = "0.14.0"
+kermit = "2.0.3"
 ksp = "1.9.23-1.0.19"
+spotless = "6.25.0"
 
 [libraries]
+androidx-core = { group = "androidx.core", name = "core", version.ref = "androidx-core" }
 androidx-room = { group = "androidx.room", name = "room-ktx", version.ref = "androidx-room" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "androidx-room" }
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "androidx-room" }
 androidx-room-testing = { group = "androidx.room", name = "room-testing", version.ref = "androidx-room" }
+androidx-sqlite-sqlite = { group = "androidx.sqlite", name = "sqlite", version.ref = "androidx-sqlite" }
 androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidx-test"}
 assertk = { group = "com.willowtreeapps.assertk", name = "assertk", version.ref = "assertk" }
 chicory = { group = "com.dylibso.chicory", name = "runtime", version.ref = "chicory" }
@@ -42,6 +47,8 @@ junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engi
 junit-jupiter-params = { group = "org.junit.jupiter", name = "junit-jupiter-params", version.ref = "junit5" }
 junit-jupiter-vintage-engine = { group = "org.junit.vintage", name = "junit-vintage-engine", version.ref = "junit5" }
 junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher", version.ref = "junit-platform-launcher" }
+kermit = { group = "co.touchlab", name = "kermit", version.ref = "kermit" }
+kermit-jvm = { group = "co.touchlab", name = "kermit-jvm", version.ref = "kermit" }
 kotlin-bom = { group = "org.jetbrains.kotlin", name = "kotlin-bom", version.ref = "kotlin" }
 
 # Dependencies of the included build-logic

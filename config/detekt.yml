@@ -24,11 +24,16 @@ comments:
 complexity:
   active: true
   LongParameterList:
+    active: false # Original implementation of SQLiteOpenHelper has a large number of such functions
     functionThreshold: 10
     ignoreDefaultParameters: true
   LongMethod:
     active: true
     ignoreAnnotated: ['Test']
+  NestedBlockDepth:
+    threshold: 5
+  TooManyFunctions:
+      active: false # Original implementation of SQLiteOpenHelper has classes with a huge number of functions
 
 coroutines:
   active: true
@@ -68,6 +73,8 @@ potential-bugs:
 style:
   active: true
 
+  ForbiddenComment:
+    active: false # disabled for a while until everything is done
   ForbiddenMethodCall:
     active: true
     methods:
