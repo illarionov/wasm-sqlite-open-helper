@@ -8,4 +8,7 @@ plugins {
 
 rootProject.name = "wasm-sqlite-open-helper"
 
+include("common-api")
+include("sqlite-common-api")
+include("sqlite-open-helper")
 include("sqlite-wasm")
