@@ -8,19 +8,19 @@ package ru.pixnews.sqlite.open.helper.graalvm.host.emscripten.func
 
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary
 import com.oracle.truffle.api.frame.VirtualFrame
-import java.util.logging.Logger
-import ru.pixnews.sqlite.open.helper.graalvm.ext.asWasmPtr
-import ru.pixnews.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.sqlite.open.helper.graalvm.host.Host
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import ru.pixnews.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.sqlite.open.helper.graalvm.ext.asWasmPtr
+import ru.pixnews.sqlite.open.helper.graalvm.host.BaseWasmNode
+import ru.pixnews.sqlite.open.helper.graalvm.host.Host
 import ru.pixnews.sqlite.open.helper.host.filesystem.FileSystem
 import ru.pixnews.sqlite.open.helper.host.filesystem.SysException
 import ru.pixnews.sqlite.open.helper.host.include.sys.StructStat
 import ru.pixnews.sqlite.open.helper.host.include.sys.pack
 import ru.pixnews.sqlite.open.helper.host.memory.write
+import java.util.logging.Logger
 
 internal fun syscallLstat64(
     language: WasmLanguage,
@@ -48,19 +48,18 @@ internal fun syscallStat64(
     filesystem = host.fileSystem,
 )
 
-private class SyscallStat64 (
+private class SyscallStat64(
     language: WasmLanguage,
     instance: WasmInstance,
     functionName: String,
     private val followSymlinks: Boolean = false,
     private val filesystem: FileSystem,
-    private val logger: Logger = Logger.getLogger(SyscallStat64::class.qualifiedName)
+    private val logger: Logger = Logger.getLogger(SyscallStat64::class.qualifiedName),
 ) : BaseWasmNode(
     language = language,
     instance = instance,
     functionName = functionName,
 ) {
-
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
         val args = frame.arguments
         return stat64(
@@ -73,13 +72,13 @@ private class SyscallStat64 (
     private fun stat64(
         pathnamePtr: WasmPtr<Byte>,
         dst: WasmPtr<StructStat>,
-    ) : Int {
+    ): Int {
         var path = ""
         try {
             path = memory.readNullTerminatedString(pathnamePtr)
             val stat = filesystem.stat(
                 path = path,
-                followSymlinks = followSymlinks
+                followSymlinks = followSymlinks,
             ).also {
                 logger.finest { "$functionName($path): $it" }
             }.pack()

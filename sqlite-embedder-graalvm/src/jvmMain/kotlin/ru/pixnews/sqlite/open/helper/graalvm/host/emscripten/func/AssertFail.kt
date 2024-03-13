@@ -8,21 +8,22 @@ package ru.pixnews.sqlite.open.helper.graalvm.host.emscripten.func
 
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary
 import com.oracle.truffle.api.frame.VirtualFrame
-import ru.pixnews.sqlite.open.helper.graalvm.ext.asWasmPtr
-import ru.pixnews.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.sqlite.open.helper.graalvm.host.Host
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import ru.pixnews.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.sqlite.open.helper.graalvm.ext.asWasmPtr
+import ru.pixnews.sqlite.open.helper.graalvm.host.BaseWasmNode
+import ru.pixnews.sqlite.open.helper.graalvm.host.Host
 import ru.pixnews.sqlite.open.helper.host.emscripten.AssertionFailedException
 
 internal class AssertFail(
     language: WasmLanguage,
     instance: WasmInstance,
-    host: Host,
+    @Suppress("UnusedPrivateProperty") host: Host,
     functionName: String = "__assert_fail",
-): BaseWasmNode(language, instance, functionName) {
+) : BaseWasmNode(language, instance, functionName) {
+    @Suppress("MagicNumber")
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Nothing {
         val args = frame.arguments
         assertFail(
@@ -34,17 +35,18 @@ internal class AssertFail(
     }
 
     @TruffleBoundary
+    @Suppress("MemberNameEqualsClassName")
     private fun assertFail(
         condition: WasmPtr<Byte>,
         filename: WasmPtr<Byte>,
         line: Int,
-        func: WasmPtr<Byte>
-    ) : Nothing {
+        func: WasmPtr<Byte>,
+    ): Nothing {
         throw AssertionFailedException(
             condition = memory.readNullTerminatedString(condition),
             filename = memory.readNullTerminatedString(filename),
             line = line,
-            func = memory.readNullTerminatedString(func)
+            func = memory.readNullTerminatedString(func),
         )
     }
 }

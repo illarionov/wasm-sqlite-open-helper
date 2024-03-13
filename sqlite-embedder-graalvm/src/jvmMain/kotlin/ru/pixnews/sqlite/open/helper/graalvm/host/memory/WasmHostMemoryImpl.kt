@@ -20,7 +20,7 @@ import java.io.ByteArrayOutputStream
 
 internal class WasmHostMemoryImpl(
     val memory: WasmMemory,
-    internal val node: Node?
+    internal val node: Node?,
 ) : Memory {
     private val memoryReader: WasiMemoryReader = GraalIInputStreamWasiMemoryReader(this)
     private val memoryWriter: WasiMemoryWriter = GraalOutputStreamWasiMemoryWriter(this)
@@ -58,16 +58,16 @@ internal class WasmHostMemoryImpl(
     override fun readFromChannel(
         channel: FdChannel,
         strategy: ReadWriteStrategy,
-        iovecs: IovecArray
+        iovecs: IovecArray,
     ): ULong = memoryReader.read(channel, strategy, iovecs)
 
     override fun writeToChannel(
         channel: FdChannel,
         strategy: ReadWriteStrategy,
-        cioVecs: CiovecArray
+        cioVecs: CiovecArray,
     ): ULong = memoryWriter.write(channel, strategy, cioVecs)
 
     fun readNullTerminatedString(
-        offset: WasmPtr<Byte>
+        offset: WasmPtr<Byte>,
     ): String = memory.readString(offset.addr, null)
 }

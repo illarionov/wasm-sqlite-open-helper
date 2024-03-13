@@ -14,13 +14,13 @@ import ru.pixnews.sqlite.open.helper.host.WasmValueType.WebAssemblyTypes.I32
 internal class HostFunction(
     val name: String,
     val type: HostFunctionType,
-    val nodeFactory: NodeFactory = notImplementedFunctionNodeFactory
+    val nodeFactory: NodeFactory = notImplementedFunctionNodeFactory,
 ) {
     constructor(
         name: String,
         paramTypes: List<WasmValueType>,
         retTypes: List<WasmValueType> = listOf(),
-        nodeFactory: NodeFactory = notImplementedFunctionNodeFactory
+        nodeFactory: NodeFactory = notImplementedFunctionNodeFactory,
     ) : this(name, HostFunctionType(paramTypes, retTypes), nodeFactory)
 }
 
@@ -40,11 +40,11 @@ internal fun MutableList<HostFunction>.fn(
     name: String,
     paramTypes: List<WasmValueType>,
     retType: WasmValueType = I32,
-    nodeFactory: NodeFactory = notImplementedFunctionNodeFactory
+    nodeFactory: NodeFactory = notImplementedFunctionNodeFactory,
 ) = add(HostFunction(name, paramTypes, listOf(retType), nodeFactory))
 
 internal fun MutableList<HostFunction>.fnVoid(
     name: String,
     paramTypes: List<WasmValueType>,
-    nodeFactory: NodeFactory = notImplementedFunctionNodeFactory
+    nodeFactory: NodeFactory = notImplementedFunctionNodeFactory,
 ) = add(HostFunction(name, paramTypes, emptyList(), nodeFactory))

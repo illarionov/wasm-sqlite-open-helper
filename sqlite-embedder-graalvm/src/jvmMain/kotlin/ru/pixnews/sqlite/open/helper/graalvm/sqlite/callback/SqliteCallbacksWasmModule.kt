@@ -6,6 +6,10 @@
 
 package ru.pixnews.sqlite.open.helper.graalvm.sqlite.callback
 
+import org.graalvm.polyglot.Context
+import org.graalvm.wasm.WasmInstance
+import org.graalvm.wasm.WasmLanguage
+import org.graalvm.wasm.WasmModule
 import ru.pixnews.sqlite.open.helper.graalvm.ext.functionTable
 import ru.pixnews.sqlite.open.helper.graalvm.ext.setupWasmModuleFunctions
 import ru.pixnews.sqlite.open.helper.graalvm.ext.withWasmContext
@@ -23,10 +27,6 @@ import ru.pixnews.sqlite.open.helper.graalvm.sqlite.callback.func.Sqlite3Compara
 import ru.pixnews.sqlite.open.helper.graalvm.sqlite.callback.func.Sqlite3DestroyComparatorAdapter
 import ru.pixnews.sqlite.open.helper.graalvm.sqlite.callback.func.Sqlite3ProgressAdapter
 import ru.pixnews.sqlite.open.helper.graalvm.sqlite.callback.func.Sqlite3TraceAdapter
-import org.graalvm.polyglot.Context
-import org.graalvm.wasm.WasmInstance
-import org.graalvm.wasm.WasmLanguage
-import org.graalvm.wasm.WasmModule
 import ru.pixnews.sqlite.open.helper.host.POINTER
 import ru.pixnews.sqlite.open.helper.host.WasmValueType.WebAssemblyTypes.I32
 import ru.pixnews.sqlite.open.helper.host.functiontable.IndirectFunctionTableIndex
@@ -37,7 +37,7 @@ internal const val SQLITE3_CALLBACK_MANAGER_MODULE_NAME = "sqlite3-callback-mana
 internal class SqliteCallbacksModuleBuilder(
     private val graalContext: Context,
     private val host: Host,
-    private val callbackStore: Sqlite3CallbackStore
+    private val callbackStore: Sqlite3CallbackStore,
 ) {
     private val sqliteCallbackHostFunctions: List<HostFunction> = buildList {
         fn(
@@ -49,9 +49,9 @@ internal class SqliteCallbacksModuleBuilder(
                     language = language,
                     instance = instance,
                     callbackStore = callbackStore,
-                    functionName = functionName
+                    functionName = functionName,
                 )
-            }
+            },
         )
         fn(
             name = SQLITE3_TRACE_CB_FUNCTION_NAME,
@@ -62,9 +62,9 @@ internal class SqliteCallbacksModuleBuilder(
                     language = language,
                     instance = instance,
                     callbackStore = callbackStore,
-                    functionName = functionName
+                    functionName = functionName,
                 )
-            }
+            },
         )
         fn(
             name = SQLITE3_PROGRESS_CB_FUNCTION_NAME,
@@ -75,9 +75,9 @@ internal class SqliteCallbacksModuleBuilder(
                     language = language,
                     instance = instance,
                     callbackStore = callbackStore,
-                    functionName = functionName
+                    functionName = functionName,
                 )
-            }
+            },
         )
         fn(
             name = SQLITE3_COMPARATOR_CALL_FUNCTION_NAME,
@@ -88,9 +88,9 @@ internal class SqliteCallbacksModuleBuilder(
                     language = language,
                     instance = instance,
                     callbackStore = callbackStore,
-                    functionName = functionName
+                    functionName = functionName,
                 )
-            }
+            },
         )
         fnVoid(
             name = SQLITE3_DESTROY_COMPARATOR_FUNCTION_NAME,
@@ -100,16 +100,16 @@ internal class SqliteCallbacksModuleBuilder(
                     language = language,
                     instance = instance,
                     callbackStore = callbackStore,
-                    functionName = functionName
+                    functionName = functionName,
                 )
-            }
+            },
         )
     }
 
     fun setupModule(): WasmInstance {
         val module = WasmModule.create(
             SQLITE3_CALLBACK_MANAGER_MODULE_NAME,
-            null
+            null,
         )
         graalContext.withWasmContext { wasmContext ->
             return setupWasmModuleFunctions(wasmContext, host, module, sqliteCallbackHostFunctions)

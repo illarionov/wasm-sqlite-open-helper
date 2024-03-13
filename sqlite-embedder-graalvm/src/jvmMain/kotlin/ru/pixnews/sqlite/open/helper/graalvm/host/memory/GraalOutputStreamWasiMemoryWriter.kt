@@ -21,7 +21,7 @@ import java.nio.channels.ClosedChannelException
 import java.nio.channels.NonReadableChannelException
 
 internal class GraalOutputStreamWasiMemoryWriter(
-    private val memory: WasmHostMemoryImpl
+    private val memory: WasmHostMemoryImpl,
 ) : WasiMemoryWriter {
     private val wasmMemory = memory.memory
     private val defaultMemoryWriter = DefaultWasiMemoryWriter(memory)
@@ -34,6 +34,7 @@ internal class GraalOutputStreamWasiMemoryWriter(
         }
     }
 
+    @Suppress("ThrowsCount")
     private fun write(channel: FdChannel, cioVecs: CiovecArray): ULong {
         var totalBytesWritten: ULong = 0U
         try {

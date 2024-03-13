@@ -6,6 +6,12 @@
 
 package ru.pixnews.sqlite.open.helper.graalvm.host.preview1
 
+import org.graalvm.polyglot.Context
+import org.graalvm.wasm.SymbolTable
+import org.graalvm.wasm.WasmContext
+import org.graalvm.wasm.WasmInstance
+import org.graalvm.wasm.WasmModule
+import org.graalvm.wasm.constants.Sizes
 import ru.pixnews.sqlite.open.helper.graalvm.ext.setupWasmModuleFunctions
 import ru.pixnews.sqlite.open.helper.graalvm.ext.withWasmContext
 import ru.pixnews.sqlite.open.helper.graalvm.host.Host
@@ -21,12 +27,6 @@ import ru.pixnews.sqlite.open.helper.graalvm.host.preview1.func.fdPread
 import ru.pixnews.sqlite.open.helper.graalvm.host.preview1.func.fdPwrite
 import ru.pixnews.sqlite.open.helper.graalvm.host.preview1.func.fdRead
 import ru.pixnews.sqlite.open.helper.graalvm.host.preview1.func.fdWrite
-import org.graalvm.polyglot.Context
-import org.graalvm.wasm.SymbolTable
-import org.graalvm.wasm.WasmContext
-import org.graalvm.wasm.WasmInstance
-import org.graalvm.wasm.WasmModule
-import org.graalvm.wasm.constants.Sizes
 import ru.pixnews.sqlite.open.helper.host.WasmValueType.WebAssemblyTypes.I32
 import ru.pixnews.sqlite.open.helper.host.WasmValueType.WebAssemblyTypes.I64
 
@@ -54,17 +54,17 @@ internal class WasiSnapshotPreview1MobuleBuilder(
         fn(
             name = "environ_get",
             paramTypes = listOf(I32, I32),
-            nodeFactory = ::EnvironGet
+            nodeFactory = ::EnvironGet,
         )
         fn(
             name = "environ_sizes_get",
             paramTypes = listOf(I32, I32),
-            nodeFactory = ::EnvironSizesGet
+            nodeFactory = ::EnvironSizesGet,
         )
         fn(
             name = "fd_close",
             paramTypes = listOf(I32),
-            nodeFactory = ::FdClose
+            nodeFactory = ::FdClose,
         )
         fn(
             name = "fd_fdstat_get",
@@ -94,32 +94,32 @@ internal class WasiSnapshotPreview1MobuleBuilder(
         fn(
             name = "fd_read",
             paramTypes = List(4) { I32 },
-            nodeFactory = ::fdRead
+            nodeFactory = ::fdRead,
         )
         fn(
             name = "fd_pread",
             paramTypes = List(4) { I32 },
-            nodeFactory = ::fdPread
+            nodeFactory = ::fdPread,
         )
         fn(
             name = "fd_seek",
             paramTypes = listOf(I32, I64, I32, I32),
-            nodeFactory = ::FdSeek
+            nodeFactory = ::FdSeek,
         )
         fn(
             name = "fd_sync",
             paramTypes = listOf(I32),
-            nodeFactory = ::FdSync
+            nodeFactory = ::FdSync,
         )
         fn(
             name = "fd_write",
             paramTypes = List(4) { I32 },
-            nodeFactory = ::fdWrite
+            nodeFactory = ::fdWrite,
         )
         fn(
             name = "fd_pwrite",
             paramTypes = List(4) { I32 },
-            nodeFactory = ::fdPwrite
+            nodeFactory = ::fdPwrite,
         )
         fn(
             name = "path_create_directory",
@@ -189,7 +189,7 @@ internal class WasiSnapshotPreview1MobuleBuilder(
         fn(
             name = "sched_yield",
             paramTypes = listOf(),
-            nodeFactory = ::SchedYield
+            nodeFactory = ::SchedYield,
         )
     }
 
@@ -199,9 +199,10 @@ internal class WasiSnapshotPreview1MobuleBuilder(
         return setupWasmModuleFunctions(wasmContext, host, wasiModule, preview1Functions)
     }
 
+    @Suppress("LOCAL_VARIABLE_EARLY_DECLARATION")
     private fun importMemory(
         symbolTable: SymbolTable,
-        context: WasmContext
+        context: WasmContext,
     ) {
         val minSize = 0L
         val maxSize: Long
@@ -210,7 +211,7 @@ internal class WasiSnapshotPreview1MobuleBuilder(
             maxSize = Sizes.MAX_MEMORY_64_DECLARATION_SIZE
             is64Bit = true
         } else {
-            maxSize = 32768
+            maxSize = @Suppress("MagicNumber") 32768
             is64Bit = false
         }
 
@@ -223,7 +224,7 @@ internal class WasiSnapshotPreview1MobuleBuilder(
             maxSize,
             is64Bit,
             false,
-            false
+            false,
         )
     }
 

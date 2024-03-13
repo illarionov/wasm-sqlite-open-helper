@@ -12,10 +12,10 @@ import ru.pixnews.sqlite.open.helper.host.memory.Memory
 import ru.pixnews.sqlite.open.helper.host.memory.readZeroTerminatedString
 
 // TODO: remove
-internal fun <P: Any?> Value.asWasmAddr(): WasmPtr<P> = WasmPtr(asInt())
+internal fun <P : Any?> Value.asWasmAddr(): WasmPtr<P> = WasmPtr(asInt())
 
 // TODO: remove
-internal fun <P: Any?> Array<Any>.asWasmPtr(idx: Int): WasmPtr<P> = WasmPtr(this[idx] as Int)
+internal fun <P : Any?> Array<Any>.asWasmPtr(idx: Int): WasmPtr<P> = WasmPtr(this[idx] as Int)
 
 internal fun Memory.readNullTerminatedString(offsetValue: Value): String? {
     return if (!offsetValue.isNull) {

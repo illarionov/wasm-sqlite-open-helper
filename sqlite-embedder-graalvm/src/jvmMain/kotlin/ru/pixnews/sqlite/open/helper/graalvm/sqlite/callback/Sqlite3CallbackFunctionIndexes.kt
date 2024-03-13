@@ -21,6 +21,6 @@ internal class Sqlite3CallbackFunctionIndexes(
     val progressFunction: IndirectFunctionTableIndex = functionMap.getValue(SQLITE3_PROGRESS_CB_FUNCTION_NAME)
     val comparatorFunction: IndirectFunctionTableIndex = functionMap.getValue(SQLITE3_COMPARATOR_CALL_FUNCTION_NAME)
     val destroyComparatorFunction: IndirectFunctionTableIndex = functionMap.getValue(
-        SQLITE3_DESTROY_COMPARATOR_FUNCTION_NAME
+        SQLITE3_DESTROY_COMPARATOR_FUNCTION_NAME,
     )
 }

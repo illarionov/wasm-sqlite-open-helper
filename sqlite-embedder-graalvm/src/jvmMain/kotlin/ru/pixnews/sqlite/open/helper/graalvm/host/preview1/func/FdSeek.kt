@@ -8,29 +8,30 @@ package ru.pixnews.sqlite.open.helper.graalvm.host.preview1.func
 
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary
 import com.oracle.truffle.api.frame.VirtualFrame
-import java.util.logging.Level
-import java.util.logging.Logger
-import ru.pixnews.sqlite.open.helper.graalvm.ext.asWasmPtr
-import ru.pixnews.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.sqlite.open.helper.graalvm.host.Host
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import ru.pixnews.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.sqlite.open.helper.graalvm.ext.asWasmPtr
+import ru.pixnews.sqlite.open.helper.graalvm.host.BaseWasmNode
+import ru.pixnews.sqlite.open.helper.graalvm.host.Host
 import ru.pixnews.sqlite.open.helper.host.filesystem.SysException
 import ru.pixnews.sqlite.open.helper.host.filesystem.fd.FdChannel
 import ru.pixnews.sqlite.open.helper.host.filesystem.fd.position
 import ru.pixnews.sqlite.open.helper.host.wasi.preview1.type.Errno
 import ru.pixnews.sqlite.open.helper.host.wasi.preview1.type.Fd
 import ru.pixnews.sqlite.open.helper.host.wasi.preview1.type.Whence
+import java.util.logging.Level
+import java.util.logging.Logger
 
 internal class FdSeek(
     language: WasmLanguage,
     instance: WasmInstance,
     private val host: Host,
     functionName: String = "fd_seek",
-    private val logger: Logger = Logger.getLogger(FdSeek::class.qualifiedName)
-): BaseWasmNode(language, instance, functionName) {
+    private val logger: Logger = Logger.getLogger(FdSeek::class.qualifiedName),
+) : BaseWasmNode(language, instance, functionName) {
+    @Suppress("MagicNumber")
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
         val args = frame.arguments
         return fdSeek(
@@ -42,6 +43,7 @@ internal class FdSeek(
     }
 
     @TruffleBoundary
+    @Suppress("MemberNameEqualsClassName", "VARIABLE_HAS_PREFIX")
     private fun fdSeek(
         fd: Fd,
         offset: Long,

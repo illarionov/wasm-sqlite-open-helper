@@ -22,4 +22,3 @@ val Project.isRunningOnGraalVm: Provider<Boolean>
                 },
         )
         .orElse(false)
-

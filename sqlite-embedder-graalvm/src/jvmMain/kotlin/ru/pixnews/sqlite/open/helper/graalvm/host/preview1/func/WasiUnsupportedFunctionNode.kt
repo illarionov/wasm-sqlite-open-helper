@@ -16,9 +16,10 @@ import org.graalvm.wasm.predefined.wasi.types.Errno
 internal class WasiUnsupportedFunctionNode(
     language: WasmLanguage,
     instance: WasmInstance,
-    private val name: String
+    private val name: String,
 ) : WasmBuiltinRootNode(
-    language, instance
+    language,
+    instance,
 ) {
     override fun builtinNodeName(): String = name
 

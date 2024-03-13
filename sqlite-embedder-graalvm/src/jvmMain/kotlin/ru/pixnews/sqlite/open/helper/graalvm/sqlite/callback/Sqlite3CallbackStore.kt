@@ -15,14 +15,14 @@ import ru.pixnews.sqlite.open.helper.sqlite.common.api.SqliteTraceCallback
 import java.util.Collections
 
 internal class Sqlite3CallbackStore {
-    val sqlite3Comparators: IdMap<Sqlite3ComparatorId, SqliteComparatorCallback> = IdMap(Sqlite3CallbackStore::Sqlite3ComparatorId)
-    val sqlite3ExecCallbacks: IdMap<Sqlite3ExecCallbackId, SqliteExecCallback> = IdMap(Sqlite3CallbackStore::Sqlite3ExecCallbackId)
-    val sqlite3TraceCallbacks: MutableMap<WasmPtr<SqliteDb>, SqliteTraceCallback> = Collections.synchronizedMap(
-        mutableMapOf()
-    )
-    val sqlite3ProgressCallbacks: MutableMap<WasmPtr<SqliteDb>, SqliteProgressCallback> = Collections.synchronizedMap(
-        mutableMapOf()
-    )
+    val sqlite3Comparators: IdMap<Sqlite3ComparatorId, SqliteComparatorCallback> =
+        IdMap(Sqlite3CallbackStore::Sqlite3ComparatorId)
+    val sqlite3ExecCallbacks: IdMap<Sqlite3ExecCallbackId, SqliteExecCallback> =
+        IdMap(Sqlite3CallbackStore::Sqlite3ExecCallbackId)
+    val sqlite3TraceCallbacks: MutableMap<WasmPtr<SqliteDb>, SqliteTraceCallback> =
+        Collections.synchronizedMap(mutableMapOf())
+    val sqlite3ProgressCallbacks: MutableMap<WasmPtr<SqliteDb>, SqliteProgressCallback> =
+        Collections.synchronizedMap(mutableMapOf())
 
     interface CallbackId {
         val id: Int
@@ -34,8 +34,8 @@ internal class Sqlite3CallbackStore {
     @JvmInline
     value class Sqlite3ComparatorId(override val id: Int) : CallbackId
 
-    class IdMap<K: CallbackId, V: Any>(
-        private val ctor: (Int) -> K
+    class IdMap<K : CallbackId, V : Any>(
+        private val ctor: (Int) -> K,
     ) {
         private val lock = Any()
         private var counter: Int = 1
@@ -59,6 +59,7 @@ internal class Sqlite3CallbackStore {
             while (map.containsKey(ctor(id))) {
                 id = id.nextNonZeroId()
                 if (id == start) {
+                    @Suppress("TooGenericExceptionThrown")
                     throw RuntimeException("Can not allocate ID")
                 }
             }

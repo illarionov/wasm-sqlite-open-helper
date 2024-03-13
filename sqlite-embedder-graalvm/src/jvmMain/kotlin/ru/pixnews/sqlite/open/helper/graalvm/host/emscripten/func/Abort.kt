@@ -7,16 +7,16 @@
 package ru.pixnews.sqlite.open.helper.graalvm.host.emscripten.func
 
 import com.oracle.truffle.api.frame.VirtualFrame
-import ru.pixnews.sqlite.open.helper.graalvm.host.BaseWasmNode
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
+import ru.pixnews.sqlite.open.helper.graalvm.host.BaseWasmNode
 
 internal class Abort(
     language: WasmLanguage,
     instance: WasmInstance,
     functionName: String = "abort",
-): BaseWasmNode(language, instance, functionName) {
+) : BaseWasmNode(language, instance, functionName) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
         error("native code called abort()")
     }

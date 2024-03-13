@@ -30,8 +30,4 @@ public class GraalvmCompilerJvmArgumentsProvider(
             emptyList()
         }
     }
-
-    companion object {
-
-    }
 }

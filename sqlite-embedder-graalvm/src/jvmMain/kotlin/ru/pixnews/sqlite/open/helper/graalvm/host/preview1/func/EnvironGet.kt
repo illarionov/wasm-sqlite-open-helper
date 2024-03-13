@@ -8,13 +8,13 @@ package ru.pixnews.sqlite.open.helper.graalvm.host.preview1.func
 
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary
 import com.oracle.truffle.api.frame.VirtualFrame
-import ru.pixnews.sqlite.open.helper.graalvm.ext.asWasmPtr
-import ru.pixnews.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.sqlite.open.helper.graalvm.host.Host
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import ru.pixnews.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.sqlite.open.helper.graalvm.ext.asWasmPtr
+import ru.pixnews.sqlite.open.helper.graalvm.host.BaseWasmNode
+import ru.pixnews.sqlite.open.helper.graalvm.host.Host
 import ru.pixnews.sqlite.open.helper.host.wasi.ext.WasiEnvironmentFunc
 
 internal class EnvironGet(
@@ -22,16 +22,17 @@ internal class EnvironGet(
     instance: WasmInstance,
     private val host: Host,
     functionName: String = "environ_get",
-): BaseWasmNode(language, instance, functionName) {
+) : BaseWasmNode(language, instance, functionName) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
         val args = frame.arguments
         return environGet(
             args.asWasmPtr(0),
             args.asWasmPtr(1),
-            )
+        )
     }
 
     @TruffleBoundary
+    @Suppress("MemberNameEqualsClassName")
     private fun environGet(
         environPAddr: WasmPtr<Int>,
         environBufAddr: WasmPtr<Int>,
@@ -40,7 +41,7 @@ internal class EnvironGet(
             envProvider = host.systemEnvProvider,
             memory = memory,
             environPAddr = environPAddr,
-            environBufAddr = environBufAddr
+            environBufAddr = environBufAddr,
         ).code
     }
 }

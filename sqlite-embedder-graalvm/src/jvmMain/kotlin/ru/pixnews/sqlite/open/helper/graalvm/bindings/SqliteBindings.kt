@@ -6,12 +6,13 @@
 
 package ru.pixnews.sqlite.open.helper.graalvm.bindings
 
-import ru.pixnews.sqlite.open.helper.graalvm.host.memory.GraalHostMemoryImpl
 import org.graalvm.polyglot.Context
 import org.graalvm.polyglot.Value
+import ru.pixnews.sqlite.open.helper.graalvm.host.memory.GraalHostMemoryImpl
 import ru.pixnews.sqlite.open.helper.sqlite.common.api.SqliteErrno
 import ru.pixnews.sqlite.open.helper.sqlite.common.api.SqliteException
 
+@Suppress("VariableNaming", "BLANK_LINE_BETWEEN_PROPERTIES")
 internal class SqliteBindings(
     val context: Context,
     envBindings: Value = context.getBindings("wasm").getMember("env"),
@@ -273,7 +274,7 @@ internal class SqliteBindings(
          }.execute()
         memoryBindings.init()
         postRun()
-        //_initialize.execute()
+        // _initialize.execute()
     }
 
     private fun postRun() {

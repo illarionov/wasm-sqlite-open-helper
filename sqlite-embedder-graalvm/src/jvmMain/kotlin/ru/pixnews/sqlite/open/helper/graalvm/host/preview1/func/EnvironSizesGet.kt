@@ -8,13 +8,13 @@ package ru.pixnews.sqlite.open.helper.graalvm.host.preview1.func
 
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary
 import com.oracle.truffle.api.frame.VirtualFrame
-import ru.pixnews.sqlite.open.helper.graalvm.ext.asWasmPtr
-import ru.pixnews.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.sqlite.open.helper.graalvm.host.Host
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import ru.pixnews.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.sqlite.open.helper.graalvm.ext.asWasmPtr
+import ru.pixnews.sqlite.open.helper.graalvm.host.BaseWasmNode
+import ru.pixnews.sqlite.open.helper.graalvm.host.Host
 import ru.pixnews.sqlite.open.helper.host.wasi.ext.WasiEnvironmentFunc
 
 internal class EnvironSizesGet(
@@ -32,6 +32,7 @@ internal class EnvironSizesGet(
     }
 
     @TruffleBoundary
+    @Suppress("MemberNameEqualsClassName")
     private fun environSizesGet(
         environCountAddr: WasmPtr<Int>,
         environSizeAddr: WasmPtr<Int>,

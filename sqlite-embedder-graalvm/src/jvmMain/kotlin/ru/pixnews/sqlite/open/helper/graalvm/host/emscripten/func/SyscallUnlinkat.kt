@@ -8,24 +8,25 @@ package ru.pixnews.sqlite.open.helper.graalvm.host.emscripten.func
 
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary
 import com.oracle.truffle.api.frame.VirtualFrame
-import java.util.logging.Logger
-import ru.pixnews.sqlite.open.helper.graalvm.ext.asWasmPtr
-import ru.pixnews.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.sqlite.open.helper.graalvm.host.Host
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import ru.pixnews.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.sqlite.open.helper.graalvm.ext.asWasmPtr
+import ru.pixnews.sqlite.open.helper.graalvm.host.BaseWasmNode
+import ru.pixnews.sqlite.open.helper.graalvm.host.Host
 import ru.pixnews.sqlite.open.helper.host.filesystem.SysException
 import ru.pixnews.sqlite.open.helper.host.wasi.preview1.type.Errno
+import java.util.logging.Logger
 
 internal class SyscallUnlinkat(
     language: WasmLanguage,
     instance: WasmInstance,
     private val host: Host,
     functionName: String = "__syscall_unlinkat",
-    private val logger: Logger = Logger.getLogger(SyscallUnlinkat::class.qualifiedName)
-): BaseWasmNode(language, instance, functionName) {
+    @Suppress("UnusedPrivateProperty")
+    private val logger: Logger = Logger.getLogger(SyscallUnlinkat::class.qualifiedName),
+) : BaseWasmNode(language, instance, functionName) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
         val args = frame.arguments
         return syscallUnlinkat(
@@ -36,6 +37,7 @@ internal class SyscallUnlinkat(
     }
 
     @TruffleBoundary
+    @Suppress("MemberNameEqualsClassName")
     private fun syscallUnlinkat(
         dirfd: Int,
         pathnamePtr: WasmPtr<Byte>,

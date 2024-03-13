@@ -22,7 +22,7 @@ import java.nio.channels.ClosedChannelException
 import java.nio.channels.NonReadableChannelException
 
 internal class GraalIInputStreamWasiMemoryReader(
-    private val memory: WasmHostMemoryImpl
+    private val memory: WasmHostMemoryImpl,
 ) : WasiMemoryReader {
     private val wasmMemory = memory.memory
     private val defaultMemoryReader = DefaultWasiMemoryReader(memory)
@@ -30,7 +30,7 @@ internal class GraalIInputStreamWasiMemoryReader(
     override fun read(
         channel: FdChannel,
         strategy: ReadWriteStrategy,
-        iovecs: IovecArray
+        iovecs: IovecArray,
     ): ULong {
         return if (strategy == CHANGE_POSITION) {
             read(channel, iovecs)
@@ -39,9 +39,10 @@ internal class GraalIInputStreamWasiMemoryReader(
         }
     }
 
+    @Suppress("ThrowsCount")
     private fun read(
         channel: FdChannel,
-        iovecs: IovecArray
+        iovecs: IovecArray,
     ): ULong {
         var totalBytesRead: ULong = 0U
         try {

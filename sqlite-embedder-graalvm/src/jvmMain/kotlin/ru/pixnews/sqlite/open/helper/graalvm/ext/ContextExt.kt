@@ -11,7 +11,7 @@ import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmTable
 
 internal inline fun <R> Context.withWasmContext(
-    code: (wasmContext: WasmContext) -> R
+    code: (wasmContext: WasmContext) -> R,
 ): R = try {
     enter()
     code(WasmContext.get(null))

@@ -8,29 +8,30 @@ package ru.pixnews.sqlite.open.helper.graalvm.host.emscripten.func
 
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary
 import com.oracle.truffle.api.frame.VirtualFrame
-import java.nio.file.Path
-import java.util.logging.Logger
-import ru.pixnews.sqlite.open.helper.graalvm.ext.asWasmPtr
-import ru.pixnews.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.sqlite.open.helper.graalvm.host.Host
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import ru.pixnews.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.sqlite.open.helper.graalvm.ext.asWasmPtr
+import ru.pixnews.sqlite.open.helper.graalvm.host.BaseWasmNode
+import ru.pixnews.sqlite.open.helper.graalvm.host.Host
 import ru.pixnews.sqlite.open.helper.host.filesystem.SysException
 import ru.pixnews.sqlite.open.helper.host.filesystem.resolveAbsolutePath
 import ru.pixnews.sqlite.open.helper.host.include.Fcntl
 import ru.pixnews.sqlite.open.helper.host.include.oMaskToString
 import ru.pixnews.sqlite.open.helper.host.include.sMaskToString
 import ru.pixnews.sqlite.open.helper.host.wasi.preview1.type.Fd
+import java.nio.file.Path
+import java.util.logging.Logger
 
 internal class SyscallOpenat(
     language: WasmLanguage,
     instance: WasmInstance,
     private val host: Host,
     functionName: String = "__syscall_openat",
-    private val logger: Logger = Logger.getLogger(SyscallOpenat::class.qualifiedName)
-): BaseWasmNode(language, instance, functionName) {
+    private val logger: Logger = Logger.getLogger(SyscallOpenat::class.qualifiedName),
+) : BaseWasmNode(language, instance, functionName) {
+    @Suppress("MagicNumber")
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
         val args = frame.arguments
         val mode = if (args.lastIndex == 3) {
@@ -54,7 +55,7 @@ internal class SyscallOpenat(
         dirfd: Int,
         pathnamePtr: WasmPtr<Byte>,
         flags: UInt,
-        mode: UInt
+        mode: UInt,
     ): Int {
         val fs = host.fileSystem
         val path = memory.readNullTerminatedString(pathnamePtr)
@@ -73,13 +74,14 @@ internal class SyscallOpenat(
         }
     }
 
+    @Suppress("MagicNumber")
     private fun formatCallString(
         dirfd: Int,
         path: String,
         absolutePath: Path,
         flags: UInt,
         mode: UInt,
-        fd: Fd?
+        fd: Fd?,
     ): String = "openAt() dirfd: " +
             "$dirfd, " +
             "path: `$path`, " +

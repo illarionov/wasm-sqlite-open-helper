@@ -8,30 +8,31 @@ package ru.pixnews.sqlite.open.helper.graalvm.host.emscripten.func
 
 import com.oracle.truffle.api.CompilerDirectives
 import com.oracle.truffle.api.frame.VirtualFrame
-import java.util.logging.Logger
-import ru.pixnews.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.sqlite.open.helper.graalvm.host.Host
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
+import ru.pixnews.sqlite.open.helper.graalvm.host.BaseWasmNode
+import ru.pixnews.sqlite.open.helper.graalvm.host.Host
 import ru.pixnews.sqlite.open.helper.host.filesystem.SysException
 import ru.pixnews.sqlite.open.helper.host.wasi.preview1.type.Errno
+import java.util.logging.Logger
 
 internal class EmscriptenResizeHeap(
     language: WasmLanguage,
     instance: WasmInstance,
-    private val host: Host,
+    @Suppress("UnusedPrivateProperty") private val host: Host,
     functionName: String = "emscripten_resize_heap",
-    private val logger: Logger = Logger.getLogger(EmscriptenResizeHeap::class.qualifiedName)
-): BaseWasmNode(language, instance, functionName) {
+    private val logger: Logger = Logger.getLogger(EmscriptenResizeHeap::class.qualifiedName),
+) : BaseWasmNode(language, instance, functionName) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
         return emscriptenResizeheap((frame.arguments[0] as Int).toLong())
     }
 
     @CompilerDirectives.TruffleBoundary
+    @Suppress("MemberNameEqualsClassName")
     private fun emscriptenResizeheap(
-        requestedSize: Long
-    ) : Int = try {
+        requestedSize: Long,
+    ): Int = try {
         val currentPages = memory.memory.size()
         val declaredMaxPages = memory.memory.declaredMaxSize()
         val newSizePages = calculateNewSizePages(requestedSize, currentPages, declaredMaxPages)
@@ -45,7 +46,8 @@ internal class EmscriptenResizeHeap(
         if (!memoryAdded) {
             throw SysException(
                 Errno.NOMEM,
-                "Cannot enlarge memory, requested $newSizePages pages, but the limit is ${memory.memory.declaredMaxSize()} pages!"
+                "Cannot enlarge memory, requested $newSizePages pages, but the limit is " +
+                        "${memory.memory.declaredMaxSize()} pages!",
             )
         }
         1
@@ -53,6 +55,7 @@ internal class EmscriptenResizeHeap(
         -e.errNo.code
     }
 
+    @Suppress("MagicNumber")
     companion object {
         const val PAGE_SIZE = 65536
 
@@ -67,7 +70,7 @@ internal class EmscriptenResizeHeap(
             val oldSize = memoryPages * PAGE_SIZE
             val overGrownHeapSize = minOf(
                 oldSize + (oldSize / 5),
-                requestedSizeBytes + 100663296L
+                requestedSizeBytes + 100_663_296L,
             ).coerceAtLeast(requestedSizeBytes)
             return ((overGrownHeapSize + PAGE_SIZE - 1) / PAGE_SIZE).coerceAtMost(memoryMaxPages)
         }

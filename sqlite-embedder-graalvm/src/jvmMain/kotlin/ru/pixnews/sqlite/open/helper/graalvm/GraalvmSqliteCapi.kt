@@ -6,25 +6,26 @@
 
 package ru.pixnews.sqlite.open.helper.graalvm
 
+import org.graalvm.polyglot.Context
+import org.graalvm.polyglot.Engine
+import org.graalvm.polyglot.Source
 import ru.pixnews.sqlite.open.helper.graalvm.bindings.SqliteBindings
 import ru.pixnews.sqlite.open.helper.graalvm.ext.withWasmContext
 import ru.pixnews.sqlite.open.helper.graalvm.host.Host
 import ru.pixnews.sqlite.open.helper.graalvm.host.emscripten.EmscriptenEnvModuleBuilder
 import ru.pixnews.sqlite.open.helper.graalvm.host.preview1.WasiSnapshotPreview1MobuleBuilder
+import ru.pixnews.sqlite.open.helper.graalvm.sqlite.GraalvmSqliteCapiImpl
 import ru.pixnews.sqlite.open.helper.graalvm.sqlite.callback.Sqlite3CallbackStore
 import ru.pixnews.sqlite.open.helper.graalvm.sqlite.callback.SqliteCallbacksModuleBuilder
-import org.graalvm.polyglot.Context
-import org.graalvm.polyglot.Engine
-import org.graalvm.polyglot.Source
-import ru.pixnews.sqlite.open.helper.graalvm.sqlite.GraalvmSqliteCapiImpl
 import ru.pixnews.sqlite.open.helper.host.filesystem.FileSystem
 import ru.pixnews.sqlite.open.helper.sqlite.common.api.SqliteCapi
 import java.net.URL
 import java.time.Clock
 
+@Suppress("FunctionNaming")
 public fun GraalvmSqliteCapi(
     graalvmEngine: Engine = Engine.create("wasm"),
-    sqlite3Url: URL, /* =  Sqlite3Wasm.Emscripten.sqlite3_346_o2 */
+    sqlite3Url: URL, // =  Sqlite3Wasm.Emscripten.sqlite3_346_o2
 ): SqliteCapi {
     val callbackStore = Sqlite3CallbackStore()
     val host = Host(
@@ -54,4 +55,3 @@ public fun GraalvmSqliteCapi(
     val bindings = SqliteBindings(graalContext)
     return GraalvmSqliteCapiImpl(bindings, callbackStore, indirectFunctionIndexes)
 }
-
