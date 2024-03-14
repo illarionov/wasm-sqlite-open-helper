@@ -17,7 +17,7 @@ kotlin {
     sourceSets {
         jvmMain.dependencies {
             api(projects.sqliteCommonApi)
-            implementation(projects.wasiEmscriptenHost)
+            implementation(project(":wasi-emscripten-host"))
             api(libs.graalvm.polyglot.polyglot)
             implementation(libs.graalvm.polyglot.wasm)
             compileOnly(libs.graalvm.wasm.language)

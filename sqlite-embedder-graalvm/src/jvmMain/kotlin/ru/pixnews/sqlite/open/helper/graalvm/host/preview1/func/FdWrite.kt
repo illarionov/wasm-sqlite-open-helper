@@ -19,7 +19,7 @@ import ru.pixnews.sqlite.open.helper.host.filesystem.ReadWriteStrategy
 import ru.pixnews.sqlite.open.helper.host.filesystem.ReadWriteStrategy.CHANGE_POSITION
 import ru.pixnews.sqlite.open.helper.host.filesystem.ReadWriteStrategy.DO_NOT_CHANGE_POSITION
 import ru.pixnews.sqlite.open.helper.host.filesystem.SysException
-import ru.pixnews.sqlite.open.helper.host.wasi.preview1.ext.FdWriteExt
+import ru.pixnews.sqlite.open.helper.host.wasi.preview1.ext.FdWriteExt.readCiovecs
 import ru.pixnews.sqlite.open.helper.host.wasi.preview1.type.CioVec
 import ru.pixnews.sqlite.open.helper.host.wasi.preview1.type.CiovecArray
 import ru.pixnews.sqlite.open.helper.host.wasi.preview1.type.Errno
@@ -68,7 +68,7 @@ private class FdWrite(
         cIovCnt: Int,
         pNum: WasmPtr<Int>,
     ): Int {
-        val cioVecs: CiovecArray = FdWriteExt.readCiovecs(memory, pCiov, cIovCnt)
+        val cioVecs: CiovecArray = readCiovecs(memory, pCiov, cIovCnt)
         return try {
             val channel = host.fileSystem.getStreamByFd(fd)
             val writtenBytes = memory.writeToChannel(channel, strategy, cioVecs)

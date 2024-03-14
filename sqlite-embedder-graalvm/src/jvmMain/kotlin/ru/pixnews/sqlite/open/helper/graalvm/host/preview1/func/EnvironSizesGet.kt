@@ -15,7 +15,7 @@ import ru.pixnews.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.sqlite.open.helper.graalvm.ext.asWasmPtr
 import ru.pixnews.sqlite.open.helper.graalvm.host.BaseWasmNode
 import ru.pixnews.sqlite.open.helper.graalvm.host.Host
-import ru.pixnews.sqlite.open.helper.host.wasi.ext.WasiEnvironmentFunc
+import ru.pixnews.sqlite.open.helper.host.wasi.preview1.ext.WasiEnvironmentFunc
 
 internal class EnvironSizesGet(
     language: WasmLanguage,

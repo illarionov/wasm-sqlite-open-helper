@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.sqlite.open.helper.host.wasi.ext
+package ru.pixnews.sqlite.open.helper.host.wasi.preview1.ext
 
 import ru.pixnews.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.sqlite.open.helper.common.api.plus
