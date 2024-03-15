@@ -9,11 +9,16 @@
 plugins {
     id("ru.pixnews.sqlite.open.helper.wasm.builder")
     id("ru.pixnews.sqlite.open.helper.gradle.multiplatform.kotlin")
+    id("ru.pixnews.sqlite.open.helper.gradle.multiplatform.publish")
 }
 
 val defaultSqliteVersion = versionCatalogs.named("libs").findVersion("sqlite").get().toString()
 
-group = "ru.pixnews.sqlite.open.helper.sqlite.wasm"
+group = "ru.pixnews.sqlite.open.helper"
+version = wasmSqliteVersions.getSubmoduleVersionProvider(
+    propertiesFileKey = "wsoh_sqlite_wasm_version",
+    envVariableName = "WSOH_SQLITE_WASM_VERSION",
+).get()
 
 sqlite3Build {
     builds {

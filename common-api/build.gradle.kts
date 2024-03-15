@@ -6,12 +6,14 @@
 
 plugins {
     id("ru.pixnews.sqlite.open.helper.gradle.multiplatform.kotlin")
+    id("ru.pixnews.sqlite.open.helper.gradle.multiplatform.publish")
 }
 
-group = "ru.pixnews.sqlite.open.helper.common.api"
-
-dependencies {
-}
+group = "ru.pixnews.sqlite.open.helper"
+version = wasmSqliteVersions.getSubmoduleVersionProvider(
+    propertiesFileKey = "wsoh_common_api_version",
+    envVariableName = "WSOH_COMMON_API_VERSION",
+).get()
 
 kotlin {
     jvm()

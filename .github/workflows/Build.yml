@@ -66,6 +66,13 @@ jobs:
           cache-encryption-key: ${{ secrets.GradleEncryptionKey }}
           dependency-graph: generate
 
+      - name: Restore Kotlin Native Cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/.konan
+          key: ${{ runner.os }}-konan-${{ hashFiles('**/*.gradle.kts', 'buildSrc') }}
+          restore-keys: ${{ runner.os }}-konan-
+
       - name: Assemble debug build, run tests
         run: >
           ./gradlew -Pkotlin.daemon.jvmargs="${{ env.KOTLIN_DAEMON_JVMARGS }}"
@@ -94,6 +101,13 @@ jobs:
         with:
           name: test-reports
           path: test-reports.tar.zst
+
+      - name: Save Kotlin Native Cache
+        uses: actions/cache/save@v4
+        if: github.ref_name == 'main'
+        with:
+          path: ~/.konan
+          key: ${{ runner.os }}-konan-${{ hashFiles('**/*.gradle.kts', 'buildSrc') }}
 
   static-analysis:
     name: Style check

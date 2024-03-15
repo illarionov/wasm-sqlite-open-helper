@@ -13,8 +13,15 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_OUT
 plugins {
     id("ru.pixnews.sqlite.open.helper.gradle.multiplatform.android")
     id("ru.pixnews.sqlite.open.helper.gradle.multiplatform.kotlin")
+    id("ru.pixnews.sqlite.open.helper.gradle.multiplatform.publish")
     id("ru.pixnews.sqlite.open.helper.gradle.room.ksp")
 }
+
+group = "ru.pixnews.sqlite.open.helper"
+version = wasmSqliteVersions.getSubmoduleVersionProvider(
+    propertiesFileKey = "wsoh_sqlite_main_version",
+    envVariableName = "WSOH_SQLITE_MAIN_VERSION",
+).get()
 
 android {
     namespace = "ru.pixnews.sqlite.open.helper"
@@ -61,7 +68,6 @@ dependencies {
 kotlin {
     androidTarget()
     jvm()
-    linuxX64()
 
     sourceSets {
         androidMain.dependencies {

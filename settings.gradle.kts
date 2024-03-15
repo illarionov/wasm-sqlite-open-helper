@@ -27,7 +27,7 @@ rootProject.name = "wasm-sqlite-open-helper"
 
 include("common-api")
 include("sqlite-common-api")
+include("sqlite-embedder-graalvm")
 include("sqlite-open-helper")
 include("sqlite-wasm")
-include("sqlite-embedder-graalvm")
 include("wasi-emscripten-host")

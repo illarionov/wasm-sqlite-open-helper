@@ -50,6 +50,7 @@
          </trusted-key>
          <trusted-key id="8756C4F765C9AC3CB6B85D62379CE192D401AB61" group="com.diffplug.durian"/>
          <trusted-key id="8A10792983023D5D14C93B488D7F1BEC1E2ECAE7" group="^com[.]fasterxml($|([.].*))" regex="true"/>
+         <trusted-key id="8E3A02905A1AE67E7B0F9ACD3967D4EDA591B991" group="org.jetbrains.kotlinx" name="kotlinx-html-jvm"/>
          <trusted-key id="90EE19787A7BCF6FD37A1E9180C08B1C29100955" group="^com[.]squareup($|([.].*))" regex="true"/>
          <trusted-key id="98465301A4939C0279F2E847D89D05374952262B" group="org.jetbrains.dokka"/>
          <trusted-key id="A5BD02B93E7A40482EB1D66A5F69AD087600B22C" group="org.ow2.asm"/>
@@ -190,6 +191,11 @@
             <pgp value="B879179229681AD9E8D23A0812DC99973C2318FD"/>
          </artifact>
       </component>
+      <component group="com.soywiz.korlibs.korte" name="korte-jvm" version="4.0.10">
+         <artifact name="korte-jvm-4.0.10.jar">
+            <pgp value="1BE2DD4B1FCF252FE4F0A1D103281AA0289FF53A"/>
+         </artifact>
+      </component>
       <component group="com.squareup" name="javapoet" version="1.10.0">
          <artifact name="javapoet-1.10.0.jar">
             <pgp value="A6D6C97108B8585F91B158748671A8DF71296252"/>
@@ -273,6 +279,11 @@
       <component group="io.perfmark" name="perfmark-api" version="0.26.0">
          <artifact name="perfmark-api-0.26.0.jar">
             <pgp value="C6F7D1C804C821F49AF3BFC13AD93C3C677A106E"/>
+         </artifact>
+      </component>
+      <component group="it.unimi.dsi" name="fastutil-core" version="8.5.12">
+         <artifact name="fastutil-core-8.5.12.jar">
+            <pgp value="0CB5871FB7BF3B351614BBF6CA85FFE638D4407A"/>
          </artifact>
       </component>
       <component group="jakarta.activation" name="jakarta.activation-api" version="1.2.1">
@@ -375,6 +386,11 @@
             <pgp value="9E3044071B758EBCB7E45673700E4F39BC05364B"/>
          </artifact>
       </component>
+      <component group="org.freemarker" name="freemarker" version="2.3.32">
+         <artifact name="freemarker-2.3.32.jar">
+            <pgp value="13AC2213964ABE1D1C147C0E1939A2520BAB1D90"/>
+         </artifact>
+      </component>
       <component group="org.gradle.kotlin" name="gradle-kotlin-dsl-plugins" version="4.2.1">
          <artifact name="gradle-kotlin-dsl-plugins-4.2.1.jar">
             <pgp value="1BD97A6A154E7810EE0BC832E2F38302C8075E3D"/>
@@ -400,6 +416,11 @@
             <pgp value="33FD4BFD33554634053D73C0C2148900BCD3C2AF"/>
          </artifact>
       </component>
+      <component group="org.jetbrains" name="markdown-jvm" version="0.5.2">
+         <artifact name="markdown-jvm-0.5.2.jar">
+            <pgp value="CFBE6E7934FB211224EE1C2B0C0A9468268C79AE"/>
+         </artifact>
+      </component>
       <component group="org.jetbrains.intellij.deps" name="trove4j" version="1.0.20200330">
          <artifact name="trove4j-1.0.20200330.jar">
             <pgp value="8756C4F765C9AC3CB6B85D62379CE192D401AB61"/>
@@ -413,6 +434,11 @@
       <component group="org.jetbrains.kotlinx" name="kotlinx-html-jvm" version="0.8.1">
          <artifact name="kotlinx-html-jvm-0.8.1.jar">
             <pgp value="8E3A02905A1AE67E7B0F9ACD3967D4EDA591B991"/>
+         </artifact>
+      </component>
+      <component group="org.jsoup" name="jsoup" version="1.16.1">
+         <artifact name="jsoup-1.16.1.jar">
+            <pgp value="F3184BCD55F4D016E30D4C9BF42E87F9665015C9"/>
          </artifact>
       </component>
       <component group="org.jvnet.staxex" name="stax-ex" version="1.8.1">

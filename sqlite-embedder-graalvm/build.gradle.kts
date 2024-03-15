@@ -5,11 +5,16 @@
  */
 
 plugins {
-    id("ru.pixnews.sqlite.open.helper.gradle.multiplatform.kotlin")
     id("ru.pixnews.sqlite.open.helper.gradle.graalvm")
+    id("ru.pixnews.sqlite.open.helper.gradle.multiplatform.kotlin")
+    id("ru.pixnews.sqlite.open.helper.gradle.multiplatform.publish")
 }
 
-group = "ru.pixnews.sqlite.open.helper.graalvm"
+group = "ru.pixnews.sqlite.open.helper"
+version = wasmSqliteVersions.getSubmoduleVersionProvider(
+    propertiesFileKey = "wsoh_sqlite_embedder_graalvm_version",
+    envVariableName = "WSOH_SQLITE_EMBEDDER_GRAALVM_VERSION",
+).get()
 
 kotlin {
     jvm()
