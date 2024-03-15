@@ -13,6 +13,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_OUT
 plugins {
     id("ru.pixnews.sqlite.open.helper.gradle.multiplatform.android")
     id("ru.pixnews.sqlite.open.helper.gradle.multiplatform.kotlin")
+    id("ru.pixnews.sqlite.open.helper.gradle.room.ksp")
 }
 
 android {
@@ -50,6 +51,10 @@ dependencies {
     api(projects.commonApi)
     api(projects.sqliteCommonApi)
     api(libs.kermit)
+    annotationProcessor(libs.androidx.room.compiler)
+    kspAndroid(libs.androidx.room.compiler)
+    kspAndroidTest(libs.androidx.room.compiler)
+    testImplementation(libs.androidx.room.testing)
     testImplementation(libs.androidx.test.core)
 }
 
@@ -62,6 +67,18 @@ kotlin {
         androidMain.dependencies {
             api(libs.androidx.sqlite.sqlite)
             implementation(libs.androidx.core)
+        }
+        androidUnitTest.dependencies {
+            implementation(libs.androidx.room.runtime)
+            implementation(libs.androidx.room.testing)
+            implementation(libs.androidx.test.core)
+            implementation(libs.junit.jupiter.api)
+            implementation(libs.junit.jupiter.params)
+
+            implementation(projects.sqliteEmbedderGraalvm)
+            implementation(projects.sqliteWasm)
+
+            runtimeOnly(libs.junit.jupiter.engine)
         }
         commonMain.dependencies {
         }

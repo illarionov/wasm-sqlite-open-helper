@@ -16,24 +16,29 @@ import ru.pixnews.sqlite.open.helper.wasm.builder.sqlite.internal.BuildDirPath.c
 import ru.pixnews.sqlite.open.helper.wasm.builder.sqlite.internal.SqliteAdditionalArgumentProvider
 import ru.pixnews.sqlite.open.helper.wasm.builder.sqlite.internal.createSqliteSourceConfiguration
 import ru.pixnews.sqlite.open.helper.wasm.builder.sqlite.internal.setupUnpackSqliteAttributes
-import ru.pixnews.sqlite.open.helper.wasm.builder.sqlite.sqliteRepository
 
 // Convention Plugin for building Sqlite WASM using Emscripten
-
 plugins {
     base
 }
 
-repositories {
-    sqliteRepository()
-}
-
 setupUnpackSqliteAttributes()
 
-private val wasmSqliteElements = configurations.consumable("wasmSqliteElements") {
-    attributes {
-        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
-        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named("wasm-library"))
+configurations {
+    dependencyScope("wasmLibraries")
+
+    consumable("wasmSqliteElements") {
+        attributes {
+            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+            attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named("wasm-library"))
+        }
+    }
+    resolvable("wasmLibrariesClasspath") {
+        extendsFrom(configurations["wasmLibraries"])
+        attributes {
+            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+            attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named("wasm-library"))
+        }
     }
 }
 
@@ -78,7 +83,7 @@ private fun setupTasksForBuild(buildSpec: SqliteWasmBuildSpec) {
         destination.set(layout.buildDirectory.dir(STRIPPED_RESULT_DIR).map { it.file(strippedWasm) })
     }
 
-    wasmSqliteElements.get().outgoing {
+    configurations.named("wasmSqliteElements").get().outgoing {
         artifacts {
             artifact(stripSqliteTask.flatMap(WasmStripTask::destination)) {
                 builtBy(stripSqliteTask)

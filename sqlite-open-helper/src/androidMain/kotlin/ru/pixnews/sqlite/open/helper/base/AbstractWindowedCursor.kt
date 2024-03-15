@@ -59,8 +59,9 @@ internal abstract class AbstractWindowedCursor<WP : Sqlite3WindowPtr>(
          */
         set(newWindow) {
             if (newWindow !== field) {
-                closeWindow()
+                val old = field
                 field = newWindow
+                old?.close()
             }
         }
 
@@ -129,15 +130,6 @@ internal abstract class AbstractWindowedCursor<WP : Sqlite3WindowPtr>(
     fun hasWindow(): Boolean = window != null
 
     /**
-     * Closes the cursor window and sets [.mWindow] to null.
-     * @hide
-     */
-    protected fun closeWindow() {
-        window?.close()
-        window = null
-    }
-
-    /**
      * If there is a window, clear it. Otherwise, creates a new window.
      *
      * @param name The window name.
@@ -151,6 +143,6 @@ internal abstract class AbstractWindowedCursor<WP : Sqlite3WindowPtr>(
 
     override fun onDeactivateOrClose() {
         super.onDeactivateOrClose()
-        closeWindow()
+        window = null
     }
 }

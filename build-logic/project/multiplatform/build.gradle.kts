@@ -13,8 +13,10 @@ group = "ru.pixnews.sqlite.open.helper.gradle.multiplatform"
 dependencies {
     implementation(project(":lint"))
     implementation(libs.agp.plugin.api)
-    implementation(libs.kotlin.gradle.plugin)
-    implementation(libs.gradle.maven.publish.plugin)
+    implementation(libs.androidx.room.plugin)
+    implementation(libs.ksp.plugin)
     implementation(libs.dokka.plugin)
+    implementation(libs.gradle.maven.publish.plugin)
+    implementation(libs.kotlin.gradle.plugin)
     runtimeOnly(libs.agp.plugin)
 }

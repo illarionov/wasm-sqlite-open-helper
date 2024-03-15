@@ -25,7 +25,7 @@ import java.time.Clock
 @Suppress("FunctionNaming")
 public fun GraalvmSqliteCapi(
     graalvmEngine: Engine = Engine.create("wasm"),
-    sqlite3Url: URL, // =  Sqlite3Wasm.Emscripten.sqlite3_346_o2
+    sqlite3Url: URL,
 ): SqliteCapi {
     val callbackStore = Sqlite3CallbackStore()
     val host = Host(
