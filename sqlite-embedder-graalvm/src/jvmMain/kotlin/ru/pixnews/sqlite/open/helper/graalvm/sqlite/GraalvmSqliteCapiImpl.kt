@@ -122,7 +122,7 @@ internal class GraalvmSqliteCapiImpl internal constructor(
             val result: Value = sqliteBindings.sqlite3_open_v2.execute(
                 pFileName.addr,
                 ppDb.addr,
-                flags.mask,
+                flags.mask.toInt(),
                 pVfsName.addr,
             )
 
@@ -273,7 +273,7 @@ internal class GraalvmSqliteCapiImpl internal constructor(
 
         val errNo = sqliteBindings.sqlite3_trace_v2.execute(
             sqliteDb.addr,
-            mask.mask,
+            mask.mask.toInt(),
             if (traceCallback != null) callbackFunctionIndexes.traceFunction.funcId else 0,
             sqliteDb.addr,
         )
@@ -473,7 +473,7 @@ internal class GraalvmSqliteCapiImpl internal constructor(
                 index,
                 pValue.addr,
                 value.size,
-                SQLITE_TRANSIENT, // TODO: change to destructor?
+                SQLITE_TRANSIENT.id, // TODO: change to destructor?
             ).asInt()
         } finally {
             memory.freeSilent(pValue)
@@ -498,7 +498,7 @@ internal class GraalvmSqliteCapiImpl internal constructor(
                 index,
                 pValue.addr,
                 size,
-                SQLITE_TRANSIENT, // TODO: change to destructor?
+                SQLITE_TRANSIENT.id, // TODO: change to destructor?
             ).asInt()
         } finally {
             memory.freeSilent(pValue)

@@ -27,7 +27,9 @@
          <trusted-key id="0785B3EFF60B1B1BEA94E0BB7C25280EAE63EBE5" group="org.apache.httpcomponents"/>
          <trusted-key id="08F0AAB4D0C1A4BDDE340765B341DDB020FCB6AB" group="org.bouncycastle"/>
          <trusted-key id="0D35D3F60078655126908E8AF3D1600878E85A3D" group="io.netty"/>
+         <trusted-key id="24D04176586361FDA94EE0315F7786DF73E61F56" group="com.google.devtools.ksp"/>
          <trusted-key id="2DB4F1EF0FA761ECC4EA935C86FDC7E2A11262CB" group="commons-codec"/>
+         <trusted-key id="475F3B8E59E6E63AA78067482C7B12F2A511E325" group="org.slf4j" name="slf4j-api"/>
          <trusted-key id="4797B4F5DCC46CEA61059071A1AE06236CA2BA62" group="^com[.]diffplug($|([.].*))" regex="true"/>
          <trusted-key id="5F6C2148AD4911FE308110E5F0D0AE433308B042" group="io.gitlab.arturbosch.detekt"/>
          <trusted-key id="694621A7227D8D5289699830ABE9F3126BB741C1" group="^com[.]google($|([.].*))" regex="true"/>
@@ -40,7 +42,12 @@
          </trusted-key>
          <trusted-key id="7E22D50A7EBD9D2CD269B2D4056ACA74D46000BF" group="io.netty"/>
          <trusted-key id="837B2CBB1D966C80643A2D6527F164F945828C4C" group="^com[.]willowtreeapps($|([.].*))" regex="true"/>
-         <trusted-key id="8461EFA0E74ABAE010DE66994EB27DB2A3B88B8B" group="^androidx[.]test($|([.].*))" regex="true"/>
+         <trusted-key id="8461EFA0E74ABAE010DE66994EB27DB2A3B88B8B">
+            <trusting group="androidx.annotation"/>
+            <trusting group="androidx.room"/>
+            <trusting group="androidx.sqlite"/>
+            <trusting group="^androidx[.]test($|([.].*))" regex="true"/>
+         </trusted-key>
          <trusted-key id="8756C4F765C9AC3CB6B85D62379CE192D401AB61" group="com.diffplug.durian"/>
          <trusted-key id="8A10792983023D5D14C93B488D7F1BEC1E2ECAE7" group="^com[.]fasterxml($|([.].*))" regex="true"/>
          <trusted-key id="90EE19787A7BCF6FD37A1E9180C08B1C29100955" group="^com[.]squareup($|([.].*))" regex="true"/>
@@ -86,6 +93,11 @@
       <component group="com.google.api.grpc" name="proto-google-common-protos" version="2.17.0">
          <artifact name="proto-google-common-protos-2.17.0.jar">
             <pgp value="47504B76CF89C15C0512D9AFE16AB52D79FD224F"/>
+         </artifact>
+      </component>
+      <component group="com.google.auto" name="auto-common" version="0.11">
+         <artifact name="auto-common-0.11.jar">
+            <pgp value="3288B8BE8512D6C0CA185268C51E6CBC7FF46F0B"/>
          </artifact>
       </component>
       <component group="com.google.code.findbugs" name="jsr305" version="3.0.2">
@@ -168,6 +180,11 @@
             <pgp value="7B79ADD11F8A779FE90FD3D0893A028475557671"/>
          </artifact>
       </component>
+      <component group="com.intellij" name="annotations" version="12.0">
+         <artifact name="annotations-12.0.jar">
+            <pgp value="FAABC3738B1F58DA2D776FA2EB380DC13C39F675"/>
+         </artifact>
+      </component>
       <component group="com.saveourtool.diktat" name="diktat-gradle-plugin" version="2.0.0">
          <artifact name="diktat-gradle-plugin-2.0.0.jar">
             <pgp value="B879179229681AD9E8D23A0812DC99973C2318FD"/>
@@ -178,6 +195,11 @@
             <pgp value="A6D6C97108B8585F91B158748671A8DF71296252"/>
          </artifact>
       </component>
+      <component group="com.squareup" name="javapoet" version="1.13.0">
+         <artifact name="javapoet-1.13.0.jar">
+            <pgp value="1D0A8B5E77C678A7C724445ABF984B4145EA13F7"/>
+         </artifact>
+      </component>
       <component group="com.sun.activation" name="javax.activation" version="1.2.0">
          <artifact name="javax.activation-1.2.0.jar">
             <pgp value="4F7E32D440EF90A83011A8FC6425559C47CC79C4"/>
@@ -186,6 +208,11 @@
       <component group="com.yarnpkg" name="yarn" version="1.22.17">
          <artifact name="yarn-1.22.17.tar.gz">
             <pgp value="6D98490C6F1ACDDD448E45954F77679369475BAA"/>
+         </artifact>
+      </component>
+      <component group="commons-codec" name="commons-codec" version="1.15">
+         <artifact name="commons-codec-1.15.jar">
+            <pgp value="BC87A3FD0A54480F0BADBEBD21939FF0CA2A6567"/>
          </artifact>
       </component>
       <component group="commons-codec" name="commons-codec" version="1.16.0">
@@ -431,6 +458,11 @@
       <component group="org.tukaani" name="xz" version="1.9">
          <artifact name="xz-1.9.jar">
             <pgp value="3690C240CE51B4670D30AD1C38EE757D69184620"/>
+         </artifact>
+      </component>
+      <component group="org.xerial" name="sqlite-jdbc" version="3.41.2.2">
+         <artifact name="sqlite-jdbc-3.41.2.2.jar">
+            <pgp value="C1CBA75EC9BD0BAF8061935459E05CE618187ED4"/>
          </artifact>
       </component>
       <component group="sqlite" name="amalgamation" version="3450100">

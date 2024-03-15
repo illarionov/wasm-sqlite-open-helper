@@ -17,6 +17,7 @@ buildscript {
     repositories {
         mavenCentral()
         gradlePluginPortal()
+        google()
     }
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$embeddedKotlinVersion")

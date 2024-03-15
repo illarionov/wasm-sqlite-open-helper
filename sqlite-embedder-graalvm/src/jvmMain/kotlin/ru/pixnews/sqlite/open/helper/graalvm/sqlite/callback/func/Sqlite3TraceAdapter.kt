@@ -40,7 +40,7 @@ internal class Sqlite3TraceAdapter(
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
         val args = frame.arguments
         return invokeTraceCallback(
-            SqliteTraceEventCode(args[0] as UInt),
+            SqliteTraceEventCode((args[0] as Int).toUInt()),
             args.asWasmPtr(1),
             args.asWasmPtr(2),
             (args[3] as Int).toLong(),

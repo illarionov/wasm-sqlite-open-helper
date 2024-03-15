@@ -4,19 +4,37 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+@file:Suppress("GENERIC_VARIABLE_WRONG_DECLARATION")
+
 plugins {
     id("ru.pixnews.sqlite.open.helper.wasm.builder")
+    id("ru.pixnews.sqlite.open.helper.gradle.multiplatform.kotlin")
 }
 
 val defaultSqliteVersion = versionCatalogs.named("libs").findVersion("sqlite").get().toString()
+
+group = "ru.pixnews.sqlite.open.helper.sqlite.wasm"
 
 sqlite3Build {
     builds {
         create("main") {
             sqliteVersion = defaultSqliteVersion
         }
-        create("main2") {
-            sqliteVersion = defaultSqliteVersion
+    }
+}
+
+val wasmResourcesDir = layout.buildDirectory.dir("wasmLibraries")
+val copyResourcesTask = tasks.register<Copy>("copyWasmLibrariesToResources") {
+    from(configurations.named("wasmSqliteElements").get().artifacts.files)
+    into(wasmResourcesDir.map { it.dir("ru/pixnews/sqlite/open/helper/sqlite/wasm") })
+    include("*.wasm")
+}
+
+kotlin {
+    jvm()
+    sourceSets {
+        named("jvmMain") {
+            resources.srcDir(files(wasmResourcesDir).builtBy(copyResourcesTask))
         }
     }
 }

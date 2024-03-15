@@ -26,6 +26,7 @@ import ru.pixnews.sqlite.open.helper.internal.interop.SqlOpenHelperWindowBinding
 import ru.pixnews.sqlite.open.helper.internal.interop.Sqlite3ConnectionPtr
 import ru.pixnews.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
 import ru.pixnews.sqlite.open.helper.internal.interop.Sqlite3WindowPtr
+import ru.pixnews.sqlite.open.helper.sqlite.common.api.SqliteCapi
 
 /**
  * Implements [SupportSQLiteOpenHelper.Factory] using the SQLite implementation shipped in
@@ -33,12 +34,12 @@ import ru.pixnews.sqlite.open.helper.internal.interop.Sqlite3WindowPtr
  */
 public class WasmSqliteOpenHelperFactory(
     private val pathResolver: DatabasePathResolver,
+    private val sqliteCapi: SqliteCapi,
     private val debugConfig: SQLiteDebug = SQLiteDebug(),
     private val configurationOptions: List<ConfigurationOptions> = emptyList(),
 ) : SupportSQLiteOpenHelper.Factory {
     override fun create(configuration: SupportSQLiteOpenHelper.Configuration): SupportSQLiteOpenHelper {
-        val api = DummySqliteCapi()
-        val bindings = GraalNativeBindings(api)
+        val bindings = GraalNativeBindings(sqliteCapi)
         val windowBindings = GraalWindowBindings()
 
         return CallbackSqliteOpenHelper(
