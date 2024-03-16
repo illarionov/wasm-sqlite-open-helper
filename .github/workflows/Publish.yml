@@ -64,6 +64,7 @@ jobs:
           ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_IN_MEMORY_KEY_PASSWORD }}
         run: >
           ./gradlew --scan -Pkotlin.daemon.jvmargs="${{ env.KOTLIN_DAEMON_JVMARGS }}"
+          --no-configuration-cache
           build publishAllPublicationsToPixnewsS3Repository --stacktrace
 
       - name: Upload build artifacts
