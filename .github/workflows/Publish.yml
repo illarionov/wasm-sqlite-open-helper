@@ -24,6 +24,18 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Install WABT
+        run: |
+          curl -fsSL https://github.com/WebAssembly/wabt/releases/download/1.0.34/wabt-1.0.34-ubuntu.tar.gz | \
+            tar -C $HOME -xzf -
+          echo "$HOME/wabt-1.0.34/bin" >> $GITHUB_PATH
+
+      - name: Install EMSDK
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: 3.1.55
+          actions-cache-folder: 'emsdk-cache'
+
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
