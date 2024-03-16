@@ -14,8 +14,8 @@ env:
 
 jobs:
   publish:
-    name: Assemble, publish to Sonatype
-    runs-on: macos-latest
+    name: Assemble, publish to S3
+    runs-on: ubuntu-latest
     timeout-minutes: 60
 
     steps:
