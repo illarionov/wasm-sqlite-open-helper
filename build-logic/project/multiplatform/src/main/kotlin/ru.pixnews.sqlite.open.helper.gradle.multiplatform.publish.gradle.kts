@@ -7,6 +7,7 @@
 import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.KotlinMultiplatform
 import org.jetbrains.dokka.gradle.DokkaTask
+import ru.pixnews.sqlite.open.helper.gradle.publish.createWasmSqliteVersionsExtension
 
 /*
  * Convention plugin with publishing defaults
@@ -16,6 +17,8 @@ plugins {
     id("com.vanniktech.maven.publish.base")
     id("org.jetbrains.dokka")
 }
+
+createWasmSqliteVersionsExtension()
 
 tasks.withType<AbstractArchiveTask>().configureEach {
     isPreserveFileTimestamps = false
@@ -43,7 +46,7 @@ mavenPublishing {
     signAllPublications()
 
     configure(
-        KotlinMultiplatform(javadocJar = JavadocJar.Dokka("dokkaHtml")),
+        KotlinMultiplatform(javadocJar = JavadocJar.Dokka("dokkaGfm")),
     )
 
     pom {
