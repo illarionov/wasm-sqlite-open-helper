@@ -35,7 +35,6 @@ androidx-sqlite-sqlite = { group = "androidx.sqlite", name = "sqlite", version.r
 androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidx-test"}
 assertk = { group = "com.willowtreeapps.assertk", name = "assertk", version.ref = "assertk" }
 chicory = { group = "com.dylibso.chicory", name = "runtime", version.ref = "chicory" }
-graalvm-compiler = { group = "org.graalvm.compiler", name = "compiler", version.ref = "graalvm" }
 graalvm-polyglot-js = { group = "org.graalvm.polyglot", name = "js-community", version.ref = "graalvm" }
 graalvm-polyglot-polyglot = { group = "org.graalvm.polyglot", name = "polyglot", version.ref = "graalvm" }
 graalvm-polyglot-wasm = { group = "org.graalvm.polyglot", name = "wasm-community", version.ref = "graalvm" }
