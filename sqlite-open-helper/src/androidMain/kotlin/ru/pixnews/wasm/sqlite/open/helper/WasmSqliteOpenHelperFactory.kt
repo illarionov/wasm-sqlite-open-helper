@@ -15,7 +15,6 @@ package ru.pixnews.wasm.sqlite.open.helper
 
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import ru.pixnews.wasm.sqlite.open.helper.base.DatabaseErrorHandler
-import ru.pixnews.wasm.sqlite.open.helper.internal.DatabasePathResolver
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDatabase
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDebug
 import ru.pixnews.wasm.sqlite.open.helper.internal.WasmSqliteOpenHelper
@@ -26,13 +25,14 @@ import ru.pixnews.wasm.sqlite.open.helper.internal.interop.SqlOpenHelperWindowBi
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3ConnectionPtr
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3WindowPtr
+import ru.pixnews.wasm.sqlite.open.helper.path.DatabasePathResolver
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteCapi
 
 /**
  * Implements [SupportSQLiteOpenHelper.Factory] using the SQLite implementation shipped in
  * this library.
  */
-public class WasmSqliteOpenHelperFactory(
+internal class WasmSqliteOpenHelperFactory(
     private val pathResolver: DatabasePathResolver,
     private val sqliteCapi: SqliteCapi,
     private val debugConfig: SQLiteDebug = SQLiteDebug(),
@@ -101,9 +101,5 @@ public class WasmSqliteOpenHelperFactory(
         private val callback: SupportSQLiteOpenHelper.Callback,
     ) : DatabaseErrorHandler {
         override fun onCorruption(dbObj: SQLiteDatabase<*, *, *>) = callback.onCorruption(dbObj)
-    }
-
-    public fun interface ConfigurationOptions {
-        public fun apply(configuration: SqliteDatabaseConfiguration): SqliteDatabaseConfiguration
     }
 }

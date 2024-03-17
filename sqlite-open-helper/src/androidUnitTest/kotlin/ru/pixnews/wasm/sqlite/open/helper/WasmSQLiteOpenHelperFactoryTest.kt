@@ -14,8 +14,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmSqliteCapi
-import ru.pixnews.wasm.sqlite.open.helper.internal.DatabasePathResolver
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDebug
+import ru.pixnews.wasm.sqlite.open.helper.path.DatabasePathResolver
 import ru.pixnews.wasm.sqlite.open.helper.room.AppDatabase1
 import ru.pixnews.wasm.sqlite.open.helper.room.User
 import java.io.File
@@ -81,17 +80,18 @@ class WasmSQLiteOpenHelperFactoryTest {
     }
 
     private fun createHelperFactory(): SupportSQLiteOpenHelper.Factory {
-        val pathResolver = DatabasePathResolver { name -> File(tempDir, name) }
-        val debugConfig = SQLiteDebug(true, true, true, true)
         val sqlitecApi = GraalvmSqliteCapi(
             sqlite3Url = Sqlite3Wasm.Emscripten.sqlite3_345,
         )
-
-        return WasmSqliteOpenHelperFactory(
-            pathResolver = pathResolver,
-            sqliteCapi = sqlitecApi,
-            debugConfig = debugConfig,
-        )
+        return WasmSqliteOpenHelperFactory(sqlitecApi) {
+            pathResolver = DatabasePathResolver { name -> File(tempDir, name) }
+            debug {
+                sqlLog = true
+                sqlTime = true
+                sqlStatements = true
+                logSlowQueries = true
+            }
+        }
     }
 
     private class LoggingOpenHelperCallback(

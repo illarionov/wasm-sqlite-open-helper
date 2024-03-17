@@ -29,6 +29,7 @@ import ru.pixnews.wasm.sqlite.open.helper.internal.interop.SqlOpenHelperWindowBi
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3ConnectionPtr
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3WindowPtr
+import ru.pixnews.wasm.sqlite.open.helper.path.DatabasePathResolver
 
 /**
  * A helper class to manage database creation and version management.
