@@ -11,6 +11,7 @@ import com.oracle.truffle.api.frame.VirtualFrame
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.asWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
@@ -21,14 +22,13 @@ import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.pack
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.write
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
-import java.util.logging.Logger
 
 internal class SyscallFstat64(
     language: WasmLanguage,
     instance: WasmInstance,
     private val host: Host,
     functionName: String = "__syscall_fstat64",
-    private val logger: Logger = Logger.getLogger(SyscallFstat64::class.qualifiedName),
+    private val logger: Logger = Logger.withTag(SyscallFstat64::class.qualifiedName!!),
 ) : BaseWasmNode(language, instance, functionName) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
         val args = frame.arguments
@@ -45,12 +45,12 @@ internal class SyscallFstat64(
         dst: WasmPtr<StructStat>,
     ): Int = try {
         val stat = host.fileSystem.stat(fd).also {
-            logger.finest { "fStat64($fd): OK $it" }
+            logger.v { "fStat64($fd): OK $it" }
         }.pack()
         memory.write(dst, stat)
         Errno.SUCCESS.code
     } catch (e: SysException) {
-        logger.finest { "fStat64($fd): Error ${e.errNo}" }
+        logger.v { "fStat64($fd): Error ${e.errNo}" }
         -e.errNo.code
     }
 }

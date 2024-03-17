@@ -11,6 +11,7 @@ import com.oracle.truffle.api.frame.VirtualFrame
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr.Companion.WASM_SIZEOF_PTR
 import ru.pixnews.wasm.sqlite.open.helper.common.api.plus
@@ -19,7 +20,6 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.Sqlite3CallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.Sqlite3CallbackStore.Sqlite3ExecCallbackId
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.readPtr
-import java.util.logging.Logger
 
 internal const val SQLITE3_EXEC_CB_FUNCTION_NAME = "sqlite3_exec_cb"
 
@@ -28,7 +28,7 @@ internal class Sqlite3CallExecAdapter(
     instance: WasmInstance,
     private val callbackStore: Sqlite3CallbackStore,
     functionName: String,
-    private val logger: Logger = Logger.getLogger(Sqlite3CallExecAdapter::class.qualifiedName),
+    private val logger: Logger = Logger.withTag(Sqlite3CallExecAdapter::class.qualifiedName!!),
 ) : BaseWasmNode(language, instance, functionName) {
     @Suppress("MagicNumber")
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
@@ -49,7 +49,7 @@ internal class Sqlite3CallExecAdapter(
         pResults: WasmPtr<WasmPtr<Byte>>,
         pColumnNames: WasmPtr<WasmPtr<Byte>>,
     ): Int {
-        logger.finest { "cb() arg1: $arg1 columns: $columns names: $pColumnNames results: $pResults" }
+        logger.v { "cb() arg1: $arg1 columns: $columns names: $pColumnNames results: $pResults" }
         val delegateId = Sqlite3ExecCallbackId(arg1)
         val delegate = callbackStore.sqlite3ExecCallbacks[delegateId] ?: error("Callback $delegateId not registered")
 

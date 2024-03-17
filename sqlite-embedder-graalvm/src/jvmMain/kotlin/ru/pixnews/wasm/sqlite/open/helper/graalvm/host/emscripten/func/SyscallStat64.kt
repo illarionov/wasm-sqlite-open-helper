@@ -11,6 +11,7 @@ import com.oracle.truffle.api.frame.VirtualFrame
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.asWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
@@ -20,7 +21,6 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
 import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.StructStat
 import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.pack
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.write
-import java.util.logging.Logger
 
 internal fun syscallLstat64(
     language: WasmLanguage,
@@ -54,7 +54,7 @@ private class SyscallStat64(
     functionName: String,
     private val followSymlinks: Boolean = false,
     private val filesystem: FileSystem,
-    private val logger: Logger = Logger.getLogger(SyscallStat64::class.qualifiedName),
+    private val logger: Logger = Logger.withTag(SyscallStat64::class.qualifiedName!!),
 ) : BaseWasmNode(
     language = language,
     instance = instance,
@@ -80,11 +80,11 @@ private class SyscallStat64(
                 path = path,
                 followSymlinks = followSymlinks,
             ).also {
-                logger.finest { "$functionName($path): $it" }
+                logger.v { "$functionName($path): $it" }
             }.pack()
             memory.write(dst, stat)
         } catch (e: SysException) {
-            logger.finest { "$functionName(`$path`): error ${e.errNo}" }
+            logger.v { "$functionName(`$path`): error ${e.errNo}" }
             return -e.errNo.code
         }
 

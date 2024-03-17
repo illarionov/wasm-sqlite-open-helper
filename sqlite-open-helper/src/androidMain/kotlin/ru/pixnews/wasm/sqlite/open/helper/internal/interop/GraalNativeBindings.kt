@@ -24,7 +24,7 @@ import android.database.sqlite.SQLiteOutOfMemoryException
 import android.database.sqlite.SQLiteReadOnlyDatabaseException
 import android.database.sqlite.SQLiteTableLockedException
 import androidx.core.os.OperationCanceledException
-import co.touchlab.kermit.Logger
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr.Companion.sqlite3Null
 import ru.pixnews.wasm.sqlite.open.helper.common.api.contains

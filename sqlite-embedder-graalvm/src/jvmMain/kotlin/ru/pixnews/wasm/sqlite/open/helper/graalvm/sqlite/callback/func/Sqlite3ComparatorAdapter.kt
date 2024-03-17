@@ -11,12 +11,12 @@ import com.oracle.truffle.api.frame.VirtualFrame
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.asWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.Sqlite3CallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteComparatorCallback
-import java.util.logging.Logger
 
 internal const val SQLITE3_COMPARATOR_CALL_FUNCTION_NAME = "sqlite3_comparator_call_cb"
 
@@ -25,7 +25,7 @@ internal class Sqlite3ComparatorAdapter(
     instance: WasmInstance,
     private val callbackStore: Sqlite3CallbackStore,
     functionName: String,
-    private val logger: Logger = Logger.getLogger(Sqlite3ProgressAdapter::class.qualifiedName),
+    private val logger: Logger = Logger.withTag(Sqlite3ProgressAdapter::class.qualifiedName!!),
 ) : BaseWasmNode(language, instance, functionName) {
     @Suppress("MagicNumber")
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
@@ -47,7 +47,7 @@ internal class Sqlite3ComparatorAdapter(
         str2Size: Int,
         str2: WasmPtr<Byte>,
     ): Int {
-        logger.finest { "invokeComparator() db: $comparatorId" }
+        logger.v { "invokeComparator() db: $comparatorId" }
         val delegate: SqliteComparatorCallback = callbackStore.sqlite3Comparators[comparatorId]
             ?: error("Comparator $comparatorId not registered")
 

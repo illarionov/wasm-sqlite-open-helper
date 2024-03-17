@@ -10,9 +10,9 @@ import android.content.ContextWrapper
 import androidx.room.Room
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteOpenHelper
-import co.touchlab.kermit.Logger
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmSqliteCapi
 import ru.pixnews.wasm.sqlite.open.helper.internal.DatabasePathResolver
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDebug
@@ -21,7 +21,7 @@ import ru.pixnews.wasm.sqlite.open.helper.room.User
 import java.io.File
 
 class WasmSQLiteOpenHelperFactoryTest {
-    val logger = Logger.withTag("RequerySQLiteOpenHelperFactoryTest")
+    val logger = KermitLogger("RequerySQLiteOpenHelperFactoryTest")
     val mockContext = ContextWrapper(null)
 
     @TempDir

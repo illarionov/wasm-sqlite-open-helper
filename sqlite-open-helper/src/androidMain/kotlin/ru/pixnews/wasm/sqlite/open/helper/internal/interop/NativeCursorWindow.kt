@@ -13,7 +13,7 @@ package ru.pixnews.wasm.sqlite.open.helper.internal.interop
  * Licensed under the Apache License, Version 2.0 (the "License")
  */
 
-import co.touchlab.kermit.Logger
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.NativeCursorWindow.CursorFieldType.BLOB
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.NativeCursorWindow.CursorFieldType.FLOAT
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.NativeCursorWindow.CursorFieldType.INTEGER

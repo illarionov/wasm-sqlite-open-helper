@@ -11,18 +11,18 @@ import com.oracle.truffle.api.frame.VirtualFrame
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.Host
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
-import java.util.logging.Logger
 
 internal class EmscriptenResizeHeap(
     language: WasmLanguage,
     instance: WasmInstance,
     @Suppress("UnusedPrivateProperty") private val host: Host,
     functionName: String = "emscripten_resize_heap",
-    private val logger: Logger = Logger.getLogger(EmscriptenResizeHeap::class.qualifiedName),
+    private val logger: Logger = Logger.withTag(EmscriptenResizeHeap::class.qualifiedName!!),
 ) : BaseWasmNode(language, instance, functionName) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
         return emscriptenResizeheap((frame.arguments[0] as Int).toLong())
@@ -37,7 +37,7 @@ internal class EmscriptenResizeHeap(
         val declaredMaxPages = memory.memory.declaredMaxSize()
         val newSizePages = calculateNewSizePages(requestedSize, currentPages, declaredMaxPages)
 
-        logger.finest {
+        logger.v {
             "emscripten_resize_heap($requestedSize). " +
                     "Requested: ${newSizePages * PAGE_SIZE} bytes ($newSizePages pages)"
         }

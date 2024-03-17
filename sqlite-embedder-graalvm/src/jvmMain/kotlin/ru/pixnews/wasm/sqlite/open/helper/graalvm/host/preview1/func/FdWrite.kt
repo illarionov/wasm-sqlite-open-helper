@@ -11,6 +11,7 @@ import com.oracle.truffle.api.frame.VirtualFrame
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.asWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
@@ -24,8 +25,6 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.CioVec
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.CiovecArray
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
-import java.util.logging.Level
-import java.util.logging.Logger
 
 internal fun fdWrite(
     language: WasmLanguage,
@@ -47,7 +46,7 @@ private class FdWrite(
     private val host: Host,
     private val strategy: ReadWriteStrategy,
     functionName: String = "fd_write",
-    private val logger: Logger = Logger.getLogger(FdWrite::class.qualifiedName),
+    private val logger: Logger = Logger.withTag(FdWrite::class.qualifiedName!!),
 ) : BaseWasmNode(language, instance, functionName) {
     @Suppress("MagicNumber")
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
@@ -75,7 +74,7 @@ private class FdWrite(
             memory.writeI32(pNum, writtenBytes.toInt())
             Errno.SUCCESS
         } catch (e: SysException) {
-            logger.log(Level.INFO, e) { "write() error" }
+            logger.i(e) { "write() error" }
             e.errNo
         }.code
     }

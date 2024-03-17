@@ -11,6 +11,7 @@ import com.oracle.truffle.api.frame.VirtualFrame
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.asWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
@@ -22,14 +23,13 @@ import ru.pixnews.wasm.sqlite.open.helper.host.include.oMaskToString
 import ru.pixnews.wasm.sqlite.open.helper.host.include.sMaskToString
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 import java.nio.file.Path
-import java.util.logging.Logger
 
 internal class SyscallOpenat(
     language: WasmLanguage,
     instance: WasmInstance,
     private val host: Host,
     functionName: String = "__syscall_openat",
-    private val logger: Logger = Logger.getLogger(SyscallOpenat::class.qualifiedName),
+    private val logger: Logger = Logger.withTag(SyscallOpenat::class.qualifiedName!!),
 ) : BaseWasmNode(language, instance, functionName) {
     @Suppress("MagicNumber")
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
@@ -63,10 +63,10 @@ internal class SyscallOpenat(
 
         return try {
             val fd = fs.open(absolutePath, flags, mode).fd
-            logger.finest { formatCallString(dirfd, path, absolutePath, flags, mode, fd) }
+            logger.v { formatCallString(dirfd, path, absolutePath, flags, mode, fd) }
             fd.fd
         } catch (e: SysException) {
-            logger.finest {
+            logger.v {
                 formatCallString(dirfd, path, absolutePath, flags, mode, null) +
                         "openAt() error ${e.errNo}"
             }

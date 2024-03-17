@@ -9,6 +9,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.host.filesystem
 
 import com.sun.nio.file.ExtendedOpenOption
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy.CHANGE_POSITION
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy.DO_NOT_CHANGE_POSITION
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.FdChannel
@@ -60,8 +61,6 @@ import java.nio.file.attribute.FileTime
 import java.nio.file.attribute.PosixFileAttributeView
 import java.nio.file.attribute.PosixFilePermission
 import java.nio.file.attribute.PosixFilePermissions
-import java.util.logging.Level
-import java.util.logging.Logger
 import kotlin.io.path.exists
 import kotlin.io.path.fileAttributesView
 import kotlin.io.path.isDirectory
@@ -71,7 +70,7 @@ import kotlin.io.path.readAttributes
 public class FileSystem(
     internal val javaFs: java.nio.file.FileSystem = FileSystems.getDefault(),
     private val blockSize: ULong = 512UL,
-    private val logger: Logger = Logger.getLogger(FileSystem::class.qualifiedName),
+    private val logger: Logger = Logger.withTag(FileSystem::class.qualifiedName!!),
 ) {
     private val fileDescriptors: FileDescriptorMap = FileDescriptorMap(this)
 
@@ -197,7 +196,7 @@ public class FileSystem(
     ) {
         val absolutePath = resolveAbsolutePath(dirfd, path)
         @Suppress("MagicNumber")
-        logger.finest { "unlinkAt($absolutePath, flags: 0${flags.toString(8)} (${Fcntl.oMaskToString(flags)}))" }
+        logger.v { "unlinkAt($absolutePath, flags: 0${flags.toString(8)} (${Fcntl.oMaskToString(flags)}))" }
 
         when (flags) {
             0U -> {
@@ -249,7 +248,7 @@ public class FileSystem(
         offset: Long,
         whence: Whence,
     ) {
-        logger.finest { "seek(${channel.fd}, $offset, $whence)" }
+        logger.v { "seek(${channel.fd}, $offset, $whence)" }
         val newPosition = when (whence) {
             Whence.SET -> offset
             Whence.CUR -> channel.position + offset
@@ -267,7 +266,7 @@ public class FileSystem(
         iovecs: Array<ByteBuffer>,
         strategy: ReadWriteStrategy = CHANGE_POSITION,
     ): ULong {
-        logger.finest { "read(${channel.fd}, ${iovecs.contentToString()}, $strategy)" }
+        logger.v { "read(${channel.fd}, ${iovecs.contentToString()}, $strategy)" }
 
         try {
             var totalBytesRead: ULong = 0U
@@ -310,7 +309,7 @@ public class FileSystem(
         cIovecs: Array<ByteBuffer>,
         strategy: ReadWriteStrategy = CHANGE_POSITION,
     ): ULong {
-        logger.finest { "write(${channel.fd}, ${cIovecs.contentToString()}, $strategy)" }
+        logger.v { "write(${channel.fd}, ${cIovecs.contentToString()}, $strategy)" }
         try {
             var totalBytesWritten = 0UL
             when (strategy) {
@@ -345,14 +344,14 @@ public class FileSystem(
     }
 
     public fun close(fd: Fd) {
-        logger.finest { "close($fd)" }
+        logger.v { "close($fd)" }
         val channel = fileDescriptors.remove(fd)
         try {
             try {
                 channel.channel.force(true)
             } catch (@Suppress("TooGenericExceptionCaught") ex: Throwable) {
                 // IGNORE
-                logger.log(Level.FINE, ex) { "close($fd): sync failed: ${ex.message}" }
+                logger.v(ex) { "close($fd): sync failed: ${ex.message}" }
             }
             channel.channel.close()
         } catch (ioe: IOException) {
@@ -364,7 +363,7 @@ public class FileSystem(
         fd: Fd,
         metadata: Boolean = true,
     ) {
-        logger.finest { "sync($fd)" }
+        logger.v { "sync($fd)" }
         val channel = getStreamByFd(fd)
 
         try {
@@ -377,7 +376,7 @@ public class FileSystem(
     }
 
     public fun chown(fd: Fd, owner: Int, group: Int) {
-        logger.finest { "chown($fd, $owner, $group)" }
+        logger.v { "chown($fd, $owner, $group)" }
         val channel = getStreamByFd(fd)
         try {
             val lookupService = javaFs.userPrincipalLookupService
@@ -395,7 +394,7 @@ public class FileSystem(
     }
 
     public fun ftruncate(fd: Fd, length: ULong) {
-        logger.finest { "ftruncate($fd, $length)" }
+        logger.v { "ftruncate($fd, $length)" }
         val channel = getStreamByFd(fd)
         try {
             channel.channel.truncate(length.toLong())
@@ -440,11 +439,11 @@ public class FileSystem(
         }
 
         if (flags and Fcntl.O_NONBLOCK != 0U) {
-            logger.info { """O_NONBLOCK not implemented""" }
+            logger.i { """O_NONBLOCK not implemented""" }
         }
 
         if (flags and Fcntl.O_ASYNC != 0U) {
-            logger.info { """O_ASYNC not implemented""" }
+            logger.i { """O_ASYNC not implemented""" }
         }
 
         if (flags and (Fcntl.O_DSYNC or Fcntl.O_SYNC) != 0U) {
@@ -463,10 +462,10 @@ public class FileSystem(
             options += LinkOption.NOFOLLOW_LINKS
         }
         if (flags and Fcntl.O_NOATIME != 0U) {
-            logger.info { "O_NOATIME not implemented" }
+            logger.i { "O_NOATIME not implemented" }
         }
         if (flags and Fcntl.O_CLOEXEC != 0U) {
-            logger.finest { "O_CLOEXEC not implemented" }
+            logger.v { "O_CLOEXEC not implemented" }
         }
 
         if (flags and Fcntl.O_PATH != 0U) {
@@ -474,7 +473,7 @@ public class FileSystem(
         }
 
         if (flags and Fcntl.O_TMPFILE != 0U) {
-            logger.info { "O_TMPFILE not implemented" }
+            logger.i { "O_TMPFILE not implemented" }
             options += StandardOpenOption.DELETE_ON_CLOSE
         }
 
@@ -501,7 +500,7 @@ public class FileSystem(
         mode.and(SUPPORTED_MODES.inv()).let { unsupportedModes ->
             if (unsupportedModes != 0U) {
                 @Suppress("MagicNumber")
-                logger.info { "Mode 0${unsupportedModes.toString(8)} not supported" }
+                logger.i { "Mode 0${unsupportedModes.toString(8)} not supported" }
             }
         }
 

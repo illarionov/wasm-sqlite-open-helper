@@ -15,8 +15,8 @@ package ru.pixnews.wasm.sqlite.open.helper.internal
 
 import android.database.Cursor
 import androidx.core.os.CancellationSignal
-import co.touchlab.kermit.Logger
 import ru.pixnews.wasm.sqlite.open.helper.base.CursorWindow
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteProgram.Companion.bindAllArgsAsStrings
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3ConnectionPtr
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
