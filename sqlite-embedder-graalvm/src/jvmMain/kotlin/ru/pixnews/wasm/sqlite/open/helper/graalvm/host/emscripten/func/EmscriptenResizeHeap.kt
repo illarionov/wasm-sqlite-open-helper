@@ -12,15 +12,15 @@ import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.Host
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 
 internal class EmscriptenResizeHeap(
     language: WasmLanguage,
     instance: WasmInstance,
-    @Suppress("UnusedPrivateProperty") private val host: Host,
+    @Suppress("UnusedPrivateProperty") private val host: SqliteEmbedderHost,
     functionName: String = "emscripten_resize_heap",
     private val logger: Logger = Logger.withTag(EmscriptenResizeHeap::class.qualifiedName!!),
 ) : BaseWasmNode(language, instance, functionName) {

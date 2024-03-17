@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.graalvm.host
+package ru.pixnews.wasm.sqlite.open.helper.graalvm
 
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
 import java.time.Clock
 
-internal class Host(
-    val systemEnvProvider: () -> Map<String, String> = System::getenv,
-    val commandArgsProvider: () -> List<String> = ::emptyList,
-    val fileSystem: FileSystem = FileSystem(),
-    val clock: Clock = Clock.systemDefaultZone(),
+public class SqliteEmbedderHost(
+    public val systemEnvProvider: () -> Map<String, String> = System::getenv,
+    public val commandArgsProvider: () -> List<String> = ::emptyList,
+    public val fileSystem: FileSystem = FileSystem(),
+    public val clock: Clock = Clock.systemDefaultZone(),
 )

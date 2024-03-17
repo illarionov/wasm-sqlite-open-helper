@@ -13,9 +13,9 @@ import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.asWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.Host
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy.CHANGE_POSITION
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy.DO_NOT_CHANGE_POSITION
@@ -29,21 +29,21 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 internal fun fdWrite(
     language: WasmLanguage,
     instance: WasmInstance,
-    host: Host,
+    host: SqliteEmbedderHost,
     functionName: String = "fd_write",
 ): BaseWasmNode = FdWrite(language, instance, host, CHANGE_POSITION, functionName)
 
 internal fun fdPwrite(
     language: WasmLanguage,
     instance: WasmInstance,
-    host: Host,
+    host: SqliteEmbedderHost,
     functionName: String = "fd_pwrite",
 ): BaseWasmNode = FdWrite(language, instance, host, DO_NOT_CHANGE_POSITION, functionName)
 
 private class FdWrite(
     language: WasmLanguage,
     instance: WasmInstance,
-    private val host: Host,
+    private val host: SqliteEmbedderHost,
     private val strategy: ReadWriteStrategy,
     functionName: String = "fd_write",
     private val logger: Logger = Logger.withTag(FdWrite::class.qualifiedName!!),

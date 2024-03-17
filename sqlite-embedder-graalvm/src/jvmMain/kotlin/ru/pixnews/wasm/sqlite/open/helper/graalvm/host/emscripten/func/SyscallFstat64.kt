@@ -13,9 +13,9 @@ import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.asWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.Host
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
 import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.StructStat
 import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.pack
@@ -26,7 +26,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 internal class SyscallFstat64(
     language: WasmLanguage,
     instance: WasmInstance,
-    private val host: Host,
+    private val host: SqliteEmbedderHost,
     functionName: String = "__syscall_fstat64",
     private val logger: Logger = Logger.withTag(SyscallFstat64::class.qualifiedName!!),
 ) : BaseWasmNode(language, instance, functionName) {

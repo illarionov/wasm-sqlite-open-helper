@@ -14,6 +14,9 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr.Companion.WASM_SIZE
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr.Companion.sqlite3Null
 import ru.pixnews.wasm.sqlite.open.helper.common.api.isSqlite3Null
 import ru.pixnews.wasm.sqlite.open.helper.common.api.plus
+import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteCapi
+import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteCapi.SqliteDbReadonlyResult
+import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteCapi.SqliteDbStatusResult
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.bindings.SqliteBindings
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.bindings.SqliteMemoryBindings
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.asWasmAddr
@@ -23,9 +26,6 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.Sqlite3Callbac
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.Sqlite3CallbackStore.Sqlite3ExecCallbackId
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.write
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteCapi
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteCapi.SqliteDbReadonlyResult
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteCapi.SqliteDbStatusResult
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteColumnType
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteComparatorCallback
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb

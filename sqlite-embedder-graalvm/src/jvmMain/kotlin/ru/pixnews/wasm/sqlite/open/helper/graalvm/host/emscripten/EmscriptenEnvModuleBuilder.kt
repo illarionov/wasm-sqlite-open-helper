@@ -11,9 +11,9 @@ import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.constants.Sizes
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.setupWasmModuleFunctions
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.withWasmContext
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.Host
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.HostFunction
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.Abort
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.AssertFail
@@ -37,7 +37,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType.WebAssemblyTypes.I6
 
 internal class EmscriptenEnvModuleBuilder(
     private val graalContext: Context,
-    private val host: Host,
+    private val host: SqliteEmbedderHost,
     private val moduleName: String = ENV_MODULE_NAME,
 ) {
     private val envFunctions: List<HostFunction> = buildList {

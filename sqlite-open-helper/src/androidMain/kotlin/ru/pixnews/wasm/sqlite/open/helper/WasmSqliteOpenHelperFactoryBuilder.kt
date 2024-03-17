@@ -1,0 +1,32 @@
+/*
+ * Copyright 2024, the wasm-sqlite-open-helper project authors and contributors. Please see the AUTHORS file
+ * for details. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+package ru.pixnews.wasm.sqlite.open.helper
+
+import androidx.sqlite.db.SupportSQLiteOpenHelper
+import ru.pixnews.wasm.sqlite.open.helper.dsl.WasmSqliteOpenHelperFactoryConfigBlock
+import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedder
+import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
+
+/**
+ * Creates a [SupportSQLiteOpenHelper.Factory] with the specified [block] configuration.
+ *
+ * @param sqliteCapi Implementation of the required functions from Sqlite C API. For example, GraalvmSqliteCapi
+ */
+@Suppress("FunctionName")
+public fun <E : SqliteEmbedderConfig>WasmSqliteOpenHelperFactory(
+    embedder: SqliteEmbedder<E>,
+    block: WasmSqliteOpenHelperFactoryConfigBlock<E>.() -> Unit,
+): SupportSQLiteOpenHelper.Factory {
+    val config = WasmSqliteOpenHelperFactoryConfigBlock<E>().apply(block)
+
+    return WasmSqliteOpenHelperFactory(
+        pathResolver = config.pathResolver,
+        sqliteCapi = embedder.createCapi(config.embedderConfig),
+        debugConfig = config.debugConfigBlock.build(),
+        configurationOptions = config.configurationOptions,
+    )
+}
