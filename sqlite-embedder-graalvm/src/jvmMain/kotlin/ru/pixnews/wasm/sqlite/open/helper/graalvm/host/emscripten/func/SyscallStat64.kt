@@ -13,9 +13,9 @@ import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.asWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.Host
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
 import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.StructStat
@@ -25,7 +25,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.memory.write
 internal fun syscallLstat64(
     language: WasmLanguage,
     instance: WasmInstance,
-    host: Host,
+    host: SqliteEmbedderHost,
     functionName: String = "__syscall_lstat64",
 ): BaseWasmNode = SyscallStat64(
     language = language,
@@ -38,7 +38,7 @@ internal fun syscallLstat64(
 internal fun syscallStat64(
     language: WasmLanguage,
     instance: WasmInstance,
-    host: Host,
+    host: SqliteEmbedderHost,
     functionName: String = "__syscall_stat64",
 ): BaseWasmNode = SyscallStat64(
     language = language,

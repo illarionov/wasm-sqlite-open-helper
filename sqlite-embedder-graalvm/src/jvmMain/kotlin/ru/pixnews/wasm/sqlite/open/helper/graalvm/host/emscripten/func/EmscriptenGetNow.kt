@@ -11,13 +11,13 @@ import com.oracle.truffle.api.frame.VirtualFrame
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.Host
 
 internal class EmscriptenGetNow(
     language: WasmLanguage,
     instance: WasmInstance,
-    @Suppress("UnusedPrivateProperty") private val host: Host,
+    @Suppress("UnusedPrivateProperty") private val host: SqliteEmbedderHost,
     functionName: String = "emscripten_get_now",
 ) : BaseWasmNode(language, instance, functionName) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Double {

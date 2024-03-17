@@ -11,14 +11,14 @@ import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmFunction
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmModule
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.Host
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.HostFunction
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.HostFunctionType
 import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType
 
 internal fun setupWasmModuleFunctions(
     context: WasmContext,
-    host: Host,
+    host: SqliteEmbedderHost,
     module: WasmModule,
     functions: List<HostFunction>,
 ): WasmInstance {

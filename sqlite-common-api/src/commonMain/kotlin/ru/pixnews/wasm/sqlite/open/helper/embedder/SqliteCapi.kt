@@ -4,9 +4,21 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api
+package ru.pixnews.wasm.sqlite.open.helper.embedder
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteColumnType
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteComparatorCallback
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDbStatusParameter
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrno
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrorInfo
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteException
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteOpenFlags
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteProgressCallback
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteStatement
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceCallback
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode
 
 public interface SqliteCapi {
     @Throws(SqliteException::class)

@@ -10,10 +10,10 @@ import org.graalvm.polyglot.Context
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.functionTable
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.setupWasmModuleFunctions
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.withWasmContext
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.Host
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.HostFunction
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.fn
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.fnVoid
@@ -36,7 +36,7 @@ internal const val SQLITE3_CALLBACK_MANAGER_MODULE_NAME = "sqlite3-callback-mana
 
 internal class SqliteCallbacksModuleBuilder(
     private val graalContext: Context,
-    private val host: Host,
+    private val host: SqliteEmbedderHost,
     private val callbackStore: Sqlite3CallbackStore,
 ) {
     private val sqliteCallbackHostFunctions: List<HostFunction> = buildList {
@@ -44,12 +44,12 @@ internal class SqliteCallbacksModuleBuilder(
             name = SQLITE3_EXEC_CB_FUNCTION_NAME,
             paramTypes = listOf(I32, I32, I32, I32),
             retType = I32,
-            nodeFactory = { language: WasmLanguage, instance: WasmInstance, _: Host, functionName: String ->
+            nodeFactory = { language: WasmLanguage, instance: WasmInstance, _: SqliteEmbedderHost, funcName: String ->
                 Sqlite3CallExecAdapter(
                     language = language,
                     instance = instance,
                     callbackStore = callbackStore,
-                    functionName = functionName,
+                    functionName = funcName,
                 )
             },
         )
@@ -57,12 +57,12 @@ internal class SqliteCallbacksModuleBuilder(
             name = SQLITE3_TRACE_CB_FUNCTION_NAME,
             paramTypes = listOf(U32, POINTER, POINTER, I32),
             retType = I32,
-            nodeFactory = { language: WasmLanguage, instance: WasmInstance, _: Host, functionName: String ->
+            nodeFactory = { language: WasmLanguage, instance: WasmInstance, _: SqliteEmbedderHost, funcName: String ->
                 Sqlite3TraceAdapter(
                     language = language,
                     instance = instance,
                     callbackStore = callbackStore,
-                    functionName = functionName,
+                    functionName = funcName,
                 )
             },
         )
@@ -70,12 +70,12 @@ internal class SqliteCallbacksModuleBuilder(
             name = SQLITE3_PROGRESS_CB_FUNCTION_NAME,
             paramTypes = listOf(POINTER),
             retType = I32,
-            nodeFactory = { language: WasmLanguage, instance: WasmInstance, _: Host, functionName: String ->
+            nodeFactory = { language: WasmLanguage, instance: WasmInstance, _: SqliteEmbedderHost, funName: String ->
                 Sqlite3ProgressAdapter(
                     language = language,
                     instance = instance,
                     callbackStore = callbackStore,
-                    functionName = functionName,
+                    functionName = funName,
                 )
             },
         )
@@ -83,24 +83,24 @@ internal class SqliteCallbacksModuleBuilder(
             name = SQLITE3_COMPARATOR_CALL_FUNCTION_NAME,
             paramTypes = listOf(I32, I32, POINTER, I32, POINTER),
             retType = I32,
-            nodeFactory = { language: WasmLanguage, instance: WasmInstance, _: Host, functionName: String ->
+            nodeFactory = { language: WasmLanguage, instance: WasmInstance, _: SqliteEmbedderHost, funcName: String ->
                 Sqlite3ComparatorAdapter(
                     language = language,
                     instance = instance,
                     callbackStore = callbackStore,
-                    functionName = functionName,
+                    functionName = funcName,
                 )
             },
         )
         fnVoid(
             name = SQLITE3_DESTROY_COMPARATOR_FUNCTION_NAME,
             paramTypes = listOf(I32),
-            nodeFactory = { language: WasmLanguage, instance: WasmInstance, _: Host, functionName: String ->
+            nodeFactory = { language: WasmLanguage, instance: WasmInstance, _: SqliteEmbedderHost, funcName: String ->
                 Sqlite3DestroyComparatorAdapter(
                     language = language,
                     instance = instance,
                     callbackStore = callbackStore,
-                    functionName = functionName,
+                    functionName = funcName,
                 )
             },
         )

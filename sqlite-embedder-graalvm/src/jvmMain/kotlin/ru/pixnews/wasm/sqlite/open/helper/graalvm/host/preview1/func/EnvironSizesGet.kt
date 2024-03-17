@@ -12,15 +12,15 @@ import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.asWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.Host
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.ext.WasiEnvironmentFunc
 
 internal class EnvironSizesGet(
     language: WasmLanguage,
     instance: WasmInstance,
-    private val host: Host,
+    private val host: SqliteEmbedderHost,
     functionName: String = "environ_sizes_get",
 ) : BaseWasmNode(language, instance, functionName) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {

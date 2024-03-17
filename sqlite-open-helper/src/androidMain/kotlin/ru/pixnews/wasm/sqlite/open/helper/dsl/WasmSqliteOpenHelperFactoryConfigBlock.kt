@@ -6,20 +6,29 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.dsl
 
-import androidx.sqlite.db.SupportSQLiteOpenHelper
 import ru.pixnews.wasm.sqlite.open.helper.ConfigurationOptions
-import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperFactory
+import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
+import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import ru.pixnews.wasm.sqlite.open.helper.path.DatabasePathResolver
 import ru.pixnews.wasm.sqlite.open.helper.path.JvmDatabasePathResolver
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteCapi
 
 @WasmSqliteOpenHelperDsl
-public class WasmSqliteOpenHelperFactoryConfigBlock(
-    private val sqliteCapi: SqliteCapi,
-) {
-    private var debugConfigBlock: DebugConfigBlock = DebugConfigBlock()
+public class WasmSqliteOpenHelperFactoryConfigBlock<E : SqliteEmbedderConfig> {
+    internal var debugConfigBlock: DebugConfigBlock = DebugConfigBlock()
+        private set
     public var pathResolver: DatabasePathResolver = JvmDatabasePathResolver()
-    private var configurationOptions: List<ConfigurationOptions> = emptyList()
+    internal var configurationOptions: List<ConfigurationOptions> = emptyList()
+        private set
+    internal var embedderConfig: E.() -> Unit = {}
+        private set
+
+    public fun embedder(block: E.() -> Unit) {
+        val oldConfig = embedderConfig
+        embedderConfig = {
+            oldConfig()
+            block()
+        }
+    }
 
     public fun debug(block: DebugConfigBlock.() -> Unit) {
         debugConfigBlock = DebugConfigBlock().apply(block)
@@ -27,14 +36,5 @@ public class WasmSqliteOpenHelperFactoryConfigBlock(
 
     public fun configurationOptions(block: MutableList<ConfigurationOptions>.() -> Unit) {
         configurationOptions = buildList(block)
-    }
-
-    internal fun build(): SupportSQLiteOpenHelper.Factory {
-        return WasmSqliteOpenHelperFactory(
-            pathResolver = pathResolver,
-            sqliteCapi = sqliteCapi,
-            debugConfig = debugConfigBlock.build(),
-            configurationOptions = configurationOptions,
-        )
     }
 }

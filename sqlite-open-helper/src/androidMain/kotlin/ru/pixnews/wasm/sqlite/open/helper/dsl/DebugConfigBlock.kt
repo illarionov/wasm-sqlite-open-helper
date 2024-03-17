@@ -6,6 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.dsl
 
+import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDebug
 
 @WasmSqliteOpenHelperDsl

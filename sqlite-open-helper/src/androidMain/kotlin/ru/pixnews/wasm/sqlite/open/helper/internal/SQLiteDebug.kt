@@ -30,8 +30,7 @@ package ru.pixnews.wasm.sqlite.open.helper.internal
  *   For example, "adb shell setprop db.log.slow_query_threshold 200" will
  *   log all queries that take 200ms or longer to run.
  */
-// TODO: Set?
-public class SQLiteDebug(
+internal class SQLiteDebug(
     public val sqlLog: Boolean = false,
     public val sqlStatements: Boolean = false,
     public val sqlTime: Boolean = false,

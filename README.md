@@ -31,7 +31,6 @@ Add the dependencies:
 
 dependencies {
     testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-open-helper:0.1-alpha02-SNAPSHOT")
-    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-wasm:0.1-alpha02-SNAPSHOT")
     testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-graalvm:0.1-alpha02-SNAPSHOT")
 }
 ```
@@ -54,17 +53,18 @@ class DatabaseTest {
 
     @BeforeEach
     fun createDb() {
-        val pathResolver = DatabasePathResolver { name -> File(tempDir, name) }
-        val debugConfig = SQLiteDebug(true, true, true, true)
-        val sqlitecApi = GraalvmSqliteCapi(
-            sqlite3Url = Sqlite3Wasm.Emscripten.sqlite3_345,
-        )
-
-        val openHelperFactory = WasmSqliteOpenHelperFactory(
-            pathResolver = pathResolver,
-            sqliteCapi = sqlitecApi,
-            debugConfig = debugConfig,
-        )
+        val openHelperFactory = WasmSqliteOpenHelperFactory(GraalvmSqliteEmbedder) {
+            pathResolver = DatabasePathResolver { name -> File(tempDir, name) }
+            embedder {
+                graalvmEngine = Engine.create("wasm")
+            }
+            debug {
+                sqlLog = true
+                sqlTime = true
+                sqlStatements = true
+                logSlowQueries = true
+            }
+        }
 
         db = Room.databaseBuilder(mockContext, TestDatabase::class.java, "test")
             .openHelperFactory(openHelperFactory)

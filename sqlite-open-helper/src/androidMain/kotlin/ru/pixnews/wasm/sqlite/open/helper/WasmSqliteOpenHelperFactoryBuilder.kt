@@ -8,7 +8,8 @@ package ru.pixnews.wasm.sqlite.open.helper
 
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import ru.pixnews.wasm.sqlite.open.helper.dsl.WasmSqliteOpenHelperFactoryConfigBlock
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteCapi
+import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedder
+import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 
 /**
  * Creates a [SupportSQLiteOpenHelper.Factory] with the specified [block] configuration.
@@ -16,9 +17,16 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteCapi
  * @param sqliteCapi Implementation of the required functions from Sqlite C API. For example, GraalvmSqliteCapi
  */
 @Suppress("FunctionName")
-public fun WasmSqliteOpenHelperFactory(
-    sqliteCapi: SqliteCapi,
-    block: WasmSqliteOpenHelperFactoryConfigBlock.() -> Unit,
+public fun <E : SqliteEmbedderConfig>WasmSqliteOpenHelperFactory(
+    embedder: SqliteEmbedder<E>,
+    block: WasmSqliteOpenHelperFactoryConfigBlock<E>.() -> Unit,
 ): SupportSQLiteOpenHelper.Factory {
-    return WasmSqliteOpenHelperFactoryConfigBlock(sqliteCapi).apply(block).build()
+    val config = WasmSqliteOpenHelperFactoryConfigBlock<E>().apply(block)
+
+    return WasmSqliteOpenHelperFactory(
+        pathResolver = config.pathResolver,
+        sqliteCapi = embedder.createCapi(config.embedderConfig),
+        debugConfig = config.debugConfigBlock.build(),
+        configurationOptions = config.configurationOptions,
+    )
 }

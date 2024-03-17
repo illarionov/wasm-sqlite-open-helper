@@ -13,9 +13,9 @@ import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.asWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.Host
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.encodeToNullTerminatedByteArray
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.write
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
@@ -23,7 +23,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 internal class SyscallGetcwd(
     language: WasmLanguage,
     instance: WasmInstance,
-    private val host: Host,
+    private val host: SqliteEmbedderHost,
     functionName: String = "__syscall_getcwd",
     private val logger: Logger = Logger.withTag(SyscallGetcwd::class.qualifiedName!!),
 ) : BaseWasmNode(language, instance, functionName) {

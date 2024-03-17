@@ -13,9 +13,9 @@ import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.asWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.Host
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.resolveAbsolutePath
 import ru.pixnews.wasm.sqlite.open.helper.host.include.Fcntl
@@ -27,7 +27,7 @@ import java.nio.file.Path
 internal class SyscallOpenat(
     language: WasmLanguage,
     instance: WasmInstance,
-    private val host: Host,
+    private val host: SqliteEmbedderHost,
     functionName: String = "__syscall_openat",
     private val logger: Logger = Logger.withTag(SyscallOpenat::class.qualifiedName!!),
 ) : BaseWasmNode(language, instance, functionName) {

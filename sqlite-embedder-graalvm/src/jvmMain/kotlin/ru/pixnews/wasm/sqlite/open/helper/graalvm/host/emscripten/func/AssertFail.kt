@@ -12,15 +12,15 @@ import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.asWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.Host
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.AssertionFailedException
 
 internal class AssertFail(
     language: WasmLanguage,
     instance: WasmInstance,
-    @Suppress("UnusedPrivateProperty") host: Host,
+    @Suppress("UnusedPrivateProperty") host: SqliteEmbedderHost,
     functionName: String = "__assert_fail",
 ) : BaseWasmNode(language, instance, functionName) {
     @Suppress("MagicNumber")

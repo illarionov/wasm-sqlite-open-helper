@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.dsl
+package ru.pixnews.wasm.sqlite.open.helper.embedder
 
-@DslMarker
-@Target(AnnotationTarget.CLASS, AnnotationTarget.TYPEALIAS, AnnotationTarget.TYPE, AnnotationTarget.FUNCTION)
-public annotation class WasmSqliteOpenHelperDsl
+import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
+
+@WasmSqliteOpenHelperDsl
+public interface SqliteEmbedderConfig

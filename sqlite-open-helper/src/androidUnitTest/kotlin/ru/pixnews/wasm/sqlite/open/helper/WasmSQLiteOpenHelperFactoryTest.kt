@@ -10,10 +10,11 @@ import android.content.ContextWrapper
 import androidx.room.Room
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteOpenHelper
+import org.graalvm.polyglot.Engine
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmSqliteCapi
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmSqliteEmbedder
 import ru.pixnews.wasm.sqlite.open.helper.path.DatabasePathResolver
 import ru.pixnews.wasm.sqlite.open.helper.room.AppDatabase1
 import ru.pixnews.wasm.sqlite.open.helper.room.User
@@ -80,11 +81,12 @@ class WasmSQLiteOpenHelperFactoryTest {
     }
 
     private fun createHelperFactory(): SupportSQLiteOpenHelper.Factory {
-        val sqlitecApi = GraalvmSqliteCapi(
-            sqlite3Url = Sqlite3Wasm.Emscripten.sqlite3_345,
-        )
-        return WasmSqliteOpenHelperFactory(sqlitecApi) {
+        return WasmSqliteOpenHelperFactory(GraalvmSqliteEmbedder) {
             pathResolver = DatabasePathResolver { name -> File(tempDir, name) }
+            embedder {
+                graalvmEngine = Engine.create("wasm")
+                sqlite3WasmBinaryUrl = Sqlite3Wasm.Emscripten.sqlite3_345
+            }
             debug {
                 sqlLog = true
                 sqlTime = true

@@ -12,9 +12,9 @@ import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.constants.Sizes
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.setupWasmModuleFunctions
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.withWasmContext
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.Host
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.HostFunction
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.fn
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.preview1.func.EnvironGet
@@ -32,7 +32,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType.WebAssemblyTypes.I6
 
 internal class WasiSnapshotPreview1MobuleBuilder(
     private val graalContext: Context,
-    private val host: Host,
+    private val host: SqliteEmbedderHost,
     private val moduleName: String = WASI_SNAPSHOT_PREVIEW1,
 ) {
     private val preview1Functions: List<HostFunction> = buildList {

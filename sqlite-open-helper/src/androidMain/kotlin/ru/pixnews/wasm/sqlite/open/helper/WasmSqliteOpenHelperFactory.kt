@@ -15,6 +15,7 @@ package ru.pixnews.wasm.sqlite.open.helper
 
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import ru.pixnews.wasm.sqlite.open.helper.base.DatabaseErrorHandler
+import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteCapi
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDatabase
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDebug
 import ru.pixnews.wasm.sqlite.open.helper.internal.WasmSqliteOpenHelper
@@ -26,7 +27,6 @@ import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3ConnectionPtr
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3WindowPtr
 import ru.pixnews.wasm.sqlite.open.helper.path.DatabasePathResolver
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteCapi
 
 /**
  * Implements [SupportSQLiteOpenHelper.Factory] using the SQLite implementation shipped in
