@@ -1,7 +1,7 @@
 plugins {
-    id("ru.pixnews.sqlite.open.helper.gradle.lint.detekt")
-    id("ru.pixnews.sqlite.open.helper.gradle.lint.diktat")
-    id("ru.pixnews.sqlite.open.helper.gradle.lint.spotless")
+    id("ru.pixnews.wasm-sqlite-open-helper.gradle.lint.detekt")
+    id("ru.pixnews.wasm-sqlite-open-helper.gradle.lint.diktat")
+    id("ru.pixnews.wasm-sqlite-open-helper.gradle.lint.spotless")
 }
 
 tasks.register("styleCheck") {

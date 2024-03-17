@@ -9,7 +9,7 @@ pluginManagement {
 }
 
 plugins {
-    id("ru.pixnews.sqlite.open.helper.gradle.settings.root")
+    id("ru.pixnews.wasm-sqlite-open-helper.gradle.settings.root")
 }
 
 // Workaround for https://github.com/gradle/gradle/issues/26020
@@ -34,6 +34,6 @@ dependencyResolutionManagement {
 
 include("lint")
 include("multiplatform")
-include("sqlite-wasm-build")
+include("sqlite-wasm-builder")
 
 rootProject.name = "sqlite-helper-gradle-project-plugins"

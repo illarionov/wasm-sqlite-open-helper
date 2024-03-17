@@ -8,7 +8,7 @@ plugins {
     `kotlin-dsl`
 }
 
-group = "ru.pixnews.sqlite.open.helper.gradle.settings"
+group = "ru.pixnews.wasm-sqlite-open-helper.gradle.settings"
 
 dependencies {
     implementation("com.gradle:gradle-enterprise-gradle-plugin:3.16.2")

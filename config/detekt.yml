@@ -58,7 +58,7 @@ naming:
     active: false
   InvalidPackageDeclaration:
     active: true
-    rootPackage: "ru.pixnews.sqlite.open.helper"
+    rootPackage: "ru.pixnews.wasm.sqlite.open.helper"
     requireRootInDeclaration: false
   TopLevelPropertyNaming:
     active: true

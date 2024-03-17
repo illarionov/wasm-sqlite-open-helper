@@ -3,7 +3,7 @@ pluginManagement {
 }
 
 plugins {
-    id("ru.pixnews.sqlite.open.helper.gradle.settings.root")
+    id("ru.pixnews.wasm-sqlite-open-helper.gradle.settings.root")
 }
 
 // Workaround for https://github.com/gradle/gradle/issues/26020

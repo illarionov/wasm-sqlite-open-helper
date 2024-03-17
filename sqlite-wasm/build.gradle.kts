@@ -7,14 +7,14 @@
 @file:Suppress("GENERIC_VARIABLE_WRONG_DECLARATION")
 
 plugins {
-    id("ru.pixnews.sqlite.open.helper.wasm.builder")
-    id("ru.pixnews.sqlite.open.helper.gradle.multiplatform.kotlin")
-    id("ru.pixnews.sqlite.open.helper.gradle.multiplatform.publish")
+    id("ru.pixnews.sqlite-wasm-builder")
+    id("ru.pixnews.wasm-sqlite-open-helper.gradle.multiplatform.kotlin")
+    id("ru.pixnews.wasm-sqlite-open-helper.gradle.multiplatform.publish")
 }
 
 val defaultSqliteVersion = versionCatalogs.named("libs").findVersion("sqlite").get().toString()
 
-group = "ru.pixnews.sqlite.open.helper"
+group = "ru.pixnews.wasm-sqlite-open-helper"
 version = wasmSqliteVersions.getSubmoduleVersionProvider(
     propertiesFileKey = "wsoh_sqlite_wasm_version",
     envVariableName = "WSOH_SQLITE_WASM_VERSION",
@@ -31,7 +31,7 @@ sqlite3Build {
 val wasmResourcesDir = layout.buildDirectory.dir("wasmLibraries")
 val copyResourcesTask = tasks.register<Copy>("copyWasmLibrariesToResources") {
     from(configurations.named("wasmSqliteElements").get().artifacts.files)
-    into(wasmResourcesDir.map { it.dir("ru/pixnews/sqlite/open/helper/sqlite/wasm") })
+    into(wasmResourcesDir.map { it.dir("ru/pixnews/wasm/sqlite/open/helper") })
     include("*.wasm")
 }
 
