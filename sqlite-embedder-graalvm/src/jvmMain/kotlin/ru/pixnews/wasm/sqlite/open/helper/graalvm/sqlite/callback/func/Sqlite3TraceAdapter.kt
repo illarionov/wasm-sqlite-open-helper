@@ -11,6 +11,7 @@ import com.oracle.truffle.api.frame.VirtualFrame
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.asWasmPtr
@@ -24,7 +25,6 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode.Companion.SQLITE_TRACE_PROFILE
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode.Companion.SQLITE_TRACE_ROW
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode.Companion.SQLITE_TRACE_STMT
-import java.util.logging.Logger
 import kotlin.time.Duration.Companion.milliseconds
 
 internal const val SQLITE3_TRACE_CB_FUNCTION_NAME = "sqlite3_trace_cb"
@@ -34,7 +34,7 @@ internal class Sqlite3TraceAdapter(
     instance: WasmInstance,
     private val callbackStore: Sqlite3CallbackStore,
     functionName: String,
-    private val logger: Logger = Logger.getLogger(Sqlite3TraceAdapter::class.qualifiedName),
+    private val logger: Logger = Logger.withTag(Sqlite3TraceAdapter::class.qualifiedName!!),
 ) : BaseWasmNode(language, instance, functionName) {
     @Suppress("MagicNumber")
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
@@ -54,7 +54,7 @@ internal class Sqlite3TraceAdapter(
         arg1: WasmPtr<Nothing>,
         arg2: Long,
     ): Int {
-        logger.finest { "invokeTraceCallback() flags: $flags db: $contextPointer arg1: $arg1 arg3: $arg2" }
+        logger.v { "invokeTraceCallback() flags: $flags db: $contextPointer arg1: $arg1 arg3: $arg2" }
         val delegate: (trace: SqliteTrace) -> Unit =
             callbackStore.sqlite3TraceCallbacks[contextPointer] ?: error("Callback $contextPointer not registered")
 

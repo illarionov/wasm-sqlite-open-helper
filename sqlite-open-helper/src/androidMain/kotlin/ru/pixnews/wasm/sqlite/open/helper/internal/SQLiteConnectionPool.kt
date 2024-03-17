@@ -15,9 +15,9 @@ package ru.pixnews.wasm.sqlite.open.helper.internal
 
 import androidx.core.os.CancellationSignal
 import androidx.core.os.OperationCanceledException
-import co.touchlab.kermit.Logger
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.ENABLE_WRITE_AHEAD_LOGGING
 import ru.pixnews.wasm.sqlite.open.helper.SqliteDatabaseConfiguration
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
 import ru.pixnews.wasm.sqlite.open.helper.common.api.xor
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.AcquiredConnectionStatus.DISCARD

@@ -13,9 +13,9 @@ package ru.pixnews.wasm.sqlite.open.helper.internal
  * Licensed under the Apache License, Version 2.0 (the "License")
  */
 
-import co.touchlab.kermit.Logger
 import ru.pixnews.wasm.sqlite.open.helper.base.AbstractWindowedCursor
 import ru.pixnews.wasm.sqlite.open.helper.base.CursorWindow
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3ConnectionPtr
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3WindowPtr

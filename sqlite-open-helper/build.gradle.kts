@@ -57,7 +57,6 @@ android {
 dependencies {
     api(projects.commonApi)
     api(projects.sqliteCommonApi)
-    api(libs.kermit)
     annotationProcessor(libs.androidx.room.compiler)
     kspAndroid(libs.androidx.room.compiler)
     kspAndroidTest(libs.androidx.room.compiler)
@@ -78,6 +77,7 @@ kotlin {
             implementation(libs.androidx.room.runtime)
             implementation(libs.androidx.room.testing)
             implementation(libs.androidx.test.core)
+            implementation(libs.kermit.jvm)
             implementation(libs.junit.jupiter.api)
             implementation(libs.junit.jupiter.params)
 

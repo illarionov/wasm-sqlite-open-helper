@@ -11,9 +11,9 @@ import com.oracle.truffle.api.frame.VirtualFrame
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.Sqlite3CallbackStore
-import java.util.logging.Logger
 
 internal const val SQLITE3_DESTROY_COMPARATOR_FUNCTION_NAME = "sqlite3_comparator_destroy"
 
@@ -23,7 +23,7 @@ internal class Sqlite3DestroyComparatorAdapter(
     instance: WasmInstance,
     private val callbackStore: Sqlite3CallbackStore,
     functionName: String,
-    private val logger: Logger = Logger.getLogger(Sqlite3ProgressAdapter::class.qualifiedName),
+    private val logger: Logger = Logger.withTag(Sqlite3ProgressAdapter::class.qualifiedName!!),
 ) : BaseWasmNode(language, instance, functionName) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext) {
         val args = frame.arguments
