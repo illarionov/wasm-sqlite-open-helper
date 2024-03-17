@@ -8,7 +8,7 @@ plugins {
     `kotlin-dsl`
 }
 
-group = "ru.pixnews.sqlite.open.helper.gradle.multiplatform"
+group = "ru.pixnews.wasm-sqlite-open-helper.gradle.multiplatform"
 
 dependencies {
     implementation(project(":lint"))

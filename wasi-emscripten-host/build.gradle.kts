@@ -5,11 +5,11 @@
  */
 
 plugins {
-    id("ru.pixnews.sqlite.open.helper.gradle.multiplatform.kotlin")
-    id("ru.pixnews.sqlite.open.helper.gradle.multiplatform.publish")
+    id("ru.pixnews.wasm-sqlite-open-helper.gradle.multiplatform.kotlin")
+    id("ru.pixnews.wasm-sqlite-open-helper.gradle.multiplatform.publish")
 }
 
-group = "ru.pixnews.sqlite.open.helper"
+group = "ru.pixnews.wasm-sqlite-open-helper"
 version = wasmSqliteVersions.getSubmoduleVersionProvider(
     propertiesFileKey = "wsoh_wasi_emscripten_host_version",
     envVariableName = "WSOH_WASI_EMSCRIPTEN_HOST_VERSION",
