@@ -4,6 +4,93 @@ Implementation of [SupportSQLiteOpenHelper] based on SQLite compiled for WASM.
 
 WIP
 
+## Installation
+
+Release and snapshot versions of the library are published to a temporary repository, since it is very experimental
+and at the moment it is in an early stage of development and is planned for use in only one project.
+File a bug report if you think it could be useful on Maven Central.
+
+Add the following to your project's settings.gradle:
+
+```kotlin
+pluginManagement {
+    repositories {
+        maven {
+            url = uri("https://maven.pixnews.ru")
+            mavenContent {
+                includeGroup("ru.pixnews.wasm-sqlite-open-helper")
+            }
+        }
+    }
+}
+```
+
+Add the dependencies:
+
+```kotlin
+
+dependencies {
+    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-open-helper:0.1-alpha02-SNAPSHOT")
+    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-wasm:0.1-alpha02-SNAPSHOT")
+    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-graalvm:0.1-alpha02-SNAPSHOT")
+}
+```
+
+## Usage
+
+The library can be used with Room in Android unit tests.
+
+Sample:
+
+```kotlin
+class DatabaseTest {
+    val mockContext = ContextWrapper(null)
+
+    @TempDir
+    lateinit var tempDir: File
+
+    lateinit var db: TestDatabase
+    lateinit var userDao: UserDao
+
+    @BeforeEach
+    fun createDb() {
+        val pathResolver = DatabasePathResolver { name -> File(tempDir, name) }
+        val debugConfig = SQLiteDebug(true, true, true, true)
+        val sqlitecApi = GraalvmSqliteCapi(
+            sqlite3Url = Sqlite3Wasm.Emscripten.sqlite3_345,
+        )
+
+        val openHelperFactory = WasmSqliteOpenHelperFactory(
+            pathResolver = pathResolver,
+            sqliteCapi = sqlitecApi,
+            debugConfig = debugConfig,
+        )
+
+        db = Room.databaseBuilder(mockContext, TestDatabase::class.java, "test")
+            .openHelperFactory(openHelperFactory)
+            .allowMainThreadQueries()
+            .build()
+        userDao = db.getUserDao()
+    }
+
+    @AfterEach
+    fun closeDb() {
+        db.close()
+    }
+
+    @Test
+    fun dbTest() {
+        val user: User = TestUtil.createUser(3).apply {
+            setName("george")
+        }
+        userDao.insert(user)
+        val byName = userDao.findUsersByName("george")
+        assertThat(byName.get(0), equalTo(user))
+    }
+}
+```
+
+
 [SupportSQLiteOpenHelper]: https://developer.android.com/reference/androidx/sqlite/db/SupportSQLiteOpenHelper
 
 ## Contributing
