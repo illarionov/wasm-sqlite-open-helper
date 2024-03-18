@@ -17,13 +17,12 @@ import android.database.Cursor
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDatabase.CursorFactory
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3ConnectionPtr
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3WindowPtr
 
 /**
  * A driver for SQLiteCursors that is used to create them and gets notified
  * by the cursors it creates on significant events in their lifetimes.
  */
-internal interface SQLiteCursorDriver<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr, WP : Sqlite3WindowPtr> {
+internal interface SQLiteCursorDriver<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> {
     /**
      * Executes the query returning a Cursor over the result set.
      *
@@ -31,7 +30,7 @@ internal interface SQLiteCursorDriver<CP : Sqlite3ConnectionPtr, SP : Sqlite3Sta
      * null if standard SQLiteCursors should be returned.
      * @return a Cursor over the result set
      */
-    fun query(factory: CursorFactory<CP, SP, WP>?, bindArgs: List<Any?>): Cursor
+    fun query(factory: CursorFactory<CP, SP>?, bindArgs: List<Any?>): Cursor
 
     /**
      * Called by a SQLiteCursor when it is released.

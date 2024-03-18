@@ -13,24 +13,26 @@ package ru.pixnews.wasm.sqlite.open.helper.base
  * Licensed under the Apache License, Version 2.0 (the "License")
  */
 
-import android.database.CharArrayBuffer
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteClosable
+import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.CursorWindowAllocationException
+import ru.pixnews.wasm.sqlite.open.helper.internal.interop.GraalWindowBindings
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.NativeCursorWindow
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.SqlOpenHelperWindowBindings
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3WindowPtr
 
 /**
  * A buffer containing multiple cursor rows.
  */
-internal class CursorWindow<WP : Sqlite3WindowPtr>(
+internal class CursorWindow(
     name: String?,
-    private val bindings: SqlOpenHelperWindowBindings<WP>,
+    rootLogger: Logger,
     val windowSizeBytes: Int = WINDOW_SIZE_KB * @Suppress("MagicNumber") 1024,
 ) : SQLiteClosable() {
+    private val bindings: GraalWindowBindings = GraalWindowBindings(rootLogger)
+
     /**
      * The native CursorWindow object pointer.  (FOR INTERNAL USE ONLY)
      */
-    var windowPtr: WP?
+    var windowPtr: NativeCursorWindow?
 
     /**
      * Sets the start position of this cursor window.
@@ -224,45 +226,6 @@ internal class CursorWindow<WP : Sqlite3WindowPtr>(
      */
     fun getString(row: Int, column: Int): String? {
         return bindings.nativeGetString(windowPtr!!, row - startPosition, column)
-    }
-
-    /**
-     * Copies the text of the field at the specified row and column index into
-     * a [CharArrayBuffer].
-     *
-     *
-     * The buffer is populated as follows:
-     *
-     *  * If the buffer is too small for the value to be copied, then it is
-     * automatically resized.
-     *  * If the field is of type [Cursor.FIELD_TYPE_NULL], then the buffer
-     * is set to an empty string.
-     *  * If the field is of type [Cursor.FIELD_TYPE_STRING], then the buffer
-     * is set to the contents of the string.
-     *  * If the field is of type [Cursor.FIELD_TYPE_INTEGER], then the buffer
-     * is set to a string representation of the integer in decimal, obtained by formatting the
-     * value with the `printf` family of functions using
-     * format specifier `%lld`.
-     *  * If the field is of type [Cursor.FIELD_TYPE_FLOAT], then the buffer is
-     * set to a string representation of the floating-point value in decimal, obtained by
-     * formatting the value with the `printf` family of functions using
-     * format specifier `%g`.
-     *  * If the field is of type [Cursor.FIELD_TYPE_BLOB], then a
-     * [SQLiteException] is thrown.
-     *
-     *
-     *
-     * @param row The zero-based row index.
-     * @param column The zero-based column index.
-     * @param buffer The [CharArrayBuffer] to hold the string.  It is automatically
-     * resized if the requested string is larger than the buffer's current capacity.
-     */
-    fun copyStringToBuffer(row: Int, column: Int, buffer: CharArrayBuffer?) {
-        requireNotNull(buffer) { "CharArrayBuffer should not be null" }
-        // TODO not as optimal as the original code
-        val chars = getString(row, column)?.toCharArray() ?: charArrayOf()
-        buffer.data = chars
-        buffer.sizeCopied = chars.size
     }
 
     /**

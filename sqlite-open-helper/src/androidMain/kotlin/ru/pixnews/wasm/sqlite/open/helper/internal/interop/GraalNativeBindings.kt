@@ -73,17 +73,10 @@ internal value class GraalSqlite3StatementPtr(
     override fun isNull(): Boolean = ptr.isSqlite3Null()
 }
 
-@JvmInline
-internal value class GraalSqlite3WindowPtr(
-    val ptr: NativeCursorWindow,
-) : Sqlite3WindowPtr {
-    override fun isNull(): Boolean = false
-}
-
 internal class GraalNativeBindings(
     private val sqlite3Api: SqliteCapi,
     rootLogger: Logger,
-) : SqlOpenHelperNativeBindings<GraalSqlite3ConnectionPtr, GraalSqlite3StatementPtr, GraalSqlite3WindowPtr> {
+) : SqlOpenHelperNativeBindings<GraalSqlite3ConnectionPtr, GraalSqlite3StatementPtr> {
     private val logger = rootLogger.withTag("GraalNativeBindings")
     private val localizedComparator = LocalizedComparator()
     private val connections = Sqlite3ConnectionRegistry()
@@ -217,12 +210,11 @@ internal class GraalNativeBindings(
     override fun nativeExecuteForCursorWindow(
         connectionPtr: GraalSqlite3ConnectionPtr,
         statementPtr: GraalSqlite3StatementPtr,
-        winPtr: GraalSqlite3WindowPtr,
+        window: NativeCursorWindow,
         startPos: Int,
         requiredPos: Int,
         countAllRows: Boolean,
     ): Long {
-        val window: NativeCursorWindow = winPtr.ptr
         val statement = statementPtr.ptr
 
         val status = window.clear()

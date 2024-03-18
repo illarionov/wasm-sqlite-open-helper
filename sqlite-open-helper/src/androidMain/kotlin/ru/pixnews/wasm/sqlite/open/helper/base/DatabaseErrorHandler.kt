@@ -25,5 +25,5 @@ internal interface DatabaseErrorHandler {
      * @param dbObj the [SQLiteDatabase] object representing the database on which corruption
      * is detected.
      */
-    fun onCorruption(dbObj: SQLiteDatabase<*, *, *>)
+    fun onCorruption(dbObj: SQLiteDatabase<*, *>)
 }

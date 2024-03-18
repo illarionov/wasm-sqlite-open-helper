@@ -4,12 +4,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.internal.interop
+package ru.pixnews.wasm.sqlite.open.helper.internal.platform
 
-internal interface Sqlite3Ptr {
-    fun isNull(): Boolean
-}
-
-internal fun Sqlite3Ptr.isNotNull() = !isNull()
-internal interface Sqlite3ConnectionPtr : Sqlite3Ptr
-internal interface Sqlite3StatementPtr : Sqlite3Ptr
+internal expect inline fun <R> synchronized(lock: Any, block: () -> R): R

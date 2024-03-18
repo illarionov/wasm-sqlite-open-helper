@@ -24,10 +24,8 @@ import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.Acquired
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.AcquiredConnectionStatus.NORMAL
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.AcquiredConnectionStatus.RECONFIGURE
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.SqlOpenHelperNativeBindings
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.SqlOpenHelperWindowBindings
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3ConnectionPtr
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3WindowPtr
 import java.io.Closeable
 import java.util.WeakHashMap
 import java.util.concurrent.atomic.AtomicBoolean
@@ -71,15 +69,10 @@ import kotlin.time.Duration.Companion.seconds
  *
  */
 @Suppress("LargeClass")
-internal class SQLiteConnectionPool<
-        CP : Sqlite3ConnectionPtr,
-        SP : Sqlite3StatementPtr,
-        WP : Sqlite3WindowPtr,
-        > private constructor(
+internal class SQLiteConnectionPool<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> private constructor(
     configuration: SqliteDatabaseConfiguration,
     private val debugConfig: SQLiteDebug,
-    private val bindings: SqlOpenHelperNativeBindings<CP, SP, WP>,
-    private val windowBindings: SqlOpenHelperWindowBindings<WP>,
+    private val bindings: SqlOpenHelperNativeBindings<CP, SP>,
     rootLogger: Logger,
 ) : Closeable {
     private val logger: Logger = rootLogger.withTag(TAG)
@@ -90,19 +83,19 @@ internal class SQLiteConnectionPool<
     private var maxConnectionPoolSize = 0
     private var isOpen = false
     private var nextConnectionId = 0
-    private var connectionWaiterPool: ConnectionWaiter<CP, SP, WP>? = null
-    private var connectionWaiterQueue: ConnectionWaiter<CP, SP, WP>? = null
+    private var connectionWaiterPool: ConnectionWaiter<CP, SP>? = null
+    private var connectionWaiterQueue: ConnectionWaiter<CP, SP>? = null
 
     // Strong references to all available connections.
-    private val availableNonPrimaryConnections: MutableList<SQLiteConnection<CP, SP, WP>> = mutableListOf()
-    private var availablePrimaryConnection: SQLiteConnection<CP, SP, WP>? = null
+    private val availableNonPrimaryConnections: MutableList<SQLiteConnection<CP, SP>> = mutableListOf()
+    private var availablePrimaryConnection: SQLiteConnection<CP, SP>? = null
 
     // Weak references to all acquired connections.  The associated value
     // indicates whether the connection must be reconfigured before being
     // returned to the available connection list or discarded.
     // For example, the prepared statement cache size may have changed and
     // need to be updated in preparation for the next client.
-    private val acquiredConnections: WeakHashMap<SQLiteConnection<CP, SP, WP>, AcquiredConnectionStatus> = WeakHashMap()
+    private val acquiredConnections: WeakHashMap<SQLiteConnection<CP, SP>, AcquiredConnectionStatus> = WeakHashMap()
 
     init {
         setMaxConnectionPoolSizeLocked()
@@ -120,6 +113,7 @@ internal class SQLiteConnectionPool<
         availablePrimaryConnection = openConnectionLocked(
             configuration = configuration,
             primaryConnection = true,
+            rootLogger = logger,
         ) // might throw
 
         // Mark the pool as being open for business.
@@ -236,6 +230,7 @@ internal class SQLiteConnectionPool<
             val newPrimaryConnection = openConnectionLocked(
                 configuration = configuration,
                 primaryConnection = true,
+                rootLogger = logger,
             ) // might throw
 
             closeAvailableConnectionsAndLogExceptionsLocked()
@@ -275,7 +270,7 @@ internal class SQLiteConnectionPool<
         sql: String?,
         connectionFlags: Int,
         cancellationSignal: CancellationSignal?,
-    ): SQLiteConnection<CP, SP, WP> = waitForConnection(sql, connectionFlags, cancellationSignal)
+    ): SQLiteConnection<CP, SP> = waitForConnection(sql, connectionFlags, cancellationSignal)
 
     /**
      * Releases a connection back to the pool.
@@ -287,7 +282,7 @@ internal class SQLiteConnectionPool<
      * @throws IllegalStateException if the connection was not acquired
      * from this pool or if it has already been released.
      */
-    fun releaseConnection(connection: SQLiteConnection<CP, SP, WP>): Unit = synchronized(lock) {
+    fun releaseConnection(connection: SQLiteConnection<CP, SP>): Unit = synchronized(lock) {
         val status = acquiredConnections.remove(connection)
             ?: throw IllegalStateException(
                 "Cannot perform this operation " +
@@ -314,7 +309,7 @@ internal class SQLiteConnectionPool<
 
     // Can't throw.
     private fun recycleConnectionLocked(
-        connection: SQLiteConnection<*, *, *>,
+        connection: SQLiteConnection<*, *>,
         status: AcquiredConnectionStatus,
     ): Boolean {
         var discard = false
@@ -342,7 +337,7 @@ internal class SQLiteConnectionPool<
      * @throws IllegalStateException if the connection was not acquired
      * from this pool or if it has already been released.
      */
-    fun shouldYieldConnection(connection: SQLiteConnection<*, *, *>): Boolean =
+    fun shouldYieldConnection(connection: SQLiteConnection<*, *>): Boolean =
         synchronized(lock) {
             if (!acquiredConnections.containsKey(connection)) {
                 throw IllegalStateException(
@@ -367,10 +362,10 @@ internal class SQLiteConnectionPool<
      */
     fun collectDbStats(dbStatsList: ArrayList<DbStats>): Unit = synchronized(lock) {
         availablePrimaryConnection?.collectDbStats(dbStatsList)
-        for (connection: SQLiteConnection<*, *, *> in availableNonPrimaryConnections) {
+        for (connection: SQLiteConnection<*, *> in availableNonPrimaryConnections) {
             connection.collectDbStats(dbStatsList)
         }
-        for (connection: SQLiteConnection<*, *, *> in acquiredConnections.keys) {
+        for (connection: SQLiteConnection<*, *> in acquiredConnections.keys) {
             connection.collectDbStatsUnsafe(dbStatsList)
         }
     }
@@ -379,16 +374,17 @@ internal class SQLiteConnectionPool<
     private fun openConnectionLocked(
         configuration: SqliteDatabaseConfiguration,
         primaryConnection: Boolean,
-    ): SQLiteConnection<CP, SP, WP> {
+        rootLogger: Logger,
+    ): SQLiteConnection<CP, SP> {
         val connectionId = nextConnectionId++
         return SQLiteConnection.open(
             this,
             configuration,
             bindings,
-            windowBindings,
             connectionId,
             primaryConnection,
             debugConfig,
+            rootLogger = rootLogger,
         ) // might throw
     }
 
@@ -450,7 +446,7 @@ internal class SQLiteConnectionPool<
     }
 
     // Can't throw.
-    private fun closeConnectionAndLogExceptionsLocked(connection: SQLiteConnection<*, *, *>) {
+    private fun closeConnectionAndLogExceptionsLocked(connection: SQLiteConnection<*, *>) {
         try {
             connection.close() // might throw
         } catch (@Suppress("TooGenericExceptionCaught") ex: RuntimeException) {
@@ -513,10 +509,10 @@ internal class SQLiteConnectionPool<
         sql: String?,
         connectionFlags: Int,
         cancellationSignal: CancellationSignal?,
-    ): SQLiteConnection<CP, SP, WP> {
+    ): SQLiteConnection<CP, SP> {
         val wantPrimaryConnection = (connectionFlags and CONNECTION_FLAG_PRIMARY_CONNECTION_AFFINITY) != 0
 
-        val waiter: ConnectionWaiter<CP, SP, WP>
+        val waiter: ConnectionWaiter<CP, SP>
         val nonce: Int
         synchronized(lock) {
             throwIfClosedLocked()
@@ -525,7 +521,7 @@ internal class SQLiteConnectionPool<
 
             // Try to acquire a connection.
             @Suppress("NULLABLE_PROPERTY_TYPE")
-            val connection: SQLiteConnection<CP, SP, WP>? = if (!wantPrimaryConnection) {
+            val connection: SQLiteConnection<CP, SP>? = if (!wantPrimaryConnection) {
                 tryAcquireNonPrimaryConnectionLocked(sql, connectionFlags) // might throw
             } else {
                 null
@@ -543,7 +539,7 @@ internal class SQLiteConnectionPool<
                 sql = sql,
                 connectionFlags = connectionFlags,
             )
-            var predecessor: ConnectionWaiter<CP, SP, WP>? = null
+            var predecessor: ConnectionWaiter<CP, SP>? = null
             var successor = connectionWaiterQueue
             while (successor != null) {
                 predecessor = successor
@@ -614,14 +610,14 @@ internal class SQLiteConnectionPool<
     }
 
     // Can't throw.
-    private fun cancelConnectionWaiterLocked(waiter: ConnectionWaiter<CP, SP, WP>) {
+    private fun cancelConnectionWaiterLocked(waiter: ConnectionWaiter<CP, SP>) {
         if (waiter.assignedConnection != null || waiter.exception != null) {
             // Waiter is done waiting but has not woken up yet.
             return
         }
 
         // Waiter must still be waiting.  Dequeue it.
-        var predecessor: ConnectionWaiter<CP, SP, WP>? = null
+        var predecessor: ConnectionWaiter<CP, SP>? = null
         var current = connectionWaiterQueue
         while (current != waiter) {
             checkNotNull(current)
@@ -691,7 +687,7 @@ internal class SQLiteConnectionPool<
         // Unpark all waiters that have requests that we can fulfill.
         // This method is designed to not throw runtime exceptions, although we might send
         // a waiter an exception for it to rethrow.
-        var predecessor: ConnectionWaiter<CP, SP, WP>? = null
+        var predecessor: ConnectionWaiter<CP, SP>? = null
         var waiter = connectionWaiterQueue
         var primaryConnectionNotAvailable = false
         var nonPrimaryConnectionNotAvailable = false
@@ -701,7 +697,7 @@ internal class SQLiteConnectionPool<
                 unpark = true
             } else {
                 try {
-                    var connection: SQLiteConnection<CP, SP, WP>? = null
+                    var connection: SQLiteConnection<CP, SP>? = null
                     if (!waiter.wantPrimaryConnection && !nonPrimaryConnectionNotAvailable) {
                         connection = tryAcquireNonPrimaryConnectionLocked(
                             waiter.sql, waiter.connectionFlags,
@@ -751,7 +747,7 @@ internal class SQLiteConnectionPool<
     }
 
     // Might throw.
-    private fun tryAcquirePrimaryConnectionLocked(connectionFlags: Int): SQLiteConnection<CP, SP, WP>? {
+    private fun tryAcquirePrimaryConnectionLocked(connectionFlags: Int): SQLiteConnection<CP, SP>? {
         // If the primary connection is available, acquire it now.
         var connection = availablePrimaryConnection
         if (connection != null) {
@@ -772,6 +768,7 @@ internal class SQLiteConnectionPool<
         connection = openConnectionLocked(
             configuration = configuration,
             primaryConnection = true,
+            rootLogger = logger,
         ) // might throw
         finishAcquireConnectionLocked(connection, connectionFlags) // might throw
         return connection
@@ -782,9 +779,9 @@ internal class SQLiteConnectionPool<
     private fun tryAcquireNonPrimaryConnectionLocked(
         sql: String?,
         connectionFlags: Int,
-    ): SQLiteConnection<CP, SP, WP>? {
+    ): SQLiteConnection<CP, SP>? {
         // Try to acquire the next connection in the queue.
-        var connection: SQLiteConnection<CP, SP, WP>
+        var connection: SQLiteConnection<CP, SP>
         val availableCount = availableNonPrimaryConnections.size
         if (availableCount > 1 && sql != null) {
             // If we have a choice, then prefer a connection that has the
@@ -816,13 +813,14 @@ internal class SQLiteConnectionPool<
         connection = openConnectionLocked(
             configuration = configuration,
             primaryConnection = false,
+            rootLogger = logger,
         ) // might throw
         finishAcquireConnectionLocked(connection, connectionFlags) // might throw
         return connection
     }
 
     // Might throw.
-    private fun finishAcquireConnectionLocked(connection: SQLiteConnection<CP, SP, WP>, connectionFlags: Int) {
+    private fun finishAcquireConnectionLocked(connection: SQLiteConnection<CP, SP>, connectionFlags: Int) {
         try {
             val readOnly = (connectionFlags and CONNECTION_FLAG_READ_ONLY) != 0
             connection.setOnlyAllowReadOnlyOperations(readOnly)
@@ -883,7 +881,7 @@ internal class SQLiteConnectionPool<
         wantPrimaryConnection: Boolean,
         sql: String?,
         connectionFlags: Int,
-    ): ConnectionWaiter<CP, SP, WP> {
+    ): ConnectionWaiter<CP, SP> {
         var waiter = connectionWaiterPool
         if (waiter != null) {
             connectionWaiterPool = waiter.next
@@ -899,7 +897,7 @@ internal class SQLiteConnectionPool<
         return waiter
     }
 
-    private fun recycleConnectionWaiterLocked(waiter: ConnectionWaiter<CP, SP, WP>) {
+    private fun recycleConnectionWaiterLocked(waiter: ConnectionWaiter<CP, SP>) {
         waiter.next = connectionWaiterPool
         waiter.thread = null
         waiter.sql = null
@@ -923,15 +921,15 @@ internal class SQLiteConnectionPool<
         DISCARD,
     }
 
-    private class ConnectionWaiter<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr, WP : Sqlite3WindowPtr> {
-        var next: ConnectionWaiter<CP, SP, WP>? = null
+    private class ConnectionWaiter<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> {
+        var next: ConnectionWaiter<CP, SP>? = null
         var thread: Thread? = null
         var startTime: Long = 0
         val priority: Int = 0
         var wantPrimaryConnection: Boolean = false
         var sql: String? = null
         var connectionFlags: Int = 0
-        var assignedConnection: SQLiteConnection<CP, SP, WP>? = null
+        var assignedConnection: SQLiteConnection<CP, SP>? = null
         var exception: RuntimeException? = null
         var nonce: Int = 0
     }
@@ -974,14 +972,14 @@ internal class SQLiteConnectionPool<
          * @return The connection pool.
          * @throws SQLiteException if a database error occurs.
          */
-        fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr, WP : Sqlite3WindowPtr> open(
+        fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> open(
             configuration: SqliteDatabaseConfiguration,
             debugConfig: SQLiteDebug,
-            bindings: SqlOpenHelperNativeBindings<CP, SP, WP>,
-            windowBindings: SqlOpenHelperWindowBindings<WP>,
+            bindings: SqlOpenHelperNativeBindings<CP, SP>,
             logger: Logger,
-        ): SQLiteConnectionPool<CP, SP, WP> =
-            SQLiteConnectionPool(configuration, debugConfig, bindings, windowBindings, logger)
-                .apply(SQLiteConnectionPool<*, *, *>::open)
+        ): SQLiteConnectionPool<CP, SP> {
+            return SQLiteConnectionPool(configuration, debugConfig, bindings, logger)
+                .apply(SQLiteConnectionPool<*, *>::open)
+        }
     }
 }

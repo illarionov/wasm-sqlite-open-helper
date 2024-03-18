@@ -16,7 +16,6 @@ package ru.pixnews.wasm.sqlite.open.helper.base
 import android.database.CharArrayBuffer
 import android.database.StaleDataException
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.NativeCursorWindow
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3WindowPtr
 
 /**
  * A base class for Cursors that store their data in [android.database.CursorWindow]s.
@@ -35,13 +34,13 @@ import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3WindowPtr
  * (because it is owned by the cursor) and set to null.
  *
  */
-internal abstract class AbstractWindowedCursor<WP : Sqlite3WindowPtr>(
-    private val windowFactory: (name: String?) -> CursorWindow<WP>,
+internal abstract class AbstractWindowedCursor(
+    private val windowFactory: (name: String?) -> CursorWindow,
 ) : AbstractCursor() {
     /**
      * The cursor window owned by this cursor.
      */
-    open var window: CursorWindow<WP>? = null
+    open var window: CursorWindow? = null
         /**
          * Sets a new cursor window for the cursor to use.
          *
@@ -75,8 +74,35 @@ internal abstract class AbstractWindowedCursor<WP : Sqlite3WindowPtr>(
         return window!!.getString(pos, column)
     }
 
+    /**
+     * Copies the text of the field at the specified row and column index into
+     * a [CharArrayBuffer].
+     *
+     *
+     * The buffer is populated as follows:
+     *
+     *  * If the buffer is too small for the value to be copied, then it is
+     * automatically resized.
+     *  * If the field is of type [Cursor.FIELD_TYPE_NULL], then the buffer
+     * is set to an empty string.
+     *  * If the field is of type [Cursor.FIELD_TYPE_STRING], then the buffer
+     * is set to the contents of the string.
+     *  * If the field is of type [Cursor.FIELD_TYPE_INTEGER], then the buffer
+     * is set to a string representation of the integer in decimal, obtained by formatting the
+     * value with the `printf` family of functions using
+     * format specifier `%lld`.
+     *  * If the field is of type [Cursor.FIELD_TYPE_FLOAT], then the buffer is
+     * set to a string representation of the floating-point value in decimal, obtained by
+     * formatting the value with the `printf` family of functions using
+     * format specifier `%g`.
+     *  * If the field is of type [Cursor.FIELD_TYPE_BLOB], then a
+     * [SQLiteException] is thrown.
+     *
+     */
     override fun copyStringToBuffer(columnIndex: Int, buffer: CharArrayBuffer) {
-        window!!.copyStringToBuffer(pos, columnIndex, buffer)
+        val chars = getString(columnIndex)?.toCharArray() ?: charArrayOf()
+        buffer.data = chars
+        buffer.sizeCopied = chars.size
     }
 
     override fun getShort(column: Int): Short {

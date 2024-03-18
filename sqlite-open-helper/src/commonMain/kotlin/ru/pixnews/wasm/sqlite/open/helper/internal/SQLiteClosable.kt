@@ -13,7 +13,7 @@ package ru.pixnews.wasm.sqlite.open.helper.internal
  * Licensed under the Apache License, Version 2.0 (the "License")
  */
 
-import java.io.Closeable
+import ru.pixnews.wasm.sqlite.open.helper.internal.platform.synchronized
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -23,7 +23,7 @@ import kotlin.contracts.contract
  *
  * This class implements a primitive reference counting scheme for database objects.
  */
-internal abstract class SQLiteClosable internal constructor() : Closeable {
+internal abstract class SQLiteClosable internal constructor() {
     private var referenceCount = 1
 
     /**
@@ -50,7 +50,7 @@ internal abstract class SQLiteClosable internal constructor() : Closeable {
      * @see .onAllReferencesReleased
      */
     fun releaseReference() {
-        var refCountIsZero: Boolean
+        var refCountIsZero = false
         synchronized(this) {
             refCountIsZero = --referenceCount == 0
         }
@@ -68,7 +68,7 @@ internal abstract class SQLiteClosable internal constructor() : Closeable {
      * @see .releaseReference
      * @see .onAllReferencesReleased
      */
-    override fun close() {
+    fun close() {
         releaseReference()
     }
 }
