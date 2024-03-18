@@ -15,6 +15,7 @@ package ru.pixnews.wasm.sqlite.open.helper
 
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import ru.pixnews.wasm.sqlite.open.helper.base.DatabaseErrorHandler
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteCapi
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDatabase
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDebug
@@ -37,25 +38,28 @@ internal class WasmSqliteOpenHelperFactory(
     private val sqliteCapi: SqliteCapi,
     private val debugConfig: SQLiteDebug = SQLiteDebug(),
     private val configurationOptions: List<ConfigurationOptions> = emptyList(),
+    rootLogger: Logger,
 ) : SupportSQLiteOpenHelper.Factory {
-    override fun create(configuration: SupportSQLiteOpenHelper.Configuration): SupportSQLiteOpenHelper {
-        val bindings = GraalNativeBindings(sqliteCapi)
-        val windowBindings = GraalWindowBindings()
+    private val logger: Logger = rootLogger.withTag(WasmSqliteOpenHelperFactory::class.qualifiedName!!)
 
+    override fun create(configuration: SupportSQLiteOpenHelper.Configuration): SupportSQLiteOpenHelper {
+        val bindings = GraalNativeBindings(sqliteCapi, logger)
         return CallbackSqliteOpenHelper(
-            pathResolver,
-            debugConfig,
-            configuration.name,
-            configuration.callback,
-            configurationOptions,
-            bindings,
-            windowBindings,
+            pathResolver = pathResolver,
+            debugConfig = debugConfig,
+            rootLogger = logger,
+            name = configuration.name,
+            cb = configuration.callback,
+            ops = configurationOptions,
+            bindings = bindings,
+            windowBindings = GraalWindowBindings(logger),
         )
     }
 
     private class CallbackSqliteOpenHelper<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr, WP : Sqlite3WindowPtr>(
         pathResolver: DatabasePathResolver,
         debugConfig: SQLiteDebug,
+        rootLogger: Logger,
         name: String?,
         cb: SupportSQLiteOpenHelper.Callback,
         ops: Iterable<ConfigurationOptions>,
@@ -64,6 +68,7 @@ internal class WasmSqliteOpenHelperFactory(
     ) : WasmSqliteOpenHelper<CP, SP, WP>(
         pathResolver = pathResolver,
         debugConfig = debugConfig,
+        rootLogger = rootLogger,
         databaseName = name,
         factory = null,
         version = cb.version,

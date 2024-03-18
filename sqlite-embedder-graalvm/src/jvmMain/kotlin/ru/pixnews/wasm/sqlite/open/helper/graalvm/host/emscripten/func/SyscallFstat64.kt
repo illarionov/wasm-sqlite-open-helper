@@ -28,8 +28,9 @@ internal class SyscallFstat64(
     instance: WasmInstance,
     private val host: SqliteEmbedderHost,
     functionName: String = "__syscall_fstat64",
-    private val logger: Logger = Logger.withTag(SyscallFstat64::class.qualifiedName!!),
 ) : BaseWasmNode(language, instance, functionName) {
+    private val logger: Logger = host.rootLogger.withTag(SyscallFstat64::class.qualifiedName!!)
+
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
         val args = frame.arguments
         return syscallFstat64(

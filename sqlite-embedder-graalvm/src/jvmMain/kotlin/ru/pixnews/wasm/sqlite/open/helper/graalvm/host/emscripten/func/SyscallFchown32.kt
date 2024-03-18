@@ -23,8 +23,9 @@ internal class SyscallFchown32(
     instance: WasmInstance,
     private val host: SqliteEmbedderHost,
     functionName: String = "__syscall_fchown32",
-    private val logger: Logger = Logger.withTag(SyscallFchown32::class.qualifiedName!!),
 ) : BaseWasmNode(language, instance, functionName) {
+    private val logger: Logger = host.rootLogger.withTag(SyscallFchown32::class.qualifiedName!!)
+
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
         val args = frame.arguments
         return syscallFchown32(

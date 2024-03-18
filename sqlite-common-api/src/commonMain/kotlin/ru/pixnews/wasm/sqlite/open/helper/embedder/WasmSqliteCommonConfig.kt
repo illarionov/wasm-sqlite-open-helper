@@ -6,9 +6,10 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.embedder
 
-public interface SqliteEmbedder<E : SqliteEmbedderConfig> {
-    public fun createCapi(
-        commonConfig: WasmSqliteCommonConfig,
-        embedderConfigBuilder: E.() -> Unit,
-    ): SqliteCapi
+import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
+
+@InternalWasmSqliteHelperApi
+public interface WasmSqliteCommonConfig {
+    public val logger: Logger
 }

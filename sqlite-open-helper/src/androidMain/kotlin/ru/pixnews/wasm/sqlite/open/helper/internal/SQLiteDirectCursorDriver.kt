@@ -30,9 +30,9 @@ internal class SQLiteDirectCursorDriver<CP : Sqlite3ConnectionPtr, SP : Sqlite3S
     private val sql: String,
     private val cancellationSignal: CancellationSignal?,
     private val cursorWindowCtor: (name: String?) -> CursorWindow<WP>,
-    logger: Logger,
+    rootLogger: Logger,
 ) : SQLiteCursorDriver<CP, SP, WP> {
-    private val logger: Logger = logger.withTag("SQLiteDirectCursorDriver")
+    private val logger: Logger = rootLogger.withTag("SQLiteDirectCursorDriver")
     private var query: SQLiteQuery<WP>? = null
 
     override fun query(

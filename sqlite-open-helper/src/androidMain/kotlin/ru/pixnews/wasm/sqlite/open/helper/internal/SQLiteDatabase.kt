@@ -77,13 +77,13 @@ internal class SQLiteDatabase<
         > private constructor(
     configuration: SqliteDatabaseConfiguration,
     private val debugConfig: SQLiteDebug,
-    logger: Logger = Logger,
+    rootLogger: Logger,
     private val bindings: SqlOpenHelperNativeBindings<CP, SP, WP>,
     private val windowBindings: SqlOpenHelperWindowBindings<WP>,
     private val cursorFactory: CursorFactory<CP, SP, WP>? = null,
     errorHandler: DatabaseErrorHandler? = null,
 ) : SQLiteClosable(), SupportSQLiteDatabase {
-    private val logger = logger.withTag(TAG)
+    private val logger = rootLogger.withTag(TAG)
 
     // Thread-local for database sessions that belong to this database.
     // Each thread has its own database session.
@@ -915,7 +915,7 @@ internal class SQLiteDatabase<
             sql = sql,
             cancellationSignal = cancellationSignal,
             cursorWindowCtor = cursorWindowCtor,
-            logger = logger,
+            rootLogger = logger,
         )
         return driver.query(cursorFactory ?: this.cursorFactory, selectionArgs)
     }
@@ -1630,7 +1630,7 @@ internal class SQLiteDatabase<
             bindings: SqlOpenHelperNativeBindings<CP, SP, WP>,
             windowBindings: SqlOpenHelperWindowBindings<WP>,
             debugConfig: SQLiteDebug,
-            logger: Logger = Logger,
+            logger: Logger,
         ): SQLiteDatabase<CP, SP, WP> {
             val configuration = SqliteDatabaseConfiguration(path, flags)
             val db = SQLiteDatabase(configuration, debugConfig, logger, bindings, windowBindings, factory, errorHandler)
@@ -1664,7 +1664,7 @@ internal class SQLiteDatabase<
             bindings: SqlOpenHelperNativeBindings<CP, SP, WP>,
             windowBindings: SqlOpenHelperWindowBindings<WP>,
             debugConfig: SQLiteDebug,
-            logger: Logger = Logger,
+            logger: Logger,
         ): SQLiteDatabase<CP, SP, WP> {
             val db = SQLiteDatabase(configuration, debugConfig, logger, bindings, windowBindings, factory, errorHandler)
             db.open()
@@ -1680,7 +1680,15 @@ internal class SQLiteDatabase<
             bindings: SqlOpenHelperNativeBindings<CP, SP, WP>,
             windowBindings: SqlOpenHelperWindowBindings<WP>,
             debugConfig: SQLiteDebug,
-        ): SQLiteDatabase<CP, SP, WP> = openOrCreateDatabase(file.path, factory, bindings, windowBindings, debugConfig)
+            logger: Logger,
+        ): SQLiteDatabase<CP, SP, WP> = openOrCreateDatabase(
+            path = file.path,
+            factory = factory,
+            bindings = bindings,
+            windowBindings = windowBindings,
+            debugConfig = debugConfig,
+            logger = logger,
+        )
 
         /**
          * Equivalent to openDatabase(path, factory, CREATE_IF_NECESSARY).
@@ -1691,6 +1699,7 @@ internal class SQLiteDatabase<
             bindings: SqlOpenHelperNativeBindings<CP, SP, WP>,
             windowBindings: SqlOpenHelperWindowBindings<WP>,
             debugConfig: SQLiteDebug,
+            logger: Logger,
         ): SQLiteDatabase<CP, SP, WP> = openDatabase(
             path = path,
             factory = factory,
@@ -1699,6 +1708,7 @@ internal class SQLiteDatabase<
             bindings = bindings,
             windowBindings = windowBindings,
             debugConfig = debugConfig,
+            logger = logger,
         )
 
         /**
@@ -1712,8 +1722,18 @@ internal class SQLiteDatabase<
             bindings: SqlOpenHelperNativeBindings<CP, SP, WP>,
             windowBindings: SqlOpenHelperWindowBindings<WP>,
             debugConfig: SQLiteDebug,
+            logger: Logger,
         ): SQLiteDatabase<CP, SP, WP> =
-            openDatabase(path, factory, CREATE_IF_NECESSARY, errorHandler, bindings, windowBindings, debugConfig)
+            openDatabase(
+                path = path,
+                factory = factory,
+                flags = CREATE_IF_NECESSARY,
+                errorHandler = errorHandler,
+                bindings = bindings,
+                windowBindings = windowBindings,
+                debugConfig = debugConfig,
+                logger = logger,
+            )
 
         /**
          * Deletes a database including its journal file and other auxiliary files
@@ -1744,7 +1764,7 @@ internal class SQLiteDatabase<
         }
 
         @Suppress("NestedBlockDepth")
-        private fun ensureFile(path: String, logger: Logger = Logger) {
+        private fun ensureFile(path: String, logger: Logger) {
             val file = File(path)
             if (!file.exists()) {
                 try {
@@ -1785,6 +1805,7 @@ internal class SQLiteDatabase<
             bindings: SqlOpenHelperNativeBindings<CP, SP, WP>,
             windowBindings: SqlOpenHelperWindowBindings<WP>,
             debugConfig: SQLiteDebug,
+            logger: Logger,
         ): SQLiteDatabase<CP, SP, WP> = openDatabase(
             path = SqliteDatabaseConfiguration.MEMORY_DB_PATH,
             factory = factory,
@@ -1792,6 +1813,7 @@ internal class SQLiteDatabase<
             bindings = bindings,
             windowBindings = windowBindings,
             debugConfig = debugConfig,
+            logger = logger,
         )
 
         /**

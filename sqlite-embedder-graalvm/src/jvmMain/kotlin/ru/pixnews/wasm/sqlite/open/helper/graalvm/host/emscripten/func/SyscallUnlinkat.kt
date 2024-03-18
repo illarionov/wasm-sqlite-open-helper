@@ -11,7 +11,6 @@ import com.oracle.truffle.api.frame.VirtualFrame
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.asWasmPtr
@@ -24,8 +23,6 @@ internal class SyscallUnlinkat(
     instance: WasmInstance,
     private val host: SqliteEmbedderHost,
     functionName: String = "__syscall_unlinkat",
-    @Suppress("UnusedPrivateProperty")
-    private val logger: Logger = Logger.withTag(SyscallUnlinkat::class.qualifiedName!!),
 ) : BaseWasmNode(language, instance, functionName) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
         val args = frame.arguments

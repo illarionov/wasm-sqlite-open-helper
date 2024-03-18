@@ -25,8 +25,9 @@ internal class SyscallGetcwd(
     instance: WasmInstance,
     private val host: SqliteEmbedderHost,
     functionName: String = "__syscall_getcwd",
-    private val logger: Logger = Logger.withTag(SyscallGetcwd::class.qualifiedName!!),
 ) : BaseWasmNode(language, instance, functionName) {
+    private val logger: Logger = host.rootLogger.withTag(SyscallGetcwd::class.qualifiedName!!)
+
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
         val args = frame.arguments
         return syscallGetcwd(

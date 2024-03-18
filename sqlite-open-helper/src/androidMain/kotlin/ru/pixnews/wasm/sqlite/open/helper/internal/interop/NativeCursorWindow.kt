@@ -29,11 +29,11 @@ internal class NativeCursorWindow(
     val name: String,
     val size: Int,
     val isReadOnly: Boolean = false,
-    logger: Logger = Logger,
+    rootLogger: Logger,
 ) {
-    private var _freeSpace: Int = size
-    private val logger = logger.withTag("NativeCursorWindow")
+    private val logger = rootLogger.withTag("NativeCursorWindow")
     private val data: Header = Header(0, RowSlotChunk(), 0, 0)
+    private var _freeSpace: Int = size
 
     val freeSpace: Int
         get() = _freeSpace

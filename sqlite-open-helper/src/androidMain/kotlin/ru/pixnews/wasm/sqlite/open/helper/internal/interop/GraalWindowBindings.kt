@@ -7,6 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.internal.interop
 
 import android.database.sqlite.SQLiteException
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.NativeCursorWindow.CursorFieldType
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.NativeCursorWindow.Field.BlobField
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.NativeCursorWindow.Field.FloatField
@@ -15,9 +16,11 @@ import ru.pixnews.wasm.sqlite.open.helper.internal.interop.NativeCursorWindow.Fi
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.NativeCursorWindow.Field.StringField
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.NativeCursorWindow.FieldSlot
 
-internal class GraalWindowBindings : SqlOpenHelperWindowBindings<GraalSqlite3WindowPtr> {
+internal class GraalWindowBindings(
+    val rootLogger: Logger,
+) : SqlOpenHelperWindowBindings<GraalSqlite3WindowPtr> {
     override fun nativeCreate(name: String, cursorWindowSize: Int): GraalSqlite3WindowPtr {
-        return GraalSqlite3WindowPtr(NativeCursorWindow(name, cursorWindowSize))
+        return GraalSqlite3WindowPtr(NativeCursorWindow(name, cursorWindowSize, rootLogger = rootLogger))
     }
 
     override fun nativeGetName(windowPtr: GraalSqlite3WindowPtr): String {

@@ -11,6 +11,7 @@ import org.graalvm.polyglot.Engine
 import org.graalvm.polyglot.Source
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteCapi
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedder
+import ru.pixnews.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.bindings.SqliteBindings
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.withWasmContext
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.EmscriptenEnvModuleBuilder
@@ -21,8 +22,11 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.SqliteCallback
 import java.net.URL
 
 public object GraalvmSqliteEmbedder : SqliteEmbedder<GraalvmSqliteEmbedderConfig> {
-    override fun createCapi(configBuilder: GraalvmSqliteEmbedderConfig.() -> Unit): SqliteCapi {
-        val config = GraalvmSqliteEmbedderConfig().apply(configBuilder)
+    override fun createCapi(
+        commonConfig: WasmSqliteCommonConfig,
+        embedderConfigBuilder: GraalvmSqliteEmbedderConfig.() -> Unit,
+    ): SqliteCapi {
+        val config = GraalvmSqliteEmbedderConfig(commonConfig.logger).apply(embedderConfigBuilder)
         return createGraalvmSqliteCapi(
             config.graalvmEngine,
             config.host,
@@ -49,7 +53,7 @@ public object GraalvmSqliteEmbedder : SqliteEmbedder<GraalvmSqliteEmbedderConfig
             sqliteCallbacksModuleBuilder.setupModule()
         }
 
-        val sqliteSource: Source = Source.newBuilder("wasm", sqlite3WasmBinaryUrl).build()
+        val sqliteSource = Source.newBuilder("wasm", sqlite3WasmBinaryUrl).build()
         graalContext.eval(sqliteSource)
 
         val indirectFunctionIndexes = sqliteCallbacksModuleBuilder.setupIndirectFunctionTable()
