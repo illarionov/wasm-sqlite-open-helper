@@ -8,12 +8,15 @@ package ru.pixnews.wasm.sqlite.open.helper.graalvm
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
-import java.time.Clock
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.nanoseconds
 
 public class SqliteEmbedderHost(
     public val systemEnvProvider: () -> Map<String, String> = System::getenv,
     public val commandArgsProvider: () -> List<String> = ::emptyList,
     public val rootLogger: Logger = Logger,
     public val fileSystem: FileSystem = FileSystem(rootLogger),
-    public val clock: Clock = Clock.systemDefaultZone(),
+    public val clock: () -> Duration = { System.currentTimeMillis().milliseconds },
+    public val monotonicClock: () -> Duration = { System.nanoTime().nanoseconds },
 )

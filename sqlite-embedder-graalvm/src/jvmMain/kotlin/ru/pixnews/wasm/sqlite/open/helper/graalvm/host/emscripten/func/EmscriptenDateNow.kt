@@ -26,7 +26,5 @@ internal class EmscriptenDateNow(
 
     @TruffleBoundary
     @Suppress("MemberNameEqualsClassName")
-    private fun emscriptenDateNow(): Double {
-        return host.clock.millis().toDouble()
-    }
+    private fun emscriptenDateNow(): Double = host.clock().inWholeMilliseconds.toDouble()
 }
