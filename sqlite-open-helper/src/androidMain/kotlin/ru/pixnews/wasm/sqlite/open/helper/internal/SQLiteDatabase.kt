@@ -43,7 +43,6 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.or
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.Companion.CONNECTION_FLAG_PRIMARY_CONNECTION_AFFINITY
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.Companion.CONNECTION_FLAG_READ_ONLY
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteProgram.Companion.bindAllArgsAsStrings
-import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.CursorWindow
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.SqlOpenHelperNativeBindings
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3ConnectionPtr
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
@@ -65,15 +64,12 @@ import java.io.IOException
  * two more, `LOCALIZED`, which changes with the system's current locale,
  * and `UNICODE`, which is the Unicode Collation Algorithm and not tailored
  * to the current locale.
- *
- * @param cursorFactory The optional factory to use when creating new Cursors.  May be null.
  */
 internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> private constructor(
     configuration: SqliteDatabaseConfiguration,
     private val debugConfig: SQLiteDebug,
     rootLogger: Logger,
     private val bindings: SqlOpenHelperNativeBindings<CP, SP>,
-    private val cursorFactory: CursorFactory<CP, SP>? = null,
     errorHandler: DatabaseErrorHandler? = null,
 ) : SQLiteClosable(), SupportSQLiteDatabase {
     private val logger = rootLogger.withTag(TAG)
@@ -116,7 +112,6 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
     // The database configuration.
     // INVARIANT: Guarded by mLock.
     private val configurationLocked = configuration
-    private val cursorWindowCtor: (String?) -> CursorWindow = { name -> CursorWindow(name, logger) }
 
     // The connection pool for the database, null when closed.
     // The pool itself is thread-safe, but the reference to it can only be acquired
@@ -848,14 +843,9 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
         supportQuery: SupportSQLiteQuery,
         signal: CancellationSignal?,
     ): Cursor = rawQueryWithFactory(
-        cursorFactory = { db, masterQuery, query ->
+        cursorFactory = { _, _, query ->
             supportQuery.bindTo(query)
-            cursorFactory?.newCursor(db, masterQuery, query) ?: SQLiteCursor(
-                checkNotNull(masterQuery),
-                query,
-                cursorWindowCtor,
-                logger,
-            )
+            SQLiteCursor(query, logger)
         },
         sql = supportQuery.sql,
         selectionArgs = listOf(),
@@ -899,10 +889,9 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
             database = this,
             sql = sql,
             cancellationSignal = cancellationSignal,
-            cursorWindowCtor = cursorWindowCtor,
             rootLogger = logger,
         )
-        return driver.query(cursorFactory ?: this.cursorFactory, selectionArgs)
+        return driver.query(cursorFactory, selectionArgs)
     }
 
     /**
@@ -1608,7 +1597,6 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
         @JvmStatic
         internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> openDatabase(
             path: String,
-            factory: CursorFactory<CP, SP>?,
             flags: OpenFlags,
             errorHandler: DatabaseErrorHandler? = null,
             bindings: SqlOpenHelperNativeBindings<CP, SP>,
@@ -1617,7 +1605,7 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
             logger: Logger,
         ): SQLiteDatabase<CP, SP> {
             val configuration = SqliteDatabaseConfiguration(path, flags, locale)
-            val db = SQLiteDatabase(configuration, debugConfig, logger, bindings, factory, errorHandler)
+            val db = SQLiteDatabase(configuration, debugConfig, logger, bindings, errorHandler)
             db.open()
             return db
         }
@@ -1643,13 +1631,12 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
          */
         internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> openDatabase(
             configuration: SqliteDatabaseConfiguration,
-            factory: CursorFactory<CP, SP>?,
             errorHandler: DatabaseErrorHandler?,
             bindings: SqlOpenHelperNativeBindings<CP, SP>,
             debugConfig: SQLiteDebug,
             logger: Logger,
         ): SQLiteDatabase<CP, SP> {
-            val db = SQLiteDatabase(configuration, debugConfig, logger, bindings, factory, errorHandler)
+            val db = SQLiteDatabase(configuration, debugConfig, logger, bindings, errorHandler)
             db.open()
             return db
         }
@@ -1659,14 +1646,12 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
          */
         internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> openOrCreateDatabase(
             file: File,
-            factory: CursorFactory<CP, SP>?,
             bindings: SqlOpenHelperNativeBindings<CP, SP>,
             locale: Locale,
             debugConfig: SQLiteDebug,
             logger: Logger,
         ): SQLiteDatabase<CP, SP> = openOrCreateDatabase(
             path = file.path,
-            factory = factory,
             bindings = bindings,
             locale = locale,
             debugConfig = debugConfig,
@@ -1678,14 +1663,12 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
          */
         internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> openOrCreateDatabase(
             path: String,
-            factory: CursorFactory<CP, SP>?,
             bindings: SqlOpenHelperNativeBindings<CP, SP>,
             debugConfig: SQLiteDebug,
             locale: Locale,
             logger: Logger,
         ): SQLiteDatabase<CP, SP> = openDatabase(
             path = path,
-            factory = factory,
             flags = CREATE_IF_NECESSARY,
             errorHandler = null,
             bindings = bindings,
@@ -1700,7 +1683,6 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
         @JvmStatic
         internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> openOrCreateDatabase(
             path: String,
-            factory: CursorFactory<CP, SP>,
             errorHandler: DatabaseErrorHandler?,
             bindings: SqlOpenHelperNativeBindings<CP, SP>,
             debugConfig: SQLiteDebug,
@@ -1708,7 +1690,6 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
             logger: Logger,
         ): SQLiteDatabase<CP, SP> = openDatabase(
             path = path,
-            factory = factory,
             flags = CREATE_IF_NECESSARY,
             errorHandler = errorHandler,
             bindings = bindings,
@@ -1783,14 +1764,12 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
          * @return a SQLiteDatabase object, or null if the database can't be created
          */
         internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> create(
-            factory: CursorFactory<CP, SP>?,
             bindings: SqlOpenHelperNativeBindings<CP, SP>,
             locale: Locale,
             debugConfig: SQLiteDebug,
             logger: Logger,
         ): SQLiteDatabase<CP, SP> = openDatabase(
             path = SqliteDatabaseConfiguration.MEMORY_DB_PATH,
-            factory = factory,
             flags = CREATE_IF_NECESSARY,
             bindings = bindings,
             debugConfig = debugConfig,

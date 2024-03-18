@@ -26,7 +26,6 @@ import ru.pixnews.wasm.sqlite.open.helper.base.DatabaseErrorHandler
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.or
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDatabase.CursorFactory
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.SqlOpenHelperNativeBindings
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3ConnectionPtr
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
@@ -42,7 +41,6 @@ internal abstract class WasmSqliteOpenHelper<CP : Sqlite3ConnectionPtr, SP : Sql
     private val debugConfig: SQLiteDebug,
     rootLogger: Logger,
     override val databaseName: String?,
-    private val factory: CursorFactory<CP, SP>?,
     private val version: Int,
     private val errorHandler: DatabaseErrorHandler? = null,
     private val bindings: SqlOpenHelperNativeBindings<CP, SP>,
@@ -156,7 +154,6 @@ internal abstract class WasmSqliteOpenHelper<CP : Sqlite3ConnectionPtr, SP : Sql
                 }
             } else if (databaseName == null) {
                 db = SQLiteDatabase.create(
-                    factory = null,
                     bindings = bindings,
                     debugConfig = debugConfig,
                     locale = defaultLocale,
@@ -169,7 +166,6 @@ internal abstract class WasmSqliteOpenHelper<CP : Sqlite3ConnectionPtr, SP : Sql
                         val configuration = createConfiguration(path, defaultLocale, OPEN_READONLY)
                         db = SQLiteDatabase.openDatabase(
                             configuration = configuration,
-                            factory = factory,
                             errorHandler = errorHandler,
                             bindings = bindings,
                             debugConfig = debugConfig,
@@ -181,7 +177,6 @@ internal abstract class WasmSqliteOpenHelper<CP : Sqlite3ConnectionPtr, SP : Sql
                         val configuration = createConfiguration(path, defaultLocale, flags)
                         db = SQLiteDatabase.openDatabase(
                             configuration = configuration,
-                            factory = factory,
                             errorHandler = errorHandler,
                             bindings = bindings,
                             debugConfig = debugConfig,
@@ -197,7 +192,6 @@ internal abstract class WasmSqliteOpenHelper<CP : Sqlite3ConnectionPtr, SP : Sql
                     val configuration = createConfiguration(path, defaultLocale, OPEN_READONLY)
                     db = SQLiteDatabase.openDatabase(
                         configuration = configuration,
-                        factory = factory,
                         errorHandler = errorHandler,
                         bindings = bindings,
                         debugConfig = debugConfig,

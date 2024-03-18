@@ -16,8 +16,6 @@ package ru.pixnews.wasm.sqlite.open.helper.internal
 import ru.pixnews.wasm.sqlite.open.helper.base.AbstractWindowedCursor
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.CursorWindow
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3ConnectionPtr
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
 import kotlin.LazyThreadSafetyMode.NONE
 import kotlin.math.max
 
@@ -27,15 +25,12 @@ import kotlin.math.max
  * SQLiteCursor is not internally synchronized so code using a SQLiteCursor from multiple
  * threads should perform its own synchronization when using the SQLiteCursor.
  *
- * @param driver The compiled query this cursor came from
  * @param query The query object for the cursor
  */
-internal class SQLiteCursor<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr>(
-    private val driver: SQLiteCursorDriver<CP, SP>,
+internal class SQLiteCursor(
     private val query: SQLiteQuery,
-    windowCtor: (name: String?) -> CursorWindow,
     rootLogger: Logger,
-) : AbstractWindowedCursor(windowCtor) {
+) : AbstractWindowedCursor({ name -> CursorWindow(name, rootLogger) }) {
     private val logger = rootLogger.withTag(TAG)
 
     /** The names of the columns in the rows  */
@@ -54,12 +49,6 @@ internal class SQLiteCursor<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr>
 
     /** Used to find out where a cursor was allocated in case it never got released.  */
     private val closeGuard: CloseGuard = CloseGuard.get()
-
-    /**
-     * Get the database that this cursor is associated with.
-     */
-    val database: SQLiteDatabase<*, *>
-        get() = query.database
 
     @Suppress("NO_CORRESPONDING_PROPERTY")
     override var window: CursorWindow?
@@ -88,7 +77,7 @@ internal class SQLiteCursor<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr>
     }
 
     private fun fillWindow(requiredPos: Int) {
-        clearOrCreateWindow(database.path)
+        createWindow(query.database.path)
         val window = checkNotNull(window)
 
         try {
@@ -120,51 +109,11 @@ internal class SQLiteCursor<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr>
 
     override fun getColumnNames(): Array<String> = columns.toTypedArray<String>()
 
-    @Deprecated("Deprecated in Java")
-    override fun deactivate() {
-        super.deactivate()
-        driver.cursorDeactivated()
-    }
-
     override fun close() {
         super.close()
         synchronized(this) {
             query.close()
-            driver.cursorClosed()
         }
-    }
-
-    @Deprecated("Deprecated in Java")
-    @Suppress("ReturnCount")
-    override fun requery(): Boolean {
-        if (isClosed) {
-            return false
-        }
-
-        synchronized(this) {
-            if (!query.database.isOpen) {
-                return false
-            }
-            window?.clear()
-            pos = -1
-            count = NO_COUNT
-            driver.cursorRequeried(this)
-        }
-
-        try {
-            return super.requery()
-        } catch (e: IllegalStateException) {
-            // for backwards compatibility, just return false
-            logger.w(e) { "requery() failed ${e.message}" }
-            return false
-        }
-    }
-
-    /**
-     * Changes the selection arguments. The new values take effect after a call to requery().
-     */
-    fun setSelectionArguments(selectionArgs: Array<String?>) {
-        driver.setBindArguments(selectionArgs.asList())
     }
 
     /**

@@ -150,15 +150,13 @@ internal abstract class AbstractWindowedCursor(
     )
 
     /**
-     * If there is a window, clear it. Otherwise, creates a new window.
+     * Creates a new window.
      *
      * @param name The window name.
      * @hide
      */
-    protected fun clearOrCreateWindow(name: String?) {
-        window?.clear() ?: run {
-            window = windowFactory(name)
-        }
+    protected fun createWindow(name: String?) {
+        window = windowFactory(name)
     }
 
     override fun onDeactivateOrClose() {

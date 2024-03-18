@@ -70,7 +70,6 @@ internal class WasmSqliteOpenHelperFactory(
         debugConfig = debugConfig,
         rootLogger = rootLogger,
         databaseName = name,
-        factory = null,
         version = cb.version,
         errorHandler = CallbackDatabaseErrorHandler(cb),
         bindings = bindings,
