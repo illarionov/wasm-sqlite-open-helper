@@ -29,6 +29,7 @@ public fun <E : SqliteEmbedderConfig> WasmSqliteOpenHelperFactory(
     }
     return WasmSqliteOpenHelperFactory(
         pathResolver = config.pathResolver,
+        defaultLocale = config.locale,
         sqliteCapi = embedder.createCapi(commonConfig, config.embedderConfig),
         debugConfig = config.debugConfigBlock.build(),
         rootLogger = commonConfig.logger,

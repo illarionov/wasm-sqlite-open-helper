@@ -6,16 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper
 
-/*
- * Original Copyrights:
- * Copyright (C) 2017-2024 requery.io
- * Copyright (C) 2005-2012 The Android Open Source Project
- * Licensed under the Apache License, Version 2.0 (the "License")
- */
-
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDatabase
-import java.util.Locale
-import java.util.regex.Pattern
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale
 
 /**
  * Describes how to configure a database.
@@ -57,7 +48,6 @@ public class SqliteDatabaseConfiguration {
     /**
      * The database locale.
      *
-     * Default is the value returned by [Locale.getDefault].
      */
     public var locale: Locale? = null
 
@@ -82,10 +72,12 @@ public class SqliteDatabaseConfiguration {
      *
      * @param path The database path.
      * @param openFlags Open flags for the database, such as [SQLiteDatabase.OPEN_READWRITE].
+     * @param defaultLocale Initial locale
      */
     public constructor(
         path: String = MEMORY_DB_PATH,
         openFlags: OpenFlags,
+        defaultLocale: Locale,
     ) {
         this.path = path
         this.openFlags = openFlags
@@ -93,7 +85,7 @@ public class SqliteDatabaseConfiguration {
 
         // Set default values for optional parameters.
         maxSqlCacheSize = @Suppress("MagicNumber") 25
-        locale = Locale.getDefault()
+        locale = defaultLocale
     }
 
     /**
@@ -131,13 +123,13 @@ public class SqliteDatabaseConfiguration {
 
         // The pattern we use to strip email addresses from database paths
         // when constructing a label to use in log messages.
-        private val EMAIL_IN_DB_PATTERN: Pattern = Pattern.compile("[\\w\\.\\-]+@[\\w\\.\\-]+")
+        private val EMAIL_IN_DB_PATTERN: Regex = Regex("""[\w.\-]+@[\w.\-]+""")
 
         private fun stripPathForLogs(path: String): String {
             if (path.indexOf('@') == -1) {
                 return path
             }
-            return EMAIL_IN_DB_PATTERN.matcher(path).replaceAll("XX@YY")
+            return EMAIL_IN_DB_PATTERN.replace(path, "XX@YY")
         }
     }
 }

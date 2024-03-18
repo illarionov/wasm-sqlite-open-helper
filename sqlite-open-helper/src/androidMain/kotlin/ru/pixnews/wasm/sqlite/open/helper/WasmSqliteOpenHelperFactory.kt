@@ -15,6 +15,7 @@ package ru.pixnews.wasm.sqlite.open.helper
 
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import ru.pixnews.wasm.sqlite.open.helper.base.DatabaseErrorHandler
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteCapi
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDatabase
@@ -35,6 +36,7 @@ import ru.pixnews.wasm.sqlite.open.helper.path.DatabasePathResolver
  */
 internal class WasmSqliteOpenHelperFactory(
     private val pathResolver: DatabasePathResolver,
+    private val defaultLocale: Locale,
     private val sqliteCapi: SqliteCapi,
     private val debugConfig: SQLiteDebug = SQLiteDebug(),
     private val configurationOptions: List<ConfigurationOptions> = emptyList(),
@@ -46,6 +48,7 @@ internal class WasmSqliteOpenHelperFactory(
         val bindings = GraalNativeBindings(sqliteCapi, logger)
         return CallbackSqliteOpenHelper(
             pathResolver = pathResolver,
+            defaultLocale = defaultLocale,
             debugConfig = debugConfig,
             rootLogger = logger,
             name = configuration.name,
@@ -58,6 +61,7 @@ internal class WasmSqliteOpenHelperFactory(
 
     private class CallbackSqliteOpenHelper<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr, WP : Sqlite3WindowPtr>(
         pathResolver: DatabasePathResolver,
+        defaultLocale: Locale,
         debugConfig: SQLiteDebug,
         rootLogger: Logger,
         name: String?,
@@ -67,6 +71,7 @@ internal class WasmSqliteOpenHelperFactory(
         windowBindings: SqlOpenHelperWindowBindings<WP>,
     ) : WasmSqliteOpenHelper<CP, SP, WP>(
         pathResolver = pathResolver,
+        defaultLocale = defaultLocale,
         debugConfig = debugConfig,
         rootLogger = rootLogger,
         databaseName = name,
@@ -91,8 +96,12 @@ internal class WasmSqliteOpenHelperFactory(
 
         override fun onOpen(db: SQLiteDatabase<CP, SP, WP>) = callback.onOpen(db)
 
-        override fun createConfiguration(path: String, openFlags: OpenFlags): SqliteDatabaseConfiguration {
-            var config = super.createConfiguration(path, openFlags)
+        override fun createConfiguration(
+            path: String,
+            defaultLocale: Locale,
+            openFlags: OpenFlags,
+        ): SqliteDatabaseConfiguration {
+            var config = super.createConfiguration(path, defaultLocale, openFlags)
 
             configurationOptions.forEach { option ->
                 config = option.apply(config)

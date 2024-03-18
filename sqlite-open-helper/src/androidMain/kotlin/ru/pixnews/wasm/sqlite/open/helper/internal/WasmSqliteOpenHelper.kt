@@ -21,6 +21,7 @@ import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.ENABLE_WRITE_AHEAD
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.OPEN_READONLY
 import ru.pixnews.wasm.sqlite.open.helper.SqliteDatabaseConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.base.DatabaseErrorHandler
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.or
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDatabase.CursorFactory
@@ -61,6 +62,7 @@ internal abstract class WasmSqliteOpenHelper<
         WP : Sqlite3WindowPtr,
         >(
     private val pathResolver: DatabasePathResolver,
+    private val defaultLocale: Locale,
     private val debugConfig: SQLiteDebug,
     rootLogger: Logger,
     override val databaseName: String?,
@@ -215,13 +217,14 @@ internal abstract class WasmSqliteOpenHelper<
                     bindings = bindings,
                     windowBindings = windowBindings,
                     debugConfig = debugConfig,
+                    locale = defaultLocale,
                     logger = logger,
                 )
             } else {
                 try {
                     val path = pathResolver.getDatabasePath(databaseName.toString()).path
                     if (DEBUG_STRICT_READONLY && !writable) {
-                        val configuration = createConfiguration(path, OPEN_READONLY)
+                        val configuration = createConfiguration(path, defaultLocale, OPEN_READONLY)
                         db = SQLiteDatabase.openDatabase(
                             configuration = configuration,
                             factory = factory,
@@ -234,7 +237,7 @@ internal abstract class WasmSqliteOpenHelper<
                     } else {
                         var flags = if (enableWriteAheadLogging) ENABLE_WRITE_AHEAD_LOGGING else OpenFlags(0U)
                         flags = flags or CREATE_IF_NECESSARY
-                        val configuration = createConfiguration(path, flags)
+                        val configuration = createConfiguration(path, defaultLocale, flags)
                         db = SQLiteDatabase.openDatabase(
                             configuration = configuration,
                             factory = factory,
@@ -251,7 +254,7 @@ internal abstract class WasmSqliteOpenHelper<
                     }
                     logger.e(ex) { "Couldn't open $databaseName for writing (will try read-only):" }
                     val path = pathResolver.getDatabasePath(databaseName.toString()).path
-                    val configuration = createConfiguration(path, OPEN_READONLY)
+                    val configuration = createConfiguration(path, defaultLocale, OPEN_READONLY)
                     db = SQLiteDatabase.openDatabase(
                         configuration = configuration,
                         factory = factory,
@@ -421,8 +424,9 @@ internal abstract class WasmSqliteOpenHelper<
      */
     protected open fun createConfiguration(
         path: String,
+        defaultLocale: Locale,
         openFlags: OpenFlags,
-    ): SqliteDatabaseConfiguration = SqliteDatabaseConfiguration(path, openFlags)
+    ): SqliteDatabaseConfiguration = SqliteDatabaseConfiguration(path, openFlags, defaultLocale)
 
     companion object {
         // When true, getReadableDatabase returns a read-only database if it is just being opened.
