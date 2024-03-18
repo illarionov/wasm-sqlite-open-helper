@@ -12,6 +12,7 @@ import ru.pixnews.wasm.sqlite.open.helper.dsl.WasmSqliteOpenHelperFactoryConfigB
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedder
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import ru.pixnews.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
+import ru.pixnews.wasm.sqlite.open.helper.path.JvmDatabasePathResolver
 
 /**
  * Creates a [SupportSQLiteOpenHelper.Factory] with the specified [block] configuration.
@@ -23,7 +24,7 @@ public fun <E : SqliteEmbedderConfig> WasmSqliteOpenHelperFactory(
     embedder: SqliteEmbedder<E>,
     block: WasmSqliteOpenHelperFactoryConfigBlock<E>.() -> Unit,
 ): SupportSQLiteOpenHelper.Factory {
-    val config = WasmSqliteOpenHelperFactoryConfigBlock<E>().apply(block)
+    val config = WasmSqliteOpenHelperFactoryConfigBlock<E>(JvmDatabasePathResolver()).apply(block)
     val commonConfig = object : WasmSqliteCommonConfig {
         override val logger: Logger = config.logger
     }

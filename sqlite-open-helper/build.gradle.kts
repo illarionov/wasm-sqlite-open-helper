@@ -67,6 +67,8 @@ kotlin {
     jvm()
     linuxX64()
 
+    applyDefaultHierarchyTemplate()
+
     sourceSets {
         androidMain.dependencies {
             api(libs.androidx.sqlite.sqlite)
@@ -85,6 +87,7 @@ kotlin {
 
             runtimeOnly(libs.junit.jupiter.engine)
         }
+
         commonMain.dependencies {
             api(projects.commonApi)
             api(projects.sqliteCommonApi)
@@ -93,5 +96,11 @@ kotlin {
             implementation(kotlin("test"))
             implementation(libs.assertk)
         }
+
+        val jvmAndAndroid by creating {
+            dependsOn(commonMain.get())
+        }
+        androidMain.get().dependsOn(jvmAndAndroid)
+        jvmMain.get().dependsOn(jvmAndAndroid)
     }
 }

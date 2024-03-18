@@ -12,14 +12,15 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import ru.pixnews.wasm.sqlite.open.helper.path.DatabasePathResolver
-import ru.pixnews.wasm.sqlite.open.helper.path.JvmDatabasePathResolver
 
 @WasmSqliteOpenHelperDsl
-public class WasmSqliteOpenHelperFactoryConfigBlock<E : SqliteEmbedderConfig> {
+public class WasmSqliteOpenHelperFactoryConfigBlock<E : SqliteEmbedderConfig>(
+    defaultDatabasePathResolver: DatabasePathResolver,
+) {
     public var logger: Logger = Logger
     internal var debugConfigBlock: DebugConfigBlock = DebugConfigBlock()
         private set
-    public var pathResolver: DatabasePathResolver = JvmDatabasePathResolver()
+    public var pathResolver: DatabasePathResolver = defaultDatabasePathResolver
     public val locale: Locale = Locale.EN_US
     internal var configurationOptions: List<ConfigurationOptions> = emptyList()
         private set

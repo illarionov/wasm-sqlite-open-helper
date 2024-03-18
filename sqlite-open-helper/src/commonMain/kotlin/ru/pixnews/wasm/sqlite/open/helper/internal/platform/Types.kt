@@ -4,13 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.path
+@file:Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING", "MatchingDeclarationName", "Filename")
 
-import java.io.File
+package ru.pixnews.wasm.sqlite.open.helper.internal.platform
 
-public fun interface DatabasePathResolver {
-    /**
-     * Return an absolute path to the given database.
-     */
-    public fun getDatabasePath(name: String): File
-}
+public expect class File

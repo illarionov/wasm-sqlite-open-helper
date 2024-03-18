@@ -4,8 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+@file:Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING", "Filename")
+
 package ru.pixnews.wasm.sqlite.open.helper.internal.platform
 
-internal actual fun getSystemProp(name: String, defaultValue: String): String {
-    return System.getProperty(name, defaultValue)!!
-}
+import java.io.File
+
+public actual typealias File = File
