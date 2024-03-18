@@ -36,6 +36,7 @@ import ru.pixnews.wasm.sqlite.open.helper.SqliteDatabaseConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.base.CursorWindow
 import ru.pixnews.wasm.sqlite.open.helper.base.DatabaseErrorHandler
 import ru.pixnews.wasm.sqlite.open.helper.base.DefaultDatabaseErrorHandler
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.clear
 import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
@@ -51,7 +52,6 @@ import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3WindowPtr
 import java.io.File
 import java.io.FileFilter
 import java.io.IOException
-import java.util.Locale
 
 /**
  * Exposes methods to manage a SQLite database.
@@ -1260,10 +1260,10 @@ internal class SQLiteDatabase<
      * for this is that there is no collator available for the locale you requested.
      * In this case the database remains unchanged.
      */
-    override fun setLocale(locale: Locale) = synchronized(lock) {
+    override fun setLocale(locale: java.util.Locale) = synchronized(lock) {
         val pool = requireConnectionPoolLocked()
         val oldLocale = configurationLocked.locale
-        configurationLocked.locale = locale
+        configurationLocked.locale = Locale(locale.toString())
         try {
             pool.reconfigure(configurationLocked)
         } catch (@Suppress("TooGenericExceptionCaught") ex: RuntimeException) {
@@ -1630,9 +1630,10 @@ internal class SQLiteDatabase<
             bindings: SqlOpenHelperNativeBindings<CP, SP, WP>,
             windowBindings: SqlOpenHelperWindowBindings<WP>,
             debugConfig: SQLiteDebug,
+            locale: Locale,
             logger: Logger,
         ): SQLiteDatabase<CP, SP, WP> {
-            val configuration = SqliteDatabaseConfiguration(path, flags)
+            val configuration = SqliteDatabaseConfiguration(path, flags, locale)
             val db = SQLiteDatabase(configuration, debugConfig, logger, bindings, windowBindings, factory, errorHandler)
             db.open()
             return db
@@ -1679,6 +1680,7 @@ internal class SQLiteDatabase<
             factory: CursorFactory<CP, SP, WP>?,
             bindings: SqlOpenHelperNativeBindings<CP, SP, WP>,
             windowBindings: SqlOpenHelperWindowBindings<WP>,
+            locale: Locale,
             debugConfig: SQLiteDebug,
             logger: Logger,
         ): SQLiteDatabase<CP, SP, WP> = openOrCreateDatabase(
@@ -1686,6 +1688,7 @@ internal class SQLiteDatabase<
             factory = factory,
             bindings = bindings,
             windowBindings = windowBindings,
+            locale = locale,
             debugConfig = debugConfig,
             logger = logger,
         )
@@ -1699,6 +1702,7 @@ internal class SQLiteDatabase<
             bindings: SqlOpenHelperNativeBindings<CP, SP, WP>,
             windowBindings: SqlOpenHelperWindowBindings<WP>,
             debugConfig: SQLiteDebug,
+            locale: Locale,
             logger: Logger,
         ): SQLiteDatabase<CP, SP, WP> = openDatabase(
             path = path,
@@ -1708,6 +1712,7 @@ internal class SQLiteDatabase<
             bindings = bindings,
             windowBindings = windowBindings,
             debugConfig = debugConfig,
+            locale = locale,
             logger = logger,
         )
 
@@ -1722,6 +1727,7 @@ internal class SQLiteDatabase<
             bindings: SqlOpenHelperNativeBindings<CP, SP, WP>,
             windowBindings: SqlOpenHelperWindowBindings<WP>,
             debugConfig: SQLiteDebug,
+            locale: Locale,
             logger: Logger,
         ): SQLiteDatabase<CP, SP, WP> =
             openDatabase(
@@ -1732,6 +1738,7 @@ internal class SQLiteDatabase<
                 bindings = bindings,
                 windowBindings = windowBindings,
                 debugConfig = debugConfig,
+                locale = locale,
                 logger = logger,
             )
 
@@ -1804,6 +1811,7 @@ internal class SQLiteDatabase<
             factory: CursorFactory<CP, SP, WP>?,
             bindings: SqlOpenHelperNativeBindings<CP, SP, WP>,
             windowBindings: SqlOpenHelperWindowBindings<WP>,
+            locale: Locale,
             debugConfig: SQLiteDebug,
             logger: Logger,
         ): SQLiteDatabase<CP, SP, WP> = openDatabase(
@@ -1813,6 +1821,7 @@ internal class SQLiteDatabase<
             bindings = bindings,
             windowBindings = windowBindings,
             debugConfig = debugConfig,
+            locale = locale,
             logger = logger,
         )
 

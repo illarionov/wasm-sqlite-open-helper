@@ -11,6 +11,7 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.SqliteUintBitMask
 import ru.pixnews.wasm.sqlite.open.helper.common.api.clear
 import ru.pixnews.wasm.sqlite.open.helper.common.api.or
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteOpenFlags
+import kotlin.jvm.JvmInline
 
 @JvmInline
 public value class OpenFlags(

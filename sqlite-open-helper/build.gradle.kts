@@ -55,8 +55,6 @@ android {
 }
 
 dependencies {
-    api(projects.commonApi)
-    api(projects.sqliteCommonApi)
     annotationProcessor(libs.androidx.room.compiler)
     kspAndroid(libs.androidx.room.compiler)
     kspAndroidTest(libs.androidx.room.compiler)
@@ -67,6 +65,7 @@ dependencies {
 kotlin {
     androidTarget()
     jvm()
+    linuxX64()
 
     sourceSets {
         androidMain.dependencies {
@@ -87,6 +86,8 @@ kotlin {
             runtimeOnly(libs.junit.jupiter.engine)
         }
         commonMain.dependencies {
+            api(projects.commonApi)
+            api(projects.sqliteCommonApi)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
