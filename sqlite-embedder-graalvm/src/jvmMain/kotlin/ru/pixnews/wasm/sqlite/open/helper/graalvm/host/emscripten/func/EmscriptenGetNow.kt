@@ -17,7 +17,7 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
 internal class EmscriptenGetNow(
     language: WasmLanguage,
     instance: WasmInstance,
-    @Suppress("UnusedPrivateProperty") private val host: SqliteEmbedderHost,
+    private val host: SqliteEmbedderHost,
     functionName: String = "emscripten_get_now",
 ) : BaseWasmNode(language, instance, functionName) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Double {
@@ -26,5 +26,5 @@ internal class EmscriptenGetNow(
 
     @CompilerDirectives.TruffleBoundary
     @Suppress("MemberNameEqualsClassName", "MagicNumber")
-    private fun emscriptenGetNow(): Double = System.nanoTime() / 1_000_000.0
+    private fun emscriptenGetNow(): Double = host.monotonicClock().inWholeNanoseconds / 1_000_000.0
 }
