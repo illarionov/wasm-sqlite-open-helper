@@ -4,13 +4,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.path
+package ru.pixnews.wasm.sqlite.open.helper.internal.platform
 
-import java.io.File
-
-public fun interface DatabasePathResolver {
-    /**
-     * Return an absolute path to the given database.
-     */
-    public fun getDatabasePath(name: String): File
-}
+internal expect fun getSystemProp(name: String, defaultValue: String): String

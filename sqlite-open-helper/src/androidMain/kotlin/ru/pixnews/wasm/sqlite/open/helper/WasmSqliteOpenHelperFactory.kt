@@ -38,7 +38,7 @@ internal class WasmSqliteOpenHelperFactory(
     private val pathResolver: DatabasePathResolver,
     private val defaultLocale: Locale,
     private val sqliteCapi: SqliteCapi,
-    private val debugConfig: SQLiteDebug = SQLiteDebug(),
+    private val debugConfig: SQLiteDebug,
     private val configurationOptions: List<ConfigurationOptions> = emptyList(),
     rootLogger: Logger,
 ) : SupportSQLiteOpenHelper.Factory {
