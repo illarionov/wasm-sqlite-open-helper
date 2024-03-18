@@ -17,6 +17,7 @@ package ru.pixnews.wasm.sqlite.open.helper.internal
 
 import android.database.sqlite.SQLiteException
 import androidx.sqlite.db.SupportSQLiteOpenHelper
+import ru.pixnews.wasm.sqlite.open.helper.ConfigurationOptions
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.CREATE_IF_NECESSARY
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.ENABLE_WRITE_AHEAD_LOGGING
@@ -35,20 +36,22 @@ import ru.pixnews.wasm.sqlite.open.helper.path.DatabasePathResolver
  * A helper class to manage database creation and version management.
  *
  */
-internal abstract class WasmSqliteOpenHelper<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr>(
+internal class WasmSqliteOpenHelper<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr>(
     private val pathResolver: DatabasePathResolver,
     private val defaultLocale: Locale,
     private val debugConfig: SQLiteDebug,
+    private val callback: SupportSQLiteOpenHelper.Callback,
+    private val configurationOptions: Iterable<ConfigurationOptions>,
     rootLogger: Logger,
     override val databaseName: String?,
-    private val version: Int,
-    private val errorHandler: DatabaseErrorHandler? = null,
     private val bindings: SqlOpenHelperNativeBindings<CP, SP>,
 ) : SupportSQLiteOpenHelper {
     private val logger: Logger = rootLogger.withTag(TAG)
     private var database: SQLiteDatabase<CP, SP>? = null
     private var isInitializing = false
     private var enableWriteAheadLogging = false
+    private val version: Int get() = callback.version
+    private val errorHandler: DatabaseErrorHandler = DatabaseErrorHandler { dbObj -> callback.onCorruption(dbObj) }
 
     init {
         require(version >= 1) { "Version must be >= 1, was $version" }
@@ -200,7 +203,7 @@ internal abstract class WasmSqliteOpenHelper<CP : Sqlite3ConnectionPtr, SP : Sql
                 }
             }
 
-            onConfigure(db!!)
+            callback.onConfigure(db!!)
 
             val version = db.version
             if (version != this.version) {
@@ -213,12 +216,12 @@ internal abstract class WasmSqliteOpenHelper<CP : Sqlite3ConnectionPtr, SP : Sql
                 db.beginTransaction()
                 try {
                     if (version == 0) {
-                        onCreate(db)
+                        callback.onCreate(db)
                     } else {
                         if (version > this.version) {
-                            onDowngrade(db, version, this.version)
+                            callback.onDowngrade(db, version, this.version)
                         } else {
-                            onUpgrade(db, version, this.version)
+                            callback.onUpgrade(db, version, this.version)
                         }
                     }
                     db.version = this.version
@@ -228,7 +231,7 @@ internal abstract class WasmSqliteOpenHelper<CP : Sqlite3ConnectionPtr, SP : Sql
                 }
             }
 
-            onOpen(db)
+            callback.onOpen(db)
 
             if (db.isReadOnly) {
                 logger.w { "Opened $databaseName in read-only mode" }
@@ -259,94 +262,6 @@ internal abstract class WasmSqliteOpenHelper<CP : Sqlite3ConnectionPtr, SP : Sql
     }
 
     /**
-     * Called when the database connection is being configured, to enable features
-     * such as write-ahead logging or foreign key support.
-     *
-     *
-     * This method is called before [.onCreate], [.onUpgrade],
-     * [.onDowngrade], or [.onOpen] are called.  It should not modify
-     * the database except to configure the database connection as required.
-     *
-     *
-     * This method should only call methods that configure the parameters of the
-     * database connection, such as [SQLiteDatabase.enableWriteAheadLogging]
-     * [SQLiteDatabase.setForeignKeyConstraintsEnabled],
-     * [SQLiteDatabase.setLocale], [SQLiteDatabase.setMaximumSize],
-     * or executing PRAGMA statements.
-     *
-     *
-     * @param db The database.
-     */
-    open fun onConfigure(db: SQLiteDatabase<CP, SP>) {}
-
-    /**
-     * Called when the database is created for the first time. This is where the
-     * creation of tables and the initial population of the tables should happen.
-     *
-     * @param db The database.
-     */
-    abstract fun onCreate(db: SQLiteDatabase<CP, SP>)
-
-    /**
-     * Called when the database needs to be upgraded. The implementation
-     * should use this method to drop tables, add tables, or do anything else it
-     * needs to upgrade to the new schema version.
-     *
-     *
-     *
-     * The SQLite ALTER TABLE documentation can be found
-     * [here](http://sqlite.org/lang_altertable.html). If you add new columns
-     * you can use ALTER TABLE to insert them into a live table. If you rename or remove columns
-     * you can use ALTER TABLE to rename the old table, then create the new table and then
-     * populate the new table with the contents of the old table.
-     *
-     *
-     * This method executes within a transaction.  If an exception is thrown, all changes
-     * will automatically be rolled back.
-     *
-     *
-     * @param db The database.
-     * @param oldVersion The old database version.
-     * @param newVersion The new database version.
-     */
-    abstract fun onUpgrade(db: SQLiteDatabase<CP, SP>, oldVersion: Int, newVersion: Int)
-
-    /**
-     * Called when the database needs to be downgraded. This is strictly similar to
-     * [.onUpgrade] method, but is called whenever current version is newer than requested one.
-     * However, this method is not abstract, so it is not mandatory for a customer to
-     * implement it. If not overridden, default implementation will reject downgrade and
-     * throws SQLiteException
-     *
-     * This method executes within a transaction.  If an exception is thrown, all changes
-     * will automatically be rolled back.
-     *
-     * @param db The database.
-     * @param oldVersion The old database version.
-     * @param newVersion The new database version.
-     * @throws SQLiteException
-     */
-    open fun onDowngrade(db: SQLiteDatabase<CP, SP>, oldVersion: Int, newVersion: Int) {
-        throw SQLiteException("Can't downgrade database from version $oldVersion to $newVersion")
-    }
-
-    /**
-     * Called when the database has been opened.  The implementation
-     * should check [SQLiteDatabase.isReadOnly] before updating the
-     * database.
-     *
-     *
-     * This method is called after the database connection has been configured
-     * and after the database schema has been created, upgraded or downgraded as necessary.
-     * If the database connection must be configured in some way before the schema
-     * is created, upgraded, or downgraded, do it in [.onConfigure] instead.
-     *
-     *
-     * @param db The database.
-     */
-    open fun onOpen(db: SQLiteDatabase<CP, SP>) {}
-
-    /**
      * Called before the database is opened. Provides the [SqliteDatabaseConfiguration]
      * instance that is used to initialize the database. Override this to create a configuration
      * that has custom functions or extensions.
@@ -355,11 +270,17 @@ internal abstract class WasmSqliteOpenHelper<CP : Sqlite3ConnectionPtr, SP : Sql
      * @param openFlags to control database access mode
      * @return [SqliteDatabaseConfiguration] instance, cannot be null.
      */
-    protected open fun createConfiguration(
+    private fun createConfiguration(
         path: String,
         defaultLocale: Locale,
         openFlags: OpenFlags,
-    ): SqliteDatabaseConfiguration = SqliteDatabaseConfiguration(path, openFlags, defaultLocale)
+    ): SqliteDatabaseConfiguration {
+        var config = SqliteDatabaseConfiguration(path, openFlags, defaultLocale)
+        configurationOptions.forEach { option ->
+            config = option.apply(config)
+        }
+        return config
+    }
 
     companion object {
         // When true, getReadableDatabase returns a read-only database if it is just being opened.
