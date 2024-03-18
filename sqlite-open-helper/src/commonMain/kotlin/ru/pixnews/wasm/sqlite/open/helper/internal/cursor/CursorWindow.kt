@@ -67,42 +67,7 @@ internal class CursorWindow(
     }
 
     /**
-     * Sets the number of columns in this window.
-     *
-     *
-     * This method must be called before any rows are added to the window, otherwise
-     * it will fail to set the number of columns if it differs from the current number
-     * of columns.
-     *
-     *
-     * @param columnNum The new number of columns.
-     * @return True if successful.
-     */
-    @Suppress("FUNCTION_BOOLEAN_PREFIX")
-    fun setNumColumns(columnNum: Int): Boolean {
-        return window.setNumColumns(columnNum) == 0
-    }
-
-    /**
-     * Allocates a new row at the end of this cursor window.
-     *
-     * @return True if successful, false if the cursor window is out of memory.
-     */
-    @Suppress("FUNCTION_BOOLEAN_PREFIX")
-    fun allocRow(): Boolean {
-        return window.allocRow() == 0
-    }
-
-    /**
-     * Frees the last row in this cursor window.
-     */
-    fun freeLastRow() {
-        window.freeLastRow()
-    }
-
-    /**
      * Returns the type of the field at the specified row and column index.
-     *
      *
      * The returned field types are:
      *
@@ -111,8 +76,6 @@ internal class CursorWindow(
      *  * [Cursor.FIELD_TYPE_FLOAT]
      *  * [Cursor.FIELD_TYPE_STRING]
      *  * [Cursor.FIELD_TYPE_BLOB]
-     *
-     *
      *
      * @param row The zero-based row index.
      * @param column The zero-based column index.
@@ -127,7 +90,6 @@ internal class CursorWindow(
 
     /**
      * Gets the value of the field at the specified row and column index as a byte array.
-     *
      *
      * The result is determined as follows:
      *
@@ -168,7 +130,6 @@ internal class CursorWindow(
     /**
      * Gets the value of the field at the specified row and column index as a string.
      *
-     *
      * The result is determined as follows:
      *
      *  * If the field is of type [Cursor.FIELD_TYPE_NULL], then the result
@@ -185,8 +146,6 @@ internal class CursorWindow(
      * format specifier `%g`.
      *  * If the field is of type [Cursor.FIELD_TYPE_BLOB], then a
      * [SQLiteException] is thrown.
-     *
-     *
      *
      * @param row The zero-based row index.
      * @param column The zero-based column index.
@@ -297,44 +256,34 @@ internal class CursorWindow(
      * Gets the value of the field at the specified row and column index as a
      * `short`.
      *
-     *
      * The result is determined by invoking [.getLong] and converting the
      * result to `short`.
-     *
      *
      * @param row The zero-based row index.
      * @param column The zero-based column index.
      * @return The value of the field as a `short`.
      */
-    fun getShort(row: Int, column: Int): Short {
-        return getLong(row, column).toShort()
-    }
+    fun getShort(row: Int, column: Int): Short = getLong(row, column).toShort()
 
     /**
      * Gets the value of the field at the specified row and column index as an
      * `int`.
      *
-     *
      * The result is determined by invoking [.getLong] and converting the
      * result to `int`.
-     *
      *
      * @param row The zero-based row index.
      * @param column The zero-based column index.
      * @return The value of the field as an `int`.
      */
-    fun getInt(row: Int, column: Int): Int {
-        return getLong(row, column).toInt()
-    }
+    fun getInt(row: Int, column: Int): Int = getLong(row, column).toInt()
 
     /**
      * Gets the value of the field at the specified row and column index as a
      * `float`.
      *
-     *
      * The result is determined by invoking [.getDouble] and converting the
      * result to `float`.
-     *
      *
      * @param row The zero-based row index.
      * @param column The zero-based column index.
@@ -342,71 +291,6 @@ internal class CursorWindow(
      */
     fun getFloat(row: Int, column: Int): Float {
         return getDouble(row, column).toFloat()
-    }
-
-    /**
-     * Copies a byte array into the field at the specified row and column index.
-     *
-     * @param value The value to store.
-     * @param row The zero-based row index.
-     * @param column The zero-based column index.
-     * @return True if successful.
-     */
-    @Suppress("FUNCTION_BOOLEAN_PREFIX")
-    fun putBlob(value: ByteArray, row: Int, column: Int): Boolean {
-        return window.putBlob(row - startPosition, column, value) == 0
-    }
-
-    /**
-     * Copies a string into the field at the specified row and column index.
-     *
-     * @param value The value to store.
-     * @param row The zero-based row index.
-     * @param column The zero-based column index.
-     * @return True if successful.
-     */
-    @Suppress("FUNCTION_BOOLEAN_PREFIX")
-    fun putString(value: String, row: Int, column: Int): Boolean {
-        return window.putString(row - startPosition, column, value) == 0
-    }
-
-    /**
-     * Puts a long integer into the field at the specified row and column index.
-     *
-     * @param value The value to store.
-     * @param row The zero-based row index.
-     * @param column The zero-based column index.
-     * @return True if successful.
-     */
-    @Suppress("FUNCTION_BOOLEAN_PREFIX")
-    fun putLong(value: Long, row: Int, column: Int): Boolean {
-        return window.putLong(row - startPosition, column, value) == 0
-    }
-
-    /**
-     * Puts a double-precision floating point value into the field at the
-     * specified row and column index.
-     *
-     * @param value The value to store.
-     * @param row The zero-based row index.
-     * @param column The zero-based column index.
-     * @return True if successful.
-     */
-    @Suppress("FUNCTION_BOOLEAN_PREFIX")
-    fun putDouble(value: Double, row: Int, column: Int): Boolean {
-        return window.putDouble(row - startPosition, column, value) == 0
-    }
-
-    /**
-     * Puts a null value into the field at the specified row and column index.
-     *
-     * @param row The zero-based row index.
-     * @param column The zero-based column index.
-     * @return True if successful.
-     */
-    @Suppress("FUNCTION_BOOLEAN_PREFIX")
-    fun putNull(row: Int, column: Int): Boolean {
-        return window.putNull(row - startPosition, column) == 0
     }
 
     override fun onAllReferencesReleased() {
