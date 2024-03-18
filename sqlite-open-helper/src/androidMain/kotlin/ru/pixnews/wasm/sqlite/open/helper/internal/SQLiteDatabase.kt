@@ -45,10 +45,8 @@ import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.Companio
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.Companion.CONNECTION_FLAG_READ_ONLY
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteProgram.Companion.bindAllArgsAsStrings
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.SqlOpenHelperNativeBindings
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.SqlOpenHelperWindowBindings
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3ConnectionPtr
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3WindowPtr
 import java.io.File
 import java.io.FileFilter
 import java.io.IOException
@@ -70,17 +68,12 @@ import java.io.IOException
  *
  * @param cursorFactory The optional factory to use when creating new Cursors.  May be null.
  */
-internal class SQLiteDatabase<
-        CP : Sqlite3ConnectionPtr,
-        SP : Sqlite3StatementPtr,
-        WP : Sqlite3WindowPtr,
-        > private constructor(
+internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> private constructor(
     configuration: SqliteDatabaseConfiguration,
     private val debugConfig: SQLiteDebug,
     rootLogger: Logger,
-    private val bindings: SqlOpenHelperNativeBindings<CP, SP, WP>,
-    private val windowBindings: SqlOpenHelperWindowBindings<WP>,
-    private val cursorFactory: CursorFactory<CP, SP, WP>? = null,
+    private val bindings: SqlOpenHelperNativeBindings<CP, SP>,
+    private val cursorFactory: CursorFactory<CP, SP>? = null,
     errorHandler: DatabaseErrorHandler? = null,
 ) : SQLiteClosable(), SupportSQLiteDatabase {
     private val logger = rootLogger.withTag(TAG)
@@ -88,9 +81,9 @@ internal class SQLiteDatabase<
     // Thread-local for database sessions that belong to this database.
     // Each thread has its own database session.
     // INVARIANT: Immutable.
-    private val _threadSession: ThreadLocal<SQLiteSession<CP, SP, WP>> =
-        object : ThreadLocal<SQLiteSession<CP, SP, WP>>() {
-            override fun initialValue(): SQLiteSession<CP, SP, WP> {
+    private val _threadSession: ThreadLocal<SQLiteSession<CP, SP>> =
+        object : ThreadLocal<SQLiteSession<CP, SP>>() {
+            override fun initialValue(): SQLiteSession<CP, SP> {
                 val pool = synchronized(lock) { requireConnectionPoolLocked() }
                 return SQLiteSession(pool)
             }
@@ -123,13 +116,13 @@ internal class SQLiteDatabase<
     // The database configuration.
     // INVARIANT: Guarded by mLock.
     private val configurationLocked = configuration
-    private val cursorWindowCtor: (String?) -> CursorWindow<WP> = { name -> CursorWindow(name, windowBindings) }
+    private val cursorWindowCtor: (String?) -> CursorWindow = { name -> CursorWindow(name, logger) }
 
     // The connection pool for the database, null when closed.
     // The pool itself is thread-safe, but the reference to it can only be acquired
     // when the lock is held.
     // INVARIANT: Guarded by mLock.
-    private var connectionPoolLocked: SQLiteConnectionPool<CP, SP, WP>? = null
+    private var connectionPoolLocked: SQLiteConnectionPool<CP, SP>? = null
 
     /**
      * Gets the [SQLiteSession] that belongs to this thread for this database.
@@ -147,7 +140,7 @@ internal class SQLiteDatabase<
      * @throws IllegalStateException if the thread does not yet have a session and
      * the database is not open.
      */
-    val threadSession: SQLiteSession<CP, SP, WP>
+    val threadSession: SQLiteSession<CP, SP>
         get() = _threadSession.get()!! // initialValue() throws if database closed
 
     /**
@@ -175,19 +168,13 @@ internal class SQLiteDatabase<
     override val isDbLockedByCurrentThread: Boolean
         get() = useReference(threadSession::hasConnection)
 
+    /**
+     * Database version
+     */
     @Suppress("NO_CORRESPONDING_PROPERTY", "WRONG_NAME_OF_VARIABLE_INSIDE_ACCESSOR")
     override var version: Int
-        /**
-         * Gets the database version.
-         */
         get() = longForQuery("PRAGMA user_version;").toInt()
-
-        /**
-         * Sets the database version.
-         */
-        set(version) {
-            execSQL("PRAGMA user_version = $version")
-        }
+        set(version) { execSQL("PRAGMA user_version = $version") }
 
     override val maximumSize: Long
         /**
@@ -204,7 +191,6 @@ internal class SQLiteDatabase<
          *
          * @return the database page size, in bytes
          */
-
         get() = longForQuery("PRAGMA page_size;")
 
         /**
@@ -351,7 +337,7 @@ internal class SQLiteDatabase<
     override fun onAllReferencesReleased() = dispose(false)
 
     private fun dispose(finalized: Boolean) {
-        val pool: SQLiteConnectionPool<CP, SP, WP>?
+        val pool: SQLiteConnectionPool<CP, SP>?
         synchronized(lock) {
             if (finalized) {
                 closeGuardLocked.warnIfOpen()
@@ -644,8 +630,7 @@ internal class SQLiteDatabase<
 
     private fun openInner() = synchronized(lock) {
         check(connectionPoolLocked == null)
-        connectionPoolLocked =
-            SQLiteConnectionPool.open(configurationLocked, debugConfig, bindings, windowBindings, logger)
+        connectionPoolLocked = SQLiteConnectionPool.open(configurationLocked, debugConfig, bindings, logger)
         closeGuardLocked.open("close")
     }
 
@@ -758,7 +743,7 @@ internal class SQLiteDatabase<
     @JvmOverloads
     @Suppress("LongParameterList")
     internal fun queryWithFactory(
-        cursorFactory: CursorFactory<CP, SP, WP>?,
+        cursorFactory: CursorFactory<CP, SP>?,
         distinct: Boolean,
         table: String,
         columns: Array<String?>?,
@@ -905,12 +890,12 @@ internal class SQLiteDatabase<
      */
     @JvmOverloads
     internal fun rawQueryWithFactory(
-        cursorFactory: CursorFactory<CP, SP, WP>?,
+        cursorFactory: CursorFactory<CP, SP>?,
         sql: String,
         selectionArgs: List<Any?> = listOf(),
         cancellationSignal: CancellationSignal? = null,
     ): Cursor = useReference {
-        val driver: SQLiteCursorDriver<CP, SP, WP> = SQLiteDirectCursorDriver(
+        val driver: SQLiteCursorDriver<CP, SP> = SQLiteDirectCursorDriver(
             database = this,
             sql = sql,
             cancellationSignal = cancellationSignal,
@@ -1145,7 +1130,7 @@ internal class SQLiteDatabase<
         }
 
         val bindArgs = values.valueSet().map(Map.Entry<*, *>::value) + whereArgs
-        return SQLiteStatement(this, sql, bindArgs).use(SQLiteStatement<*>::executeUpdateDelete)
+        return SQLiteStatement(this, sql, bindArgs).use(SQLiteStatement::executeUpdateDelete)
     }
 
     /**
@@ -1226,8 +1211,7 @@ internal class SQLiteDatabase<
 
     @Throws(SQLException::class)
     private fun executeSql(sql: String, bindArgs: List<Any?> = emptyList()): Int = useReference {
-        SQLiteStatement(this, sql, bindArgs)
-            .use(SQLiteStatement<*>::executeUpdateDelete)
+        SQLiteStatement(this, sql, bindArgs).use(SQLiteStatement::executeUpdateDelete)
     }
 
     /**
@@ -1493,7 +1477,7 @@ internal class SQLiteDatabase<
 
     override fun toString(): String = "SQLiteDatabase: $path"
 
-    private fun requireConnectionPoolLocked(): SQLiteConnectionPool<CP, SP, WP> = checkNotNull(connectionPoolLocked) {
+    private fun requireConnectionPoolLocked(): SQLiteConnectionPool<CP, SP> = checkNotNull(connectionPoolLocked) {
         "The database '${configurationLocked.label}' is not open."
     }
 
@@ -1554,14 +1538,14 @@ internal class SQLiteDatabase<
     /**
      * Used to allow returning sub-classes of [Cursor] when calling query.
      */
-    internal fun interface CursorFactory<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr, WP : Sqlite3WindowPtr> {
+    internal fun interface CursorFactory<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> {
         /**
          * See [SQLiteCursor.SQLiteCursor].
          */
         fun newCursor(
-            db: SQLiteDatabase<CP, SP, WP>,
-            masterQuery: SQLiteCursorDriver<CP, SP, WP>?,
-            query: SQLiteQuery<WP>,
+            db: SQLiteDatabase<CP, SP>,
+            masterQuery: SQLiteCursorDriver<CP, SP>?,
+            query: SQLiteQuery,
         ): Cursor
     }
 
@@ -1622,19 +1606,18 @@ internal class SQLiteDatabase<
          * @throws SQLiteException if the database cannot be opened
          */
         @JvmStatic
-        internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr, WP : Sqlite3WindowPtr> openDatabase(
+        internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> openDatabase(
             path: String,
-            factory: CursorFactory<CP, SP, WP>?,
+            factory: CursorFactory<CP, SP>?,
             flags: OpenFlags,
             errorHandler: DatabaseErrorHandler? = null,
-            bindings: SqlOpenHelperNativeBindings<CP, SP, WP>,
-            windowBindings: SqlOpenHelperWindowBindings<WP>,
+            bindings: SqlOpenHelperNativeBindings<CP, SP>,
             debugConfig: SQLiteDebug,
             locale: Locale,
             logger: Logger,
-        ): SQLiteDatabase<CP, SP, WP> {
+        ): SQLiteDatabase<CP, SP> {
             val configuration = SqliteDatabaseConfiguration(path, flags, locale)
-            val db = SQLiteDatabase(configuration, debugConfig, logger, bindings, windowBindings, factory, errorHandler)
+            val db = SQLiteDatabase(configuration, debugConfig, logger, bindings, factory, errorHandler)
             db.open()
             return db
         }
@@ -1658,16 +1641,15 @@ internal class SQLiteDatabase<
          * @return the newly opened database
          * @throws SQLiteException if the database cannot be opened
          */
-        internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr, WP : Sqlite3WindowPtr> openDatabase(
+        internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> openDatabase(
             configuration: SqliteDatabaseConfiguration,
-            factory: CursorFactory<CP, SP, WP>?,
+            factory: CursorFactory<CP, SP>?,
             errorHandler: DatabaseErrorHandler?,
-            bindings: SqlOpenHelperNativeBindings<CP, SP, WP>,
-            windowBindings: SqlOpenHelperWindowBindings<WP>,
+            bindings: SqlOpenHelperNativeBindings<CP, SP>,
             debugConfig: SQLiteDebug,
             logger: Logger,
-        ): SQLiteDatabase<CP, SP, WP> {
-            val db = SQLiteDatabase(configuration, debugConfig, logger, bindings, windowBindings, factory, errorHandler)
+        ): SQLiteDatabase<CP, SP> {
+            val db = SQLiteDatabase(configuration, debugConfig, logger, bindings, factory, errorHandler)
             db.open()
             return db
         }
@@ -1675,19 +1657,17 @@ internal class SQLiteDatabase<
         /**
          * Equivalent to openDatabase(file.getPath(), factory, CREATE_IF_NECESSARY).
          */
-        internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr, WP : Sqlite3WindowPtr> openOrCreateDatabase(
+        internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> openOrCreateDatabase(
             file: File,
-            factory: CursorFactory<CP, SP, WP>?,
-            bindings: SqlOpenHelperNativeBindings<CP, SP, WP>,
-            windowBindings: SqlOpenHelperWindowBindings<WP>,
+            factory: CursorFactory<CP, SP>?,
+            bindings: SqlOpenHelperNativeBindings<CP, SP>,
             locale: Locale,
             debugConfig: SQLiteDebug,
             logger: Logger,
-        ): SQLiteDatabase<CP, SP, WP> = openOrCreateDatabase(
+        ): SQLiteDatabase<CP, SP> = openOrCreateDatabase(
             path = file.path,
             factory = factory,
             bindings = bindings,
-            windowBindings = windowBindings,
             locale = locale,
             debugConfig = debugConfig,
             logger = logger,
@@ -1696,21 +1676,19 @@ internal class SQLiteDatabase<
         /**
          * Equivalent to openDatabase(path, factory, CREATE_IF_NECESSARY).
          */
-        internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr, WP : Sqlite3WindowPtr> openOrCreateDatabase(
+        internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> openOrCreateDatabase(
             path: String,
-            factory: CursorFactory<CP, SP, WP>?,
-            bindings: SqlOpenHelperNativeBindings<CP, SP, WP>,
-            windowBindings: SqlOpenHelperWindowBindings<WP>,
+            factory: CursorFactory<CP, SP>?,
+            bindings: SqlOpenHelperNativeBindings<CP, SP>,
             debugConfig: SQLiteDebug,
             locale: Locale,
             logger: Logger,
-        ): SQLiteDatabase<CP, SP, WP> = openDatabase(
+        ): SQLiteDatabase<CP, SP> = openDatabase(
             path = path,
             factory = factory,
             flags = CREATE_IF_NECESSARY,
             errorHandler = null,
             bindings = bindings,
-            windowBindings = windowBindings,
             debugConfig = debugConfig,
             locale = locale,
             logger = logger,
@@ -1720,27 +1698,24 @@ internal class SQLiteDatabase<
          * Equivalent to openDatabase(path, factory, CREATE_IF_NECESSARY, errorHandler).
          */
         @JvmStatic
-        internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr, WP : Sqlite3WindowPtr> openOrCreateDatabase(
+        internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> openOrCreateDatabase(
             path: String,
-            factory: CursorFactory<CP, SP, WP>,
+            factory: CursorFactory<CP, SP>,
             errorHandler: DatabaseErrorHandler?,
-            bindings: SqlOpenHelperNativeBindings<CP, SP, WP>,
-            windowBindings: SqlOpenHelperWindowBindings<WP>,
+            bindings: SqlOpenHelperNativeBindings<CP, SP>,
             debugConfig: SQLiteDebug,
             locale: Locale,
             logger: Logger,
-        ): SQLiteDatabase<CP, SP, WP> =
-            openDatabase(
-                path = path,
-                factory = factory,
-                flags = CREATE_IF_NECESSARY,
-                errorHandler = errorHandler,
-                bindings = bindings,
-                windowBindings = windowBindings,
-                debugConfig = debugConfig,
-                locale = locale,
-                logger = logger,
-            )
+        ): SQLiteDatabase<CP, SP> = openDatabase(
+            path = path,
+            factory = factory,
+            flags = CREATE_IF_NECESSARY,
+            errorHandler = errorHandler,
+            bindings = bindings,
+            debugConfig = debugConfig,
+            locale = locale,
+            logger = logger,
+        )
 
         /**
          * Deletes a database including its journal file and other auxiliary files
@@ -1807,19 +1782,17 @@ internal class SQLiteDatabase<
          * cursor when query is called
          * @return a SQLiteDatabase object, or null if the database can't be created
          */
-        internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr, WP : Sqlite3WindowPtr> create(
-            factory: CursorFactory<CP, SP, WP>?,
-            bindings: SqlOpenHelperNativeBindings<CP, SP, WP>,
-            windowBindings: SqlOpenHelperWindowBindings<WP>,
+        internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> create(
+            factory: CursorFactory<CP, SP>?,
+            bindings: SqlOpenHelperNativeBindings<CP, SP>,
             locale: Locale,
             debugConfig: SQLiteDebug,
             logger: Logger,
-        ): SQLiteDatabase<CP, SP, WP> = openDatabase(
+        ): SQLiteDatabase<CP, SP> = openDatabase(
             path = SqliteDatabaseConfiguration.MEMORY_DB_PATH,
             factory = factory,
             flags = CREATE_IF_NECESSARY,
             bindings = bindings,
-            windowBindings = windowBindings,
             debugConfig = debugConfig,
             locale = locale,
             logger = logger,
@@ -1897,7 +1870,7 @@ internal class SQLiteDatabase<
          * [Cursor]s are not synchronized, see the documentation for more details.
          * @see Cursor
          */
-        fun SQLiteDatabase<Sqlite3ConnectionPtr, Sqlite3StatementPtr, Sqlite3WindowPtr>.query(
+        fun SQLiteDatabase<Sqlite3ConnectionPtr, Sqlite3StatementPtr>.query(
             table: String,
             columns: Array<String?>?,
             selection: String?,
@@ -1952,7 +1925,7 @@ internal class SQLiteDatabase<
          * [Cursor]s are not synchronized, see the documentation for more details.
          * @see Cursor
          */
-        fun SQLiteDatabase<Sqlite3ConnectionPtr, Sqlite3StatementPtr, Sqlite3WindowPtr>.query(
+        fun SQLiteDatabase<Sqlite3ConnectionPtr, Sqlite3StatementPtr>.query(
             distinct: Boolean,
             table: String,
             columns: Array<String?>?,
@@ -1993,7 +1966,7 @@ internal class SQLiteDatabase<
          * column values
          * @return the row ID of the newly inserted row, or -1 if an error occurred
          */
-        fun SQLiteDatabase<*, *, *>.insert(table: String?, nullColumnHack: String?, values: ContentValues): Long = try {
+        fun SQLiteDatabase<*, *>.insert(table: String?, nullColumnHack: String?, values: ContentValues): Long = try {
             insertWithOnConflict(table, nullColumnHack, values, ConflictAlgorithm.CONFLICT_NONE)
         } catch (e: SQLException) {
             logger.e(e) { "Error inserting $values" }
@@ -2018,7 +1991,7 @@ internal class SQLiteDatabase<
          * @throws SQLException
          */
         @Throws(SQLException::class)
-        fun SQLiteDatabase<*, *, *>.insertOrThrow(
+        fun SQLiteDatabase<*, *>.insertOrThrow(
             table: String?,
             nullColumnHack: String?,
             values: ContentValues?,
@@ -2041,7 +2014,7 @@ internal class SQLiteDatabase<
          * the row.
          * @return the row ID of the newly inserted row, or -1 if an error occurred
          */
-        fun SQLiteDatabase<*, *, *>.replace(
+        fun SQLiteDatabase<*, *>.replace(
             table: String?,
             nullColumnHack: String?,
             initialValues: ContentValues,
@@ -2071,7 +2044,7 @@ internal class SQLiteDatabase<
          * @throws SQLException
          */
         @Throws(SQLException::class)
-        fun SQLiteDatabase<*, *, *>.replaceOrThrow(
+        fun SQLiteDatabase<*, *>.replaceOrThrow(
             table: String?,
             nullColumnHack: String?,
             initialValues: ContentValues?,

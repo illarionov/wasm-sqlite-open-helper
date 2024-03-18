@@ -18,7 +18,6 @@ import ru.pixnews.wasm.sqlite.open.helper.base.CursorWindow
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3ConnectionPtr
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3WindowPtr
 import kotlin.LazyThreadSafetyMode.NONE
 import kotlin.math.max
 
@@ -31,12 +30,12 @@ import kotlin.math.max
  * @param driver The compiled query this cursor came from
  * @param query The query object for the cursor
  */
-internal class SQLiteCursor<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr, WP : Sqlite3WindowPtr>(
-    private val driver: SQLiteCursorDriver<CP, SP, WP>,
-    private val query: SQLiteQuery<WP>,
-    windowCtor: (name: String?) -> CursorWindow<WP>,
+internal class SQLiteCursor<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr>(
+    private val driver: SQLiteCursorDriver<CP, SP>,
+    private val query: SQLiteQuery,
+    windowCtor: (name: String?) -> CursorWindow,
     rootLogger: Logger,
-) : AbstractWindowedCursor<WP>(windowCtor) {
+) : AbstractWindowedCursor(windowCtor) {
     private val logger = rootLogger.withTag(TAG)
 
     /** The names of the columns in the rows  */
@@ -59,11 +58,11 @@ internal class SQLiteCursor<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr,
     /**
      * Get the database that this cursor is associated with.
      */
-    val database: SQLiteDatabase<*, *, WP>
+    val database: SQLiteDatabase<*, *>
         get() = query.database
 
     @Suppress("NO_CORRESPONDING_PROPERTY")
-    override var window: CursorWindow<WP>?
+    override var window: CursorWindow?
         get() = super.window
         set(value) {
             super.window = value

@@ -6,4 +6,4 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.internal.platform
 
-internal  expect inline fun <R> synchronized(lock: Any, block: () -> R): R
+internal expect inline fun <R> synchronized(lock: Any, block: () -> R): R

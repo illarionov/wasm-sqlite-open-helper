@@ -38,7 +38,7 @@ import java.io.File
  * as the default [DatabaseErrorHandler].
  */
 internal class DefaultDatabaseErrorHandler : DatabaseErrorHandler {
-    override fun onCorruption(dbObj: SQLiteDatabase<*, *, *>) {
+    override fun onCorruption(dbObj: SQLiteDatabase<*, *>) {
         Log.e(TAG, "Corruption reported by sqlite on database: ${dbObj.path}")
 
         // is the corruption detected even before database could be 'opened'?

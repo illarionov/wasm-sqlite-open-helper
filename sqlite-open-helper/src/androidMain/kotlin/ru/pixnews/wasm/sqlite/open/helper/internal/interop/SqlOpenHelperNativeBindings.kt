@@ -11,7 +11,6 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteOpenFlags
 internal interface SqlOpenHelperNativeBindings<
         CP : Sqlite3ConnectionPtr,
         SP : Sqlite3StatementPtr,
-        WP : Sqlite3WindowPtr,
         > {
     fun connectionNullPtr(): CP
     fun connectionStatementPtr(): SP
@@ -126,7 +125,7 @@ internal interface SqlOpenHelperNativeBindings<
     fun nativeExecuteForCursorWindow(
         connectionPtr: CP,
         statementPtr: SP,
-        winPtr: WP,
+        window: NativeCursorWindow,
         startPos: Int,
         requiredPos: Int,
         countAllRows: Boolean,

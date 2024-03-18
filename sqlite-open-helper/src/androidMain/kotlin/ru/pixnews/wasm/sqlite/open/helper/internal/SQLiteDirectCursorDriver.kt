@@ -20,23 +20,22 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteProgram.Companion.bindAllArgsAsStrings
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3ConnectionPtr
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3WindowPtr
 
 /**
  * A cursor driver that uses the given query directly.
  */
-internal class SQLiteDirectCursorDriver<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr, WP : Sqlite3WindowPtr>(
-    private val database: SQLiteDatabase<CP, SP, WP>,
+internal class SQLiteDirectCursorDriver<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr>(
+    private val database: SQLiteDatabase<CP, SP>,
     private val sql: String,
     private val cancellationSignal: CancellationSignal?,
-    private val cursorWindowCtor: (name: String?) -> CursorWindow<WP>,
+    private val cursorWindowCtor: (name: String?) -> CursorWindow,
     rootLogger: Logger,
-) : SQLiteCursorDriver<CP, SP, WP> {
+) : SQLiteCursorDriver<CP, SP> {
     private val logger: Logger = rootLogger.withTag("SQLiteDirectCursorDriver")
-    private var query: SQLiteQuery<WP>? = null
+    private var query: SQLiteQuery? = null
 
     override fun query(
-        factory: SQLiteDatabase.CursorFactory<CP, SP, WP>?,
+        factory: SQLiteDatabase.CursorFactory<CP, SP>?,
         bindArgs: List<Any?>,
     ): Cursor {
         val query = SQLiteQuery(database, sql, bindArgs, cancellationSignal)

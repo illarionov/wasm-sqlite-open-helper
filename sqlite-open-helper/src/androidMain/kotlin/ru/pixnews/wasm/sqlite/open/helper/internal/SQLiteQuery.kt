@@ -18,7 +18,6 @@ import android.database.sqlite.SQLiteException
 import android.util.Log
 import androidx.core.os.CancellationSignal
 import ru.pixnews.wasm.sqlite.open.helper.base.CursorWindow
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3WindowPtr
 
 /**
  * Represents a query that reads the resulting rows into a [SQLiteQuery].
@@ -28,12 +27,12 @@ import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3WindowPtr
  * This class is not thread-safe.
  *
  */
-internal class SQLiteQuery<WP : Sqlite3WindowPtr>(
-    db: SQLiteDatabase<*, *, WP>,
+internal class SQLiteQuery(
+    db: SQLiteDatabase<*, *>,
     query: String,
     bindArgs: List<Any?>,
     private val cancellationSignal: CancellationSignal?,
-) : SQLiteProgram<WP>(db, query, bindArgs, cancellationSignal) {
+) : SQLiteProgram(db, query, bindArgs, cancellationSignal) {
     /**
      * Reads rows into a buffer.
      *
@@ -50,7 +49,7 @@ internal class SQLiteQuery<WP : Sqlite3WindowPtr>(
      * @throws SQLiteDatabaseCorruptException
      */
     fun fillWindow(
-        window: CursorWindow<WP>,
+        window: CursorWindow,
         startPos: Int,
         requiredPos: Int,
         countAllRows: Boolean,

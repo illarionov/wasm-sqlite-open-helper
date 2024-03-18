@@ -18,7 +18,6 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteBindOrColumnIndexOutOfRangeException
 import android.database.sqlite.SQLiteDatabaseLockedException
 import android.database.sqlite.SQLiteException
-import android.util.Log
 import android.util.Printer
 import androidx.collection.LruCache
 import androidx.core.os.CancellationSignal
@@ -26,15 +25,14 @@ import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.ENABLE_WRITE_AHEAD
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.OPEN_READONLY
 import ru.pixnews.wasm.sqlite.open.helper.SqliteDatabaseConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.base.CursorWindow
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
 import ru.pixnews.wasm.sqlite.open.helper.common.api.xor
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_SELECT
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_UPDATE
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.SqlOpenHelperNativeBindings
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.SqlOpenHelperWindowBindings
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3ConnectionPtr
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3WindowPtr
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.isNotNull
 import ru.pixnews.wasm.sqlite.open.helper.toSqliteOpenFlags
 import java.text.SimpleDateFormat
@@ -85,26 +83,23 @@ import java.util.regex.Pattern
  *
  */
 @Suppress("LargeClass")
-internal class SQLiteConnection<
-        CP : Sqlite3ConnectionPtr,
-        SP : Sqlite3StatementPtr,
-        WP : Sqlite3WindowPtr,
-        > private constructor(
-    private val pool: SQLiteConnectionPool<CP, SP, WP>,
+internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> private constructor(
+    private val pool: SQLiteConnectionPool<CP, SP>,
     configuration: SqliteDatabaseConfiguration,
-    private val bindings: SqlOpenHelperNativeBindings<CP, SP, WP>,
-    private val windowBindings: SqlOpenHelperWindowBindings<WP>,
+    private val bindings: SqlOpenHelperNativeBindings<CP, SP>,
     private val connectionId: Int,
     internal val isPrimaryConnection: Boolean,
     private val debugConfig: SQLiteDebug,
+    rootLogger: Logger,
 ) : CancellationSignal.OnCancelListener {
+    private val logger = rootLogger.withTag(TAG)
     private val closeGuard: CloseGuard = CloseGuard.get()
     private val configuration = SqliteDatabaseConfiguration(configuration)
     private val isReadOnlyConnection = configuration.openFlags.contains(OPEN_READONLY)
     private val preparedStatementCache = PreparedStatementCache(this.configuration.maxSqlCacheSize)
 
     // The recent operations log.
-    private val recentOperations = OperationLog(debugConfig)
+    private val recentOperations = OperationLog(debugConfig, logger)
 
     // The native SQLiteConnection pointer.  (FOR INTERNAL USE ONLY)
     private var connectionPtr: CP = bindings.connectionNullPtr()
@@ -264,15 +259,14 @@ internal class SQLiteConnection<
             // If we don't change the journal mode, nothing really bad happens.
             // In the worst case, an application that enables WAL might not actually
             // get it, although it can still use connection pooling.
-            Log.w(
-                TAG,
+            logger.w {
                 "Could not change the database journal mode of '" +
                         configuration.label + "' from '" + value + "' to '" + newValue +
                         "' because the database is locked.  This usually means that " +
                         "there are other open connections to the database which prevents " +
                         "the database from enabling or disabling write-ahead logging mode.  " +
-                        "Proceeding without changing the journal mode.",
-            )
+                        "Proceeding without changing the journal mode."
+            }
         }
     }
 
@@ -647,7 +641,7 @@ internal class SQLiteConnection<
     fun executeForCursorWindow(
         sql: String,
         bindArgs: List<Any?> = listOf(),
-        window: CursorWindow<WP>,
+        window: CursorWindow,
         startPos: Int = 0,
         requiredPos: Int = 0,
         countAllRows: Boolean = false,
@@ -669,7 +663,7 @@ internal class SQLiteConnection<
                         val result = bindings.nativeExecuteForCursorWindow(
                             connectionPtr = connectionPtr,
                             statementPtr = statement.statementPtr,
-                            winPtr = window.windowPtr!!,
+                            window = window.windowPtr!!,
                             startPos = startPos,
                             requiredPos = requiredPos,
                             countAllRows = countAllRows,
@@ -756,14 +750,10 @@ internal class SQLiteConnection<
                 // When remove() is called, the cache will invoke its entryRemoved() callback,
                 // which will in turn call finalizePreparedStatement() to finalize and
                 // recycle the statement.
-                if (DEBUG) {
-                    Log.d(
-                        TAG,
-                        "Could not reset prepared statement due to an exception.  " +
-                                "Removing it from the cache.  SQL: " +
-                                trimSqlForDisplay(statement.sql),
-                        ex,
-                    )
+                logger.d(ex) {
+                    "Could not reset prepared statement due to an exception.  " +
+                            "Removing it from the cache.  SQL: " +
+                            trimSqlForDisplay(statement.sql)
                 }
 
                 preparedStatementCache.remove(statement.sql)
@@ -938,7 +928,7 @@ internal class SQLiteConnection<
         // Get information about attached databases.
         // We ignore the first row in the database list because it corresponds to
         // the main database which we have already described.
-        val window = CursorWindow("collectDbStats", windowBindings)
+        val window = CursorWindow("collectDbStats", logger)
         try {
             executeForCursorWindow(
                 sql = "PRAGMA database_list;",
@@ -1068,7 +1058,9 @@ internal class SQLiteConnection<
 
     private class OperationLog(
         private val debugConfig: SQLiteDebug,
+        rootRogger: Logger,
     ) {
+        private val logger = rootRogger.withTag(OperationLog::class.qualifiedName!!)
         private val operations: Array<Operation?> = arrayOfNulls(MAX_RECENT_OPERATIONS)
         private var index: Int = 0
         private var generation: Int = 0
@@ -1138,7 +1130,7 @@ internal class SQLiteConnection<
             if (detail != null) {
                 msg.append(", ").append(detail)
             }
-            Log.d(TAG, msg.toString())
+            logger.d(message = msg::toString)
         }
 
         private fun newOperationCookieLocked(index: Int): Int {
@@ -1261,27 +1253,26 @@ internal class SQLiteConnection<
 
     companion object {
         private const val TAG = "SQLiteConnection"
-        private const val DEBUG = false
         private val TRIM_SQL_PATTERN: Pattern = Pattern.compile("[\\s]*\\n+[\\s]*")
 
         // Called by SQLiteConnectionPool only.
-        fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr, WP : Sqlite3WindowPtr> open(
-            pool: SQLiteConnectionPool<CP, SP, WP>,
+        fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> open(
+            pool: SQLiteConnectionPool<CP, SP>,
             configuration: SqliteDatabaseConfiguration,
-            bindings: SqlOpenHelperNativeBindings<CP, SP, WP>,
-            windowBindings: SqlOpenHelperWindowBindings<WP>,
+            bindings: SqlOpenHelperNativeBindings<CP, SP>,
             connectionId: Int,
             primaryConnection: Boolean,
             debugConfig: SQLiteDebug,
-        ): SQLiteConnection<CP, SP, WP> {
+            rootLogger: Logger,
+        ): SQLiteConnection<CP, SP> {
             val connection = SQLiteConnection(
                 pool = pool,
                 configuration = configuration,
                 bindings = bindings,
-                windowBindings = windowBindings,
                 connectionId = connectionId,
                 isPrimaryConnection = primaryConnection,
                 debugConfig = debugConfig,
+                rootLogger = rootLogger,
             )
             try {
                 connection.open()

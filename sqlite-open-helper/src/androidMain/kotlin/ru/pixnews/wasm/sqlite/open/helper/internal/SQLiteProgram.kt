@@ -18,7 +18,6 @@ import androidx.sqlite.db.SupportSQLiteProgram
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_ABORT
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_BEGIN
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_COMMIT
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3WindowPtr
 
 /**
  * A base class for compiled SQLite programs.
@@ -27,8 +26,8 @@ import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3WindowPtr
  * This class is not thread-safe.
  *
  */
-internal abstract class SQLiteProgram<WP : Sqlite3WindowPtr> internal constructor(
-    val database: SQLiteDatabase<*, *, WP>,
+internal abstract class SQLiteProgram internal constructor(
+    val database: SQLiteDatabase<*, *>,
     sql: String,
     bindArgs: List<Any?>,
     cancellationSignalForPrepare: CancellationSignal?,
@@ -40,7 +39,7 @@ internal abstract class SQLiteProgram<WP : Sqlite3WindowPtr> internal constructo
     private val _bindArgs: MutableList<Any?>
     val bindArgs: List<Any?> get() = _bindArgs
 
-    protected val session: SQLiteSession<*, *, WP>
+    protected val session: SQLiteSession<*, *>
         get() = database.threadSession
 
     protected val connectionFlags: Int

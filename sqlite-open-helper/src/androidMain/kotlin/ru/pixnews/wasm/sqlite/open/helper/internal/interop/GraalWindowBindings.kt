@@ -18,37 +18,37 @@ import ru.pixnews.wasm.sqlite.open.helper.internal.interop.NativeCursorWindow.Fi
 
 internal class GraalWindowBindings(
     val rootLogger: Logger,
-) : SqlOpenHelperWindowBindings<GraalSqlite3WindowPtr> {
-    override fun nativeCreate(name: String, cursorWindowSize: Int): GraalSqlite3WindowPtr {
-        return GraalSqlite3WindowPtr(NativeCursorWindow(name, cursorWindowSize, rootLogger = rootLogger))
+) {
+    fun nativeCreate(name: String, cursorWindowSize: Int): NativeCursorWindow {
+        return NativeCursorWindow(name, cursorWindowSize, rootLogger = rootLogger)
     }
 
-    override fun nativeGetName(windowPtr: GraalSqlite3WindowPtr): String {
-        return windowPtr.ptr.name
+    fun nativeGetName(windowPtr: NativeCursorWindow): String {
+        return windowPtr.name
     }
 
-    override fun nativePutNull(windowPtr: GraalSqlite3WindowPtr, row: Int, column: Int): Boolean {
-        return windowPtr.ptr.putNull(row, column) == 0
+    fun nativePutNull(windowPtr: NativeCursorWindow, row: Int, column: Int): Boolean {
+        return windowPtr.putNull(row, column) == 0
     }
 
-    override fun nativePutDouble(windowPtr: GraalSqlite3WindowPtr, value: Double, row: Int, column: Int): Boolean {
-        return windowPtr.ptr.putDouble(row, column, value) == 0
+    fun nativePutDouble(windowPtr: NativeCursorWindow, value: Double, row: Int, column: Int): Boolean {
+        return windowPtr.putDouble(row, column, value) == 0
     }
 
-    override fun nativePutLong(windowPtr: GraalSqlite3WindowPtr, value: Long, row: Int, column: Int): Boolean {
-        return windowPtr.ptr.putLong(row, column, value) == 0
+    fun nativePutLong(windowPtr: NativeCursorWindow, value: Long, row: Int, column: Int): Boolean {
+        return windowPtr.putLong(row, column, value) == 0
     }
 
-    override fun nativePutString(windowPtr: GraalSqlite3WindowPtr, value: String, row: Int, column: Int): Boolean {
-        return windowPtr.ptr.putString(row, column, value) == 0
+    fun nativePutString(windowPtr: NativeCursorWindow, value: String, row: Int, column: Int): Boolean {
+        return windowPtr.putString(row, column, value) == 0
     }
 
-    override fun nativePutBlob(windowPtr: GraalSqlite3WindowPtr, value: ByteArray, row: Int, column: Int): Boolean {
-        return windowPtr.ptr.putBlob(row, column, value) == 0
+    fun nativePutBlob(windowPtr: NativeCursorWindow, value: ByteArray, row: Int, column: Int): Boolean {
+        return windowPtr.putBlob(row, column, value) == 0
     }
 
-    override fun nativeGetDouble(windowPtr: GraalSqlite3WindowPtr, row: Int, column: Int): Double {
-        val slot: FieldSlot = windowPtr.ptr.getFieldSlot(row, column) ?: error("Couldn't read row $row column $column")
+    fun nativeGetDouble(windowPtr: NativeCursorWindow, row: Int, column: Int): Double {
+        val slot: FieldSlot = windowPtr.getFieldSlot(row, column) ?: error("Couldn't read row $row column $column")
         return slot.field.let { field ->
             when (field) {
                 is BlobField -> throw SQLiteException("Unable to convert BLOB to double")
@@ -60,8 +60,8 @@ internal class GraalWindowBindings(
         }
     }
 
-    override fun nativeGetLong(windowPtr: GraalSqlite3WindowPtr, row: Int, column: Int): Long {
-        val slot: FieldSlot = windowPtr.ptr.getFieldSlot(row, column) ?: error("Couldn't read row $row column $column")
+    fun nativeGetLong(windowPtr: NativeCursorWindow, row: Int, column: Int): Long {
+        val slot: FieldSlot = windowPtr.getFieldSlot(row, column) ?: error("Couldn't read row $row column $column")
         return slot.field.let { field ->
             when (field) {
                 is BlobField -> throw SQLiteException("Unable to convert BLOB to double")
@@ -73,8 +73,8 @@ internal class GraalWindowBindings(
         }
     }
 
-    override fun nativeGetString(windowPtr: GraalSqlite3WindowPtr, row: Int, column: Int): String? {
-        val slot: FieldSlot = windowPtr.ptr.getFieldSlot(row, column) ?: error("Couldn't read row $row column $column")
+    fun nativeGetString(windowPtr: NativeCursorWindow, row: Int, column: Int): String? {
+        val slot: FieldSlot = windowPtr.getFieldSlot(row, column) ?: error("Couldn't read row $row column $column")
         return slot.field.let { field ->
             when (field) {
                 is BlobField -> throw SQLiteException("Unable to convert BLOB to double")
@@ -86,8 +86,8 @@ internal class GraalWindowBindings(
         }
     }
 
-    override fun nativeGetBlob(windowPtr: GraalSqlite3WindowPtr, row: Int, column: Int): ByteArray? {
-        val slot: FieldSlot = windowPtr.ptr.getFieldSlot(row, column) ?: error("Couldn't read row $row column $column")
+    fun nativeGetBlob(windowPtr: NativeCursorWindow, row: Int, column: Int): ByteArray? {
+        val slot: FieldSlot = windowPtr.getFieldSlot(row, column) ?: error("Couldn't read row $row column $column")
         return slot.field.let { field ->
             when (field) {
                 is BlobField -> field.value
@@ -99,32 +99,32 @@ internal class GraalWindowBindings(
         }
     }
 
-    override fun nativeGetType(windowPtr: GraalSqlite3WindowPtr, row: Int, column: Int): CursorFieldType {
-        val slot: FieldSlot = windowPtr.ptr.getFieldSlot(row, column) ?: error("Couldn't read row $row column $column")
+    fun nativeGetType(windowPtr: NativeCursorWindow, row: Int, column: Int): CursorFieldType {
+        val slot: FieldSlot = windowPtr.getFieldSlot(row, column) ?: error("Couldn't read row $row column $column")
         return slot.type
     }
 
-    override fun nativeFreeLastRow(windowPtr: GraalSqlite3WindowPtr) {
-        windowPtr.ptr.freeLastRow()
+    fun nativeFreeLastRow(windowPtr: NativeCursorWindow) {
+        windowPtr.freeLastRow()
     }
 
-    override fun nativeAllocRow(windowPtr: GraalSqlite3WindowPtr): Boolean {
-        return windowPtr.ptr.allocRow() == 0
+    fun nativeAllocRow(windowPtr: NativeCursorWindow): Boolean {
+        return windowPtr.allocRow() == 0
     }
 
-    override fun nativeSetNumColumns(windowPtr: GraalSqlite3WindowPtr, columnNum: Int): Boolean {
-        return windowPtr.ptr.setNumColumns(columnNum) == 0
+    fun nativeSetNumColumns(windowPtr: NativeCursorWindow, columnNum: Int): Boolean {
+        return windowPtr.setNumColumns(columnNum) == 0
     }
 
-    override fun nativeGetNumRows(windowPtr: GraalSqlite3WindowPtr): Int {
-        return windowPtr.ptr.numRows
+    fun nativeGetNumRows(windowPtr: NativeCursorWindow): Int {
+        return windowPtr.numRows
     }
 
-    override fun nativeClear(windowPtr: GraalSqlite3WindowPtr) {
-        windowPtr.ptr.clear()
+    fun nativeClear(windowPtr: NativeCursorWindow) {
+        windowPtr.clear()
     }
 
-    override fun nativeDispose(windowPtr: GraalSqlite3WindowPtr) {
-        windowPtr.ptr.clear()
+    fun nativeDispose(windowPtr: NativeCursorWindow) {
+        windowPtr.clear()
     }
 }

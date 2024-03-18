@@ -23,7 +23,7 @@ import kotlin.contracts.contract
  *
  * This class implements a primitive reference counting scheme for database objects.
  */
-internal abstract class SQLiteClosable internal constructor()  {
+internal abstract class SQLiteClosable internal constructor() {
     private var referenceCount = 1
 
     /**
