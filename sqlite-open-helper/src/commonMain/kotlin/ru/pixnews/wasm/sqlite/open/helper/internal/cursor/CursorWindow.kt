@@ -4,38 +4,30 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.base
-
-/*
- * Original Copyrights:
- * Copyright (C) 2017-2024 requery.io
- * Copyright (C) 2005-2012 The Android Open Source Project
- * Licensed under the Apache License, Version 2.0 (the "License")
- */
+package ru.pixnews.wasm.sqlite.open.helper.internal.cursor
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
+import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteException
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteClosable
-import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.CursorWindowAllocationException
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.GraalWindowBindings
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.NativeCursorWindow
 
 /**
+ *
  * A buffer containing multiple cursor rows.
+ *
+ * The cursor initially has no rows or columns.  Call [.setNumColumns] to
+ * set the number of columns before adding any rows to the cursor.
+ *
+ * @param name The name of the cursor window, or null if none.
+ * @param windowSizeBytes Maximym size of cursor window in bytes.
  */
 internal class CursorWindow(
     name: String?,
     rootLogger: Logger,
     val windowSizeBytes: Int = WINDOW_SIZE_KB * @Suppress("MagicNumber") 1024,
 ) : SQLiteClosable() {
-    private val bindings: GraalWindowBindings = GraalWindowBindings(rootLogger)
-
     /**
-     * The native CursorWindow object pointer.  (FOR INTERNAL USE ONLY)
-     */
-    var windowPtr: NativeCursorWindow?
-
-    /**
-     * Sets the start position of this cursor window.
+     *
+     *  Sets the start position of this cursor window.
      *
      *
      * The start position is the zero-based index of the first row that this window contains
@@ -50,56 +42,15 @@ internal class CursorWindow(
      * Gets the name of this cursor window, never null.
      */
     val name: String = if (name?.isNotEmpty() == true) name else "<unnamed>"
-
-    val numRows: Int
-
-        /**
-         * Gets the number of rows in this window.
-         *
-         * @return The number of rows in this cursor window.
-         */
-        get() = bindings.nativeGetNumRows(windowPtr!!)
+    var window: NativeCursorWindow = NativeCursorWindow(this.name, windowSizeBytes, rootLogger = rootLogger)
 
     /**
-     * Creates a new empty cursor window and gives it a name.
+     * Gets the number of rows in this window.
      *
-     *
-     * The cursor initially has no rows or columns.  Call [.setNumColumns] to
-     * set the number of columns before adding any rows to the cursor.
-     *
-     *
-     * @param name The name of the cursor window, or null if none.
-     * @param windowSizeBytes Size of cursor window in bytes.
-     *
-     * Note: Memory is dynamically allocated as data rows are added to
-     * the window. Depending on the amount of data stored, the actual
-     * amount of memory allocated can be lower than specified size,
-     * but cannot exceed it. Value is a non-negative number of bytes.
+     * @return The number of rows in this cursor window.
      */
-
-/**
-     * Creates a new empty cursor with default cursor size (currently 2MB)
-     */
-    init {
-        windowPtr = bindings.nativeCreate(
-            this.name,
-            windowSizeBytes,
-        ) ?: throw CursorWindowAllocationException(
-            @Suppress("MagicNumber")
-            "Cursor window allocation of ${windowSizeBytes / 1024} kb failed. ",
-        )
-    }
-
-    protected fun finalize() {
-        dispose()
-    }
-
-    private fun dispose() {
-        windowPtr?.let {
-            bindings.nativeDispose(it)
-            windowPtr = null
-        }
-    }
+    val numRows: Int
+        get() = window.numRows
 
     /**
      * Clears out the existing contents of the window, making it safe to reuse
@@ -112,7 +63,7 @@ internal class CursorWindow(
      */
     fun clear() {
         startPosition = 0
-        bindings.nativeClear(windowPtr!!)
+        window.clear()
     }
 
     /**
@@ -129,7 +80,7 @@ internal class CursorWindow(
      */
     @Suppress("FUNCTION_BOOLEAN_PREFIX")
     fun setNumColumns(columnNum: Int): Boolean {
-        return bindings.nativeSetNumColumns(windowPtr!!, columnNum)
+        return window.setNumColumns(columnNum) == 0
     }
 
     /**
@@ -139,14 +90,14 @@ internal class CursorWindow(
      */
     @Suppress("FUNCTION_BOOLEAN_PREFIX")
     fun allocRow(): Boolean {
-        return bindings.nativeAllocRow(windowPtr!!)
+        return window.allocRow() == 0
     }
 
     /**
      * Frees the last row in this cursor window.
      */
     fun freeLastRow() {
-        bindings.nativeFreeLastRow(windowPtr!!)
+        window.freeLastRow()
     }
 
     /**
@@ -168,7 +119,10 @@ internal class CursorWindow(
      * @return The field type.
      */
     fun getType(row: Int, column: Int): NativeCursorWindow.CursorFieldType {
-        return bindings.nativeGetType(windowPtr!!, row - startPosition, column)
+        val slot: NativeCursorWindow.FieldSlot = window.getFieldSlot(row - startPosition, column) ?: error(
+            "Couldn't read row $row column $column",
+        )
+        return slot.type
     }
 
     /**
@@ -177,24 +131,38 @@ internal class CursorWindow(
      *
      * The result is determined as follows:
      *
-     *  * If the field is of type [Cursor.FIELD_TYPE_NULL], then the result
-     * is `null`.
-     *  * If the field is of type [Cursor.FIELD_TYPE_BLOB], then the result
-     * is the blob value.
-     *  * If the field is of type [Cursor.FIELD_TYPE_STRING], then the result
-     * is the array of bytes that make up the internal representation of the
-     * string value.
-     *  * If the field is of type [Cursor.FIELD_TYPE_INTEGER] or
-     * [Cursor.FIELD_TYPE_FLOAT], then a [SQLiteException] is thrown.
-     *
-     *
+     *  * If the field is of type [Cursor.FIELD_TYPE_NULL], then the result is `null`.
+     *  * If the field is of type [Cursor.FIELD_TYPE_BLOB], then the resultis the blob value.
+     *  * If the field is of type [Cursor.FIELD_TYPE_STRING], then the result is the array of bytes that make up the
+     *  internal representation of the string value.
+     *  * If the field is of type [Cursor.FIELD_TYPE_INTEGER] or [Cursor.FIELD_TYPE_FLOAT], then a
+     *  [AndroidSqliteException] is thrown.
      *
      * @param row The zero-based row index.
      * @param column The zero-based column index.
      * @return The value of the field as a byte array.
+     * @throws AndroidSqliteException
      */
     fun getBlob(row: Int, column: Int): ByteArray? {
-        return bindings.nativeGetBlob(windowPtr!!, row - startPosition, column)
+        val slot: NativeCursorWindow.FieldSlot = window.getFieldSlot(row - startPosition, column) ?: error(
+            "Couldn't read row $row column $column",
+        )
+
+        return slot.field.let { field ->
+            when (field) {
+                is NativeCursorWindow.Field.BlobField -> field.value
+                is NativeCursorWindow.Field.FloatField -> throw AndroidSqliteException(
+                    "FLOAT data in nativeGetBlob",
+                )
+
+                is NativeCursorWindow.Field.IntegerField -> throw AndroidSqliteException(
+                    "INTEGER data in nativeGetBlob",
+                )
+
+                NativeCursorWindow.Field.Null -> null
+                is NativeCursorWindow.Field.StringField -> field.value.encodeToByteArray()
+            }
+        }
     }
 
     /**
@@ -223,9 +191,25 @@ internal class CursorWindow(
      * @param row The zero-based row index.
      * @param column The zero-based column index.
      * @return The value of the field as a string.
+     * @throws AndroidSqliteException
      */
     fun getString(row: Int, column: Int): String? {
-        return bindings.nativeGetString(windowPtr!!, row - startPosition, column)
+        val slot: NativeCursorWindow.FieldSlot = window.getFieldSlot(row - startPosition, column) ?: error(
+            "Couldn't read row $row column $column",
+        )
+
+        return slot.field.let { field ->
+            when (field) {
+                is NativeCursorWindow.Field.BlobField -> throw AndroidSqliteException(
+                    "Unable to convert BLOB to double",
+                )
+
+                is NativeCursorWindow.Field.FloatField -> field.value.toString()
+                is NativeCursorWindow.Field.IntegerField -> field.value.toString()
+                NativeCursorWindow.Field.Null -> null
+                is NativeCursorWindow.Field.StringField -> field.value
+            }
+        }
     }
 
     /**
@@ -243,42 +227,70 @@ internal class CursorWindow(
      *  * If the field is of type [Cursor.FIELD_TYPE_FLOAT], then the result
      * is the floating-point value converted to a `long`.
      *  * If the field is of type [Cursor.FIELD_TYPE_BLOB], then a
-     * [SQLiteException] is thrown.
+     * [AndroidSqliteException] is thrown.
      *
      * @param row The zero-based row index.
      * @param column The zero-based column index.
      * @return The value of the field as a `long`.
+     * @throws AndroidSqliteException
      */
     fun getLong(row: Int, column: Int): Long {
-        return bindings.nativeGetLong(windowPtr!!, row - startPosition, column)
+        val slot: NativeCursorWindow.FieldSlot = window.getFieldSlot(row - startPosition, column) ?: error(
+            "Couldn't read row $row column $column",
+        )
+
+        return slot.field.let { field ->
+            when (field) {
+                is NativeCursorWindow.Field.BlobField -> throw AndroidSqliteException(
+                    "Unable to convert BLOB to double",
+                )
+
+                is NativeCursorWindow.Field.FloatField -> field.value.toLong()
+                is NativeCursorWindow.Field.IntegerField -> field.value
+                NativeCursorWindow.Field.Null -> 0L
+                is NativeCursorWindow.Field.StringField -> field.value.toLongOrNull() ?: 0L
+            }
+        }
     }
 
     /**
      * Gets the value of the field at the specified row and column index as a
      * `double`.
      *
-     *
      * The result is determined as follows:
      *
-     *  * If the field is of type [Cursor.FIELD_TYPE_NULL], then the result
+     *  * If the field is of type Cursor.FIELD_TYPE_NULL, then the result
      * is `0.0`.
-     *  * If the field is of type [Cursor.FIELD_TYPE_STRING], then the result
+     *  * If the field is of type Cursor.FIELD_TYPE_STRING, then the result
      * is the value obtained by parsing the string value with `strtod`.
-     *  * If the field is of type [Cursor.FIELD_TYPE_INTEGER], then the result
+     *  * If the field is of type Cursor.FIELD_TYPE_INTEGER, then the result
      * is the integer value converted to a `double`.
-     *  * If the field is of type [Cursor.FIELD_TYPE_FLOAT], then the result
+     *  * If the field is of type Cursor.FIELD_TYPE_FLOAT, then the result
      * is the `double` value.
-     *  * If the field is of type [Cursor.FIELD_TYPE_BLOB], then a
-     * [SQLiteException] is thrown.
-     *
-     *
+     *  * If the field is of type Cursor.FIELD_TYPE_BLOB, then a
+     * [AndroidSqliteException] is thrown.
      *
      * @param row The zero-based row index.
      * @param column The zero-based column index.
      * @return The value of the field as a `double`.
+     * @throws AndroidSqliteException
      */
     fun getDouble(row: Int, column: Int): Double {
-        return bindings.nativeGetDouble(windowPtr!!, row - startPosition, column)
+        val slot: NativeCursorWindow.FieldSlot = window.getFieldSlot(row - startPosition, column) ?: error(
+            "Couldn't read row $row column $column",
+        )
+        return slot.field.let { field ->
+            when (field) {
+                is NativeCursorWindow.Field.BlobField -> throw AndroidSqliteException(
+                    "Unable to convert BLOB to double",
+                )
+
+                is NativeCursorWindow.Field.FloatField -> field.value
+                is NativeCursorWindow.Field.IntegerField -> field.value.toDouble()
+                NativeCursorWindow.Field.Null -> 0.0
+                is NativeCursorWindow.Field.StringField -> field.value.toDoubleOrNull() ?: 0.0
+            }
+        }
     }
 
     /**
@@ -342,7 +354,7 @@ internal class CursorWindow(
      */
     @Suppress("FUNCTION_BOOLEAN_PREFIX")
     fun putBlob(value: ByteArray, row: Int, column: Int): Boolean {
-        return bindings.nativePutBlob(windowPtr!!, value, row - startPosition, column)
+        return window.putBlob(row - startPosition, column, value) == 0
     }
 
     /**
@@ -355,7 +367,7 @@ internal class CursorWindow(
      */
     @Suppress("FUNCTION_BOOLEAN_PREFIX")
     fun putString(value: String, row: Int, column: Int): Boolean {
-        return bindings.nativePutString(windowPtr!!, value, row - startPosition, column)
+        return window.putString(row - startPosition, column, value) == 0
     }
 
     /**
@@ -368,7 +380,7 @@ internal class CursorWindow(
      */
     @Suppress("FUNCTION_BOOLEAN_PREFIX")
     fun putLong(value: Long, row: Int, column: Int): Boolean {
-        return bindings.nativePutLong(windowPtr!!, value, row - startPosition, column)
+        return window.putLong(row - startPosition, column, value) == 0
     }
 
     /**
@@ -382,7 +394,7 @@ internal class CursorWindow(
      */
     @Suppress("FUNCTION_BOOLEAN_PREFIX")
     fun putDouble(value: Double, row: Int, column: Int): Boolean {
-        return bindings.nativePutDouble(windowPtr!!, value, row - startPosition, column)
+        return window.putDouble(row - startPosition, column, value) == 0
     }
 
     /**
@@ -394,14 +406,14 @@ internal class CursorWindow(
      */
     @Suppress("FUNCTION_BOOLEAN_PREFIX")
     fun putNull(row: Int, column: Int): Boolean {
-        return bindings.nativePutNull(windowPtr!!, row - startPosition, column)
+        return window.putNull(row - startPosition, column) == 0
     }
 
     override fun onAllReferencesReleased() {
-        dispose()
+        window.clear()
     }
 
-    override fun toString(): String = "$name {$windowPtr}"
+    override fun toString(): String = "$name {$window}"
 
     companion object {
         private const val WINDOW_SIZE_KB = 2048

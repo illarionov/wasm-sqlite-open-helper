@@ -24,12 +24,12 @@ import androidx.core.os.CancellationSignal
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.ENABLE_WRITE_AHEAD_LOGGING
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.OPEN_READONLY
 import ru.pixnews.wasm.sqlite.open.helper.SqliteDatabaseConfiguration
-import ru.pixnews.wasm.sqlite.open.helper.base.CursorWindow
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
 import ru.pixnews.wasm.sqlite.open.helper.common.api.xor
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_SELECT
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_UPDATE
+import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.CursorWindow
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.SqlOpenHelperNativeBindings
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3ConnectionPtr
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
@@ -663,7 +663,7 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
                         val result = bindings.nativeExecuteForCursorWindow(
                             connectionPtr = connectionPtr,
                             statementPtr = statement.statementPtr,
-                            window = window.windowPtr!!,
+                            window = window.window,
                             startPos = startPos,
                             requiredPos = requiredPos,
                             countAllRows = countAllRows,

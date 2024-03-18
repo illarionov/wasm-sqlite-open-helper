@@ -14,8 +14,8 @@ package ru.pixnews.wasm.sqlite.open.helper.internal
  */
 
 import ru.pixnews.wasm.sqlite.open.helper.base.AbstractWindowedCursor
-import ru.pixnews.wasm.sqlite.open.helper.base.CursorWindow
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
+import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.CursorWindow
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3ConnectionPtr
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
 import kotlin.LazyThreadSafetyMode.NONE

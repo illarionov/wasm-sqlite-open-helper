@@ -15,7 +15,7 @@ package ru.pixnews.wasm.sqlite.open.helper.internal
 
 import android.database.sqlite.SQLiteTransactionListener
 import androidx.core.os.CancellationSignal
-import ru.pixnews.wasm.sqlite.open.helper.base.CursorWindow
+import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.CursorWindow
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3ConnectionPtr
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
 

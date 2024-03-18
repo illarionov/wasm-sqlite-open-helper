@@ -33,7 +33,6 @@ import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.ENABLE_WRITE_AHEAD
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.OPEN_CREATE
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.OPEN_READONLY
 import ru.pixnews.wasm.sqlite.open.helper.SqliteDatabaseConfiguration
-import ru.pixnews.wasm.sqlite.open.helper.base.CursorWindow
 import ru.pixnews.wasm.sqlite.open.helper.base.DatabaseErrorHandler
 import ru.pixnews.wasm.sqlite.open.helper.base.DefaultDatabaseErrorHandler
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale
@@ -44,6 +43,7 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.or
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.Companion.CONNECTION_FLAG_PRIMARY_CONNECTION_AFFINITY
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.Companion.CONNECTION_FLAG_READ_ONLY
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteProgram.Companion.bindAllArgsAsStrings
+import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.CursorWindow
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.SqlOpenHelperNativeBindings
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3ConnectionPtr
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr

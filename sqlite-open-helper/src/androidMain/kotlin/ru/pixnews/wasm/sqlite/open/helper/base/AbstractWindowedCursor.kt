@@ -15,7 +15,8 @@ package ru.pixnews.wasm.sqlite.open.helper.base
 
 import android.database.CharArrayBuffer
 import android.database.StaleDataException
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.NativeCursorWindow
+import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.CursorWindow
+import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow
 
 /**
  * A base class for Cursors that store their data in [android.database.CursorWindow]s.
