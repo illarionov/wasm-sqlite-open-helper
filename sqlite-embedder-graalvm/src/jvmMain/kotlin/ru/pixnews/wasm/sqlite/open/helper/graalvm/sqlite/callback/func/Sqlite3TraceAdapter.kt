@@ -33,9 +33,11 @@ internal class Sqlite3TraceAdapter(
     language: WasmLanguage,
     instance: WasmInstance,
     private val callbackStore: Sqlite3CallbackStore,
+    logger: Logger,
     functionName: String,
-    private val logger: Logger = Logger.withTag(Sqlite3TraceAdapter::class.qualifiedName!!),
 ) : BaseWasmNode(language, instance, functionName) {
+    private val logger: Logger = logger.withTag(Sqlite3TraceAdapter::class.qualifiedName!!)
+
     @Suppress("MagicNumber")
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
         val args = frame.arguments

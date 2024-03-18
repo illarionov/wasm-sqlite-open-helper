@@ -23,8 +23,9 @@ internal class SyscallFtruncate64(
     instance: WasmInstance,
     private val host: SqliteEmbedderHost,
     functionName: String = "__syscall_ftruncate64",
-    private val logger: Logger = Logger.withTag(SyscallFtruncate64::class.qualifiedName!!),
 ) : BaseWasmNode(language, instance, functionName) {
+    private val logger: Logger = host.rootLogger.withTag(SyscallFtruncate64::class.qualifiedName!!)
+
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
         val args = frame.arguments
         return syscallFtruncate64(

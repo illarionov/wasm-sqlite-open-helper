@@ -10,6 +10,7 @@ import org.graalvm.polyglot.Context
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.functionTable
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.setupWasmModuleFunctions
@@ -39,6 +40,7 @@ internal class SqliteCallbacksModuleBuilder(
     private val host: SqliteEmbedderHost,
     private val callbackStore: Sqlite3CallbackStore,
 ) {
+    private val logger: Logger = host.rootLogger.withTag(SqliteCallbacksModuleBuilder::class.qualifiedName!!)
     private val sqliteCallbackHostFunctions: List<HostFunction> = buildList {
         fn(
             name = SQLITE3_EXEC_CB_FUNCTION_NAME,
@@ -49,6 +51,7 @@ internal class SqliteCallbacksModuleBuilder(
                     language = language,
                     instance = instance,
                     callbackStore = callbackStore,
+                    logger = logger,
                     functionName = funcName,
                 )
             },
@@ -62,6 +65,7 @@ internal class SqliteCallbacksModuleBuilder(
                     language = language,
                     instance = instance,
                     callbackStore = callbackStore,
+                    logger = logger,
                     functionName = funcName,
                 )
             },
@@ -75,6 +79,7 @@ internal class SqliteCallbacksModuleBuilder(
                     language = language,
                     instance = instance,
                     callbackStore = callbackStore,
+                    logger = logger,
                     functionName = funName,
                 )
             },
@@ -88,6 +93,7 @@ internal class SqliteCallbacksModuleBuilder(
                     language = language,
                     instance = instance,
                     callbackStore = callbackStore,
+                    logger = logger,
                     functionName = funcName,
                 )
             },
@@ -100,6 +106,7 @@ internal class SqliteCallbacksModuleBuilder(
                     language = language,
                     instance = instance,
                     callbackStore = callbackStore,
+                    logger = logger,
                     functionName = funcName,
                 )
             },

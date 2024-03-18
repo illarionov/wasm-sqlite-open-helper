@@ -82,9 +82,9 @@ internal value class GraalSqlite3WindowPtr(
 
 internal class GraalNativeBindings(
     private val sqlite3Api: SqliteCapi,
-    logger: Logger = Logger,
+    rootLogger: Logger,
 ) : SqlOpenHelperNativeBindings<GraalSqlite3ConnectionPtr, GraalSqlite3StatementPtr, GraalSqlite3WindowPtr> {
-    private val logger = logger.withTag("GraalNativeBindings")
+    private val logger = rootLogger.withTag("GraalNativeBindings")
     private val localizedComparator = LocalizedComparator()
     private val connections = Sqlite3ConnectionRegistry()
 

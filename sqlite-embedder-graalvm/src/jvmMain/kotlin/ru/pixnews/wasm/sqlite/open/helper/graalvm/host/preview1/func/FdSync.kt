@@ -23,8 +23,9 @@ internal class FdSync(
     instance: WasmInstance,
     private val host: SqliteEmbedderHost,
     functionName: String = "fd_sync",
-    private val logger: Logger = Logger.withTag(FdSync::class.qualifiedName!!),
 ) : BaseWasmNode(language, instance, functionName) {
+    private val logger: Logger = host.rootLogger.withTag(FdSync::class.qualifiedName!!)
+
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
         val args = frame.arguments
         return fdSync(Fd(args[0] as Int))

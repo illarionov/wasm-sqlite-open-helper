@@ -29,8 +29,9 @@ internal class SyscallOpenat(
     instance: WasmInstance,
     private val host: SqliteEmbedderHost,
     functionName: String = "__syscall_openat",
-    private val logger: Logger = Logger.withTag(SyscallOpenat::class.qualifiedName!!),
 ) : BaseWasmNode(language, instance, functionName) {
+    private val logger: Logger = host.rootLogger.withTag(SyscallOpenat::class.qualifiedName!!)
+
     @Suppress("MagicNumber")
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
         val args = frame.arguments
@@ -49,7 +50,7 @@ internal class SyscallOpenat(
         return fdOrErrno
     }
 
-    // XXX: copy of chikory version
+    // XXX: copy of chicory version
     @TruffleBoundary
     private fun openAt(
         dirfd: Int,

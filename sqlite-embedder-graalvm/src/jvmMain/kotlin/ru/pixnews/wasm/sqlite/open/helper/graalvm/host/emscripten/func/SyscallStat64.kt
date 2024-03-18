@@ -32,6 +32,7 @@ internal fun syscallLstat64(
     instance = instance,
     functionName = functionName,
     followSymlinks = false,
+    rootLogger = host.rootLogger,
     filesystem = host.fileSystem,
 )
 
@@ -45,21 +46,23 @@ internal fun syscallStat64(
     instance = instance,
     functionName = functionName,
     followSymlinks = true,
+    rootLogger = host.rootLogger,
     filesystem = host.fileSystem,
 )
 
 private class SyscallStat64(
     language: WasmLanguage,
     instance: WasmInstance,
+    rootLogger: Logger,
     functionName: String,
     private val followSymlinks: Boolean = false,
     private val filesystem: FileSystem,
-    private val logger: Logger = Logger.withTag(SyscallStat64::class.qualifiedName!!),
 ) : BaseWasmNode(
     language = language,
     instance = instance,
     functionName = functionName,
 ) {
+    private val logger: Logger = rootLogger.withTag(SyscallStat64::class.qualifiedName!!)
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
         val args = frame.arguments
         return stat64(

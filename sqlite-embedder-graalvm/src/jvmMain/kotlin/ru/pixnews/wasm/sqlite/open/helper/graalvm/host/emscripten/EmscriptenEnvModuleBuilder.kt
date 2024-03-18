@@ -49,7 +49,7 @@ internal class EmscriptenEnvModuleBuilder(
         fnVoid(
             name = "__assert_fail",
             paramTypes = List(4) { I32 },
-            nodeFactory = ::AssertFail,
+            nodeFactory = { language, instance, _, functionName -> AssertFail(language, instance, functionName) },
         )
         fn(
             name = "emscripten_date_now",

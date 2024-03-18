@@ -68,10 +68,11 @@ import kotlin.io.path.pathString
 import kotlin.io.path.readAttributes
 
 public class FileSystem(
+    rootLogger: Logger,
     internal val javaFs: java.nio.file.FileSystem = FileSystems.getDefault(),
     private val blockSize: ULong = 512UL,
-    private val logger: Logger = Logger.withTag(FileSystem::class.qualifiedName!!),
 ) {
+    private val logger: Logger = rootLogger.withTag(FileSystem::class.qualifiedName!!)
     private val fileDescriptors: FileDescriptorMap = FileDescriptorMap(this)
 
     public fun getCwd(): String = getCwdPath().pathString

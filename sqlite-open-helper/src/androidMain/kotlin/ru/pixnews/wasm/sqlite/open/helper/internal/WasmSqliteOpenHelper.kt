@@ -14,7 +14,6 @@ package ru.pixnews.wasm.sqlite.open.helper.internal
  */
 
 import android.database.sqlite.SQLiteException
-import android.util.Log
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.CREATE_IF_NECESSARY
@@ -22,6 +21,7 @@ import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.ENABLE_WRITE_AHEAD
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.OPEN_READONLY
 import ru.pixnews.wasm.sqlite.open.helper.SqliteDatabaseConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.base.DatabaseErrorHandler
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.or
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDatabase.CursorFactory
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.SqlOpenHelperNativeBindings
@@ -62,6 +62,7 @@ internal abstract class WasmSqliteOpenHelper<
         >(
     private val pathResolver: DatabasePathResolver,
     private val debugConfig: SQLiteDebug,
+    rootLogger: Logger,
     override val databaseName: String?,
     private val factory: CursorFactory<CP, SP, WP>?,
     private val version: Int,
@@ -69,6 +70,7 @@ internal abstract class WasmSqliteOpenHelper<
     private val bindings: SqlOpenHelperNativeBindings<CP, SP, WP>,
     private val windowBindings: SqlOpenHelperWindowBindings<WP>,
 ) : SupportSQLiteOpenHelper {
+    private val logger: Logger = rootLogger.withTag(TAG)
     private var database: SQLiteDatabase<CP, SP, WP>? = null
     private var isInitializing = false
     private var enableWriteAheadLogging = false
@@ -210,9 +212,10 @@ internal abstract class WasmSqliteOpenHelper<
             } else if (databaseName == null) {
                 db = SQLiteDatabase.create(
                     factory = null,
-                    bindings,
-                    windowBindings,
-                    debugConfig,
+                    bindings = bindings,
+                    windowBindings = windowBindings,
+                    debugConfig = debugConfig,
+                    logger = logger,
                 )
             } else {
                 try {
@@ -226,6 +229,7 @@ internal abstract class WasmSqliteOpenHelper<
                             bindings = bindings,
                             windowBindings = windowBindings,
                             debugConfig = debugConfig,
+                            logger = logger,
                         )
                     } else {
                         var flags = if (enableWriteAheadLogging) ENABLE_WRITE_AHEAD_LOGGING else OpenFlags(0U)
@@ -238,13 +242,14 @@ internal abstract class WasmSqliteOpenHelper<
                             bindings = bindings,
                             windowBindings = windowBindings,
                             debugConfig = debugConfig,
+                            logger = logger,
                         )
                     }
                 } catch (ex: SQLiteException) {
                     if (writable) {
                         throw ex
                     }
-                    Log.e(TAG, "Couldn't open $databaseName for writing (will try read-only):", ex)
+                    logger.e(ex) { "Couldn't open $databaseName for writing (will try read-only):" }
                     val path = pathResolver.getDatabasePath(databaseName.toString()).path
                     val configuration = createConfiguration(path, OPEN_READONLY)
                     db = SQLiteDatabase.openDatabase(
@@ -254,6 +259,7 @@ internal abstract class WasmSqliteOpenHelper<
                         bindings = bindings,
                         windowBindings = windowBindings,
                         debugConfig = debugConfig,
+                        logger = logger,
                     )
                 }
             }
@@ -289,7 +295,7 @@ internal abstract class WasmSqliteOpenHelper<
             onOpen(db)
 
             if (db.isReadOnly) {
-                Log.w(TAG, "Opened $databaseName in read-only mode")
+                logger.w { "Opened $databaseName in read-only mode" }
             }
 
             database = db
@@ -426,6 +432,6 @@ internal abstract class WasmSqliteOpenHelper<
         // read-only semantics to catch applications that call getReadableDatabase when they really
         // wanted getWritableDatabase.
         private const val DEBUG_STRICT_READONLY = false
-        private val TAG: String = WasmSqliteOpenHelper::class.java.simpleName
+        private val TAG: String = WasmSqliteOpenHelper::class.qualifiedName!!
     }
 }

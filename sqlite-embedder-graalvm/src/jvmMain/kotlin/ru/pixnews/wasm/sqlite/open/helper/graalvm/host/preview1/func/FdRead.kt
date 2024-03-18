@@ -46,8 +46,9 @@ private class FdRead(
     private val host: SqliteEmbedderHost,
     private val strategy: ReadWriteStrategy,
     functionName: String = "fd_read",
-    private val logger: Logger = Logger.withTag(FdRead::class.qualifiedName!!),
 ) : BaseWasmNode(language, instance, functionName) {
+    private val logger: Logger = host.rootLogger.withTag(FdRead::class.qualifiedName!!)
+
     @Suppress("MagicNumber")
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
         val args = frame.arguments

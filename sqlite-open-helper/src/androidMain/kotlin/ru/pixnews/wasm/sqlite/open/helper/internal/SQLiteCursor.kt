@@ -35,9 +35,9 @@ internal class SQLiteCursor<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr,
     private val driver: SQLiteCursorDriver<CP, SP, WP>,
     private val query: SQLiteQuery<WP>,
     windowCtor: (name: String?) -> CursorWindow<WP>,
-    logger: Logger = Logger,
+    rootLogger: Logger,
 ) : AbstractWindowedCursor<WP>(windowCtor) {
-    private val logger = logger.withTag(TAG)
+    private val logger = rootLogger.withTag(TAG)
 
     /** The names of the columns in the rows  */
     private val columns: List<String> = query.columnNames

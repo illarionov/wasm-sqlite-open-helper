@@ -8,12 +8,14 @@ package ru.pixnews.wasm.sqlite.open.helper.dsl
 
 import ru.pixnews.wasm.sqlite.open.helper.ConfigurationOptions
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import ru.pixnews.wasm.sqlite.open.helper.path.DatabasePathResolver
 import ru.pixnews.wasm.sqlite.open.helper.path.JvmDatabasePathResolver
 
 @WasmSqliteOpenHelperDsl
 public class WasmSqliteOpenHelperFactoryConfigBlock<E : SqliteEmbedderConfig> {
+    public var logger: Logger = Logger
     internal var debugConfigBlock: DebugConfigBlock = DebugConfigBlock()
         private set
     public var pathResolver: DatabasePathResolver = JvmDatabasePathResolver()

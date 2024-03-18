@@ -23,8 +23,9 @@ internal class FdClose(
     instance: WasmInstance,
     private val host: SqliteEmbedderHost,
     functionName: String = "fd_close",
-    private val logger: Logger = Logger.withTag(FdClose::class.qualifiedName!!),
 ) : BaseWasmNode(language, instance, functionName) {
+    private val logger: Logger = host.rootLogger.withTag(FdClose::class.qualifiedName!!)
+
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
         val args = frame.arguments
         return fdClose(Fd(args[0] as Int))

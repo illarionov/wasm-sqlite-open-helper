@@ -11,7 +11,6 @@ import com.oracle.truffle.api.frame.VirtualFrame
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
@@ -20,10 +19,10 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 internal class EmscriptenResizeHeap(
     language: WasmLanguage,
     instance: WasmInstance,
-    @Suppress("UnusedPrivateProperty") private val host: SqliteEmbedderHost,
+    host: SqliteEmbedderHost,
     functionName: String = "emscripten_resize_heap",
-    private val logger: Logger = Logger.withTag(EmscriptenResizeHeap::class.qualifiedName!!),
 ) : BaseWasmNode(language, instance, functionName) {
+    private val logger = host.rootLogger.withTag(EmscriptenResizeHeap::class.qualifiedName!!)
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
         return emscriptenResizeheap((frame.arguments[0] as Int).toLong())
     }

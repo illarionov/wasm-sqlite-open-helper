@@ -80,9 +80,9 @@ internal class SQLiteConnectionPool<
     private val debugConfig: SQLiteDebug,
     private val bindings: SqlOpenHelperNativeBindings<CP, SP, WP>,
     private val windowBindings: SqlOpenHelperWindowBindings<WP>,
-    logger: Logger = Logger,
+    rootLogger: Logger,
 ) : Closeable {
-    private val logger: Logger = logger.withTag(TAG)
+    private val logger: Logger = rootLogger.withTag(TAG)
     private val closeGuard: CloseGuard = CloseGuard.get()
     private val lock = Any()
     private val connectionLeaked = AtomicBoolean()
@@ -979,7 +979,7 @@ internal class SQLiteConnectionPool<
             debugConfig: SQLiteDebug,
             bindings: SqlOpenHelperNativeBindings<CP, SP, WP>,
             windowBindings: SqlOpenHelperWindowBindings<WP>,
-            logger: Logger = Logger,
+            logger: Logger,
         ): SQLiteConnectionPool<CP, SP, WP> =
             SQLiteConnectionPool(configuration, debugConfig, bindings, windowBindings, logger)
                 .apply(SQLiteConnectionPool<*, *, *>::open)

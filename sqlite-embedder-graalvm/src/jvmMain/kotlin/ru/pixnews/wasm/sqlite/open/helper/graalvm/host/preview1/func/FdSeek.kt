@@ -28,8 +28,9 @@ internal class FdSeek(
     instance: WasmInstance,
     private val host: SqliteEmbedderHost,
     functionName: String = "fd_seek",
-    private val logger: Logger = Logger.withTag(FdSeek::class.qualifiedName!!),
 ) : BaseWasmNode(language, instance, functionName) {
+    private val logger: Logger = host.rootLogger.withTag(FdSeek::class.qualifiedName!!)
+
     @Suppress("MagicNumber")
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
         val args = frame.arguments
