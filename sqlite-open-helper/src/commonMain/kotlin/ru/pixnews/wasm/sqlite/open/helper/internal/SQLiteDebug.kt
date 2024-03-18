@@ -31,13 +31,11 @@ package ru.pixnews.wasm.sqlite.open.helper.internal
  *   log all queries that take 200ms or longer to run.
  */
 internal class SQLiteDebug(
-    public val sqlLog: Boolean = false,
-    public val sqlStatements: Boolean = false,
-    public val sqlTime: Boolean = false,
-    public val logSlowQueries: Boolean = false,
-    public val slowQueryThresholdProvider: () -> Int = {
-        System.getProperty("db.log.slow_query_threshold", "-1")!!.toInt()
-    },
+    val sqlLog: Boolean = false,
+    val sqlStatements: Boolean = false,
+    val sqlTime: Boolean = false,
+    val logSlowQueries: Boolean = false,
+    val slowQueryThresholdProvider: () -> Int,
 ) {
     /**
      * Determines whether a query should be logged.
