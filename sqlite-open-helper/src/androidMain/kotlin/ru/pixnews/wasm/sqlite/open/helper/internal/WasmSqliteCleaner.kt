@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+@file:Suppress("WRONG_ORDER_IN_CLASS_LIKE_STRUCTURES")
+
 package ru.pixnews.wasm.sqlite.open.helper.internal
 
 import android.os.Build.VERSION
@@ -22,33 +24,27 @@ internal object WasmSqliteCleaner {
             @Suppress("NewApi")
             JvmWasmSqliteCleanerImpl()
         } else {
-            NoOpWasmSqliteCleanerImpl()
+            NoOpWasmSqliteCleanerImpl
         }
     }
 
-    fun register(obj: Any, runnable: () -> Unit): WasmSqliteCleanable {
-        return cleaner.register(obj, runnable)
+    fun register(obj: Any, cleanAction: () -> Unit): WasmSqliteCleanable {
+        return cleaner.register(obj, cleanAction)
     }
 
-    public fun interface WasmSqliteCleanable {
+    fun interface WasmSqliteCleanable {
         fun clean()
     }
 
     private interface WasmSqliteCleaner {
-        fun register(obj: Any, runnable: () -> Unit): WasmSqliteCleanable
-    }
-
-    private class NoOpWasmSqliteCleanerImpl : WasmSqliteCleaner {
-        override fun register(obj: Any, runnable: () -> Unit): WasmSqliteCleanable {
-            return WasmSqliteCleanable { runnable() }
-        }
+        fun register(obj: Any, cleanAction: () -> Unit): WasmSqliteCleanable
     }
 
     @RequiresApi(TIRAMISU)
     private class JvmWasmSqliteCleanerImpl : WasmSqliteCleaner {
         private val cleaner = JvmCleaner.create()
-        override fun register(obj: Any, runnable: () -> Unit): WasmSqliteCleanable {
-            return CleanableAdapter(cleaner.register(obj, runnable))
+        override fun register(obj: Any, cleanAction: () -> Unit): WasmSqliteCleanable {
+            return CleanableAdapter(cleaner.register(obj, cleanAction))
         }
 
         private class CleanableAdapter(
@@ -58,5 +54,9 @@ internal object WasmSqliteCleaner {
         }
     }
 
-
+    private object NoOpWasmSqliteCleanerImpl : WasmSqliteCleaner {
+        override fun register(obj: Any, cleanAction: () -> Unit): WasmSqliteCleanable {
+            return WasmSqliteCleanable { cleanAction() }
+        }
+    }
 }

@@ -56,7 +56,6 @@ internal class SQLiteCursor(
             .mapIndexed { columnNo, name -> name to columnNo }
             .toMap()
     }
-
     private var windowCleaner: WasmSqliteCleanable? = null
 
     /**
@@ -321,7 +320,6 @@ internal class SQLiteCursor(
         throw UnsupportedOperationException("Extras on cursor not supported")
     }
 
-
     @Deprecated("Deprecated in Java")
     override fun deactivate() = throw UnsupportedOperationException("Not supported")
 
@@ -341,7 +339,7 @@ internal class SQLiteCursor(
     }
 
     private class CloseWindowAction(
-        private val window: CursorWindow
+        private val window: CursorWindow,
     ) : () -> Unit {
         override fun invoke() {
             window.close()
