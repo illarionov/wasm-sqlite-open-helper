@@ -6,24 +6,6 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.internal.interop
 
-import android.database.sqlite.SQLiteAbortException
-import android.database.sqlite.SQLiteAccessPermException
-import android.database.sqlite.SQLiteBindOrColumnIndexOutOfRangeException
-import android.database.sqlite.SQLiteBlobTooBigException
-import android.database.sqlite.SQLiteCantOpenDatabaseException
-import android.database.sqlite.SQLiteConstraintException
-import android.database.sqlite.SQLiteDatabaseCorruptException
-import android.database.sqlite.SQLiteDatabaseLockedException
-import android.database.sqlite.SQLiteDatatypeMismatchException
-import android.database.sqlite.SQLiteDiskIOException
-import android.database.sqlite.SQLiteDoneException
-import android.database.sqlite.SQLiteException
-import android.database.sqlite.SQLiteFullException
-import android.database.sqlite.SQLiteMisuseException
-import android.database.sqlite.SQLiteOutOfMemoryException
-import android.database.sqlite.SQLiteReadOnlyDatabaseException
-import android.database.sqlite.SQLiteTableLockedException
-import androidx.core.os.OperationCanceledException
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr.Companion.sqlite3Null
@@ -32,10 +14,14 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.isSqlite3Null
 import ru.pixnews.wasm.sqlite.open.helper.common.api.or
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteCapi
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteCapi.SqliteDbReadonlyResult
+import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteCantOpenDatabaseException
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow
-import ru.pixnews.wasm.sqlite.open.helper.internal.encodedNullTerminatedStringLength
+import ru.pixnews.wasm.sqlite.open.helper.internal.ext.encodedNullTerminatedStringLength
+import ru.pixnews.wasm.sqlite.open.helper.internal.ext.rethrowAndroidSqliteException
+import ru.pixnews.wasm.sqlite.open.helper.internal.ext.throwAndroidSqliteException
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.GraalNativeBindings.CopyRowResult.CPR_FULL
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.GraalNativeBindings.CopyRowResult.CPR_OK
+import ru.pixnews.wasm.sqlite.open.helper.internal.platform.yieldSleepAroundMSec
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteColumnType.Companion.SQLITE3_TEXT
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteColumnType.Companion.SQLITE_BLOB
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteColumnType.Companion.SQLITE_FLOAT
@@ -47,7 +33,6 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrno
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrno.Companion.SQLITE_DONE
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrno.Companion.SQLITE_OK
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrno.Companion.SQLITE_ROW
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrorInfo
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteException
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteException.Companion.sqlite3ErrNoName
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteOpenFlags
@@ -59,6 +44,7 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode.Companion.SQLITE_TRACE_PROFILE
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode.Companion.SQLITE_TRACE_ROW
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode.Companion.SQLITE_TRACE_STMT
+import kotlin.jvm.JvmInline
 
 @JvmInline
 internal value class GraalSqlite3ConnectionPtr(
@@ -107,7 +93,7 @@ internal class GraalNativeBindings(
             if (openFlags.contains(SQLITE_OPEN_READWRITE) &&
                 sqlite3Api.sqlite3DbReadonly(db, null) != SqliteDbReadonlyResult.READ_WRITE
             ) {
-                throw SQLiteCantOpenDatabaseException("Could not open the database in read/write mode.")
+                throw AndroidSqliteCantOpenDatabaseException("Could not open the database in read/write mode.")
             }
 
             // Set the default busy handler to retry automatically before returning SQLITE_BUSY.
@@ -279,7 +265,7 @@ internal class GraalNativeBindings(
                             throwAndroidSqliteException(connectionPtr.ptr, "retrycount exceeded")
                         } else {
                             // Sleep to give the thread holding the lock a chance to finish
-                            Thread.sleep(1)
+                            yieldSleepAroundMSec()
                             retryCount++
                         }
                     }
@@ -690,59 +676,5 @@ internal class GraalNativeBindings(
         operations but not so long as to cause the application to hang indefinitely if
         there is a problem acquiring a database lock. */
         const val BUSY_TIMEOUT_MS = 2500
-
-        private fun SqliteException.rethrowAndroidSqliteException(msg: String? = null): Nothing {
-            throwAndroidSqliteException(errorInfo, msg)
-        }
-
-        private fun throwAndroidSqliteException(message: String?): Nothing = throwAndroidSqliteException(
-            SqliteErrorInfo(0, 0, null),
-            message,
-        )
-
-        @Suppress("CyclomaticComplexMethod")
-        private fun throwAndroidSqliteException(
-            errorInfo: SqliteErrorInfo,
-            message: String?,
-        ): Nothing {
-            val fullErMsg = if (errorInfo.sqliteMsg != null) {
-                buildString {
-                    append("Error ", errorInfo.sqliteErrorCode.toString())
-                    append(" (code ", errorInfo.sqliteExtendedErrorCode, ")")
-                    val msgs = listOfNotNull(message, errorInfo.sqliteMsg)
-                    if (msgs.isNotEmpty()) {
-                        msgs.joinTo(
-                            buffer = this,
-                            separator = ", ",
-                            prefix = ": ",
-                        )
-                    }
-                }
-            } else {
-                message
-            }
-
-            val androidException = when (SqliteErrno.fromErrNoCode(errorInfo.sqliteErrorCode)) {
-                SqliteErrno.SQLITE_IOERR -> SQLiteDiskIOException(fullErMsg)
-                SqliteErrno.SQLITE_CORRUPT, SqliteErrno.SQLITE_NOTADB -> SQLiteDatabaseCorruptException(fullErMsg)
-                SqliteErrno.SQLITE_CONSTRAINT -> SQLiteConstraintException(fullErMsg)
-                SqliteErrno.SQLITE_ABORT -> SQLiteAbortException(fullErMsg)
-                SQLITE_DONE -> SQLiteDoneException(fullErMsg)
-                SqliteErrno.SQLITE_FULL -> SQLiteFullException(fullErMsg)
-                SqliteErrno.SQLITE_MISUSE -> SQLiteMisuseException(fullErMsg)
-                SqliteErrno.SQLITE_PERM -> SQLiteAccessPermException(fullErMsg)
-                SqliteErrno.SQLITE_BUSY -> SQLiteDatabaseLockedException(fullErMsg)
-                SqliteErrno.SQLITE_LOCKED -> SQLiteTableLockedException(fullErMsg)
-                SqliteErrno.SQLITE_READONLY -> SQLiteReadOnlyDatabaseException(fullErMsg)
-                SqliteErrno.SQLITE_CANTOPEN -> SQLiteCantOpenDatabaseException(fullErMsg)
-                SqliteErrno.SQLITE_TOOBIG -> SQLiteBlobTooBigException(fullErMsg)
-                SqliteErrno.SQLITE_RANGE -> SQLiteBindOrColumnIndexOutOfRangeException(fullErMsg)
-                SqliteErrno.SQLITE_NOMEM -> SQLiteOutOfMemoryException(fullErMsg)
-                SqliteErrno.SQLITE_MISMATCH -> SQLiteDatatypeMismatchException(fullErMsg)
-                SqliteErrno.SQLITE_INTERRUPT -> OperationCanceledException(fullErMsg)
-                else -> SQLiteException(fullErMsg)
-            }
-            throw androidException
-        }
     }
 }

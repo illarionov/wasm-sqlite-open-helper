@@ -19,3 +19,88 @@ public expect open class AndroidSqliteException : AndroidSqlException {
     public constructor(message: String?)
     public constructor(message: String?, cause: Throwable?)
 }
+
+public expect open class AndroidSqliteDiskIoException : AndroidSqliteException {
+    public constructor()
+    public constructor(message: String?)
+}
+
+public expect open class AndroidSqliteDatabaseCorruptException : AndroidSqliteException {
+    public constructor()
+    public constructor(message: String?)
+}
+
+public expect open class AndroidSqliteConstraintException : AndroidSqliteException {
+    public constructor()
+    public constructor(message: String?)
+}
+
+public expect open class AndroidSqliteAbortException : AndroidSqliteException {
+    public constructor()
+    public constructor(message: String?)
+}
+
+public expect open class AndroidSqliteDoneException : AndroidSqliteException {
+    public constructor()
+    public constructor(message: String?)
+}
+
+public expect open class AndroidSqliteFullException : AndroidSqliteException {
+    public constructor()
+    public constructor(message: String?)
+}
+
+public expect open class AndroidSqliteMisuseException : AndroidSqliteException {
+    public constructor()
+    public constructor(message: String?)
+}
+
+public expect open class AndroidSqliteAccessPermException : AndroidSqliteException {
+    public constructor()
+    public constructor(message: String?)
+}
+
+public expect open class AndroidSqliteDatabaseLockedException : AndroidSqliteException {
+    public constructor()
+    public constructor(message: String?)
+}
+
+public expect open class AndroidSqliteTableLockedException : AndroidSqliteException {
+    public constructor()
+    public constructor(message: String?)
+}
+
+public expect open class AndroidSqliteReadOnlyDatabaseException : AndroidSqliteException {
+    public constructor()
+    public constructor(message: String?)
+}
+
+public expect open class AndroidSqliteCantOpenDatabaseException : AndroidSqliteException {
+    public constructor()
+    public constructor(message: String?)
+}
+
+public expect open class AndroidSqliteBlobTooBigException : AndroidSqliteException {
+    public constructor()
+    public constructor(message: String?)
+}
+
+public expect open class AndroidSqliteBindOrColumnIndexOutOfRangeException : AndroidSqliteException {
+    public constructor()
+    public constructor(message: String?)
+}
+
+public expect open class AndroidSqliteOutOfMemoryException : AndroidSqliteException {
+    public constructor()
+    public constructor(message: String?)
+}
+
+public expect open class AndroidSqliteDatatypeMismatchException : AndroidSqliteException {
+    public constructor()
+    public constructor(message: String?)
+}
+
+public expect open class AndroidOperationCanceledException : RuntimeException {
+    public constructor()
+    public constructor(message: String?)
+}

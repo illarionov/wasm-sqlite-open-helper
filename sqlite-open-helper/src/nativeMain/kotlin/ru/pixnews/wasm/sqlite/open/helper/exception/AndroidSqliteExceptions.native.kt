@@ -6,7 +6,6 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.exception
 
-@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 public actual open class AndroidSqlException : RuntimeException {
     public actual constructor() : super()
     public actual constructor(message: String?) : super(message)
@@ -17,4 +16,89 @@ public actual open class AndroidSqliteException : AndroidSqlException {
     public actual constructor() : super()
     public actual constructor(message: String?) : super(message)
     public actual constructor(message: String?, cause: Throwable?) : super(message, cause)
+}
+
+public actual open class AndroidSqliteDiskIoException : AndroidSqliteException {
+    public actual constructor() : super()
+    public actual constructor(message: String?) : super(message)
+}
+
+public actual open class AndroidSqliteDatabaseCorruptException : AndroidSqliteException {
+    public actual constructor() : super()
+    public actual constructor(message: String?) : super(message)
+}
+
+public actual open class AndroidSqliteConstraintException : AndroidSqliteException {
+    public actual constructor() : super()
+    public actual constructor(message: String?) : super(message)
+}
+
+public actual open class AndroidSqliteAbortException : AndroidSqliteException {
+    public actual constructor() : super()
+    public actual constructor(message: String?) : super(message)
+}
+
+public actual open class AndroidSqliteDoneException : AndroidSqliteException {
+    public actual constructor() : super()
+    public actual constructor(message: String?) : super(message)
+}
+
+public actual open class AndroidSqliteFullException : AndroidSqliteException {
+    public actual constructor() : super()
+    public actual constructor(message: String?) : super(message)
+}
+
+public actual open class AndroidSqliteMisuseException : AndroidSqliteException {
+    public actual constructor() : super()
+    public actual constructor(message: String?) : super(message)
+}
+
+public actual open class AndroidSqliteAccessPermException : AndroidSqliteException {
+    public actual constructor() : super()
+    public actual constructor(message: String?) : super(message)
+}
+
+public actual open class AndroidSqliteDatabaseLockedException : AndroidSqliteException {
+    public actual constructor() : super()
+    public actual constructor(message: String?) : super(message)
+}
+
+public actual open class AndroidSqliteTableLockedException : AndroidSqliteException {
+    public actual constructor() : super()
+    public actual constructor(message: String?) : super(message)
+}
+
+public actual open class AndroidSqliteReadOnlyDatabaseException : AndroidSqliteException {
+    public actual constructor() : super()
+    public actual constructor(message: String?) : super(message)
+}
+
+public actual open class AndroidSqliteCantOpenDatabaseException : AndroidSqliteException {
+    public actual constructor() : super()
+    public actual constructor(message: String?) : super(message)
+}
+
+public actual open class AndroidSqliteBlobTooBigException : AndroidSqliteException {
+    public actual constructor() : super()
+    public actual constructor(message: String?) : super(message)
+}
+
+public actual open class AndroidSqliteBindOrColumnIndexOutOfRangeException : AndroidSqliteException {
+    public actual constructor() : super()
+    public actual constructor(message: String?) : super(message)
+}
+
+public actual open class AndroidSqliteOutOfMemoryException : AndroidSqliteException {
+    public actual constructor() : super()
+    public actual constructor(message: String?) : super(message)
+}
+
+public actual open class AndroidSqliteDatatypeMismatchException : AndroidSqliteException {
+    public actual constructor() : super()
+    public actual constructor(message: String?) : super(message)
+}
+
+public actual open class AndroidOperationCanceledException : RuntimeException {
+    public actual constructor() : super()
+    public actual constructor(message: String?) : super(message)
 }
