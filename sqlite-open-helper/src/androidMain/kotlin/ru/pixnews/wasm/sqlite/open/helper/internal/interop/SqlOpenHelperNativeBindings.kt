@@ -6,6 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.internal.interop
 
+import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteOpenFlags
 
 internal interface SqlOpenHelperNativeBindings<

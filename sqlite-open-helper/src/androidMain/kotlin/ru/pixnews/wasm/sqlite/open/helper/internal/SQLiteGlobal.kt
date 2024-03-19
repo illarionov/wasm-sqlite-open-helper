@@ -64,15 +64,6 @@ internal object SQLiteGlobal {
      * Gets the connection pool size when in WAL mode.
      */
     const val wALConnectionPoolSize: Int = 10
-    // private external fun nativeReleaseMemory(): Int
 
-    /**
-     * Attempts to release memory by pruning the SQLite page cache and other
-     * internal data structures.
-     *
-     * @return The number of bytes that were freed.
-     */
-    fun releaseMemory(): Int {
-        TODO("nativeReleaseMemory()")
-    }
+    // private external fun nativeReleaseMemory(): Int
 }

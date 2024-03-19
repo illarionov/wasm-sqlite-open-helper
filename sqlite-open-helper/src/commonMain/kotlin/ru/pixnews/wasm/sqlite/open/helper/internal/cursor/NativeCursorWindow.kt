@@ -4,26 +4,19 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.internal.interop
-
-/*
- * Original Copyrights:
- * Copyright (C) 2017-2024 requery.io
- * Copyright (C) 2005-2012 The Android Open Source Project
- * Licensed under the Apache License, Version 2.0 (the "License")
- */
+package ru.pixnews.wasm.sqlite.open.helper.internal.cursor
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.NativeCursorWindow.CursorFieldType.BLOB
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.NativeCursorWindow.CursorFieldType.FLOAT
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.NativeCursorWindow.CursorFieldType.INTEGER
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.NativeCursorWindow.CursorFieldType.NULL
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.NativeCursorWindow.CursorFieldType.STRING
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.NativeCursorWindow.Field.BlobField
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.NativeCursorWindow.Field.FloatField
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.NativeCursorWindow.Field.IntegerField
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.NativeCursorWindow.Field.Null
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.NativeCursorWindow.Field.StringField
+import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.CursorFieldType.BLOB
+import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.CursorFieldType.FLOAT
+import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.CursorFieldType.INTEGER
+import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.CursorFieldType.NULL
+import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.CursorFieldType.STRING
+import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.Field.BlobField
+import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.Field.FloatField
+import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.Field.IntegerField
+import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.Field.Null
+import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.Field.StringField
 
 internal class NativeCursorWindow(
     val name: String,
@@ -162,14 +155,13 @@ internal class NativeCursorWindow(
         var numColumns: Int,
     )
 
-    sealed class Field(
-        val type: CursorFieldType,
-    ) {
-        data object Null : Field(NULL)
-        class IntegerField(val value: Long) : Field(INTEGER)
-        class FloatField(val value: Double) : Field(FLOAT)
-        class StringField(val value: String) : Field(STRING)
-        class BlobField(val value: ByteArray) : Field(BLOB)
+    private class RowSlotChunk {
+        val slots: MutableList<RowSlot> = MutableList(ROW_SLOT_CHUNK_NUM_ROWS) { RowSlot(0) }
+        var nextChunk: RowSlotChunk? = null
+    }
+
+    private class RowSlot(numColumns: Int) {
+        var fields: Array<FieldSlot> = Array(numColumns) { FieldSlot() }
     }
 
     class FieldSlot(
@@ -179,13 +171,14 @@ internal class NativeCursorWindow(
             get() = this.field.type
     }
 
-    private class RowSlot(numColumns: Int) {
-        var fields: Array<FieldSlot> = Array(numColumns) { FieldSlot() }
-    }
-
-    private class RowSlotChunk {
-        val slots: MutableList<RowSlot> = MutableList(ROW_SLOT_CHUNK_NUM_ROWS) { RowSlot(0) }
-        var nextChunk: RowSlotChunk? = null
+    sealed class Field(
+        val type: CursorFieldType,
+    ) {
+        data object Null : Field(NULL)
+        class IntegerField(val value: Long) : Field(INTEGER)
+        class FloatField(val value: Double) : Field(FLOAT)
+        class StringField(val value: String) : Field(STRING)
+        class BlobField(val value: ByteArray) : Field(BLOB)
     }
 
     @Suppress("MagicNumber")

@@ -17,7 +17,7 @@ import android.database.sqlite.SQLiteDatabaseCorruptException
 import android.database.sqlite.SQLiteException
 import android.util.Log
 import androidx.core.os.CancellationSignal
-import ru.pixnews.wasm.sqlite.open.helper.base.CursorWindow
+import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.CursorWindow
 
 /**
  * Represents a query that reads the resulting rows into a [SQLiteQuery].

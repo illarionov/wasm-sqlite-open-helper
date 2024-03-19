@@ -18,7 +18,7 @@ import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDatabase
 /**
  * An interface to let apps define an action to take when database corruption is detected.
  */
-internal interface DatabaseErrorHandler {
+internal fun interface DatabaseErrorHandler {
     /**
      * The method invoked when database corruption is detected.
      *

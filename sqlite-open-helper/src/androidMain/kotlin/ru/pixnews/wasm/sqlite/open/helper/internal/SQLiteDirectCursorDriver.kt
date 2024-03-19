@@ -15,7 +15,6 @@ package ru.pixnews.wasm.sqlite.open.helper.internal
 
 import android.database.Cursor
 import androidx.core.os.CancellationSignal
-import ru.pixnews.wasm.sqlite.open.helper.base.CursorWindow
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteProgram.Companion.bindAllArgsAsStrings
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3ConnectionPtr
@@ -28,7 +27,6 @@ internal class SQLiteDirectCursorDriver<CP : Sqlite3ConnectionPtr, SP : Sqlite3S
     private val database: SQLiteDatabase<CP, SP>,
     private val sql: String,
     private val cancellationSignal: CancellationSignal?,
-    private val cursorWindowCtor: (name: String?) -> CursorWindow,
     rootLogger: Logger,
 ) : SQLiteCursorDriver<CP, SP> {
     private val logger: Logger = rootLogger.withTag("SQLiteDirectCursorDriver")
@@ -41,12 +39,7 @@ internal class SQLiteDirectCursorDriver<CP : Sqlite3ConnectionPtr, SP : Sqlite3S
         val query = SQLiteQuery(database, sql, bindArgs, cancellationSignal)
         val cursor: Cursor
         try {
-            cursor = factory?.newCursor(database, this, query) ?: SQLiteCursor(
-                this,
-                query,
-                cursorWindowCtor,
-                logger,
-            )
+            cursor = factory?.newCursor(database, this, query) ?: SQLiteCursor(query, logger)
         } catch (@Suppress("TooGenericExceptionCaught") ex: RuntimeException) {
             query.close()
             throw ex
@@ -56,20 +49,8 @@ internal class SQLiteDirectCursorDriver<CP : Sqlite3ConnectionPtr, SP : Sqlite3S
         return cursor
     }
 
-    override fun cursorClosed() {
-        // Do nothing
-    }
-
     override fun setBindArguments(bindArgs: List<String?>) {
         requireNotNull(query) { "query() not called" }.bindAllArgsAsStrings(bindArgs)
-    }
-
-    override fun cursorDeactivated() {
-        // Do nothing
-    }
-
-    override fun cursorRequeried(cursor: Cursor) {
-        // Do nothing
     }
 
     override fun toString(): String = "SQLiteDirectCursorDriver: $sql"

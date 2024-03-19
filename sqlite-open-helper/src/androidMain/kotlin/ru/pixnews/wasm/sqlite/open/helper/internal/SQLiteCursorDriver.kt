@@ -33,21 +33,6 @@ internal interface SQLiteCursorDriver<CP : Sqlite3ConnectionPtr, SP : Sqlite3Sta
     fun query(factory: CursorFactory<CP, SP>?, bindArgs: List<Any?>): Cursor
 
     /**
-     * Called by a SQLiteCursor when it is released.
-     */
-    fun cursorDeactivated()
-
-    /**
-     * Called by a SQLiteCursor when it is requeried.
-     */
-    fun cursorRequeried(cursor: Cursor)
-
-    /**
-     * Called by a SQLiteCursor when it it closed to destroy this object as well.
-     */
-    fun cursorClosed()
-
-    /**
      * Set new bind arguments. These will take effect in cursorRequeried().
      *
      * @param bindArgs the new arguments

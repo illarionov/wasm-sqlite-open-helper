@@ -15,7 +15,8 @@ package ru.pixnews.wasm.sqlite.open.helper.base
 
 import android.database.CharArrayBuffer
 import android.database.StaleDataException
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.NativeCursorWindow
+import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.CursorWindow
+import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow
 
 /**
  * A base class for Cursors that store their data in [android.database.CursorWindow]s.
@@ -66,12 +67,12 @@ internal abstract class AbstractWindowedCursor(
 
     override fun getBlob(column: Int): ByteArray {
         checkPosition()
-        return window!!.getBlob(pos, column) ?: byteArrayOf()
+        return requireWindow().getBlob(pos, column) ?: byteArrayOf()
     }
 
     override fun getString(column: Int): String? {
         checkPosition()
-        return window!!.getString(pos, column)
+        return requireWindow().getString(pos, column)
     }
 
     /**
@@ -107,64 +108,55 @@ internal abstract class AbstractWindowedCursor(
 
     override fun getShort(column: Int): Short {
         checkPosition()
-        return window!!.getShort(pos, column)
+        return requireWindow().getShort(pos, column)
     }
 
     override fun getInt(column: Int): Int {
         checkPosition()
-        return window!!.getInt(pos, column)
+        return requireWindow().getInt(pos, column)
     }
 
     override fun getLong(column: Int): Long {
         checkPosition()
-        return window!!.getLong(pos, column)
+        return requireWindow().getLong(pos, column)
     }
 
     override fun getFloat(column: Int): Float {
         checkPosition()
-        return window!!.getFloat(pos, column)
+        return requireWindow().getFloat(pos, column)
     }
 
     override fun getDouble(column: Int): Double {
         checkPosition()
-        return window!!.getDouble(pos, column)
+        return requireWindow().getDouble(pos, column)
     }
 
     override fun isNull(column: Int): Boolean {
-        return window!!.getType(pos, column) == NativeCursorWindow.CursorFieldType.NULL
+        return requireWindow().getType(pos, column) == NativeCursorWindow.CursorFieldType.NULL
     }
 
     override fun getType(column: Int): Int {
-        return window!!.getType(pos, column).id
+        return requireWindow().getType(pos, column).id
     }
 
     override fun checkPosition() {
         super.checkPosition()
-        if (window == null) {
-            throw StaleDataException(
-                "Attempting to access a closed CursorWindow." +
-                        "Most probable cause: cursor is deactivated prior to calling this method.",
-            )
-        }
+        requireWindow()
     }
 
-    /**
-     * Returns true if the cursor has an associated cursor window.
-     *
-     * @return True if the cursor has an associated cursor window.
-     */
-    fun hasWindow(): Boolean = window != null
+    private fun requireWindow(): CursorWindow = window ?: throw StaleDataException(
+        "Attempting to access a closed CursorWindow." +
+                "Most probable cause: cursor is deactivated prior to calling this method.",
+    )
 
     /**
-     * If there is a window, clear it. Otherwise, creates a new window.
+     * Creates a new window.
      *
      * @param name The window name.
      * @hide
      */
-    protected fun clearOrCreateWindow(name: String?) {
-        window?.clear() ?: run {
-            window = windowFactory(name)
-        }
+    protected fun createWindow(name: String?) {
+        window = windowFactory(name)
     }
 
     override fun onDeactivateOrClose() {
