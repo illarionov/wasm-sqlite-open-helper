@@ -23,6 +23,7 @@ import android.database.StaleDataException
 import android.net.Uri
 import android.os.Bundle
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
+import ru.pixnews.wasm.sqlite.open.helper.internal.WasmSqliteCleaner.WasmSqliteCleanable
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.CursorWindow
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow
 import kotlin.math.max
@@ -56,8 +57,7 @@ internal class SQLiteCursor(
             .toMap()
     }
 
-    /** Used to find out where a cursor was allocated in case it never got released.  */
-    private val closeGuard: CloseGuard = CloseGuard.get()
+    private var windowCleaner: WasmSqliteCleanable? = null
 
     /**
      * The cursor window owned by this cursor.
@@ -77,9 +77,16 @@ internal class SQLiteCursor(
          */
         set(newWindow) {
             if (newWindow !== field) {
-                val old = field
+                val oldCleaner = windowCleaner
+
                 field = newWindow
-                old?.close()
+                windowCleaner = if (newWindow != null) {
+                    WasmSqliteCleaner.register(this, CloseWindowAction(newWindow))
+                } else {
+                    null
+                }
+
+                oldCleaner?.clean()
             }
             _count = NO_COUNT
         }
@@ -314,16 +321,6 @@ internal class SQLiteCursor(
         throw UnsupportedOperationException("Extras on cursor not supported")
     }
 
-    /**
-     * Release the native resources, if they haven't been released yet.
-     */
-    protected fun finalize() {
-        // if the cursor hasn't been closed yet, close it first
-        if (window != null) {
-            closeGuard.warnIfOpen()
-            close()
-        }
-    }
 
     @Deprecated("Deprecated in Java")
     override fun deactivate() = throw UnsupportedOperationException("Not supported")
@@ -335,9 +332,19 @@ internal class SQLiteCursor(
 
     override fun close() {
         closed = true
+        windowCleaner?.clean()
+        windowCleaner = null
         window = null
         synchronized(this) {
             query.close()
+        }
+    }
+
+    private class CloseWindowAction(
+        private val window: CursorWindow
+    ) : () -> Unit {
+        override fun invoke() {
+            window.close()
         }
     }
 
