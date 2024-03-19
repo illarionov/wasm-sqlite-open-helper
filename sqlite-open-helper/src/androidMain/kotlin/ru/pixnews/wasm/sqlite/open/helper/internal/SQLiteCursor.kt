@@ -22,12 +22,9 @@ import android.database.DataSetObserver
 import android.database.StaleDataException
 import android.net.Uri
 import android.os.Bundle
-import ru.pixnews.wasm.sqlite.open.helper.base.ContentObservable
-import ru.pixnews.wasm.sqlite.open.helper.base.DataSetObservable
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.CursorWindow
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow
-import java.lang.ref.WeakReference
 import kotlin.math.max
 
 /**
@@ -58,15 +55,6 @@ internal class SQLiteCursor(
             .mapIndexed { columnNo, name -> name to columnNo }
             .toMap()
     }
-
-    @Deprecated("deprecated in AOSP but still used for non-deprecated methods")
-    private var contentResolver: ContentResolver? = null
-    private var notifyUri: Uri? = null
-    private val selfObserverLock = Any()
-    private var selfObserver: ContentObserver? = null
-    private var selfObserverRegistered = false
-    private val dataSetObservable = DataSetObservable()
-    private val contentObservable = ContentObservable()
 
     /** Used to find out where a cursor was allocated in case it never got released.  */
     private val closeGuard: CloseGuard = CloseGuard.get()
@@ -288,47 +276,29 @@ internal class SQLiteCursor(
 
     override fun getColumnName(columnIndex: Int): String = columnNames[columnIndex]
 
-    override fun registerContentObserver(observer: ContentObserver) {
-        contentObservable.registerObserver(observer)
+    override fun registerContentObserver(observer: ContentObserver): Nothing {
+        throw UnsupportedOperationException("Not supported")
     }
 
     override fun unregisterContentObserver(observer: ContentObserver) {
-        // cursor will unregister all observers when it close
-        if (!closed) {
-            contentObservable.unregisterObserver(observer)
-        }
+        throw UnsupportedOperationException("Not supported")
     }
 
     override fun registerDataSetObserver(observer: DataSetObserver) {
-        dataSetObservable.registerObserver(observer)
+        throw UnsupportedOperationException("Not supported")
     }
 
     override fun unregisterDataSetObserver(observer: DataSetObserver) {
-        dataSetObservable.unregisterObserver(observer)
+        throw UnsupportedOperationException("Not supported")
     }
 
-    /**
-     * Specifies a content URI to watch for changes.
-     *
-     * @param cr The content resolver from the caller's context.
-     * @param notifyUri The URI to watch for changes. This can be a
-     * specific row URI, or a base URI for a whole class of content.
-     */
-    override fun setNotificationUri(cr: ContentResolver, notifyUri: Uri) = synchronized(selfObserverLock) {
-        this.contentResolver = cr
-        this.notifyUri = notifyUri
-
-        selfObserver?.let {
-            cr.unregisterContentObserver(it)
-        }
-        SelfContentObserver(this).let {
-            selfObserver = it
-            cr.registerContentObserver(notifyUri, true, it)
-        }
-        selfObserverRegistered = true
+    override fun setNotificationUri(cr: ContentResolver, notifyUri: Uri) {
+        throw UnsupportedOperationException("Not supported")
     }
 
-    override fun getNotificationUri(): Uri = synchronized(selfObserverLock) { notifyUri!! }
+    override fun getNotificationUri(): Uri {
+        throw UnsupportedOperationException("Not supported")
+    }
 
     override fun getWantsAllOnMoveCalls(): Boolean = false
 
@@ -348,29 +318,15 @@ internal class SQLiteCursor(
      * Release the native resources, if they haven't been released yet.
      */
     protected fun finalize() {
-        try {
-            // if the cursor hasn't been closed yet, close it first
-            if (window != null) {
-                closeGuard.warnIfOpen()
-                close()
-            }
-        } finally {
-            if (selfObserver != null && selfObserverRegistered) {
-                contentResolver!!.unregisterContentObserver(selfObserver!!)
-            }
-            try {
-                if (!closed) {
-                    close()
-                }
-            } catch (ignored: Exception) {
-            }
+        // if the cursor hasn't been closed yet, close it first
+        if (window != null) {
+            closeGuard.warnIfOpen()
+            close()
         }
     }
 
     @Deprecated("Deprecated in Java")
-    override fun deactivate() {
-        onDeactivateOrClose()
-    }
+    override fun deactivate() = throw UnsupportedOperationException("Not supported")
 
     @Deprecated("Deprecated in Java")
     override fun requery(): Boolean = throw UnsupportedOperationException("Not supported")
@@ -379,43 +335,9 @@ internal class SQLiteCursor(
 
     override fun close() {
         closed = true
-        contentObservable.unregisterAll()
-        onDeactivateOrClose()
+        window = null
         synchronized(this) {
             query.close()
-        }
-    }
-
-    private fun onDeactivateOrClose() {
-        if (selfObserver != null) {
-            contentResolver!!.unregisterContentObserver(selfObserver!!)
-            selfObserverRegistered = false
-        }
-        dataSetObservable.notifyInvalidated()
-        window = null
-    }
-
-    /**
-     * Subclasses must call this method when they finish committing updates to notify all
-     * observers.
-     */
-    private fun onChange() {
-        synchronized(selfObserverLock) {
-            contentObservable.dispatchChange(false, null)
-        }
-    }
-
-    /**
-     * Cursors use this class to track changes others make to their URI.
-     */
-    private class SelfContentObserver(cursor: SQLiteCursor) : ContentObserver(null) {
-        var cursor: WeakReference<SQLiteCursor> = WeakReference(cursor)
-
-        override fun deliverSelfNotifications(): Boolean = false
-
-        override fun onChange(selfChange: Boolean) {
-            val cursor = cursor.get()
-            cursor?.onChange()
         }
     }
 
