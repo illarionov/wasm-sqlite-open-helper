@@ -15,8 +15,8 @@ package ru.pixnews.wasm.sqlite.open.helper.internal
 
 import android.database.sqlite.SQLiteDatabaseCorruptException
 import android.database.sqlite.SQLiteException
-import android.util.Log
 import androidx.core.os.CancellationSignal
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.CursorWindow
 
 /**
@@ -32,7 +32,10 @@ internal class SQLiteQuery(
     query: String,
     bindArgs: List<Any?>,
     private val cancellationSignal: CancellationSignal?,
+    rootLogger: Logger,
 ) : SQLiteProgram(db, query, bindArgs, cancellationSignal) {
+    private val logger = rootLogger.withTag("SQLiteQuery")
+
     /**
      * Reads rows into a buffer.
      *
@@ -70,15 +73,11 @@ internal class SQLiteQuery(
                 onCorruption()
                 throw ex
             } catch (ex: SQLiteException) {
-                Log.e(TAG, "exception: ${ex.message}; query: $sql")
+                logger.e { "exception: ${ex.message}; query: $sql" }
                 throw ex
             }
         }
     }
 
     override fun toString(): String = "SQLiteQuery: $sql"
-
-    private companion object {
-        private const val TAG = "SQLiteQuery"
-    }
 }

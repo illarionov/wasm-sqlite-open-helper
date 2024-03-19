@@ -310,7 +310,7 @@ internal class SQLiteSession<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr
      * @see .setTransactionSuccessful
      * @see .yieldTransaction
      */
-    fun endTransaction(cancellationSignal: CancellationSignal?) {
+    fun endTransaction(cancellationSignal: CancellationSignal? = null) {
         throwIfNoTransaction()
         checkNotNull(connection)
 

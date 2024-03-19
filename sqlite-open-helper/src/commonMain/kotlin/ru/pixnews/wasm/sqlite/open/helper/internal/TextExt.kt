@@ -6,14 +6,8 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.internal
 
-internal interface SQLiteCursorDriverListener {
-    /**
-     * Called by a SQLiteCursor when it is released.
-     */
-    fun cursorDeactivated()
+import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
 
-    /**
-     * Called by a SQLiteCursor when it it closed to destroy this object as well.
-     */
-    fun cursorClosed()
-}
+// TODO: merge with MemoryUtil
+@InternalWasmSqliteHelperApi
+internal fun String.encodedNullTerminatedStringLength(): Int = this.encodeToByteArray().size + 1

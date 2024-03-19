@@ -74,19 +74,16 @@ internal class SQLiteCursor(
     /**
      * The cursor window owned by this cursor.
      */
-    var window: CursorWindow? = null
+    private var window: CursorWindow? = null
         /**
          * Sets a new cursor window for the cursor to use.
-         *
          *
          * The cursor takes ownership of the provided cursor window; the cursor window
          * will be closed when the cursor is closed or when the cursor adopts a new
          * cursor window.
          *
-         *
          * If the cursor previously had a cursor window, then it is closed when the
          * new cursor window is assigned.
-         *
          *
          * @param newWindow The new cursor window, typically a remote cursor window.
          */

@@ -33,7 +33,7 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.or
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteCapi
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteCapi.SqliteDbReadonlyResult
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow
-import ru.pixnews.wasm.sqlite.open.helper.internal.ext.encodedNullTerminatedStringLength
+import ru.pixnews.wasm.sqlite.open.helper.internal.encodedNullTerminatedStringLength
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.GraalNativeBindings.CopyRowResult.CPR_FULL
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.GraalNativeBindings.CopyRowResult.CPR_OK
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteColumnType.Companion.SQLITE3_TEXT
