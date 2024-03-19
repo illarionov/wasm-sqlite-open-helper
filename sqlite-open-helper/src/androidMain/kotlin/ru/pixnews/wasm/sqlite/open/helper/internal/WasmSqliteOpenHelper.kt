@@ -46,12 +46,12 @@ internal class WasmSqliteOpenHelper<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
     override val databaseName: String?,
     private val bindings: SqlOpenHelperNativeBindings<CP, SP>,
 ) : SupportSQLiteOpenHelper {
-    private val logger: Logger = rootLogger.withTag(TAG)
-    private var database: SQLiteDatabase<CP, SP>? = null
-    private var isInitializing = false
-    private var enableWriteAheadLogging = false
+    private val logger: Logger = rootLogger.withTag(WasmSqliteOpenHelper::class.qualifiedName!!)
     private val version: Int get() = callback.version
     private val errorHandler: DatabaseErrorHandler = DatabaseErrorHandler { dbObj -> callback.onCorruption(dbObj) }
+    private var enableWriteAheadLogging = false
+    private var isInitializing = false
+    private var database: SQLiteDatabase<CP, SP>? = null
 
     init {
         require(version >= 1) { "Version must be >= 1, was $version" }
@@ -118,19 +118,21 @@ internal class WasmSqliteOpenHelper<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
      *
      * @see SQLiteDatabase.enableWriteAheadLogging
      */
+    @Synchronized
     override fun setWriteAheadLoggingEnabled(enabled: Boolean) {
-        synchronized(this) {
-            if (enableWriteAheadLogging != enabled) {
-                if (database != null && database!!.isOpen && !database!!.isReadOnly) {
-                    if (enabled) {
-                        database!!.enableWriteAheadLogging()
-                    } else {
-                        database!!.disableWriteAheadLogging()
-                    }
+        if (enableWriteAheadLogging == enabled) {
+            return
+        }
+        database?.let {
+            if (it.isOpen && !it.isReadOnly) {
+                if (enabled) {
+                    it.enableWriteAheadLogging()
+                } else {
+                    it.disableWriteAheadLogging()
                 }
-                enableWriteAheadLogging = enabled
             }
         }
+        enableWriteAheadLogging = enabled
     }
 
     @Suppress("CyclomaticComplexMethod", "LongMethod", "NestedBlockDepth")
@@ -159,40 +161,30 @@ internal class WasmSqliteOpenHelper<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
                 db = SQLiteDatabase.create(
                     bindings = bindings,
                     debugConfig = debugConfig,
+                    errorHandler = errorHandler,
                     locale = defaultLocale,
                     logger = logger,
                 )
             } else {
                 try {
                     val path = pathResolver.getDatabasePath(databaseName.toString()).path
-                    if (DEBUG_STRICT_READONLY && !writable) {
-                        val configuration = createConfiguration(path, defaultLocale, OPEN_READONLY)
-                        db = SQLiteDatabase.openDatabase(
-                            configuration = configuration,
-                            errorHandler = errorHandler,
-                            bindings = bindings,
-                            debugConfig = debugConfig,
-                            logger = logger,
-                        )
-                    } else {
-                        var flags = if (enableWriteAheadLogging) ENABLE_WRITE_AHEAD_LOGGING else OpenFlags(0U)
-                        flags = flags or CREATE_IF_NECESSARY
-                        val configuration = createConfiguration(path, defaultLocale, flags)
-                        db = SQLiteDatabase.openDatabase(
-                            configuration = configuration,
-                            errorHandler = errorHandler,
-                            bindings = bindings,
-                            debugConfig = debugConfig,
-                            logger = logger,
-                        )
-                    }
+                    var flags = if (enableWriteAheadLogging) ENABLE_WRITE_AHEAD_LOGGING else OpenFlags(0U)
+                    flags = flags or CREATE_IF_NECESSARY
+                    val configuration = createConfiguration(path, flags)
+                    db = SQLiteDatabase.openDatabase(
+                        configuration = configuration,
+                        errorHandler = errorHandler,
+                        bindings = bindings,
+                        debugConfig = debugConfig,
+                        logger = logger,
+                    )
                 } catch (ex: SQLiteException) {
                     if (writable) {
                         throw ex
                     }
                     logger.e(ex) { "Couldn't open $databaseName for writing (will try read-only):" }
                     val path = pathResolver.getDatabasePath(databaseName.toString()).path
-                    val configuration = createConfiguration(path, defaultLocale, OPEN_READONLY)
+                    val configuration = createConfiguration(path, OPEN_READONLY)
                     db = SQLiteDatabase.openDatabase(
                         configuration = configuration,
                         errorHandler = errorHandler,
@@ -263,8 +255,7 @@ internal class WasmSqliteOpenHelper<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
 
     /**
      * Called before the database is opened. Provides the [SqliteDatabaseConfiguration]
-     * instance that is used to initialize the database. Override this to create a configuration
-     * that has custom functions or extensions.
+     * instance that is used to initialize the database.
      *
      * @param path to database file to open and/or create
      * @param openFlags to control database access mode
@@ -272,24 +263,10 @@ internal class WasmSqliteOpenHelper<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
      */
     private fun createConfiguration(
         path: String,
-        defaultLocale: Locale,
         openFlags: OpenFlags,
-    ): SqliteDatabaseConfiguration {
-        var config = SqliteDatabaseConfiguration(path, openFlags, defaultLocale)
-        configurationOptions.forEach { option ->
-            config = option.apply(config)
-        }
-        return config
-    }
-
-    companion object {
-        // When true, getReadableDatabase returns a read-only database if it is just being opened.
-        // The database handle is reopened in read/write mode when getWritableDatabase is called.
-        // We leave this behavior disabled in production because it is inefficient and breaks
-        // many applications.  For debugging purposes it can be useful to turn on strict
-        // read-only semantics to catch applications that call getReadableDatabase when they really
-        // wanted getWritableDatabase.
-        private const val DEBUG_STRICT_READONLY = false
-        private val TAG: String = WasmSqliteOpenHelper::class.qualifiedName!!
+    ): SqliteDatabaseConfiguration = configurationOptions.fold(
+        SqliteDatabaseConfiguration(path, openFlags, defaultLocale),
+    ) { config, transformer ->
+        transformer.apply(config)
     }
 }

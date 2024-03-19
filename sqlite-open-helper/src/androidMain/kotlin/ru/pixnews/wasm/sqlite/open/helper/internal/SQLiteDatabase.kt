@@ -20,21 +20,18 @@ import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabaseCorruptException
 import android.database.sqlite.SQLiteException
-import android.database.sqlite.SQLiteQueryBuilder
 import android.database.sqlite.SQLiteTransactionListener
 import android.util.Pair
 import androidx.core.os.CancellationSignal
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteStatement
-import ru.pixnews.wasm.sqlite.open.helper.OpenFlags
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.CREATE_IF_NECESSARY
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.ENABLE_WRITE_AHEAD_LOGGING
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.OPEN_CREATE
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.OPEN_READONLY
 import ru.pixnews.wasm.sqlite.open.helper.SqliteDatabaseConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.base.DatabaseErrorHandler
-import ru.pixnews.wasm.sqlite.open.helper.base.DefaultDatabaseErrorHandler
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.clear
@@ -49,6 +46,7 @@ import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
 import java.io.File
 import java.io.FileFilter
 import java.io.IOException
+import kotlin.collections.Map.Entry
 
 /**
  * Exposes methods to manage a SQLite database.
@@ -70,7 +68,7 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
     private val debugConfig: SQLiteDebug,
     rootLogger: Logger,
     private val bindings: SqlOpenHelperNativeBindings<CP, SP>,
-    errorHandler: DatabaseErrorHandler? = null,
+    private val errorHandler: DatabaseErrorHandler,
 ) : SQLiteClosable(), SupportSQLiteDatabase {
     private val logger = rootLogger.withTag(TAG)
 
@@ -84,10 +82,6 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
                 return SQLiteSession(pool)
             }
         }
-
-    // Error handler to be used when SQLite returns corruption errors.
-    // INVARIANT: Immutable.
-    private val errorHandler = errorHandler ?: DefaultDatabaseErrorHandler()
 
     // Shared database state lock.
     // This lock guards all of the shared state of the database, such as its
@@ -169,7 +163,9 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
     @Suppress("NO_CORRESPONDING_PROPERTY", "WRONG_NAME_OF_VARIABLE_INSIDE_ACCESSOR")
     override var version: Int
         get() = longForQuery("PRAGMA user_version;").toInt()
-        set(version) { execSQL("PRAGMA user_version = $version") }
+        set(version) {
+            execSQL("PRAGMA user_version = $version")
+        }
 
     override val maximumSize: Long
         /**
@@ -207,15 +203,6 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
 
     private val isReadOnlyLocked: Boolean
         get() = configurationLocked.openFlags.contains(OPEN_READONLY)
-
-    /**
-     * Returns true if the database is in-memory db.
-     *
-     * @return True if the database is in-memory.
-     * @hide
-     */
-    val isInMemoryDatabase: Boolean
-        get() = synchronized(lock) { configurationLocked.isInMemoryDb }
 
     /**
      * Returns true if the database is currently open.
@@ -418,28 +405,6 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
     override fun beginTransactionNonExclusive() = beginTransaction(
         null,
         SQLiteSession.TRANSACTION_MODE_IMMEDIATE,
-    )
-
-    /**
-     * Begins a transaction in DEFERRED mode.
-     */
-    fun beginTransactionDeferred() = beginTransaction(
-        null,
-        SQLiteSession.TRANSACTION_MODE_DEFERRED,
-    )
-
-    /**
-     * Begins a transaction in DEFERRED mode.
-     *
-     * @param transactionListener listener that should be notified when the transaction begins,
-     * commits, or is rolled back, either explicitly or by a call to
-     * [.yieldIfContendedSafely].
-     */
-    fun beginTransactionWithListenerDeferred(
-        transactionListener: SQLiteTransactionListener?,
-    ) = beginTransaction(
-        transactionListener,
-        SQLiteSession.TRANSACTION_MODE_DEFERRED,
     )
 
     /**
@@ -704,75 +669,13 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
      */
 
     /**
-     * Query the given URL, returning a [Cursor] over the result set.
-     *
-     * @param cursorFactory the cursor factory to use, or null for the default factory
-     * @param distinct true if you want each row to be unique, false otherwise.
-     * @param table The table name to compile the query against.
-     * @param columns A list of which columns to return. Passing null will
-     * return all columns, which is discouraged to prevent reading
-     * data from storage that isn't going to be used.
-     * @param selection A filter declaring which rows to return, formatted as an
-     * SQL WHERE clause (excluding the WHERE itself). Passing null
-     * will return all rows for the given table.
-     * @param selectionArgs You may include ?s in selection, which will be
-     * replaced by the values from selectionArgs, in order that they
-     * appear in the selection.
-     * @param groupBy A filter declaring how to group rows, formatted as an SQL
-     * GROUP BY clause (excluding the GROUP BY itself). Passing null
-     * will cause the rows to not be grouped.
-     * @param having A filter declare which row groups to include in the cursor,
-     * if row grouping is being used, formatted as an SQL HAVING
-     * clause (excluding the HAVING itself). Passing null will cause
-     * all row groups to be included, and is required when row
-     * grouping is not being used.
-     * @param orderBy How to order the rows, formatted as an SQL ORDER BY clause
-     * (excluding the ORDER BY itself). Passing null will use the
-     * default sort order, which may be unordered.
-     * @param limit Limits the number of rows returned by the query,
-     * formatted as LIMIT clause. Passing null denotes no LIMIT clause.
-     * @return A [Cursor] object, which is positioned before the first entry. Note that
-     * [Cursor]s are not synchronized, see the documentation for more details.
-     * @see Cursor
-     */
-    @JvmOverloads
-    @Suppress("LongParameterList")
-    internal fun queryWithFactory(
-        cursorFactory: CursorFactory<CP, SP>?,
-        distinct: Boolean,
-        table: String,
-        columns: Array<String?>?,
-        selection: String?,
-        selectionArgs: List<Any?>,
-        groupBy: String?,
-        having: String?,
-        orderBy: String?,
-        limit: String?,
-        cancellationSignal: CancellationSignal? = null,
-    ): Cursor = useReference {
-        val sql = SQLiteQueryBuilder.buildQueryString(
-            distinct,
-            table,
-            columns,
-            selection,
-            groupBy,
-            having,
-            orderBy,
-            limit,
-        )
-        rawQueryWithFactory(cursorFactory, sql, selectionArgs, cancellationSignal)
-    }
-
-    /**
      * Runs the provided SQL and returns a [Cursor] over the result set.
      *
      * @param query the SQL query. The SQL string must not be ; terminated
      * @return A [Cursor] object, which is positioned before the first entry. Note that
      * [Cursor]s are not synchronized, see the documentation for more details.
      */
-    override fun query(
-        query: String,
-    ): Cursor = rawQueryWithFactory(
+    override fun query(query: String): Cursor = rawQueryWithFactory(
         cursorFactory = null,
         sql = query,
         cancellationSignal = null,
@@ -787,10 +690,7 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
      * @return A [Cursor] object, which is positioned before the first entry. Note that
      * [Cursor]s are not synchronized, see the documentation for more details.
      */
-    override fun query(
-        query: String,
-        bindArgs: Array<out Any?>,
-    ): Cursor = rawQueryWithFactory(
+    override fun query(query: String, bindArgs: Array<out Any?>): Cursor = rawQueryWithFactory(
         cursorFactory = null,
         sql = query,
         selectionArgs = bindArgs.toList(),
@@ -843,7 +743,7 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
         supportQuery: SupportSQLiteQuery,
         signal: CancellationSignal?,
     ): Cursor = rawQueryWithFactory(
-        cursorFactory = { _, _, query ->
+        cursorFactory = { _, _, query: SQLiteQuery ->
             supportQuery.bindTo(query)
             SQLiteCursor(query, logger)
         },
@@ -851,21 +751,6 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
         selectionArgs = listOf(),
         cancellationSignal = signal,
     )
-
-    /**
-     * Runs the provided SQL and returns a cursor over the result set.
-     *
-     * @param cursorFactory the cursor factory to use, or null for the default factory
-     * @param sql the SQL query. The SQL string must not be ; terminated
-     * @param selectionArgs You may include ?s in where clause in the query,
-     * which will be replaced by the values from selectionArgs.
-     * @param editTable the name of the first table, which is editable
-     * @param cancellationSignal A signal to cancel the operation in progress, or null if none.
-     * If the operation is canceled, then [OperationCanceledException] will be thrown
-     * when the query is executed.
-     * @return A [Cursor] object, which is positioned before the first entry. Note that
-     * [Cursor]s are not synchronized, see the documentation for more details.
-     */
 
     /**
      * Runs the provided SQL and returns a cursor over the result set.
@@ -910,7 +795,12 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
         sql: String,
         selectionArgs: List<Any> = listOf(),
         cancellationSignal: CancellationSignal? = null,
-    ): Cursor = rawQueryWithFactory(null, sql, selectionArgs, cancellationSignal)
+    ): Cursor = rawQueryWithFactory(
+        cursorFactory = null,
+        sql = sql,
+        selectionArgs = selectionArgs,
+        cancellationSignal = cancellationSignal,
+    )
 
     /**
      * General method for inserting a row into the database.
@@ -930,9 +820,12 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
         table: String,
         conflictAlgorithm: Int,
         values: ContentValues,
-    ): Long {
-        return insertWithOnConflict(table, null, values, ConflictAlgorithm.entitiesMap.getValue(conflictAlgorithm))
-    }
+    ): Long = insertWithOnConflict(
+        table = table,
+        nullColumnHack = null,
+        initialValues = values,
+        conflictAlgorithm = ConflictAlgorithm.entitiesMap.getValue(conflictAlgorithm),
+    )
 
     /**
      * General method for inserting a row into the database.
@@ -1041,28 +934,11 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
     override fun delete(table: String, whereClause: String?, whereArgs: Array<out Any?>?): Int = useReference {
         SQLiteStatement(
             this,
-            "DELETE FROM $table${(if (whereClause?.isNotEmpty() == true) " WHERE $whereClause" else "")}",
+            "DELETE FROM $table${(if (!whereClause.isNullOrEmpty()) " WHERE $whereClause" else "")}",
             whereArgs?.toList() ?: emptyList(),
         ).use {
             it.executeUpdateDelete()
         }
-    }
-
-    /**
-     * Convenience method for updating rows in the database.
-     *
-     * @param table the table to update in
-     * @param values a map from column names to new column values. null is a
-     * valid value that will be translated to NULL.
-     * @param whereClause the optional WHERE clause to apply when updating.
-     * Passing null will update all rows.
-     * @param whereArgs You may include ?s in the where clause, which
-     * will be replaced by the values from whereArgs. The values
-     * will be bound as Strings.
-     * @return the number of rows affected
-     */
-    internal fun update(table: String?, values: ContentValues, whereClause: String?, whereArgs: List<String?>): Int {
-        return update(table, values, whereClause, whereArgs, ConflictAlgorithm.CONFLICT_NONE)
     }
 
     /**
@@ -1085,40 +961,24 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
         values: ContentValues,
         whereClause: String?,
         whereArgs: Array<out Any?>?,
-    ): Int = update(
-        table,
-        values,
-        whereClause,
-        whereArgs?.asList() ?: emptyList(),
-        ConflictAlgorithm.entitiesMap.getValue(conflictAlgorithm),
-    )
-
-    private fun update(
-        table: String?,
-        values: ContentValues,
-        whereClause: String?,
-        whereArgs: List<Any?>,
-        conflictAlgorithm: ConflictAlgorithm,
     ): Int = useReference {
         require(values.size() != 0) { "Empty values" }
 
         val sql = buildString {
             append("UPDATE ")
-            append(conflictAlgorithm.sql)
+            append(ConflictAlgorithm.entitiesMap.getValue(conflictAlgorithm).sql)
             append(table)
             append(" SET ")
 
             values.keySet().joinTo(this) { "$it=?" }
 
-            whereClause?.let {
-                if (it.isNotEmpty()) {
-                    append(" WHERE ")
-                    append(it)
-                }
+            if (!whereClause.isNullOrEmpty()) {
+                append(" WHERE ")
+                append(whereClause)
             }
         }
 
-        val bindArgs = values.valueSet().map(Map.Entry<*, *>::value) + whereArgs
+        val bindArgs = values.valueSet().map(Entry<*, *>::value) + (whereArgs?.asList() ?: emptyList())
         return SQLiteStatement(this, sql, bindArgs).use(SQLiteStatement::executeUpdateDelete)
     }
 
@@ -1201,20 +1061,6 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
     @Throws(SQLException::class)
     private fun executeSql(sql: String, bindArgs: List<Any?> = emptyList()): Int = useReference {
         SQLiteStatement(this, sql, bindArgs).use(SQLiteStatement::executeUpdateDelete)
-    }
-
-    /**
-     * Verifies that a SQL SELECT statement is valid by compiling it.
-     * If the SQL statement is not valid, this method will throw a [SQLiteException].
-     *
-     * @param sql SQL to be validated
-     * @param cancellationSignal A signal to cancel the operation in progress, or null if none.
-     * If the operation is canceled, then [OperationCanceledException] will be thrown
-     * when the query is executed.
-     * @throws SQLiteException if `sql` is invalid
-     */
-    fun validateSql(sql: String, cancellationSignal: CancellationSignal?) {
-        threadSession.prepare(sql, getThreadDefaultConnectionFlags(true), cancellationSignal)
     }
 
     /**
@@ -1458,50 +1304,10 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
         }
     }
 
-    private fun collectDbStats(dbStatsList: ArrayList<DbStats>) {
-        synchronized(lock) {
-            connectionPoolLocked?.collectDbStats(dbStatsList)
-        }
-    }
-
     override fun toString(): String = "SQLiteDatabase: $path"
 
     private fun requireConnectionPoolLocked(): SQLiteConnectionPool<CP, SP> = checkNotNull(connectionPoolLocked) {
         "The database '${configurationLocked.label}' is not open."
-    }
-
-    /**
-     * Query the table for the number of rows in the table.
-     *
-     * @param table the name of the table to query
-     * @param selection A filter declaring which rows to return,
-     * formatted as an SQL WHERE clause (excluding the WHERE itself).
-     * Passing null will count all rows for the given table
-     * @param selectionArgs You may include ?s in selection,
-     * which will be replaced by the values from selectionArgs,
-     * in order that they appear in the selection.
-     * The values will be bound as Strings.
-     * @return the number of rows in the table filtered by the selection
-     */
-    /**
-     * Query the table for the number of rows in the table.
-     *
-     * @param table the name of the table to query
-     * @return the number of rows in the table
-     */
-
-    /**
-     * Query the table for the number of rows in the table.
-     *
-     * @param table the name of the table to query
-     * @param selection A filter declaring which rows to return,
-     * formatted as an SQL WHERE clause (excluding the WHERE itself).
-     * Passing null will count all rows for the given table
-     * @return the number of rows in the table filtered by the selection
-     */
-    fun queryNumEntries(table: String, selection: String? = null, selectionArgs: List<String> = listOf()): Long {
-        val whereSelection = if (selection?.isNotEmpty() == true) " where $selection" else ""
-        return longForQuery("select count(*) from $table$whereSelection", selectionArgs)
     }
 
     /**
@@ -1514,15 +1320,6 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
     ): Long = compileStatement(query).use { prog ->
         longForQuery(prog = prog, selectionArgs)
     }
-
-    /**
-     * Utility method to run the query on the db and return the value in the
-     * first column of the first row.
-     */
-    fun stringForQuery(
-        query: String,
-        selectionArgs: List<String> = emptyList(),
-    ): String? = compileStatement(query).use { prog -> stringForQuery(prog, selectionArgs) }
 
     /**
      * Used to allow returning sub-classes of [Cursor] when calling query.
@@ -1550,67 +1347,6 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
         const val MAX_SQL_CACHE_SIZE: Int = 100
 
         /**
-         * Attempts to release memory that SQLite holds but does not require to
-         * operate properly. Typically this memory will come from the page cache.
-         *
-         * @return the number of bytes actually released
-         */
-        fun releaseMemory(): Int {
-            return SQLiteGlobal.releaseMemory()
-        }
-
-        /**
-         * Open the database according to the flags [OpenFlags]
-         *
-         *
-         * Sets the locale of the database to the  the system's current locale.
-         * Call [.setLocale] if you would like something else.
-         *
-         *
-         * Accepts input param: a concrete instance of [DatabaseErrorHandler] to be
-         * used to handle corruption when sqlite reports database corruption.
-         *
-         * @param path to database file to open and/or create
-         * @param factory an optional factory class that is called to instantiate a
-         * cursor when query is called, or null for default
-         * @param flags to control database access mode
-         * @param errorHandler the [DatabaseErrorHandler] obj to be used to handle corruption
-         * when sqlite reports database corruption
-         * @return the newly opened database
-         * @throws SQLiteException if the database cannot be opened
-         */
-
-        /**
-         * Open the database according to the flags [OpenFlags]
-         *
-         *
-         * Sets the locale of the database to the  the system's current locale.
-         * Call [.setLocale] if you would like something else.
-         *
-         * @param path to database file to open and/or create
-         * @param factory an optional factory class that is called to instantiate a
-         * cursor when query is called, or null for default
-         * @param flags to control database access mode
-         * @return the newly opened database
-         * @throws SQLiteException if the database cannot be opened
-         */
-        @JvmStatic
-        internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> openDatabase(
-            path: String,
-            flags: OpenFlags,
-            errorHandler: DatabaseErrorHandler? = null,
-            bindings: SqlOpenHelperNativeBindings<CP, SP>,
-            debugConfig: SQLiteDebug,
-            locale: Locale,
-            logger: Logger,
-        ): SQLiteDatabase<CP, SP> {
-            val configuration = SqliteDatabaseConfiguration(path, flags, locale)
-            val db = SQLiteDatabase(configuration, debugConfig, logger, bindings, errorHandler)
-            db.open()
-            return db
-        }
-
-        /**
          * Open the database according to the given configuration.
          *
          *
@@ -1631,7 +1367,7 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
          */
         internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> openDatabase(
             configuration: SqliteDatabaseConfiguration,
-            errorHandler: DatabaseErrorHandler?,
+            errorHandler: DatabaseErrorHandler,
             bindings: SqlOpenHelperNativeBindings<CP, SP>,
             debugConfig: SQLiteDebug,
             logger: Logger,
@@ -1640,63 +1376,6 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
             db.open()
             return db
         }
-
-        /**
-         * Equivalent to openDatabase(file.getPath(), factory, CREATE_IF_NECESSARY).
-         */
-        internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> openOrCreateDatabase(
-            file: File,
-            bindings: SqlOpenHelperNativeBindings<CP, SP>,
-            locale: Locale,
-            debugConfig: SQLiteDebug,
-            logger: Logger,
-        ): SQLiteDatabase<CP, SP> = openOrCreateDatabase(
-            path = file.path,
-            bindings = bindings,
-            locale = locale,
-            debugConfig = debugConfig,
-            logger = logger,
-        )
-
-        /**
-         * Equivalent to openDatabase(path, factory, CREATE_IF_NECESSARY).
-         */
-        internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> openOrCreateDatabase(
-            path: String,
-            bindings: SqlOpenHelperNativeBindings<CP, SP>,
-            debugConfig: SQLiteDebug,
-            locale: Locale,
-            logger: Logger,
-        ): SQLiteDatabase<CP, SP> = openDatabase(
-            path = path,
-            flags = CREATE_IF_NECESSARY,
-            errorHandler = null,
-            bindings = bindings,
-            debugConfig = debugConfig,
-            locale = locale,
-            logger = logger,
-        )
-
-        /**
-         * Equivalent to openDatabase(path, factory, CREATE_IF_NECESSARY, errorHandler).
-         */
-        @JvmStatic
-        internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> openOrCreateDatabase(
-            path: String,
-            errorHandler: DatabaseErrorHandler?,
-            bindings: SqlOpenHelperNativeBindings<CP, SP>,
-            debugConfig: SQLiteDebug,
-            locale: Locale,
-            logger: Logger,
-        ): SQLiteDatabase<CP, SP> = openDatabase(
-            path = path,
-            flags = CREATE_IF_NECESSARY,
-            errorHandler = errorHandler,
-            bindings = bindings,
-            debugConfig = debugConfig,
-            locale = locale,
-            logger = logger,
-        )
 
         /**
          * Deletes a database including its journal file and other auxiliary files
@@ -1765,40 +1444,25 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
          */
         internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> create(
             bindings: SqlOpenHelperNativeBindings<CP, SP>,
+            errorHandler: DatabaseErrorHandler,
             locale: Locale,
             debugConfig: SQLiteDebug,
             logger: Logger,
-        ): SQLiteDatabase<CP, SP> = openDatabase(
-            path = SqliteDatabaseConfiguration.MEMORY_DB_PATH,
-            flags = CREATE_IF_NECESSARY,
-            bindings = bindings,
-            debugConfig = debugConfig,
-            locale = locale,
-            logger = logger,
-        )
-
-        /**
-         * Finds the name of the first table, which is editable.
-         *
-         * @param tables a list of tables
-         * @return the first table listed
-         */
-        @JvmStatic
-        fun findEditTable(tables: String): String {
-            if (tables.isNotEmpty()) {
-                // find the first word terminated by either a space or a comma
-                val spacepos = tables.indexOf(' ')
-                val commapos = tables.indexOf(',')
-
-                if (spacepos > 0 && (spacepos < commapos || commapos < 0)) {
-                    return tables.substring(0, spacepos)
-                } else if (commapos > 0 && (commapos < spacepos || spacepos < 0)) {
-                    return tables.substring(0, commapos)
-                }
-                return tables
-            } else {
-                error("Invalid tables")
-            }
+        ): SQLiteDatabase<CP, SP> {
+            val configuration = SqliteDatabaseConfiguration(
+                path = SqliteDatabaseConfiguration.MEMORY_DB_PATH,
+                openFlags = CREATE_IF_NECESSARY,
+                defaultLocale = locale,
+            )
+            val db = SQLiteDatabase(
+                configuration = configuration,
+                debugConfig = debugConfig,
+                rootLogger = logger,
+                bindings = bindings,
+                errorHandler = errorHandler,
+            )
+            db.open()
+            return db
         }
 
         /**
@@ -1809,125 +1473,6 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
             prog.bindAllArgsAsStrings(selectionArgs)
             return prog.simpleQueryForLong()
         }
-
-        /**
-         * Utility method to run the pre-compiled query and return the value in the
-         * first column of the first row.
-         */
-        fun stringForQuery(prog: SupportSQLiteStatement, selectionArgs: List<String?>): String? {
-            prog.bindAllArgsAsStrings(selectionArgs)
-            return prog.simpleQueryForString()
-        }
-
-        /**
-         * Query the given table, returning a [Cursor] over the result set.
-         *
-         * @param table The table name to compile the query against.
-         * @param columns A list of which columns to return. Passing null will
-         * return all columns, which is discouraged to prevent reading
-         * data from storage that isn't going to be used.
-         * @param selection A filter declaring which rows to return, formatted as an
-         * SQL WHERE clause (excluding the WHERE itself). Passing null
-         * will return all rows for the given table.
-         * @param selectionArgs You may include ?s in selection, which will be
-         * replaced by the values from selectionArgs, in order that they
-         * appear in the selection.
-         * @param groupBy A filter declaring how to group rows, formatted as an SQL
-         * GROUP BY clause (excluding the GROUP BY itself). Passing null
-         * will cause the rows to not be grouped.
-         * @param having A filter declare which row groups to include in the cursor,
-         * if row grouping is being used, formatted as an SQL HAVING
-         * clause (excluding the HAVING itself). Passing null will cause
-         * all row groups to be included, and is required when row
-         * grouping is not being used.
-         * @param orderBy How to order the rows, formatted as an SQL ORDER BY clause
-         * (excluding the ORDER BY itself). Passing null will use the
-         * default sort order, which may be unordered.
-         * @param limit Limits the number of rows returned by the query,
-         * formatted as LIMIT clause. Passing null denotes no LIMIT clause.
-         * @return A [Cursor] object, which is positioned before the first entry. Note that
-         * [Cursor]s are not synchronized, see the documentation for more details.
-         * @see Cursor
-         */
-        fun SQLiteDatabase<Sqlite3ConnectionPtr, Sqlite3StatementPtr>.query(
-            table: String,
-            columns: Array<String?>?,
-            selection: String?,
-            selectionArgs: List<Any?>,
-            groupBy: String?,
-            having: String?,
-            orderBy: String?,
-            limit: String? = null,
-        ): Cursor = query(
-            distinct = false,
-            table = table,
-            columns = columns,
-            selection = selection,
-            selectionArgs = selectionArgs,
-            groupBy = groupBy,
-            having = having,
-            orderBy = orderBy,
-            limit = limit,
-        )
-
-        /**
-         * Query the given URL, returning a [Cursor] over the result set.
-         *
-         * @param distinct true if you want each row to be unique, false otherwise.
-         * @param table The table name to compile the query against.
-         * @param columns A list of which columns to return. Passing null will
-         * return all columns, which is discouraged to prevent reading
-         * data from storage that isn't going to be used.
-         * @param selection A filter declaring which rows to return, formatted as an
-         * SQL WHERE clause (excluding the WHERE itself). Passing null
-         * will return all rows for the given table.
-         * @param selectionArgs You may include ?s in selection, which will be
-         * replaced by the values from selectionArgs, in order that they
-         * appear in the selection.
-         * @param groupBy A filter declaring how to group rows, formatted as an SQL
-         * GROUP BY clause (excluding the GROUP BY itself). Passing null
-         * will cause the rows to not be grouped.
-         * @param having A filter declare which row groups to include in the cursor,
-         * if row grouping is being used, formatted as an SQL HAVING
-         * clause (excluding the HAVING itself). Passing null will cause
-         * all row groups to be included, and is required when row
-         * grouping is not being used.
-         * @param orderBy How to order the rows, formatted as an SQL ORDER BY clause
-         * (excluding the ORDER BY itself). Passing null will use the
-         * default sort order, which may be unordered.
-         * @param limit Limits the number of rows returned by the query,
-         * formatted as LIMIT clause. Passing null denotes no LIMIT clause.
-         * @param cancellationSignal A signal to cancel the operation in progress, or null if none.
-         * If the operation is canceled, then [OperationCanceledException] will be thrown
-         * when the query is executed.
-         * @return A [Cursor] object, which is positioned before the first entry. Note that
-         * [Cursor]s are not synchronized, see the documentation for more details.
-         * @see Cursor
-         */
-        fun SQLiteDatabase<Sqlite3ConnectionPtr, Sqlite3StatementPtr>.query(
-            distinct: Boolean,
-            table: String,
-            columns: Array<String?>?,
-            selection: String?,
-            selectionArgs: List<Any?>,
-            groupBy: String?,
-            having: String?,
-            orderBy: String?,
-            limit: String?,
-            cancellationSignal: CancellationSignal? = null,
-        ): Cursor = queryWithFactory(
-            cursorFactory = null,
-            distinct = distinct,
-            table = table,
-            columns = columns,
-            selection = selection,
-            selectionArgs = selectionArgs,
-            groupBy = groupBy,
-            having = having,
-            orderBy = orderBy,
-            limit = limit,
-            cancellationSignal = cancellationSignal,
-        )
 
         /**
          * Convenience method for inserting a row into the database.
@@ -1950,32 +1495,6 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
         } catch (e: SQLException) {
             logger.e(e) { "Error inserting $values" }
             -1
-        }
-
-        /**
-         * Convenience method for inserting a row into the database.
-         *
-         * @param table the table to insert the row into
-         * @param nullColumnHack optional; may be `null`.
-         * SQL doesn't allow inserting a completely empty row without
-         * naming at least one column name.  If your provided `values` is
-         * empty, no column names are known and an empty row can't be inserted.
-         * If not set to null, the `nullColumnHack` parameter
-         * provides the name of nullable column name to explicitly insert a NULL into
-         * in the case where your `values` is empty.
-         * @param values this map contains the initial column values for the
-         * row. The keys should be the column names and the values the
-         * column values
-         * @return the row ID of the newly inserted row, or -1 if an error occurred
-         * @throws SQLException
-         */
-        @Throws(SQLException::class)
-        fun SQLiteDatabase<*, *>.insertOrThrow(
-            table: String?,
-            nullColumnHack: String?,
-            values: ContentValues?,
-        ): Long {
-            return insertWithOnConflict(table, nullColumnHack, values, ConflictAlgorithm.CONFLICT_NONE)
         }
 
         /**
@@ -2005,63 +1524,5 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
                 return -1
             }
         }
-
-        /**
-         * Convenience method for replacing a row in the database.
-         *
-         * @param table the table in which to replace the row
-         * @param nullColumnHack optional; may be `null`.
-         * SQL doesn't allow inserting a completely empty row without
-         * naming at least one column name.  If your provided `initialValues` is
-         * empty, no column names are known and an empty row can't be inserted.
-         * If not set to null, the `nullColumnHack` parameter
-         * provides the name of nullable column name to explicitly insert a NULL into
-         * in the case where your `initialValues` is empty.
-         * @param initialValues this map contains the initial column values for
-         * the row. The key
-         * @return the row ID of the newly inserted row, or -1 if an error occurred
-         * @throws SQLException
-         */
-        @Throws(SQLException::class)
-        fun SQLiteDatabase<*, *>.replaceOrThrow(
-            table: String?,
-            nullColumnHack: String?,
-            initialValues: ContentValues?,
-        ): Long = insertWithOnConflict(table, nullColumnHack, initialValues, ConflictAlgorithm.CONFLICT_REPLACE)
-    }
-}
-
-public interface SQLiteDatabaseFunction {
-    /**
-     * Invoked whenever the function is called.
-     *
-     * @param args function arguments
-     * @return String value of the result or null
-     */
-    public fun callback(args: Args?, result: Result?)
-    public interface Args {
-        public fun getBlob(arg: Int): ByteArray?
-        public fun getString(arg: Int): String?
-        public fun getDouble(arg: Int): Double
-        public fun getInt(arg: Int): Int
-        public fun getLong(arg: Int): Long
-    }
-
-    public interface Result {
-        public fun set(value: ByteArray?)
-        public fun set(value: Double)
-        public fun set(value: Int)
-        public fun set(value: Long)
-        public fun set(value: String?)
-        public fun setError(error: String?)
-        public fun setNull()
-    }
-
-    public companion object {
-        /**
-         * Flag that declares this function to be "deterministic,"
-         * which means it may be used with Indexes on Expressions.
-         */
-        public const val FLAG_DETERMINISTIC: Int = 0x800
     }
 }

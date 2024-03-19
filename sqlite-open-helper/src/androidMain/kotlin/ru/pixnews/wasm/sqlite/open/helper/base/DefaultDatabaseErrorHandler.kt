@@ -23,17 +23,6 @@ import java.io.File
  * Default class used to define the actions to take when the database corruption is reported
  * by sqlite.
  *
- *
- * An application can specify an implementation of [DatabaseErrorHandler] on the
- * following:
- *
- *  * [SQLiteDatabase.openOrCreateDatabase]
- *  * [SQLiteDatabase.openDatabase]
- *
- * The specified [DatabaseErrorHandler] is used to handle database corruption errors, if they
- * occur.
- *
- *
  * If null is specified for DatabaeErrorHandler param in the above calls, then this class is used
  * as the default [DatabaseErrorHandler].
  */
