@@ -8,8 +8,13 @@ package ru.pixnews.wasm.sqlite.open.helper.internal.platform
 
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.posix.getenv
+import platform.posix.usleep
 
 @OptIn(ExperimentalForeignApi::class)
 internal actual fun getSystemProp(name: String, defaultValue: String): String {
     return getenv(name.uppercase().replace(".", "_"))?.toString() ?: defaultValue
+}
+
+internal actual fun yieldSleepAroundMSec() {
+    usleep(1000U)
 }

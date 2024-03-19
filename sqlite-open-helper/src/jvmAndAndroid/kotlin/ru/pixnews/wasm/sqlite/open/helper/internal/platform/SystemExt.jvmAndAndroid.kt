@@ -9,3 +9,5 @@ package ru.pixnews.wasm.sqlite.open.helper.internal.platform
 internal actual fun getSystemProp(name: String, defaultValue: String): String {
     return System.getProperty(name, defaultValue)!!
 }
+
+internal actual fun yieldSleepAroundMSec() = Thread.sleep(1)
