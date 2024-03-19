@@ -202,9 +202,9 @@ internal class SQLiteConnectionPool<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
         val foreignKeyModeChanged = configuration.foreignKeyConstraintsEnabled !=
                 this.configuration.foreignKeyConstraintsEnabled
         if (foreignKeyModeChanged &&
-// Foreign key constraints can only be changed if there are no transactions
-// in progress.  To make this clear, we throw an exception if there are
-// any acquired connections.
+            // Foreign key constraints can only be changed if there are no transactions
+            // in progress.  To make this clear, we throw an exception if there are
+            // any acquired connections.
             acquiredConnections.isNotEmpty()
         ) {
             throw IllegalStateException(

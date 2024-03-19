@@ -6,14 +6,6 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.internal
 
-/*
- * Original Copyrights:
- * Copyright (C) 2017-2024 requery.io
- * Copyright (C) 2005-2012 The Android Open Source Project
- * Licensed under the Apache License, Version 2.0 (the "License")
- */
-
-import android.util.Log
 import kotlin.concurrent.Volatile
 
 /**
@@ -106,15 +98,6 @@ internal class CloseGuard private constructor() {
     private var allocationSite: Throwable? = null
 
     /**
-     * Default Reporter which reports CloseGuard violations to the log.
-     */
-    private object DefaultReporter : Reporter {
-        override fun report(message: String?, allocationSite: Throwable?) {
-            Log.w("SQLite", message, allocationSite)
-        }
-    }
-
-    /**
      * If CloseGuard is enabled, `open` initializes the instance
      * with a warning that the caller should have explicitly called the
      * `closer` method instead of relying on finalization.
@@ -182,7 +165,7 @@ internal class CloseGuard private constructor() {
          * Hook for customizing how CloseGuard issues are reported.
          */
         @Volatile
-        private var _reporter: Reporter = DefaultReporter
+        private var _reporter: Reporter = Reporter { _, _ -> }
 
         var reporter: Reporter?
             /**
@@ -206,7 +189,6 @@ internal class CloseGuard private constructor() {
          * instance to warn on failure to close.
          * If CloseGuard is disabled, a non-null no-op instance is returned.
          */
-        @JvmStatic
         fun get(): CloseGuard {
             if (!ENABLED) {
                 return NOOP

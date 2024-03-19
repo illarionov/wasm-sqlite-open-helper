@@ -36,13 +36,8 @@ internal class SQLiteStatement(
      *
      * @throws SQLException If the SQL string is invalid for some reason
      */
-    override fun execute() = useReference {
-        try {
-            session.execute(sql, bindArgs, connectionFlags, null)
-        } catch (ex: SQLiteDatabaseCorruptException) {
-            onCorruption()
-            throw ex
-        }
+    override fun execute() = executeHandleCorruption {
+        session.execute(sql, bindArgs, connectionFlags, null)
     }
 
     /**
@@ -52,13 +47,8 @@ internal class SQLiteStatement(
      * @return the number of rows affected by this SQL statement execution.
      * @throws SQLException If the SQL string is invalid for some reason
      */
-    override fun executeUpdateDelete(): Int = useReference {
-        try {
-            return session.executeForChangedRowCount(sql, bindArgs, connectionFlags, null)
-        } catch (ex: SQLiteDatabaseCorruptException) {
-            onCorruption()
-            throw ex
-        }
+    override fun executeUpdateDelete(): Int = executeHandleCorruption {
+        return session.executeForChangedRowCount(sql, bindArgs, connectionFlags, null)
     }
 
     /**
@@ -68,13 +58,8 @@ internal class SQLiteStatement(
      * @return the row ID of the last row inserted, if this insert is successful. -1 otherwise.
      * @throws SQLException If the SQL string is invalid for some reason
      */
-    override fun executeInsert(): Long = useReference {
-        try {
-            return session.executeForLastInsertedRowId(sql, bindArgs, connectionFlags, null)
-        } catch (ex: SQLiteDatabaseCorruptException) {
-            onCorruption()
-            throw ex
-        }
+    override fun executeInsert(): Long = executeHandleCorruption {
+        session.executeForLastInsertedRowId(sql, bindArgs, connectionFlags, null)
     }
 
     /**
@@ -84,13 +69,8 @@ internal class SQLiteStatement(
      * @return The result of the query.
      * @throws SQLiteDoneException if the query returns zero rows
      */
-    override fun simpleQueryForLong(): Long = useReference {
-        try {
-            return session.executeForLong(sql, bindArgs, connectionFlags, null)
-        } catch (ex: SQLiteDatabaseCorruptException) {
-            onCorruption()
-            throw ex
-        }
+    override fun simpleQueryForLong(): Long = executeHandleCorruption {
+        session.executeForLong(sql, bindArgs, connectionFlags, null)
     }
 
     /**
@@ -100,9 +80,13 @@ internal class SQLiteStatement(
      * @return The result of the query.
      * @throws SQLiteDoneException if the query returns zero rows
      */
-    override fun simpleQueryForString(): String? = useReference {
+    override fun simpleQueryForString(): String? = executeHandleCorruption {
+        session.executeForString(sql, bindArgs, connectionFlags, null)
+    }
+
+    private inline fun <R : Any?> executeHandleCorruption(block: () -> R): R = useReference {
         try {
-            return session.executeForString(sql, bindArgs, connectionFlags, null)
+            return block()
         } catch (ex: SQLiteDatabaseCorruptException) {
             onCorruption()
             throw ex

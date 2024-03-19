@@ -6,13 +6,6 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.internal
 
-/*
- * Original Copyrights:
- * Copyright (C) 2017-2024 requery.io
- * Copyright (C) 2005-2012 The Android Open Source Project
- * Licensed under the Apache License, Version 2.0 (the "License")
- */
-
 /**
  * Describes a SQLite statement.
  *

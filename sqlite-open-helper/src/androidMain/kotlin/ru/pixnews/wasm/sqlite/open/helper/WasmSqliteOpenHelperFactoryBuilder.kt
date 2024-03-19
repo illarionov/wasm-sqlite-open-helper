@@ -12,6 +12,8 @@ import ru.pixnews.wasm.sqlite.open.helper.dsl.WasmSqliteOpenHelperFactoryConfigB
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedder
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import ru.pixnews.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
+import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard
+import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard.Reporter
 import ru.pixnews.wasm.sqlite.open.helper.path.JvmDatabasePathResolver
 
 /**
@@ -28,6 +30,9 @@ public fun <E : SqliteEmbedderConfig> WasmSqliteOpenHelperFactory(
     val commonConfig = object : WasmSqliteCommonConfig {
         override val logger: Logger = config.logger
     }
+
+    setupCloseGuard(config.logger)
+
     return WasmSqliteOpenHelperFactory(
         pathResolver = config.pathResolver,
         defaultLocale = config.locale,
@@ -36,4 +41,11 @@ public fun <E : SqliteEmbedderConfig> WasmSqliteOpenHelperFactory(
         rootLogger = commonConfig.logger,
         configurationOptions = config.configurationOptions,
     )
+}
+
+private fun setupCloseGuard(rootLogger: Logger) {
+    val logger = rootLogger.withTag("SQLite")
+    CloseGuard.reporter = Reporter { message, allocationSite ->
+        logger.w(allocationSite, message::toString)
+    }
 }

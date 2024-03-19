@@ -40,11 +40,12 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.or
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.Companion.CONNECTION_FLAG_PRIMARY_CONNECTION_AFFINITY
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.Companion.CONNECTION_FLAG_READ_ONLY
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteProgram.Companion.bindAllArgsAsStrings
+import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteSession.Companion.TRANSACTION_MODE_EXCLUSIVE
+import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteSession.Companion.TRANSACTION_MODE_IMMEDIATE
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.SqlOpenHelperNativeBindings
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3ConnectionPtr
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
 import java.io.File
-import java.io.FileFilter
 import java.io.IOException
 import kotlin.collections.Map.Entry
 
@@ -167,10 +168,10 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
             execSQL("PRAGMA user_version = $version")
         }
 
+    /**
+     * Returns the maximum size the database may grow to.
+     */
     override val maximumSize: Long
-        /**
-         * Returns the maximum size the database may grow to.
-         */
         get() {
             val pageCount = longForQuery("PRAGMA max_page_count;")
             return pageCount * pageSize
@@ -258,7 +259,7 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
             try {
                 val attachedDbs: MutableList<Pair<String, String>> = mutableListOf()
                 // has attached databases. query sqlite to get the list of attached databases.
-                rawQuery("pragma database_list;").use { cursor ->
+                rawQueryWithFactory("pragma database_list;").use { cursor ->
                     while (cursor.moveToNext()) {
                         // sqlite returns a row for each database in the returned list of databases.
                         // in each row,
@@ -342,18 +343,6 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
     }
 
     /**
-     * Gets default connection flags that are appropriate for this thread, taking into
-     * account whether the thread is acting on behalf of the UI.
-     *
-     * @param readOnly True if the connection should be read-only.
-     * @return The connection flags.
-     */
-    fun getThreadDefaultConnectionFlags(readOnly: Boolean): Int {
-        val flags = if (readOnly) CONNECTION_FLAG_READ_ONLY else CONNECTION_FLAG_PRIMARY_CONNECTION_AFFINITY
-        return flags
-    }
-
-    /**
      * Begins a transaction in EXCLUSIVE mode.
      *
      *
@@ -376,10 +365,7 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
      * }
     </pre> *
      */
-    override fun beginTransaction() = beginTransaction(
-        null,
-        SQLiteSession.TRANSACTION_MODE_EXCLUSIVE,
-    )
+    override fun beginTransaction() = beginTransaction(null, TRANSACTION_MODE_EXCLUSIVE)
 
     /**
      * Begins a transaction in IMMEDIATE mode. Transactions can be nested. When
@@ -402,10 +388,7 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
      * }
     </pre> *
      */
-    override fun beginTransactionNonExclusive() = beginTransaction(
-        null,
-        SQLiteSession.TRANSACTION_MODE_IMMEDIATE,
-    )
+    override fun beginTransactionNonExclusive() = beginTransaction(null, TRANSACTION_MODE_IMMEDIATE)
 
     /**
      * Begins a transaction in EXCLUSIVE mode.
@@ -436,10 +419,7 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
      */
     override fun beginTransactionWithListener(
         transactionListener: SQLiteTransactionListener,
-    ) = beginTransaction(
-        transactionListener,
-        SQLiteSession.TRANSACTION_MODE_EXCLUSIVE,
-    )
+    ) = beginTransaction(transactionListener, TRANSACTION_MODE_EXCLUSIVE)
 
     /**
      * Begins a transaction in IMMEDIATE mode. Transactions can be nested. When
@@ -471,7 +451,7 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
     ) {
         beginTransaction(
             transactionListener,
-            SQLiteSession.TRANSACTION_MODE_IMMEDIATE,
+            TRANSACTION_MODE_IMMEDIATE,
         )
     }
 
@@ -488,9 +468,7 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
      * End a transaction. See beginTransaction for notes about how to use this and when transactions
      * are committed and rolled back.
      */
-    override fun endTransaction() = useReference {
-        threadSession.endTransaction(null)
-    }
+    override fun endTransaction() = useReference { threadSession.endTransaction() }
 
     /**
      * Marks the current transaction as successful. Do not do any more database work between
@@ -519,10 +497,7 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
      *
      * @return true if the transaction was yielded
      */
-    override fun yieldIfContendedSafely(): Boolean = yieldIfContendedHelper(
-        throwIfUnsafe = true,
-        sleepAfterYieldDelay = -1,
-    )
+    override fun yieldIfContendedSafely(): Boolean = yieldIfContendedSafely(-1)
 
     /**
      * Temporarily end the transaction to let other threads run. The transaction is assumed to be
@@ -536,12 +511,8 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
      * more progress than they would if we started the transaction immediately.
      * @return true if the transaction was yielded
      */
-    override fun yieldIfContendedSafely(sleepAfterYieldDelayMillis: Long): Boolean {
-        return yieldIfContendedHelper(true, sleepAfterYieldDelay = sleepAfterYieldDelayMillis)
-    }
-
-    private fun yieldIfContendedHelper(throwIfUnsafe: Boolean, sleepAfterYieldDelay: Long): Boolean = useReference {
-        threadSession.yieldTransaction(sleepAfterYieldDelay, throwIfUnsafe, null)
+    override fun yieldIfContendedSafely(sleepAfterYieldDelayMillis: Long): Boolean = useReference {
+        threadSession.yieldTransaction(sleepAfterYieldDelayMillis, true, null)
     }
 
     /**
@@ -675,11 +646,7 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
      * @return A [Cursor] object, which is positioned before the first entry. Note that
      * [Cursor]s are not synchronized, see the documentation for more details.
      */
-    override fun query(query: String): Cursor = rawQueryWithFactory(
-        cursorFactory = null,
-        sql = query,
-        cancellationSignal = null,
-    )
+    override fun query(query: String): Cursor = rawQueryWithFactory(query)
 
     /**
      * Runs the provided SQL and returns a [Cursor] over the result set.
@@ -691,10 +658,8 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
      * [Cursor]s are not synchronized, see the documentation for more details.
      */
     override fun query(query: String, bindArgs: Array<out Any?>): Cursor = rawQueryWithFactory(
-        cursorFactory = null,
         sql = query,
         selectionArgs = bindArgs.toList(),
-        cancellationSignal = null,
     )
 
     /**
@@ -743,13 +708,12 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
         supportQuery: SupportSQLiteQuery,
         signal: CancellationSignal?,
     ): Cursor = rawQueryWithFactory(
-        cursorFactory = { _, _, query: SQLiteQuery ->
+        sql = supportQuery.sql,
+        cancellationSignal = signal,
+        cursorFactory = { query ->
             supportQuery.bindTo(query)
             SQLiteCursor(query, logger)
         },
-        sql = supportQuery.sql,
-        selectionArgs = listOf(),
-        cancellationSignal = signal,
     )
 
     /**
@@ -762,45 +726,23 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
      * @param editTable the name of the first table, which is editable
      * @return A [Cursor] object, which is positioned before the first entry. Note that
      * [Cursor]s are not synchronized, see the documentation for more details.
+     * @throws RuntimeException
      */
     @JvmOverloads
     internal fun rawQueryWithFactory(
-        cursorFactory: CursorFactory<CP, SP>?,
         sql: String,
         selectionArgs: List<Any?> = listOf(),
         cancellationSignal: CancellationSignal? = null,
+        cursorFactory: ((SQLiteQuery) -> Cursor)? = null,
     ): Cursor = useReference {
-        val driver: SQLiteCursorDriver<CP, SP> = SQLiteDirectCursorDriver(
-            database = this,
-            sql = sql,
-            cancellationSignal = cancellationSignal,
-            rootLogger = logger,
-        )
-        return driver.query(cursorFactory, selectionArgs)
+        val query = SQLiteQuery(this, sql, selectionArgs, cancellationSignal, logger)
+        try {
+            return cursorFactory?.invoke(query) ?: SQLiteCursor(query, logger)
+        } catch (@Suppress("TooGenericExceptionCaught") ex: RuntimeException) {
+            query.close()
+            throw ex
+        }
     }
-
-    /**
-     * Runs the provided SQL and returns a [Cursor] over the result set.
-     *
-     * @param sql the SQL query. The SQL string must not be ; terminated
-     * @param selectionArgs You may include ?s in where clause in the query,
-     * which will be replaced by the values from selectionArgs.
-     * @param cancellationSignal A signal to cancel the operation in progress, or null if none.
-     * If the operation is canceled, then [OperationCanceledException] will be thrown
-     * when the query is executed.
-     * @return A [Cursor] object, which is positioned before the first entry. Note that
-     * [Cursor]s are not synchronized, see the documentation for more details.
-     */
-    fun rawQuery(
-        sql: String,
-        selectionArgs: List<Any> = listOf(),
-        cancellationSignal: CancellationSignal? = null,
-    ): Cursor = rawQueryWithFactory(
-        cursorFactory = null,
-        sql = sql,
-        selectionArgs = selectionArgs,
-        cancellationSignal = cancellationSignal,
-    )
 
     /**
      * General method for inserting a row into the database.
@@ -893,29 +835,6 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
             sql.toString(),
             bindArgs.toList(),
         ).use { it.executeInsert() }
-    }
-
-    /**
-     * Convenience method for deleting rows in the database.
-     *
-     * @param table the table to delete from
-     * @param whereClause the optional WHERE clause to apply when deleting.
-     * Passing null will delete all rows.
-     * @param whereArgs You may include ?s in the where clause, which
-     * will be replaced by the values from whereArgs. The values
-     * will be bound as Strings.
-     * @return the number of rows affected if a whereClause is passed in, 0
-     * otherwise. To remove all rows and get a count pass "1" as the
-     * whereClause.
-     */
-    fun delete(table: String, whereClause: String, whereArgs: List<String?> = emptyList()): Int = useReference {
-        SQLiteStatement(
-            this,
-            "DELETE FROM $table${(if (whereClause.isNotEmpty()) " WHERE $whereClause" else "")}",
-            whereArgs,
-        ).use {
-            it.executeUpdateDelete()
-        }
     }
 
     /**
@@ -1304,38 +1223,25 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
         }
     }
 
-    override fun toString(): String = "SQLiteDatabase: $path"
-
     private fun requireConnectionPoolLocked(): SQLiteConnectionPool<CP, SP> = checkNotNull(connectionPoolLocked) {
         "The database '${configurationLocked.label}' is not open."
     }
+
+    override fun toString(): String = "SQLiteDatabase: $path"
 
     /**
      * Utility method to run the query on the db and return the value in the
      * first column of the first row.
      */
-    fun longForQuery(
+    private fun longForQuery(
         query: String,
         selectionArgs: List<String?> = emptyList(),
-    ): Long = compileStatement(query).use { prog ->
-        longForQuery(prog = prog, selectionArgs)
+    ): Long = compileStatement(query).use { statement: SupportSQLiteStatement ->
+        statement.bindAllArgsAsStrings(selectionArgs)
+        statement.simpleQueryForLong()
     }
 
-    /**
-     * Used to allow returning sub-classes of [Cursor] when calling query.
-     */
-    internal fun interface CursorFactory<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> {
-        /**
-         * See [SQLiteCursor.SQLiteCursor].
-         */
-        fun newCursor(
-            db: SQLiteDatabase<CP, SP>,
-            masterQuery: SQLiteCursorDriver<CP, SP>?,
-            query: SQLiteQuery,
-        ): Cursor
-    }
-
-    companion object {
+    internal companion object {
         private const val TAG = "SQLiteDatabase"
 
         /**
@@ -1375,34 +1281,6 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
             val db = SQLiteDatabase(configuration, debugConfig, logger, bindings, errorHandler)
             db.open()
             return db
-        }
-
-        /**
-         * Deletes a database including its journal file and other auxiliary files
-         * that may have been created by the database engine.
-         *
-         * @param file The database file path.
-         * @return True if the database was successfully deleted.
-         */
-        @JvmStatic
-        fun deleteDatabase(file: File?): Boolean {
-            requireNotNull(file) { "file must not be null" }
-
-            var deleted: Boolean
-            deleted = file.delete()
-            deleted = deleted or File(file.path + "-journal").delete()
-            deleted = deleted or File(file.path + "-shm").delete()
-            deleted = deleted or File(file.path + "-wal").delete()
-
-            val dir = file.parentFile
-            if (dir != null) {
-                val prefix = file.name + "-mj"
-                val filter = FileFilter { candidate -> candidate.name.startsWith(prefix) }
-                dir.listFiles(filter)?.forEach { masterJournal ->
-                    deleted = deleted or masterJournal.delete()
-                }
-            }
-            return deleted
         }
 
         @Suppress("NestedBlockDepth")
@@ -1466,15 +1344,6 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
         }
 
         /**
-         * Utility method to run the pre-compiled query and return the value in the
-         * first column of the first row.
-         */
-        private fun longForQuery(prog: SupportSQLiteStatement, selectionArgs: List<String?>): Long {
-            prog.bindAllArgsAsStrings(selectionArgs)
-            return prog.simpleQueryForLong()
-        }
-
-        /**
          * Convenience method for inserting a row into the database.
          *
          * @param table the table to insert the row into
@@ -1523,6 +1392,17 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
                 logger.e(e) { "Error inserting $initialValues" }
                 return -1
             }
+        }
+
+        /**
+         * Gets default connection flags that are appropriate for this thread, taking into
+         * account whether the thread is acting on behalf of the UI.
+         *
+         * @param readOnly True if the connection should be read-only.
+         * @return The connection flags.
+         */
+        fun getThreadDefaultConnectionFlags(readOnly: Boolean): Int {
+            return if (readOnly) CONNECTION_FLAG_READ_ONLY else CONNECTION_FLAG_PRIMARY_CONNECTION_AFFINITY
         }
     }
 }

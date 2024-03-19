@@ -15,6 +15,7 @@ package ru.pixnews.wasm.sqlite.open.helper.internal
 
 import androidx.core.os.CancellationSignal
 import androidx.sqlite.db.SupportSQLiteProgram
+import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDatabase.Companion.getThreadDefaultConnectionFlags
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_ABORT
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_BEGIN
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_COMMIT
@@ -43,7 +44,7 @@ internal abstract class SQLiteProgram internal constructor(
         get() = database.threadSession
 
     protected val connectionFlags: Int
-        get() = database.getThreadDefaultConnectionFlags(readOnly)
+        get() = getThreadDefaultConnectionFlags(readOnly)
 
     init {
         when (val statementType = SQLiteStatementType.getSqlStatementType(this.sql)) {
@@ -57,7 +58,7 @@ internal abstract class SQLiteProgram internal constructor(
                 val assumeReadOnly = (statementType == SQLiteStatementType.STATEMENT_SELECT)
                 val info = database.threadSession.prepare(
                     this.sql,
-                    database.getThreadDefaultConnectionFlags(assumeReadOnly),
+                    getThreadDefaultConnectionFlags(assumeReadOnly),
                     cancellationSignalForPrepare,
                 )
                 readOnly = info.readOnly
@@ -106,7 +107,6 @@ internal abstract class SQLiteProgram internal constructor(
          *
          * @param bindArgs the String array of bind args, none of which must be null.
          */
-        @JvmStatic
         fun SupportSQLiteProgram.bindAllArgsAsStrings(bindArgs: List<String?>) {
             for (i in bindArgs.size downTo 1) {
                 val arg = bindArgs[i - 1]

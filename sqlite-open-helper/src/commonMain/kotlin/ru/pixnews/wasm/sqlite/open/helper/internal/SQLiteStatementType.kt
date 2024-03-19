@@ -6,15 +6,6 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.internal
 
-/*
- * Original Copyrights:
- * Copyright (C) 2017-2024 requery.io
- * Copyright (C) 2005-2012 The Android Open Source Project
- * Licensed under the Apache License, Version 2.0 (the "License")
- */
-
-import androidx.annotation.VisibleForTesting
-
 internal enum class SQLiteStatementType {
     STATEMENT_SELECT,
     STATEMENT_UPDATE,
@@ -78,7 +69,6 @@ internal enum class SQLiteStatementType {
          * @param sql sql statement to check
          * @return index of the SQL statement start, skipping leading comments
          */
-        @VisibleForTesting
         @Suppress("CyclomaticComplexMethod", "IDENTIFIER_LENGTH")
         internal fun statementStartIndex(sql: String): Int {
             var inSingleLineComment = false
@@ -89,20 +79,20 @@ internal enum class SQLiteStatementType {
                 val c = sql[i]
                 when {
                     inSingleLineComment -> if (c == '\n') {
-                            inSingleLineComment = false
-                        }
+                        inSingleLineComment = false
+                    }
 
                     inMultiLineComment -> if (c == '*' && i + 1 < sql.length && sql[i + 1] == '/') {
-                            inMultiLineComment = false
-                        }
+                        inMultiLineComment = false
+                    }
 
                     c == '-' -> if (i + 1 < sql.length && sql[i + 1] == '-') {
-                            inSingleLineComment = true
-                        }
+                        inSingleLineComment = true
+                    }
 
                     c == '/' -> if (i + 1 < sql.length && sql[i + 1] == '*') {
-                            inMultiLineComment = true
-                        }
+                        inMultiLineComment = true
+                    }
 
                     c != '\n' && c != '\r' && c != ' ' && c != '\t' -> {
                         statementStartIndex = i
