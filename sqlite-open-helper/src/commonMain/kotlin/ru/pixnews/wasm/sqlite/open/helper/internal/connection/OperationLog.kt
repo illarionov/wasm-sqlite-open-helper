@@ -4,9 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.internal
+package ru.pixnews.wasm.sqlite.open.helper.internal.connection
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
+import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDebug
 import ru.pixnews.wasm.sqlite.open.helper.internal.platform.synchronized
 
 internal class OperationLog(

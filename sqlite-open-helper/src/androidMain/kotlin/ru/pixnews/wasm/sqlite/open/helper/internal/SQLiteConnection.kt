@@ -18,7 +18,6 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteBindOrColumnIndexOutOfRangeException
 import android.database.sqlite.SQLiteDatabaseLockedException
 import android.database.sqlite.SQLiteException
-import androidx.collection.LruCache
 import androidx.core.os.CancellationSignal
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.ENABLE_WRITE_AHEAD_LOGGING
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.OPEN_READONLY
@@ -27,10 +26,12 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
 import ru.pixnews.wasm.sqlite.open.helper.common.api.xor
 import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard.SqliteDatabaseFinalizeAction
-import ru.pixnews.wasm.sqlite.open.helper.internal.OperationLog.Companion.trimSqlForDisplay
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_SELECT
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_UPDATE
+import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.Companion.isCacheable
 import ru.pixnews.wasm.sqlite.open.helper.internal.WasmSqliteCleaner.WasmSqliteCleanable
+import ru.pixnews.wasm.sqlite.open.helper.internal.connection.OperationLog
+import ru.pixnews.wasm.sqlite.open.helper.internal.connection.OperationLog.Companion.trimSqlForDisplay
+import ru.pixnews.wasm.sqlite.open.helper.internal.connection.PreparedStatement
+import ru.pixnews.wasm.sqlite.open.helper.internal.connection.PreparedStatementCache
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.CursorWindow
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.SqlOpenHelperNativeBindings
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3ConnectionPtr
@@ -709,7 +710,7 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
         val statementPtr = bindings.nativePrepareStatement(connectionPtr, sql)
         try {
             val statementType = SQLiteStatementType.getSqlStatementType(sql)
-            val putInCache = !skipCache && isCacheable(statementType)
+            val putInCache = !skipCache && statementType.isCacheable
             statement = PreparedStatement(
                 sql = sql,
                 statementPtr = statementPtr,
@@ -977,9 +978,7 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
         )
     }
 
-    override fun toString(): String {
-        return "SQLiteConnection: ${configuration.path} ($connectionId)"
-    }
+    override fun toString(): String = "SQLiteConnection: ${configuration.path} ($connectionId)"
 
     private class ConnectionPtrClosable<CP : Sqlite3ConnectionPtr>(
         val nativePtr: CP,
@@ -999,76 +998,6 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
                 // TODO: can run on any thread, do we need to care about thread safety?
                 onConnectionLeaked()
                 closeNativeConnection(bindings, operationLog, preparedStatementCache, ptr.nativePtr)
-            }
-        }
-    }
-
-    /**
-     * Holder type for a prepared statement.
-     *
-     * Although this object holds a pointer to a native statement object, it
-     * does not have a finalizer.  This is deliberate.  The [SQLiteConnection]
-     * owns the statement object and will take care of freeing it when needed.
-     * In particular, closing the connection requires a guarantee of deterministic
-     * resource disposal because all native statement objects must be freed before
-     * the native database object can be closed.  So no finalizers here.
-     *
-     * @property sql The SQL from which the statement was prepared.
-     * @property statementPtr Lifetime is managed explicitly by the connection.
-     *   The native sqlite3_stmt object pointer.
-     * @property numParameters The number of parameters that the prepared statement has.
-     * @property type The statement type.
-     * @property readOnly True if the statement is read-only.
-     * @property inCache True if the statement is in the cache.
-     * @property inUse in use statements from being finalized until they are no longer in use.
-     *   possible for SQLite calls to be re-entrant.  Consequently we need to prevent
-     *   We need this flag because due to the use of custom functions in triggers, it's
-     */
-    internal data class PreparedStatement<SP : Sqlite3StatementPtr>(
-        val sql: String,
-        val statementPtr: SP,
-        val numParameters: Int = 0,
-        val type: SQLiteStatementType = STATEMENT_SELECT,
-        val readOnly: Boolean = false,
-        var inCache: Boolean = false,
-        var inUse: Boolean = false,
-    )
-
-    internal class PreparedStatementCache<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr>(
-        private val connectionPtr: CP,
-        private val bindings: SqlOpenHelperNativeBindings<CP, SP>,
-        size: Int,
-    ) : LruCache<String, PreparedStatement<SP>>(size) {
-        override fun entryRemoved(
-            evicted: Boolean,
-            key: String,
-            oldValue: PreparedStatement<SP>,
-            newValue: PreparedStatement<SP>?,
-        ) {
-            oldValue.inCache = false
-            if (!oldValue.inUse) {
-                bindings.nativeFinalizeStatement(connectionPtr, oldValue.statementPtr)
-            }
-        }
-
-        fun dump(): String = buildString {
-            append("  Prepared statement cache:\n")
-            val cache = snapshot()
-            if (cache.isNotEmpty()) {
-                cache.entries
-                    .filter { it.value.inCache }
-                    .forEachIndexed { i, (sql, statement) ->
-                        append(
-                            "    $i: statementPtr=${statement.statementPtr}, " +
-                                    "numParameters=${statement.numParameters}, " +
-                                    "type=${statement.type}, " +
-                                    "readOnly=${statement.readOnly}, " +
-                                    "sql=\"${trimSqlForDisplay(sql)}\"" +
-                                    "\n",
-                        )
-                    }
-            } else {
-                append("    <none>\n")
             }
         }
     }
@@ -1159,8 +1088,5 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
             is Long, is Int, is Short, is Byte -> Cursor.FIELD_TYPE_INTEGER
             else -> Cursor.FIELD_TYPE_STRING
         }
-
-        private fun isCacheable(statementType: SQLiteStatementType): Boolean = statementType == STATEMENT_UPDATE ||
-                statementType == STATEMENT_SELECT
     }
 }
