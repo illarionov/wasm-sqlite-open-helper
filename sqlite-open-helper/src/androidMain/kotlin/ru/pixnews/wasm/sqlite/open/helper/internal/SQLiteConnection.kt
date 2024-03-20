@@ -27,16 +27,18 @@ import ru.pixnews.wasm.sqlite.open.helper.SqliteDatabaseConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
 import ru.pixnews.wasm.sqlite.open.helper.common.api.xor
+import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard.SqliteDatabaseFinalizeAction
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_SELECT
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_UPDATE
+import ru.pixnews.wasm.sqlite.open.helper.internal.WasmSqliteCleaner.WasmSqliteCleanable
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.CursorWindow
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.SqlOpenHelperNativeBindings
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3ConnectionPtr
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.isNotNull
 import ru.pixnews.wasm.sqlite.open.helper.toSqliteOpenFlags
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.regex.Pattern
 
 /**
@@ -84,7 +86,8 @@ import java.util.regex.Pattern
  */
 @Suppress("LargeClass")
 internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> private constructor(
-    private val pool: SQLiteConnectionPool<CP, SP>,
+    private val connectionPtrResource: ConnectionPtrClosable<CP>,
+    onConnectionLeaked: () -> Unit,
     configuration: SqliteDatabaseConfiguration,
     private val bindings: SqlOpenHelperNativeBindings<CP, SP>,
     private val connectionId: Int,
@@ -93,16 +96,20 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
     rootLogger: Logger,
 ) : CancellationSignal.OnCancelListener {
     private val logger = rootLogger.withTag(TAG)
+    private val closeGuardCleanable: WasmSqliteCleanable
+    private val connectionPtrResourceCleanable: WasmSqliteCleanable
     private val closeGuard: CloseGuard = CloseGuard.get()
     private val configuration = SqliteDatabaseConfiguration(configuration)
     private val isReadOnlyConnection = configuration.openFlags.contains(OPEN_READONLY)
-    private val preparedStatementCache = PreparedStatementCache(this.configuration.maxSqlCacheSize)
+    private val connectionPtr: CP = connectionPtrResource.nativePtr
+    private val preparedStatementCache = PreparedStatementCache(
+        connectionPtr,
+        bindings,
+        this.configuration.maxSqlCacheSize,
+    )
 
     // The recent operations log.
     private val recentOperations = OperationLog(debugConfig, logger)
-
-    // The native SQLiteConnection pointer.  (FOR INTERNAL USE ONLY)
-    private var connectionPtr: CP = bindings.connectionNullPtr()
     private var onlyAllowReadOnlyOperations = false
 
     // The number of times attachCancellationSignal has been called.
@@ -113,33 +120,20 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
 
     init {
         closeGuard.open("close")
-    }
-
-    @Throws(Throwable::class)
-    protected fun finalize() {
-        if (connectionPtr.isNotNull()) {
-            pool.onConnectionLeaked()
-        }
-
-        dispose(true)
-    }
-
-    // Called by SQLiteConnectionPool only.
-    // Closes the database closes and releases all of its associated resources.
-    // Do not call methods on the connection after it is closed.  It will probably crash.
-    fun close() {
-        dispose(false)
-    }
-
-    private fun open() {
-        connectionPtr = bindings.nativeOpen(
-            path = configuration.path,
-            openFlags = configuration.openFlags.toSqliteOpenFlags(),
-            label = configuration.label,
-            enableTrace = debugConfig.sqlStatements,
-            enableProfile = debugConfig.sqlTime,
+        closeGuardCleanable = WasmSqliteCleaner.register(this, SqliteDatabaseFinalizeAction(closeGuard))
+        connectionPtrResourceCleanable = WasmSqliteCleaner.register(
+            this,
+            ConnectionPtrClosableCleanAction(
+                ptr = connectionPtrResource,
+                onConnectionLeaked = onConnectionLeaked,
+                bindings = bindings,
+                operationLog = recentOperations,
+                preparedStatementCache = preparedStatementCache,
+            ),
         )
+    }
 
+    private fun setupOnOpen() {
         setPageSize()
         setForeignKeyModeFromConfiguration()
         setJournalSizeLimit()
@@ -148,22 +142,17 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
         setLocaleFromConfiguration()
     }
 
-    private fun dispose(finalized: Boolean) {
-        if (finalized) {
-            closeGuard.warnIfOpen()
+    // Called by SQLiteConnectionPool.
+    // Closes the database closes and releases all of its associated resources.
+    // Do not call methods on the connection after it is closed.  It will probably crash.
+    fun close() {
+        val alreadyClosed = connectionPtrResource.isClosed.getAndSet(true)
+        if (!alreadyClosed) {
+            closeNativeConnection(bindings, recentOperations, preparedStatementCache, connectionPtrResource.nativePtr)
         }
         closeGuard.close()
-
-        if (connectionPtr.isNotNull()) {
-            val cookie = recentOperations.beginOperation("close", null)
-            try {
-                preparedStatementCache.evictAll()
-                bindings.nativeClose(connectionPtr)
-                connectionPtr = bindings.connectionNullPtr()
-            } finally {
-                recentOperations.endOperation(cookie)
-            }
-        }
+        connectionPtrResourceCleanable.clean()
+        closeGuardCleanable.clean()
     }
 
     private fun setPageSize() {
@@ -988,6 +977,28 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
         return "SQLiteConnection: ${configuration.path} ($connectionId)"
     }
 
+    private class ConnectionPtrClosable<CP : Sqlite3ConnectionPtr>(
+        val nativePtr: CP,
+        val isClosed: AtomicBoolean = AtomicBoolean(false),
+    )
+
+    private class ConnectionPtrClosableCleanAction<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr>(
+        val ptr: ConnectionPtrClosable<CP>,
+        val onConnectionLeaked: () -> Unit,
+        val bindings: SqlOpenHelperNativeBindings<CP, SP>,
+        val operationLog: OperationLog,
+        val preparedStatementCache: PreparedStatementCache<CP, SP>,
+    ) : () -> Unit {
+        override fun invoke() {
+            val alreadyClosed = ptr.isClosed.getAndSet(true)
+            if (!alreadyClosed) {
+                // TODO: can run on any thread, do we need to care about thread safety?
+                onConnectionLeaked()
+                closeNativeConnection(bindings, operationLog, preparedStatementCache, ptr.nativePtr)
+            }
+        }
+    }
+
     /**
      * Holder type for a prepared statement.
      *
@@ -1009,7 +1020,7 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
      *   possible for SQLite calls to be re-entrant.  Consequently we need to prevent
      *   We need this flag because due to the use of custom functions in triggers, it's
      */
-    private data class PreparedStatement<SP : Sqlite3StatementPtr>(
+    internal data class PreparedStatement<SP : Sqlite3StatementPtr>(
         val sql: String,
         val statementPtr: SP,
         val numParameters: Int = 0,
@@ -1019,7 +1030,11 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
         var inUse: Boolean = false,
     )
 
-    private inner class PreparedStatementCache(size: Int) : LruCache<String, PreparedStatement<SP>>(size) {
+    internal class PreparedStatementCache<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr>(
+        private val connectionPtr: CP,
+        private val bindings: SqlOpenHelperNativeBindings<CP, SP>,
+        size: Int,
+    ) : LruCache<String, PreparedStatement<SP>>(size) {
         override fun entryRemoved(
             evicted: Boolean,
             key: String,
@@ -1028,35 +1043,33 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
         ) {
             oldValue.inCache = false
             if (!oldValue.inUse) {
-                finalizePreparedStatement(oldValue)
+                bindings.nativeFinalizeStatement(connectionPtr, oldValue.statementPtr)
             }
         }
 
-        fun dump(printer: Printer) {
-            printer.println("  Prepared statement cache:")
+        fun dump(): String = buildString {
+            append("  Prepared statement cache:\n")
             val cache = snapshot()
             if (cache.isNotEmpty()) {
-                var i = 0
-                for ((sql, statement) in cache) {
-                    if (statement.inCache) {
-// might be false due to a race with entryRemoved
-                        printer.println(
-                            "    " + i + ": statementPtr=${statement.statementPtr}" +
-                                    ", numParameters=" + statement.numParameters +
-                                    ", type=" + statement.type +
-                                    ", readOnly=" + statement.readOnly +
-                                    ", sql=\"" + trimSqlForDisplay(sql) + "\"",
+                cache.entries
+                    .filter { it.value.inCache }
+                    .forEachIndexed { i, (sql, statement) ->
+                        append(
+                            "    $i: statementPtr=${statement.statementPtr}, " +
+                                    "numParameters=${statement.numParameters}, " +
+                                    "type=${statement.type}, " +
+                                    "readOnly=${statement.readOnly}, " +
+                                    "sql=\"${trimSqlForDisplay(sql)}\"" +
+                                    "\n",
                         )
                     }
-                    i += 1
-                }
             } else {
-                printer.println("    <none>")
+                append("    <none>\n")
             }
         }
     }
 
-    private class OperationLog(
+    internal class OperationLog(
         private val debugConfig: SQLiteDebug,
         rootRogger: Logger,
     ) {
@@ -1265,8 +1278,17 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
             debugConfig: SQLiteDebug,
             rootLogger: Logger,
         ): SQLiteConnection<CP, SP> {
+            val connectionPtr = bindings.nativeOpen(
+                path = configuration.path,
+                openFlags = configuration.openFlags.toSqliteOpenFlags(),
+                label = configuration.label,
+                enableTrace = debugConfig.sqlStatements,
+                enableProfile = debugConfig.sqlTime,
+            )
+
             val connection = SQLiteConnection(
-                pool = pool,
+                connectionPtrResource = ConnectionPtrClosable(connectionPtr),
+                onConnectionLeaked = pool::onConnectionLeaked,
                 configuration = configuration,
                 bindings = bindings,
                 connectionId = connectionId,
@@ -1275,11 +1297,26 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
                 rootLogger = rootLogger,
             )
             try {
-                connection.open()
+                connection.setupOnOpen()
                 return connection
             } catch (ex: SQLiteException) {
-                connection.dispose(false)
+                connection.close()
                 throw ex
+            }
+        }
+
+        internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> closeNativeConnection(
+            bindings: SqlOpenHelperNativeBindings<CP, SP>,
+            recentOperations: OperationLog,
+            preparedStatementCache: PreparedStatementCache<CP, SP>,
+            nativePtr: CP,
+        ) {
+            val cookie = recentOperations.beginOperation("close", null)
+            try {
+                preparedStatementCache.evictAll()
+                bindings.nativeClose(nativePtr)
+            } finally {
+                recentOperations.endOperation(cookie)
             }
         }
 

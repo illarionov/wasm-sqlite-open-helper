@@ -13,88 +13,15 @@ import kotlin.concurrent.Volatile
  * resources that should have been cleaned up by explicit close
  * methods (aka "explicit termination methods" in Effective Java).
  *
- *
- * A simple example: <pre>   `class Foo {
- *
- * private final CloseGuard guard = CloseGuard.get();
- *
- * ...
- *
- * public Foo() {
- * ...;
- * guard.open("cleanup");
- * }
- *
- * public void cleanup() {
- * guard.close();
- * ...;
- * }
- *
- * protected void finalize() throws Throwable {
- * try {
- * if (guard != null) {
- * guard.warnIfOpen();
- * }
- * cleanup();
- * } finally {
- * super.finalize();
- * }
- * }
- * }
-`</pre> *
- *
- * In usage where the resource to be explicitly cleaned up are
- * allocated after object construction, CloseGuard protection can
- * be deferred. For example: <pre>   `class Bar {
- *
- * private final CloseGuard guard = CloseGuard.get();
- *
- * ...
- *
- * public Bar() {
- * ...;
- * }
- *
- * public void connect() {
- * ...;
- * guard.open("cleanup");
- * }
- *
- * public void cleanup() {
- * guard.close();
- * ...;
- * }
- *
- * protected void finalize() throws Throwable {
- * try {
- * if (guard != null) {
- * guard.warnIfOpen();
- * }
- * cleanup();
- * } finally {
- * super.finalize();
- * }
- * }
- * }
-`</pre> *
- *
  * When used in a constructor calls to `open` should occur at
  * the end of the constructor since an exception that would cause
  * abrupt termination of the constructor will mean that the user will
  * not have a reference to the object to cleanup explicitly. When used
  * in a method, the call to `open` should occur just after
  * resource acquisition.
- *
- *
- *
- *
- * Note that the null check on `guard` in the finalizer is to
- * cover cases where a constructor throws an exception causing the
- * `guard` to be uninitialized.
- *
- * @hide
  */
 internal class CloseGuard private constructor() {
+    @Volatile
     private var allocationSite: Throwable? = null
 
     /**
@@ -103,8 +30,6 @@ internal class CloseGuard private constructor() {
      * `closer` method instead of relying on finalization.
      *
      * @param closer non-null name of explicit termination method
-     * @throws NullPointerException if closer is null, regardless of
-     * whether or not CloseGuard is enabled
      */
     fun open(closer: String) {
         // avoid allocating an allocationSite if disabled
@@ -130,6 +55,8 @@ internal class CloseGuard private constructor() {
      * performed.
      */
     fun warnIfOpen() {
+        val allocationSite = this.allocationSite
+
         if (allocationSite == null || !ENABLED) {
             return
         }
@@ -202,6 +129,15 @@ internal class CloseGuard private constructor() {
          */
         fun setEnabled(enabled: Boolean) {
             ENABLED = enabled
+        }
+    }
+
+    internal class SqliteDatabaseFinalizeAction(
+        private val closeGuard: CloseGuard,
+    ) : () -> Unit {
+        override fun invoke() {
+            closeGuard.warnIfOpen()
+            closeGuard.close()
         }
     }
 }

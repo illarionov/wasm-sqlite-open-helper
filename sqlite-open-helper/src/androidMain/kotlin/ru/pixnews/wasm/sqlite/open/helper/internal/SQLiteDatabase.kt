@@ -22,6 +22,7 @@ import android.database.sqlite.SQLiteDatabaseCorruptException
 import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteTransactionListener
 import android.util.Pair
+import androidx.annotation.GuardedBy
 import androidx.core.os.CancellationSignal
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteQuery
@@ -37,6 +38,7 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.clear
 import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
 import ru.pixnews.wasm.sqlite.open.helper.common.api.or
+import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard.SqliteDatabaseFinalizeAction
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.Companion.CONNECTION_FLAG_PRIMARY_CONNECTION_AFFINITY
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.Companion.CONNECTION_FLAG_READ_ONLY
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteProgram.Companion.bindAllArgsAsStrings
@@ -76,8 +78,7 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
     // Thread-local for database sessions that belong to this database.
     // Each thread has its own database session.
     // INVARIANT: Immutable.
-    private val _threadSession: ThreadLocal<SQLiteSession<CP, SP>> =
-        object : ThreadLocal<SQLiteSession<CP, SP>>() {
+    private val _threadSession: ThreadLocal<SQLiteSession<CP, SP>> = object : ThreadLocal<SQLiteSession<CP, SP>>() {
             override fun initialValue(): SQLiteSession<CP, SP> {
                 val pool = synchronized(lock) { requireConnectionPoolLocked() }
                 return SQLiteSession(pool)
@@ -101,17 +102,20 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
     private val lock = Any()
 
     // Warns if the database is finalized without being closed properly.
-    // INVARIANT: Guarded by mLock.
-    private val closeGuardLocked: CloseGuard = CloseGuard.get()
+    // INVARIANT: Guarded by lock.
+    @GuardedBy("lock")
+    private val closeGuardLocked: CloseGuard = CloseGuard.get().also { closeGuard ->
+        WasmSqliteCleaner.register(this, SqliteDatabaseFinalizeAction(closeGuard))
+    }
 
     // The database configuration.
-    // INVARIANT: Guarded by mLock.
+    @GuardedBy("lock")
     private val configurationLocked = configuration
 
     // The connection pool for the database, null when closed.
     // The pool itself is thread-safe, but the reference to it can only be acquired
     // when the lock is held.
-    // INVARIANT: Guarded by mLock.
+    @GuardedBy("lock")
     private var connectionPoolLocked: SQLiteConnectionPool<CP, SP>? = null
 
     /**
@@ -314,25 +318,14 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
             return true
         }
 
-    @Throws(Throwable::class)
-    protected fun finalize() = dispose(true)
-
-    override fun onAllReferencesReleased() = dispose(false)
-
-    private fun dispose(finalized: Boolean) {
+    override fun onAllReferencesReleased() {
         val pool: SQLiteConnectionPool<CP, SP>?
         synchronized(lock) {
-            if (finalized) {
-                closeGuardLocked.warnIfOpen()
-            }
             closeGuardLocked.close()
             pool = connectionPoolLocked
             connectionPoolLocked = null
         }
-
-        if (!finalized) {
-            pool?.close()
-        }
+        pool?.close()
     }
 
     /**
