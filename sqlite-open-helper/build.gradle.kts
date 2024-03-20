@@ -91,6 +91,7 @@ kotlin {
         commonMain.dependencies {
             api(projects.commonApi)
             api(projects.sqliteCommonApi)
+            api(libs.androidx.collection)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))

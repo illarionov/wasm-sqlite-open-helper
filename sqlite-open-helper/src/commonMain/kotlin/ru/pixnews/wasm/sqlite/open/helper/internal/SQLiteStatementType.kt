@@ -20,6 +20,11 @@ internal enum class SQLiteStatementType {
     ;
 
     companion object {
+        internal val SQLiteStatementType.isCacheable: Boolean get() = when (this) {
+            STATEMENT_SELECT, STATEMENT_UPDATE -> true
+            else -> false
+        }
+
         /**
          * Returns one of the following which represent the type of the given SQL statement.
          *

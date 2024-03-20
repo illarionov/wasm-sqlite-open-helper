@@ -18,8 +18,6 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteBindOrColumnIndexOutOfRangeException
 import android.database.sqlite.SQLiteDatabaseLockedException
 import android.database.sqlite.SQLiteException
-import android.util.Printer
-import androidx.collection.LruCache
 import androidx.core.os.CancellationSignal
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.ENABLE_WRITE_AHEAD_LOGGING
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.OPEN_READONLY
@@ -28,18 +26,19 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
 import ru.pixnews.wasm.sqlite.open.helper.common.api.xor
 import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard.SqliteDatabaseFinalizeAction
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_SELECT
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_UPDATE
+import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.Companion.isCacheable
 import ru.pixnews.wasm.sqlite.open.helper.internal.WasmSqliteCleaner.WasmSqliteCleanable
+import ru.pixnews.wasm.sqlite.open.helper.internal.connection.OperationLog
+import ru.pixnews.wasm.sqlite.open.helper.internal.connection.OperationLog.Companion.trimSqlForDisplay
+import ru.pixnews.wasm.sqlite.open.helper.internal.connection.PreparedStatement
+import ru.pixnews.wasm.sqlite.open.helper.internal.connection.PreparedStatementCache
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.CursorWindow
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.SqlOpenHelperNativeBindings
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3ConnectionPtr
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
 import ru.pixnews.wasm.sqlite.open.helper.toSqliteOpenFlags
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.concurrent.atomic.AtomicBoolean
-import java.util.regex.Pattern
 
 /**
  * Represents a SQLite database connection.
@@ -109,7 +108,7 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
     )
 
     // The recent operations log.
-    private val recentOperations = OperationLog(debugConfig, logger)
+    private val recentOperations = OperationLog(debugConfig, logger, System::currentTimeMillis, TimestampFormatter)
     private var onlyAllowReadOnlyOperations = false
 
     // The number of times attachCancellationSignal has been called.
@@ -117,6 +116,12 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
     // times we have attempted to attach a cancellation signal to the connection so that
     // we can ensure that we detach the signal at the right time.
     private var cancellationSignalAttachCount = 0
+
+    private object TimestampFormatter : (Long) -> String {
+        @SuppressLint("SimpleDateFormat")
+        private val startTimeDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
+        override fun invoke(timestamp: Long): String = startTimeDateFormat.format(timestamp)
+    }
 
     init {
         closeGuard.open("close")
@@ -705,7 +710,7 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
         val statementPtr = bindings.nativePrepareStatement(connectionPtr, sql)
         try {
             val statementType = SQLiteStatementType.getSqlStatementType(sql)
-            val putInCache = !skipCache && isCacheable(statementType)
+            val putInCache = !skipCache && statementType.isCacheable
             statement = PreparedStatement(
                 sql = sql,
                 statementPtr = statementPtr,
@@ -973,9 +978,7 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
         )
     }
 
-    override fun toString(): String {
-        return "SQLiteConnection: ${configuration.path} ($connectionId)"
-    }
+    override fun toString(): String = "SQLiteConnection: ${configuration.path} ($connectionId)"
 
     private class ConnectionPtrClosable<CP : Sqlite3ConnectionPtr>(
         val nativePtr: CP,
@@ -999,274 +1002,8 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
         }
     }
 
-    /**
-     * Holder type for a prepared statement.
-     *
-     * Although this object holds a pointer to a native statement object, it
-     * does not have a finalizer.  This is deliberate.  The [SQLiteConnection]
-     * owns the statement object and will take care of freeing it when needed.
-     * In particular, closing the connection requires a guarantee of deterministic
-     * resource disposal because all native statement objects must be freed before
-     * the native database object can be closed.  So no finalizers here.
-     *
-     * @property sql The SQL from which the statement was prepared.
-     * @property statementPtr Lifetime is managed explicitly by the connection.
-     *   The native sqlite3_stmt object pointer.
-     * @property numParameters The number of parameters that the prepared statement has.
-     * @property type The statement type.
-     * @property readOnly True if the statement is read-only.
-     * @property inCache True if the statement is in the cache.
-     * @property inUse in use statements from being finalized until they are no longer in use.
-     *   possible for SQLite calls to be re-entrant.  Consequently we need to prevent
-     *   We need this flag because due to the use of custom functions in triggers, it's
-     */
-    internal data class PreparedStatement<SP : Sqlite3StatementPtr>(
-        val sql: String,
-        val statementPtr: SP,
-        val numParameters: Int = 0,
-        val type: SQLiteStatementType = STATEMENT_SELECT,
-        val readOnly: Boolean = false,
-        var inCache: Boolean = false,
-        var inUse: Boolean = false,
-    )
-
-    internal class PreparedStatementCache<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr>(
-        private val connectionPtr: CP,
-        private val bindings: SqlOpenHelperNativeBindings<CP, SP>,
-        size: Int,
-    ) : LruCache<String, PreparedStatement<SP>>(size) {
-        override fun entryRemoved(
-            evicted: Boolean,
-            key: String,
-            oldValue: PreparedStatement<SP>,
-            newValue: PreparedStatement<SP>?,
-        ) {
-            oldValue.inCache = false
-            if (!oldValue.inUse) {
-                bindings.nativeFinalizeStatement(connectionPtr, oldValue.statementPtr)
-            }
-        }
-
-        fun dump(): String = buildString {
-            append("  Prepared statement cache:\n")
-            val cache = snapshot()
-            if (cache.isNotEmpty()) {
-                cache.entries
-                    .filter { it.value.inCache }
-                    .forEachIndexed { i, (sql, statement) ->
-                        append(
-                            "    $i: statementPtr=${statement.statementPtr}, " +
-                                    "numParameters=${statement.numParameters}, " +
-                                    "type=${statement.type}, " +
-                                    "readOnly=${statement.readOnly}, " +
-                                    "sql=\"${trimSqlForDisplay(sql)}\"" +
-                                    "\n",
-                        )
-                    }
-            } else {
-                append("    <none>\n")
-            }
-        }
-    }
-
-    internal class OperationLog(
-        private val debugConfig: SQLiteDebug,
-        rootRogger: Logger,
-    ) {
-        private val logger = rootRogger.withTag(OperationLog::class.qualifiedName!!)
-        private val operations: Array<Operation?> = arrayOfNulls(MAX_RECENT_OPERATIONS)
-        private var index: Int = 0
-        private var generation: Int = 0
-
-        fun beginOperation(kind: String?, sql: String?, bindArgs: List<Any?> = emptyList()): Int =
-            synchronized(operations) {
-                val index = (index + 1) % MAX_RECENT_OPERATIONS
-                var operation = operations[index]
-                if (operation == null) {
-                    operation = Operation()
-                    operations[index] = operation
-                } else {
-                    operation.finished = false
-                    operation.exception = null
-                }
-                operation.startTime = System.currentTimeMillis()
-                operation.kind = kind
-                operation.sql = sql
-                operation.bindArgs = bindArgs.map {
-                    if (it is ByteArray) {
-                        // Don't hold onto the real byte array longer than necessary.
-                        arrayOf<Byte>()
-                    } else {
-                        it
-                    }
-                }
-                operation.cookie = newOperationCookieLocked(index)
-                this.index = index
-                return operation.cookie
-            }
-
-        fun failOperation(cookie: Int, ex: Exception?) = synchronized(operations) {
-            val operation = getOperationLocked(cookie)
-            if (operation != null) {
-                operation.exception = ex
-            }
-        }
-
-        fun endOperation(cookie: Int) = synchronized(operations) {
-            if (endOperationDeferLogLocked(cookie)) {
-                logOperationLocked(cookie, null)
-            }
-        }
-
-        fun endOperationDeferLog(cookie: Int): Boolean = synchronized(operations) {
-            return endOperationDeferLogLocked(cookie)
-        }
-
-        fun logOperation(cookie: Int, detail: String?) = synchronized(operations) {
-            logOperationLocked(cookie, detail)
-        }
-
-        private fun endOperationDeferLogLocked(cookie: Int): Boolean {
-            val operation = getOperationLocked(cookie)
-            if (operation != null) {
-                operation.endTime = System.currentTimeMillis()
-                operation.finished = true
-                return debugConfig.sqlLog && debugConfig.shouldLogSlowQuery(operation.endTime - operation.startTime)
-            }
-            return false
-        }
-
-        private fun logOperationLocked(cookie: Int, detail: String?) {
-            val operation = getOperationLocked(cookie) ?: return
-            val msg = StringBuilder()
-            operation.describe(msg, false)
-            if (detail != null) {
-                msg.append(", ").append(detail)
-            }
-            logger.d(message = msg::toString)
-        }
-
-        private fun newOperationCookieLocked(index: Int): Int {
-            val generation = generation++
-            return generation shl COOKIE_GENERATION_SHIFT or index
-        }
-
-        private fun getOperationLocked(cookie: Int): Operation? {
-            val index = cookie and COOKIE_INDEX_MASK
-            val operation = operations[index]
-            return if (operation!!.cookie == cookie) operation else null
-        }
-
-        fun describeCurrentOperation(): String? = synchronized(operations) {
-            val operation = operations[index]
-            if (operation != null && !operation.finished) {
-                val msg = StringBuilder()
-                operation.describe(msg, false)
-                return msg.toString()
-            }
-            return null
-        }
-
-        fun dump(printer: Printer, verbose: Boolean) = synchronized(operations) {
-            printer.println("  Most recently executed operations:")
-            var index = index
-            var operation: Operation? = operations[index]
-            if (operation != null) {
-                var operationNo = 0
-                do {
-                    val msg = buildString {
-                        append("    ")
-                        append(operationNo)
-                        append(": [")
-                        append(operation!!.formattedStartTime)
-                        append("] ")
-                        operation!!.describe(this, verbose)
-                    }
-                    printer.println(msg)
-
-                    if (index > 0) {
-                        index -= 1
-                    } else {
-                        index = MAX_RECENT_OPERATIONS - 1
-                    }
-                    operationNo += 1
-                    operation = operations[index]
-                } while (operation != null && operationNo < MAX_RECENT_OPERATIONS)
-            } else {
-                printer.println("    <none>")
-            }
-        }
-
-        companion object {
-            private const val MAX_RECENT_OPERATIONS = 20
-            private const val COOKIE_GENERATION_SHIFT = 8
-            private const val COOKIE_INDEX_MASK = 0xff
-        }
-    }
-
-    private class Operation {
-        var startTime: Long = 0
-        var endTime: Long = 0
-        var kind: String? = null
-        var sql: String? = null
-        var bindArgs: List<Any?>? = null
-        var finished: Boolean = false
-        var exception: Exception? = null
-        var cookie: Int = 0
-
-        private val status: String
-            get() = when {
-                !finished -> "running"
-                exception != null -> "failed"
-                else -> "succeeded"
-            }
-
-        val formattedStartTime: String
-            get() = startTimeDateFormat.format(Date(startTime))
-
-        fun describe(msg: StringBuilder, verbose: Boolean) {
-            msg.append(kind)
-            if (finished) {
-                msg.append(" took ").append(endTime - startTime).append("ms")
-            } else {
-                msg.append(" started ").append(System.currentTimeMillis() - startTime)
-                    .append("ms ago")
-            }
-            msg.append(" - ").append(status)
-            if (sql != null) {
-                msg.append(", sql=\"").append(trimSqlForDisplay(sql)).append("\"")
-            }
-            if (verbose && bindArgs != null && bindArgs!!.size != 0) {
-                msg.append(", bindArgs=[")
-                val count = bindArgs!!.size
-                for (i in 0 until count) {
-                    val arg = bindArgs!![i]
-                    if (i != 0) {
-                        msg.append(", ")
-                    }
-                    when (arg) {
-                        null -> msg.append("null")
-                        is ByteArray -> msg.append("<byte[]>")
-                        is String -> msg.append("\"").append(arg as String?).append("\"")
-                        else -> msg.append(arg)
-                    }
-                }
-                msg.append("]")
-            }
-            if (exception != null) {
-                msg.append(", exception=\"").append(exception!!.message).append("\"")
-            }
-        }
-
-        companion object {
-            @SuppressLint("SimpleDateFormat")
-            private val startTimeDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
-        }
-    }
-
     companion object {
         private const val TAG = "SQLiteConnection"
-        private val TRIM_SQL_PATTERN: Pattern = Pattern.compile("[\\s]*\\n+[\\s]*")
 
         // Called by SQLiteConnectionPool only.
         fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> open(
@@ -1350,13 +1087,6 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
             is Float, is Double -> Cursor.FIELD_TYPE_FLOAT
             is Long, is Int, is Short, is Byte -> Cursor.FIELD_TYPE_INTEGER
             else -> Cursor.FIELD_TYPE_STRING
-        }
-
-        private fun isCacheable(statementType: SQLiteStatementType): Boolean = statementType == STATEMENT_UPDATE ||
-                statementType == STATEMENT_SELECT
-
-        private fun trimSqlForDisplay(sql: String?): String {
-            return TRIM_SQL_PATTERN.matcher(sql ?: "").replaceAll(" ")
         }
     }
 }
