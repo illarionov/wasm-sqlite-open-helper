@@ -113,6 +113,23 @@ internal class OperationLog(
         return null
     }
 
+    internal inline fun <R : Any?> useOperation(
+        kind: String,
+        sql: String?,
+        bindArgs: List<Any?> = emptyList(),
+        block: (cookie: Int) -> R,
+    ): R {
+        val cookie = beginOperation(kind, sql, bindArgs)
+        try {
+            return block(cookie)
+        } catch (@Suppress("TooGenericExceptionCaught") ex: RuntimeException) {
+            failOperation(cookie, ex)
+            throw ex
+        } finally {
+            endOperation(cookie)
+        }
+    }
+
     fun dump(verbose: Boolean): String = synchronized(operations) {
         buildString {
             appendLine("  Most recently executed operations:")
