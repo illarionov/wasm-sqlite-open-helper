@@ -20,6 +20,7 @@ import ru.pixnews.wasm.sqlite.open.helper.SqliteDatabaseConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
 import ru.pixnews.wasm.sqlite.open.helper.common.api.xor
+import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard.SqliteDatabaseFinalizeAction
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.AcquiredConnectionStatus.DISCARD
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.AcquiredConnectionStatus.NORMAL
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.AcquiredConnectionStatus.RECONFIGURE
@@ -41,7 +42,6 @@ import kotlin.time.Duration.Companion.seconds
  * acquired by a [SQLiteSession].  When the [SQLiteSession] is
  * finished with the connection it is using, it must return the connection
  * back to the pool.
- *
  *
  * The pool holds strong references to the connections it owns.  However,
  * it only holds *weak references* to the connections that sessions
@@ -77,6 +77,7 @@ internal class SQLiteConnectionPool<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
 ) : Closeable {
     private val logger: Logger = rootLogger.withTag(TAG)
     private val closeGuard: CloseGuard = CloseGuard.get()
+    private val closeGuardCleaner = WasmSqliteCleaner.register(this, SqliteDatabaseFinalizeAction(closeGuard))
     private val lock = Any()
     private val connectionLeaked = AtomicBoolean()
     private val configuration = SqliteDatabaseConfiguration(configuration)
@@ -99,11 +100,6 @@ internal class SQLiteConnectionPool<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
 
     init {
         setMaxConnectionPoolSizeLocked()
-    }
-
-    @Throws(Throwable::class)
-    protected fun finalize() {
-        dispose(true)
     }
 
     // Might throw
@@ -132,36 +128,28 @@ internal class SQLiteConnectionPool<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
      * @throws IllegalStateException if the pool has been closed.
      */
     override fun close() {
-        dispose(false)
-    }
-
-    private fun dispose(finalized: Boolean) {
-        if (finalized) {
-            closeGuard.warnIfOpen()
-        }
         closeGuard.close()
+        closeGuardCleaner.clean()
 
-        if (!finalized) {
-            // Close all connections.  We don't need (or want) to do this
-            // when finalized because we don't know what state the connections
-            // themselves will be in.  The finalizer is really just here for CloseGuard.
-            // The connections will take care of themselves when their own finalizers run.
-            synchronized(lock) {
-                throwIfClosedLocked()
-                isOpen = false
+        // Close all connections.  We don't need (or want) to do this
+        // when finalized because we don't know what state the connections
+        // themselves will be in.  The finalizer is really just here for CloseGuard.
+        // The connections will take care of themselves when their own finalizers run.
+        synchronized(lock) {
+            throwIfClosedLocked()
+            isOpen = false
 
-                closeAvailableConnectionsAndLogExceptionsLocked()
+            closeAvailableConnectionsAndLogExceptionsLocked()
 
-                val pendingCount = acquiredConnections.size
-                if (pendingCount != 0) {
-                    logger.i {
-                        "The connection pool for ${configuration.label} has been closed but there are still " +
-                                "$pendingCount connections in use.  They will be closed as they are released back to " +
-                                "the pool."
-                    }
+            val pendingCount = acquiredConnections.size
+            if (pendingCount != 0) {
+                logger.i {
+                    "The connection pool for ${configuration.label} has been closed but there are still " +
+                            "$pendingCount connections in use.  They will be closed as they are released back to " +
+                            "the pool."
                 }
-                wakeConnectionWaitersLocked()
             }
+            wakeConnectionWaitersLocked()
         }
     }
 

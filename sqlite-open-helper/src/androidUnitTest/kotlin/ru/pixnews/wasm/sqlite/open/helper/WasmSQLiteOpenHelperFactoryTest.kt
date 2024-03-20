@@ -10,6 +10,7 @@ import android.content.ContextWrapper
 import androidx.room.Room
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteOpenHelper
+import co.touchlab.kermit.Severity.Info
 import org.graalvm.polyglot.Engine
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -50,7 +51,7 @@ class WasmSQLiteOpenHelperFactoryTest {
     @Test
     fun `Test Room`() {
         val helperFactory = createHelperFactory()
-        val db = Room.databaseBuilder(mockContext, AppDatabase1::class.java, "database-name")
+        val db: AppDatabase1 = Room.databaseBuilder(mockContext, AppDatabase1::class.java, "database-name")
             .openHelperFactory(helperFactory)
             .allowMainThreadQueries()
             .build()
@@ -69,6 +70,8 @@ class WasmSQLiteOpenHelperFactoryTest {
         val users: List<User> = userDao.getAll()
 
         logger.i { "users by ids: $usersByIds; user by name: $userByName; users: $users;" }
+
+        db.close()
     }
 
     private fun createHelper(
@@ -83,6 +86,7 @@ class WasmSQLiteOpenHelperFactoryTest {
     private fun createHelperFactory(): SupportSQLiteOpenHelper.Factory {
         return WasmSqliteOpenHelperFactory(GraalvmSqliteEmbedder) {
             pathResolver = DatabasePathResolver { name -> File(tempDir, name) }
+            logger = KermitLogger(tag = "WSOH", minSeverity = Info)
             embedder {
                 graalvmEngine = Engine.create("wasm")
                 sqlite3WasmBinaryUrl = Sqlite3Wasm.Emscripten.sqlite3_345
