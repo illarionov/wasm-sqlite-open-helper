@@ -45,28 +45,3 @@ internal class SQLiteDebug(
         return slowQueryMillis in 0..elapsedTimeMillis
     }
 }
-
-/**
- * contains statistics about a database
- *
- * @property dbName name of the database
- * @property lookaside documented here http://www.sqlite.org/c3ref/c_dbstatus_lookaside_used.html
- */
-internal class DbStats(
-    val dbName: String,
-    pageCount: Long,
-    pageSize: Long,
-    val lookaside: Int,
-    hits: Int,
-    misses: Int,
-    cachesize: Int,
-) {
-    /** the page size for the database  */
-    val pageSize: Long = pageSize / 1024
-
-    /** the database size  */
-    val dbSize: Long = pageCount * pageSize / 1024
-
-    /** statement cache stats: hits/misses/cachesize  */
-    val cache: String = "$hits/$misses/$cachesize"
-}

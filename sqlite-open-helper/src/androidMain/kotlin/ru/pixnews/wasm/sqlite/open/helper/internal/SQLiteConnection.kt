@@ -753,12 +753,8 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
                 preparedStatementCache.remove(statement.sql)
             }
         } else {
-            finalizePreparedStatement(statement)
+            bindings.nativeFinalizeStatement(connectionPtr, statement.statementPtr)
         }
-    }
-
-    private fun finalizePreparedStatement(statement: PreparedStatement<SP>) {
-        bindings.nativeFinalizeStatement(connectionPtr, statement.statementPtr)
     }
 
     private fun attachCancellationSignal(cancellationSignal: CancellationSignal?) {
@@ -900,83 +896,6 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
      * or null if none.
      */
     fun describeCurrentOperationUnsafe(): String? = recentOperations.describeCurrentOperation()
-
-    /**
-     * Collects statistics about database connection memory usage.
-     *
-     * @param dbStatsList The list to populate.
-     */
-    fun collectDbStats(dbStatsList: ArrayList<DbStats>) {
-        // Get information about the main database.
-        val lookaside = bindings.nativeGetDbLookaside(connectionPtr)
-        var pageCount: Long = 0
-        var pageSize: Long = 0
-        try {
-            pageCount = executeForLong("PRAGMA page_count;")
-            pageSize = executeForLong("PRAGMA page_size;")
-        } catch (@Suppress("SwallowedException") ex: SQLiteException) {
-            // Ignore.
-        }
-        dbStatsList.add(getMainDbStatsUnsafe(lookaside, pageCount, pageSize))
-
-        // Get information about attached databases.
-        // We ignore the first row in the database list because it corresponds to
-        // the main database which we have already described.
-        val window = CursorWindow("collectDbStats", logger)
-        try {
-            executeForCursorWindow(
-                sql = "PRAGMA database_list;",
-                window = window,
-            )
-            for (i in 1 until window.numRows) {
-                val name = window.getString(i, 1) ?: ""
-                val path = window.getString(i, 2) ?: ""
-                pageCount = 0
-                pageSize = 0
-                try {
-                    pageCount = executeForLong("PRAGMA $name.page_count;")
-                    pageSize = executeForLong("PRAGMA $name.page_size;")
-                } catch (@Suppress("TooGenericExceptionCaught", "SwallowedException") ex: SQLiteException) {
-                    // Ignore.
-                }
-                var label = "  (attached) $name"
-                if (path.isNotEmpty()) {
-                    label += ": $path"
-                }
-                dbStatsList.add(DbStats(label, pageCount, pageSize, 0, 0, 0, 0))
-            }
-        } catch (@Suppress("TooGenericExceptionCaught", "SwallowedException") ex: SQLiteException) {
-            // Ignore.
-        } finally {
-            window.close()
-        }
-    }
-
-    /**
-     * Collects statistics about database connection memory usage, in the case where the
-     * caller might not actually own the connection.
-     */
-    fun collectDbStatsUnsafe(dbStatsList: MutableList<DbStats>) {
-        dbStatsList.add(getMainDbStatsUnsafe(0, 0, 0))
-    }
-
-    private fun getMainDbStatsUnsafe(lookaside: Int, pageCount: Long, pageSize: Long): DbStats {
-        // The prepared statement cache is thread-safe so we can access its statistics
-        // even if we do not own the database connection.
-        var label = configuration.path
-        if (!isPrimaryConnection) {
-            label += " ($connectionId)"
-        }
-        return DbStats(
-            dbName = label,
-            pageCount = pageCount,
-            pageSize = pageSize,
-            lookaside = lookaside,
-            hits = preparedStatementCache.hitCount(),
-            misses = preparedStatementCache.missCount(),
-            cachesize = preparedStatementCache.size(),
-        )
-    }
 
     override fun toString(): String = "SQLiteConnection: ${configuration.path} ($connectionId)"
 

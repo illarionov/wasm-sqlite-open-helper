@@ -343,21 +343,6 @@ internal class SQLiteConnectionPool<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
             }
         }
 
-    /**
-     * Collects statistics about database connection memory usage.
-     *
-     * @param dbStatsList The list to populate.
-     */
-    fun collectDbStats(dbStatsList: ArrayList<DbStats>): Unit = synchronized(lock) {
-        availablePrimaryConnection?.collectDbStats(dbStatsList)
-        for (connection: SQLiteConnection<*, *> in availableNonPrimaryConnections) {
-            connection.collectDbStats(dbStatsList)
-        }
-        for (connection: SQLiteConnection<*, *> in acquiredConnections.keys) {
-            connection.collectDbStatsUnsafe(dbStatsList)
-        }
-    }
-
     // Might throw.
     private fun openConnectionLocked(
         configuration: SqliteDatabaseConfiguration,
