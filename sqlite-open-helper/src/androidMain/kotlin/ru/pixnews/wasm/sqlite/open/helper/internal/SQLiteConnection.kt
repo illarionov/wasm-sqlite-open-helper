@@ -16,7 +16,6 @@ package ru.pixnews.wasm.sqlite.open.helper.internal
 import android.annotation.SuppressLint
 import android.database.Cursor
 import android.database.sqlite.SQLiteBindOrColumnIndexOutOfRangeException
-import android.database.sqlite.SQLiteDatabaseLockedException
 import android.database.sqlite.SQLiteException
 import androidx.core.os.CancellationSignal
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.ENABLE_WRITE_AHEAD_LOGGING
@@ -26,6 +25,7 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
 import ru.pixnews.wasm.sqlite.open.helper.common.api.xor
 import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard.SqliteDatabaseFinalizeAction
+import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.Companion.getSqlStatementType
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.Companion.isCacheable
 import ru.pixnews.wasm.sqlite.open.helper.internal.WasmSqliteCleaner.WasmSqliteCleanable
 import ru.pixnews.wasm.sqlite.open.helper.internal.connection.OperationLog
@@ -83,7 +83,6 @@ import java.util.concurrent.atomic.AtomicBoolean
  * triggers may call custom SQLite functions that perform additional queries.
  *
  */
-@Suppress("LargeClass")
 internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> private constructor(
     private val connectionPtrResource: ConnectionPtrClosable<CP>,
     onConnectionLeaked: () -> Unit,
@@ -94,18 +93,14 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
     private val debugConfig: SQLiteDebug,
     rootLogger: Logger,
 ) : CancellationSignal.OnCancelListener {
-    private val logger = rootLogger.withTag(TAG)
+    internal val logger = rootLogger.withTag(TAG)
+    private val closeGuard: CloseGuard = CloseGuard.get()
     private val closeGuardCleanable: WasmSqliteCleanable
     private val connectionPtrResourceCleanable: WasmSqliteCleanable
-    private val closeGuard: CloseGuard = CloseGuard.get()
     private val configuration = SqliteDatabaseConfiguration(configuration)
-    private val isReadOnlyConnection = configuration.openFlags.contains(OPEN_READONLY)
-    private val connectionPtr: CP = connectionPtrResource.nativePtr
-    private val preparedStatementCache = PreparedStatementCache(
-        connectionPtr,
-        bindings,
-        this.configuration.maxSqlCacheSize,
-    )
+    private val preparedStatementCache = PreparedStatementCache(connectionPtr, bindings, configuration.maxSqlCacheSize)
+    private val connectionPtr: CP get() = connectionPtrResource.nativePtr
+    internal val databaseLabel: String get() = configuration.label
 
     // The recent operations log.
     private val recentOperations = OperationLog(debugConfig, logger, System::currentTimeMillis, TimestampFormatter)
@@ -138,169 +133,18 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
         )
     }
 
-    private fun setupOnOpen() {
-        setPageSize()
-        setForeignKeyModeFromConfiguration()
-        setJournalSizeLimit()
-        setAutoCheckpointInterval()
-        setWalModeFromConfiguration()
-        setLocaleFromConfiguration()
-    }
-
-    // Called by SQLiteConnectionPool.
-    // Closes the database closes and releases all of its associated resources.
-    // Do not call methods on the connection after it is closed.  It will probably crash.
-    fun close() {
-        val alreadyClosed = connectionPtrResource.isClosed.getAndSet(true)
-        if (!alreadyClosed) {
-            closeNativeConnection(bindings, recentOperations, preparedStatementCache, connectionPtrResource.nativePtr)
-        }
-        closeGuard.close()
-        connectionPtrResourceCleanable.clean()
-        closeGuardCleanable.clean()
-    }
-
-    private fun setPageSize() {
-        if (!configuration.isInMemoryDb && !isReadOnlyConnection) {
-            val newValue = SQLiteGlobal.defaultPageSize.toLong()
-            val value = executeForLong("PRAGMA page_size")
-            if (value != newValue) {
-                execute("PRAGMA page_size=$newValue")
-            }
-        }
-    }
-
-    private fun setAutoCheckpointInterval() {
-        if (!configuration.isInMemoryDb && !isReadOnlyConnection) {
-            val newValue = SQLiteGlobal.wALAutoCheckpoint.toLong()
-            val value = executeForLong("PRAGMA wal_autocheckpoint")
-            if (value != newValue) {
-                executeForLong("PRAGMA wal_autocheckpoint=$newValue")
-            }
-        }
-    }
-
-    private fun setJournalSizeLimit() {
-        if (!configuration.isInMemoryDb && !isReadOnlyConnection) {
-            val newValue = SQLiteGlobal.journalSizeLimit.toLong()
-            val value = executeForLong("PRAGMA journal_size_limit")
-            if (value != newValue) {
-                executeForLong("PRAGMA journal_size_limit=$newValue")
-            }
-        }
-    }
-
-    private fun setForeignKeyModeFromConfiguration() {
-        if (!isReadOnlyConnection) {
-            val newValue = (if (configuration.foreignKeyConstraintsEnabled) 1 else 0).toLong()
-            val value = executeForLong("PRAGMA foreign_keys")
-            if (value != newValue) {
-                execute("PRAGMA foreign_keys=$newValue")
-            }
-        }
-    }
-
-    private fun setWalModeFromConfiguration() {
-        if (!configuration.isInMemoryDb && !isReadOnlyConnection) {
-            if (configuration.openFlags.contains(ENABLE_WRITE_AHEAD_LOGGING)) {
-                setJournalMode("WAL")
-                setSyncMode(SQLiteGlobal.wALSyncMode)
-            } else {
-                setJournalMode(SQLiteGlobal.defaultJournalMode)
-                setSyncMode(SQLiteGlobal.defaultSyncMode)
-            }
-        }
-    }
-
-    private fun setSyncMode(newValue: String) {
-        val value = executeForString("PRAGMA synchronous")
-        if (!canonicalizeSyncMode(value).equals(
-                canonicalizeSyncMode(newValue),
-                ignoreCase = true,
-            )
-        ) {
-            execute("PRAGMA synchronous=$newValue")
-        }
-    }
-
-    private fun setJournalMode(newValue: String) {
-        val value = executeForString("PRAGMA journal_mode")
-        if (!value.equals(newValue, ignoreCase = true)) {
-            try {
-                val result = executeForString("PRAGMA journal_mode=$newValue")
-                if (result.equals(newValue, ignoreCase = true)) {
-                    return
-                }
-                // PRAGMA journal_mode silently fails and returns the original journal
-                // mode in some cases if the journal mode could not be changed.
-            } catch (ex: SQLiteException) {
-                // This error (SQLITE_BUSY) occurs if one connection has the database
-                // open in WAL mode and another tries to change it to non-WAL.
-                if (@Suppress("TooGenericExceptionCaught") ex !is SQLiteDatabaseLockedException) {
-                    throw ex
-                }
-            }
-
-            // Because we always disable WAL mode when a database is first opened
-            // (even if we intend to re-enable it), we can encounter problems if
-            // there is another open connection to the database somewhere.
-            // This can happen for a variety of reasons such as an application opening
-            // the same database in multiple processes at the same time or if there is a
-            // crashing content provider service that the ActivityManager has
-            // removed from its registry but whose process hasn't quite died yet
-            // by the time it is restarted in a new process.
-            //
-            // If we don't change the journal mode, nothing really bad happens.
-            // In the worst case, an application that enables WAL might not actually
-            // get it, although it can still use connection pooling.
-            logger.w {
-                "Could not change the database journal mode of '" +
-                        configuration.label + "' from '" + value + "' to '" + newValue +
-                        "' because the database is locked.  This usually means that " +
-                        "there are other open connections to the database which prevents " +
-                        "the database from enabling or disabling write-ahead logging mode.  " +
-                        "Proceeding without changing the journal mode."
-            }
-        }
-    }
-
-    private fun setLocaleFromConfiguration() {
-        // Register the localized collators.
-        val newLocale = configuration.locale.toString()
-        // Removed: bindings.nativeRegisterLocalizedCollators(connectionPtr, newLocale)
-
-        // If the database is read-only, we cannot modify the android metadata table
-        // or existing indexes.
-        if (isReadOnlyConnection) {
+    private fun configure() {
+        if (configuration.isReadOnlyConnection) {
             return
         }
-
-        try {
-            // Ensure the android metadata table exists.
-            execute("CREATE TABLE IF NOT EXISTS android_metadata (locale TEXT)")
-
-            // Check whether the locale was actually changed.
-            val oldLocale = executeForString(
-                "SELECT locale FROM android_metadata UNION SELECT NULL ORDER BY locale DESC LIMIT 1",
-            )
-            if (oldLocale == newLocale) {
-                return
-            }
-
-            // Go ahead and update the indexes using the new locale.
-            execute("BEGIN")
-            var success = false
-            try {
-                execute("DELETE FROM android_metadata")
-                execute("INSERT INTO android_metadata (locale) VALUES(?)", listOf(newLocale))
-                execute("REINDEX LOCALIZED")
-                success = true
-            } finally {
-                execute(if (success) "COMMIT" else "ROLLBACK")
-            }
-        } catch (@Suppress("TooGenericExceptionCaught") ex: RuntimeException) {
-            throw SQLiteException("Failed to change locale for db '${configuration.label}' to '$newLocale'.", ex)
+        if (!configuration.isInMemoryDb) {
+            setPageSize()
+            setJournalSizeLimit()
+            setAutoCheckpointInterval()
+            setWalMode(configuration.isWalEnabled)
         }
+        setForeignKeyMode(configuration.foreignKeyConstraintsEnabled)
+        setLocale(configuration.locale.toString())
     }
 
     // Called by SQLiteConnectionPool only.
@@ -310,29 +154,28 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
         // Remember what changed.
         val foreignKeyModeChanged = newConfiguration.foreignKeyConstraintsEnabled !=
                 this.configuration.foreignKeyConstraintsEnabled
-        val walModeChanged =
-            (newConfiguration.openFlags xor this.configuration.openFlags).contains(ENABLE_WRITE_AHEAD_LOGGING)
+        val walModeChanged = (newConfiguration.openFlags xor this.configuration.openFlags)
+            .contains(ENABLE_WRITE_AHEAD_LOGGING)
         val localeChanged = newConfiguration.locale != this.configuration.locale
 
         // Update configuration parameters.
         this.configuration.updateParametersFrom(newConfiguration)
 
-        // Update prepared statement cache size.
-        /* mPreparedStatementCache.resize(configuration.maxSqlCacheSize); */
+        if (!configuration.isReadOnlyConnection) {
+            // Update foreign key mode.
+            if (foreignKeyModeChanged) {
+                setForeignKeyMode(configuration.foreignKeyConstraintsEnabled)
+            }
 
-        // Update foreign key mode.
-        if (foreignKeyModeChanged) {
-            setForeignKeyModeFromConfiguration()
-        }
+            // Update WAL.
+            if (walModeChanged && !configuration.isInMemoryDb) {
+                setWalMode(configuration.isWalEnabled)
+            }
 
-        // Update WAL.
-        if (walModeChanged) {
-            setWalModeFromConfiguration()
-        }
-
-        // Update locale.
-        if (localeChanged) {
-            setLocaleFromConfiguration()
+            // Update locale.
+            if (localeChanged) {
+                setLocale(configuration.locale.toString())
+            }
         }
     }
 
@@ -350,12 +193,10 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
     /**
      * Prepares a statement for execution but does not bind its parameters or execute it.
      *
-     *
      * This method can be used to check for syntax errors during compilation
      * prior to execution of the statement.  If the `outStatementInfo` argument
      * is not null, the provided [SQLiteStatementInfo] object is populated
      * with information about the statement.
-     *
      *
      * A prepared statement makes no reference to the arguments that may eventually
      * be bound to it, consequently it it possible to cache certain prepared statements
@@ -373,9 +214,7 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
      * @throws RuntimeException
      */
     fun prepare(sql: String): SQLiteStatementInfo {
-        val cookie = recentOperations.beginOperation("prepare", sql)
-        try {
-            // TODO: inline func
+        recentOperations.useOperation("prepare", sql) { _ ->
             val statement = acquirePreparedStatement(sql)
             try {
                 val columnCount = bindings.nativeGetColumnCount(connectionPtr, statement.statementPtr)
@@ -391,11 +230,6 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
             } finally {
                 releasePreparedStatement(statement)
             }
-        } catch (@Suppress("TooGenericExceptionCaught") ex: RuntimeException) {
-            recentOperations.failOperation(cookie, ex)
-            throw ex
-        } finally {
-            recentOperations.endOperation(cookie)
         }
     }
 
@@ -415,26 +249,8 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
         bindArgs: List<Any?> = listOf(),
         cancellationSignal: CancellationSignal? = null,
     ) {
-        val cookie = recentOperations.beginOperation("execute", sql, bindArgs)
-        try {
-            val statement = acquirePreparedStatement(sql)
-            try {
-                throwIfStatementForbidden(statement)
-                bindArguments(statement, bindArgs)
-                attachCancellationSignal(cancellationSignal)
-                try {
-                    bindings.nativeExecute(connectionPtr, statement.statementPtr)
-                } finally {
-                    detachCancellationSignal(cancellationSignal)
-                }
-            } finally {
-                releasePreparedStatement(statement)
-            }
-        } catch (@Suppress("TooGenericExceptionCaught") ex: RuntimeException) {
-            recentOperations.failOperation(cookie, ex)
-            throw ex
-        } finally {
-            recentOperations.endOperation(cookie)
+        executeOpWithPreparedStatement("execute", sql, bindArgs, cancellationSignal) { statement, _ ->
+            bindings.nativeExecute(connectionPtr, statement.statementPtr)
         }
     }
 
@@ -456,26 +272,8 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
         bindArgs: List<Any?> = emptyList(),
         cancellationSignal: CancellationSignal? = null,
     ): Long {
-        val cookie = recentOperations.beginOperation("executeForLong", sql, bindArgs)
-        try {
-            val statement = acquirePreparedStatement(sql)
-            try {
-                throwIfStatementForbidden(statement)
-                bindArguments(statement, bindArgs)
-                attachCancellationSignal(cancellationSignal)
-                try {
-                    return bindings.nativeExecuteForLong(connectionPtr, statement.statementPtr)
-                } finally {
-                    detachCancellationSignal(cancellationSignal)
-                }
-            } finally {
-                releasePreparedStatement(statement)
-            }
-        } catch (@Suppress("TooGenericExceptionCaught") ex: RuntimeException) {
-            recentOperations.failOperation(cookie, ex)
-            throw ex
-        } finally {
-            recentOperations.endOperation(cookie)
+        executeOpWithPreparedStatement("executeForLong", sql, bindArgs, cancellationSignal) { statement, _ ->
+            return bindings.nativeExecuteForLong(connectionPtr, statement.statementPtr)
         }
     }
 
@@ -497,26 +295,8 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
         bindArgs: List<Any?> = listOf(),
         cancellationSignal: CancellationSignal? = null,
     ): String? {
-        val cookie = recentOperations.beginOperation("executeForString", sql, bindArgs)
-        try {
-            val statement = acquirePreparedStatement(sql)
-            try {
-                throwIfStatementForbidden(statement)
-                bindArguments(statement, bindArgs)
-                attachCancellationSignal(cancellationSignal)
-                try {
-                    return bindings.nativeExecuteForString(connectionPtr, statement.statementPtr)
-                } finally {
-                    detachCancellationSignal(cancellationSignal)
-                }
-            } finally {
-                releasePreparedStatement(statement)
-            }
-        } catch (@Suppress("TooGenericExceptionCaught") ex: RuntimeException) {
-            recentOperations.failOperation(cookie, ex)
-            throw ex
-        } finally {
-            recentOperations.endOperation(cookie)
+        executeOpWithPreparedStatement("executeForString", sql, bindArgs, cancellationSignal) { statement, _ ->
+            return bindings.nativeExecuteForString(connectionPtr, statement.statementPtr)
         }
     }
 
@@ -541,19 +321,9 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
         var changedRows = 0
         val cookie = recentOperations.beginOperation("executeForChangedRowCount", sql, bindArgs)
         try {
-            val statement = acquirePreparedStatement(sql)
-            try {
-                throwIfStatementForbidden(statement)
-                bindArguments(statement, bindArgs)
-                attachCancellationSignal(cancellationSignal)
-                try {
-                    changedRows = bindings.nativeExecuteForChangedRowCount(connectionPtr, statement.statementPtr)
-                    return changedRows
-                } finally {
-                    detachCancellationSignal(cancellationSignal)
-                }
-            } finally {
-                releasePreparedStatement(statement)
+            executeWithPreparedStatement(sql, bindArgs, cancellationSignal) { statement ->
+                changedRows = bindings.nativeExecuteForChangedRowCount(connectionPtr, statement.statementPtr)
+                return changedRows
             }
         } catch (@Suppress("TooGenericExceptionCaught") ex: RuntimeException) {
             recentOperations.failOperation(cookie, ex)
@@ -582,32 +352,13 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
         sql: String,
         bindArgs: List<Any?> = listOf(),
         cancellationSignal: CancellationSignal? = null,
-    ): Long {
-        val cookie = recentOperations.beginOperation(
-            "executeForLastInsertedRowId",
-            sql,
-            bindArgs,
-        )
-        try {
-            val statement = acquirePreparedStatement(sql)
-            try {
-                throwIfStatementForbidden(statement)
-                bindArguments(statement, bindArgs)
-                attachCancellationSignal(cancellationSignal)
-                try {
-                    return bindings.nativeExecuteForLastInsertedRowId(connectionPtr, statement.statementPtr)
-                } finally {
-                    detachCancellationSignal(cancellationSignal)
-                }
-            } finally {
-                releasePreparedStatement(statement)
-            }
-        } catch (@Suppress("TooGenericExceptionCaught") ex: RuntimeException) {
-            recentOperations.failOperation(cookie, ex)
-            throw ex
-        } finally {
-            recentOperations.endOperation(cookie)
-        }
+    ): Long = executeOpWithPreparedStatement(
+        "executeForLastInsertedRowId",
+        sql,
+        bindArgs,
+        cancellationSignal,
+    ) { statement, _ ->
+        bindings.nativeExecuteForLastInsertedRowId(connectionPtr, statement.statementPtr)
     }
 
     /**
@@ -640,57 +391,102 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
         requiredPos: Int = 0,
         countAllRows: Boolean = false,
         cancellationSignal: CancellationSignal? = null,
-    ): Int {
-        window.acquireReference()
+    ): Int = window.useReference {
+        var actualPos = -1
+        var countedRows = -1
+        var filledRows = -1
+        val cookie = recentOperations.beginOperation("executeForCursorWindow", sql, bindArgs)
         try {
-            var actualPos = -1
-            var countedRows = -1
-            var filledRows = -1
-            val cookie = recentOperations.beginOperation("executeForCursorWindow", sql, bindArgs)
+            executeWithPreparedStatement(sql, bindArgs, cancellationSignal) { statement ->
+                val result = bindings.nativeExecuteForCursorWindow(
+                    connectionPtr = connectionPtr,
+                    statementPtr = statement.statementPtr,
+                    window = window.window,
+                    startPos = startPos,
+                    requiredPos = requiredPos,
+                    countAllRows = countAllRows,
+                )
+                @Suppress("MagicNumber")
+                actualPos = (result shr 32).toInt()
+                countedRows = result.toInt()
+                filledRows = window.numRows
+                window.startPosition = actualPos
+                return countedRows
+            }
+        } catch (@Suppress("TooGenericExceptionCaught") ex: RuntimeException) {
+            recentOperations.failOperation(cookie, ex)
+            throw ex
+        } finally {
+            if (recentOperations.endOperationDeferLog(cookie)) {
+                recentOperations.logOperation(
+                    cookie,
+                    "window='" + window +
+                            "', startPos=" + startPos +
+                            ", actualPos=" + actualPos +
+                            ", filledRows=" + filledRows +
+                            ", countedRows=" + countedRows,
+                )
+            }
+        }
+    }
+
+    // CancellationSignal.OnCancelListener callback.
+    // This method may be called on a different thread than the executing statement.
+    // However, it will only be called between calls to attachCancellationSignal and
+    // detachCancellationSignal, while a statement is executing.  We can safely assume
+    // that the SQLite connection is still alive.
+    override fun onCancel() = bindings.nativeCancel(connectionPtr)
+
+    // Called by SQLiteConnectionPool.
+    // Closes the database closes and releases all of its associated resources.
+    // Do not call methods on the connection after it is closed.  It will probably crash.
+    fun close() {
+        val alreadyClosed = connectionPtrResource.isClosed.getAndSet(true)
+        if (!alreadyClosed) {
+            closeNativeConnection(
+                bindings,
+                recentOperations,
+                preparedStatementCache,
+                connectionPtrResource.nativePtr,
+            )
+        }
+        closeGuard.close()
+        connectionPtrResourceCleanable.clean()
+        closeGuardCleanable.clean()
+    }
+
+    private inline fun <R : Any?> executeOpWithPreparedStatement(
+        operationKind: String,
+        sql: String,
+        bindArgs: List<Any?>,
+        cancellationSignal: CancellationSignal?,
+        block: (statement: PreparedStatement<SP>, operationCookie: Int) -> R,
+    ): R {
+        return recentOperations.useOperation(operationKind, sql, bindArgs) { operationCookie ->
+            executeWithPreparedStatement(sql, bindArgs, cancellationSignal) { statement ->
+                block(statement, operationCookie)
+            }
+        }
+    }
+
+    private inline fun <R : Any?> executeWithPreparedStatement(
+        sql: String,
+        bindArgs: List<Any?>,
+        cancellationSignal: CancellationSignal?,
+        block: (statement: PreparedStatement<SP>) -> R,
+    ): R {
+        val statement = acquirePreparedStatement(sql)
+        try {
+            throwIfStatementForbidden(statement)
+            bindArguments(statement, bindArgs)
+            attachCancellationSignal(cancellationSignal)
             try {
-                val statement = acquirePreparedStatement(sql)
-                try {
-                    throwIfStatementForbidden(statement)
-                    bindArguments(statement, bindArgs)
-                    attachCancellationSignal(cancellationSignal)
-                    try {
-                        val result = bindings.nativeExecuteForCursorWindow(
-                            connectionPtr = connectionPtr,
-                            statementPtr = statement.statementPtr,
-                            window = window.window,
-                            startPos = startPos,
-                            requiredPos = requiredPos,
-                            countAllRows = countAllRows,
-                        )
-                        @Suppress("MagicNumber")
-                        actualPos = (result shr 32).toInt()
-                        countedRows = result.toInt()
-                        filledRows = window.numRows
-                        window.startPosition = actualPos
-                        return countedRows
-                    } finally {
-                        detachCancellationSignal(cancellationSignal)
-                    }
-                } finally {
-                    releasePreparedStatement(statement)
-                }
-            } catch (@Suppress("TooGenericExceptionCaught") ex: RuntimeException) {
-                recentOperations.failOperation(cookie, ex)
-                throw ex
+                return block(statement)
             } finally {
-                if (recentOperations.endOperationDeferLog(cookie)) {
-                    recentOperations.logOperation(
-                        cookie,
-                        "window='" + window +
-                                "', startPos=" + startPos +
-                                ", actualPos=" + actualPos +
-                                ", filledRows=" + filledRows +
-                                ", countedRows=" + countedRows,
-                    )
-                }
+                detachCancellationSignal(cancellationSignal)
             }
         } finally {
-            window.releaseReference()
+            releasePreparedStatement(statement)
         }
     }
 
@@ -709,7 +505,7 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
 
         val statementPtr = bindings.nativePrepareStatement(connectionPtr, sql)
         try {
-            val statementType = SQLiteStatementType.getSqlStatementType(sql)
+            val statementType = getSqlStatementType(sql)
             val putInCache = !skipCache && statementType.isCacheable
             statement = PreparedStatement(
                 sql = sql,
@@ -790,13 +586,6 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
             bindings.nativeResetCancel(connectionPtr, cancelable = false)
         }
     }
-
-    // CancellationSignal.OnCancelListener callback.
-    // This method may be called on a different thread than the executing statement.
-    // However, it will only be called between calls to attachCancellationSignal and
-    // detachCancellationSignal, while a statement is executing.  We can safely assume
-    // that the SQLite connection is still alive.
-    override fun onCancel() = bindings.nativeCancel(connectionPtr)
 
     @Suppress("LongMethod")
     private fun bindArguments(statement: PreparedStatement<SP>, bindArgs: List<Any?>) {
@@ -924,6 +713,12 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
     companion object {
         private const val TAG = "SQLiteConnection"
 
+        internal val SqliteDatabaseConfiguration.isReadOnlyConnection: Boolean
+            get() = openFlags.contains(OPEN_READONLY)
+
+        internal val SqliteDatabaseConfiguration.isWalEnabled: Boolean
+            get() = openFlags.contains(ENABLE_WRITE_AHEAD_LOGGING)
+
         // Called by SQLiteConnectionPool only.
         fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> open(
             pool: SQLiteConnectionPool<CP, SP>,
@@ -953,7 +748,7 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
                 rootLogger = rootLogger,
             )
             try {
-                connection.setupOnOpen()
+                connection.configure()
                 return connection
             } catch (ex: SQLiteException) {
                 connection.close()
@@ -976,30 +771,6 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
             }
         }
 
-        private fun canonicalizeSyncMode(value: String?): String = when (value) {
-            "0" -> "OFF"
-            "1" -> "NORMAL"
-            "2" -> "FULL"
-            else -> value.toString()
-        }
-
-        /**
-         * Returns data type of the given object's value.
-         *
-         *
-         * Returned values are
-         *
-         *  * [Cursor.FIELD_TYPE_NULL]
-         *  * [Cursor.FIELD_TYPE_INTEGER]
-         *  * [Cursor.FIELD_TYPE_FLOAT]
-         *  * [Cursor.FIELD_TYPE_STRING]
-         *  * [Cursor.FIELD_TYPE_BLOB]
-         *
-         *
-         *
-         * @param obj the object whose value type is to be returned
-         * @return object value type
-         */
         private fun getTypeOfObject(obj: Any?): Int = when (obj) {
             null -> Cursor.FIELD_TYPE_NULL
             is ByteArray -> Cursor.FIELD_TYPE_BLOB
