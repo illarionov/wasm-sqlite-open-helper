@@ -7,7 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.builder.sqlite
 
 public object SqliteExportedFunctions {
-    public val openHelper: List<String> = listOf(
+    public val openHelperExportedFunctions: List<String> = listOf(
         "_sqlite3_initialize",
         "_sqlite3_bind_blob",
         "_sqlite3_bind_double",
@@ -50,7 +50,7 @@ public object SqliteExportedFunctions {
         "_sqlite3_trace_v2",
         "_sqlite3__wasm_enum_json", // optional
     )
-    public val defaultWasm: List<String> = listOf(
+    public val defaultWasmExportedFunctions: List<String> = listOf(
         "_free",
         "_malloc",
         "_realloc",

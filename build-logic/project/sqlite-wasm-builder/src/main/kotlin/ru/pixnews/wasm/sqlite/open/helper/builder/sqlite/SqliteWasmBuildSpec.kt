@@ -11,6 +11,7 @@ package ru.pixnews.wasm.sqlite.open.helper.builder.sqlite
 import org.gradle.api.Named
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.ProviderFactory
 import java.io.Serializable
@@ -43,9 +44,24 @@ public open class SqliteWasmBuildSpec @Inject internal constructor(
             },
         )
 
+    public val codeGenerationOptions: ListProperty<String> = objects.listProperty(String::class.java)
+        .convention(SqliteCodeGenerationOptions.codeGenerationOptions)
+
+    public val codeOptimizationOptions: ListProperty<String> = objects.listProperty(String::class.java)
+        .convention(SqliteCodeGenerationOptions.codeOptimizationOptionsO2)
+
+    public val emscriptenConfigurationOptions: ListProperty<String> = objects.listProperty(String::class.java)
+        .convention(SqliteCodeGenerationOptions.emscriptenConfigurationOptions)
+
+    public val exportedFunctions: ListProperty<String> = objects.listProperty(String::class.java)
+        .convention(SqliteExportedFunctions.openHelperExportedFunctions)
+
+    public val sqliteConfigOptions: ListProperty<String> = objects.listProperty(String::class.java)
+        .convention(SqliteConfigurationOptions.wasmConfig)
+
     override fun getName(): String = name
 
     public companion object {
-        private const val serialVersionUID: Long = -1
+        private const val serialVersionUID: Long = -2
     }
 }

@@ -7,38 +7,37 @@
 package ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.internal
 
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.process.CommandLineArgumentProvider
-import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.SqliteCodeGenerationOptions.codeGenerationOptions
-import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.SqliteCodeGenerationOptions.codeOptimizationOptionsO2
-import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.SqliteCodeGenerationOptions.emscriptenConfigurationOptions
-import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.SqliteConfigurationOptions
-import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.SqliteExportedFunctions
 import java.io.File
 
 internal class SqliteAdditionalArgumentProvider(
     @get:InputFile
     @get:PathSensitive(PathSensitivity.NONE)
     val sqliteCFile: Provider<File>,
-) : CommandLineArgumentProvider {
+    @get:Input
+    val codeGenerationOptions: Provider<List<String>>,
+    @get:Input
+    val codeOptimizationOptions: Provider<List<String>>,
+    @get:Input
+    val emscriptenConfigurationOptions: Provider<List<String>>,
+    @get:Input
+    val exportedFunctions: Provider<List<String>>,
+    @get:Input
+    val sqliteConfigOptions: Provider<List<String>>,
+    ) : CommandLineArgumentProvider {
     override fun asArguments(): MutableIterable<String> {
         return mutableListOf<String>().apply {
-            addAll(codeGenerationOptions)
-            addAll(codeOptimizationOptionsO2)
-            addAll(emscriptenConfigurationOptions)
-            addAll(exportedFunctionsConfiguration)
-            addAll(SqliteConfigurationOptions.wasmConfig)
+            addAll(codeGenerationOptions.get())
+            addAll(codeOptimizationOptions.get())
+            addAll(emscriptenConfigurationOptions.get())
+            add("-sEXPORTED_FUNCTIONS=${exportedFunctions.get().joinToString(",")}")
+            addAll(sqliteConfigOptions.get())
             add("""-DSQLITE_WASM_EXPORT=""") // we specify all exported functions in -sEXPORTED_FUNCTIONS
             add("-DSQLITE_C=${sqliteCFile.get()}")
         }
-    }
-
-    companion object {
-        val exportedFunctionsConfiguration = listOf(
-            // "-sEXPORTED_FUNCTIONS=${ExportedFunctions.defaultWasm.joinToString(",")}",
-            "-sEXPORTED_FUNCTIONS=${SqliteExportedFunctions.openHelper.joinToString(",")}",
-        )
     }
 }
