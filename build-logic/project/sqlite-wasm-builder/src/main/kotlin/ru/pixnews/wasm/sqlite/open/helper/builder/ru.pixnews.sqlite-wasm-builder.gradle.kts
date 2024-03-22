@@ -73,7 +73,16 @@ private fun setupTasksForBuild(buildSpec: SqliteWasmBuildSpec) {
             sqlite3cFile.map { it.parentFile },
             sqliteWasmFilesSrdDir.dir("wasm/api"),
         )
-        additionalArgumentProviders.add(SqliteAdditionalArgumentProvider(sqlite3cFile))
+
+        val additionalArgsProvider = SqliteAdditionalArgumentProvider(
+            sqlite3cFile,
+            codeGenerationOptions = buildSpec.codeGenerationOptions,
+            codeOptimizationOptions = buildSpec.codeOptimizationOptions,
+            emscriptenConfigurationOptions = buildSpec.emscriptenConfigurationOptions,
+            exportedFunctions = buildSpec.exportedFunctions,
+            sqliteConfigOptions = buildSpec.sqliteConfigOptions,
+        )
+        additionalArgumentProviders.add(additionalArgsProvider)
     }
 
     val stripSqliteTask: TaskProvider<WasmStripTask> = tasks.register<WasmStripTask>("stripSqlite$buildName") {
