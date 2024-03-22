@@ -10,6 +10,5 @@ internal interface Sqlite3Ptr {
     fun isNull(): Boolean
 }
 
-internal fun Sqlite3Ptr.isNotNull() = !isNull()
 internal interface Sqlite3ConnectionPtr : Sqlite3Ptr
 internal interface Sqlite3StatementPtr : Sqlite3Ptr
