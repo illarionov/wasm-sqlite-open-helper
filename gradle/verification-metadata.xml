@@ -44,6 +44,7 @@
          <trusted-key id="837B2CBB1D966C80643A2D6527F164F945828C4C" group="^com[.]willowtreeapps($|([.].*))" regex="true"/>
          <trusted-key id="8461EFA0E74ABAE010DE66994EB27DB2A3B88B8B">
             <trusting group="androidx.annotation"/>
+            <trusting group="androidx.collection"/>
             <trusting group="androidx.room"/>
             <trusting group="androidx.sqlite"/>
             <trusting group="^androidx[.]test($|([.].*))" regex="true"/>
@@ -393,6 +394,11 @@
       </component>
       <component group="org.gradle.kotlin" name="gradle-kotlin-dsl-plugins" version="4.2.1">
          <artifact name="gradle-kotlin-dsl-plugins-4.2.1.jar">
+            <pgp value="1BD97A6A154E7810EE0BC832E2F38302C8075E3D"/>
+         </artifact>
+      </component>
+      <component group="org.gradle.kotlin" name="gradle-kotlin-dsl-plugins" version="4.3.0">
+         <artifact name="gradle-kotlin-dsl-plugins-4.3.0.jar">
             <pgp value="1BD97A6A154E7810EE0BC832E2F38302C8075E3D"/>
          </artifact>
       </component>
