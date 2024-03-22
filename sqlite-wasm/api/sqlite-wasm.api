@@ -1,9 +1,0 @@
-public final class ru/pixnews/wasm/sqlite/open/helper/Sqlite3Wasm {
-	public static final field INSTANCE Lru/pixnews/wasm/sqlite/open/helper/Sqlite3Wasm;
-}
-
-public final class ru/pixnews/wasm/sqlite/open/helper/Sqlite3Wasm$Emscripten {
-	public static final field INSTANCE Lru/pixnews/wasm/sqlite/open/helper/Sqlite3Wasm$Emscripten;
-	public final fun getSqlite3_345 ()Ljava/net/URL;
-}
-
