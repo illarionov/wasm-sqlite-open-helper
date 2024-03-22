@@ -1,0 +1,1450 @@
+public final class ru/pixnews/wasm/sqlite/open/helper/host/WasmValueType {
+	public static final field WebAssemblyTypes Lru/pixnews/wasm/sqlite/open/helper/host/WasmValueType$WebAssemblyTypes;
+	public static final synthetic fun box-impl (Ljava/lang/Byte;)Lru/pixnews/wasm/sqlite/open/helper/host/WasmValueType;
+	public static fun constructor-impl (Ljava/lang/Byte;)Ljava/lang/Byte;
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (Ljava/lang/Byte;Ljava/lang/Object;)Z
+	public static final fun equals-impl0 (Ljava/lang/Byte;Ljava/lang/Byte;)Z
+	public final fun getOpcode ()Ljava/lang/Byte;
+	public fun hashCode ()I
+	public static fun hashCode-impl (Ljava/lang/Byte;)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (Ljava/lang/Byte;)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/WasmValueType$WebAssemblyTypes {
+	public final fun getExternRef-dU_UwH0 ()Ljava/lang/Byte;
+	public final fun getF32-dU_UwH0 ()Ljava/lang/Byte;
+	public final fun getF64-dU_UwH0 ()Ljava/lang/Byte;
+	public final fun getFuncRef-dU_UwH0 ()Ljava/lang/Byte;
+	public final fun getFunctionType-dU_UwH0 ()Ljava/lang/Byte;
+	public final fun getI32-dU_UwH0 ()Ljava/lang/Byte;
+	public final fun getI64-dU_UwH0 ()Ljava/lang/Byte;
+	public final fun getResultType-dU_UwH0 ()Ljava/lang/Byte;
+	public final fun getV128-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/WasmValueTypeExtKt {
+	public static final fun getPOINTER ()Ljava/lang/Byte;
+	public static final fun getPointer-otkXctc (Ljava/lang/Byte;)Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/AssertionFailedException : java/lang/RuntimeException {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;)V
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/FileSystem {
+	public synthetic fun <init> (Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;Ljava/nio/file/FileSystem;JILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;Ljava/nio/file/FileSystem;JLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun chown-z4h_Sj0 (III)V
+	public final fun close-l5Tu65g (I)V
+	public final fun ftruncate-tVmRj-E (IJ)V
+	public final fun getCwd ()Ljava/lang/String;
+	public final fun getCwdPath ()Ljava/nio/file/Path;
+	public final fun getStreamByFd-l5Tu65g (I)Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/fd/FdChannel;
+	public final fun open-BltQuoY (Ljava/nio/file/Path;II)Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/fd/FdChannel;
+	public final fun read-qJGtvoU (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/fd/FdChannel;[Ljava/nio/ByteBuffer;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/ReadWriteStrategy;)J
+	public static synthetic fun read-qJGtvoU$default (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/FileSystem;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/fd/FdChannel;[Ljava/nio/ByteBuffer;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/ReadWriteStrategy;ILjava/lang/Object;)J
+	public final fun seek (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/fd/FdChannel;JLru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Whence;)V
+	public final fun stat (Ljava/lang/String;Z)Lru/pixnews/wasm/sqlite/open/helper/host/include/sys/StructStat;
+	public final fun stat (Ljava/nio/file/Path;Z)Lru/pixnews/wasm/sqlite/open/helper/host/include/sys/StructStat;
+	public static synthetic fun stat$default (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/FileSystem;Ljava/lang/String;ZILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/host/include/sys/StructStat;
+	public static synthetic fun stat$default (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/FileSystem;Ljava/nio/file/Path;ZILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/host/include/sys/StructStat;
+	public final fun stat-l5Tu65g (I)Lru/pixnews/wasm/sqlite/open/helper/host/include/sys/StructStat;
+	public final fun sync-ffIemAE (IZ)V
+	public static synthetic fun sync-ffIemAE$default (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/FileSystem;IZILjava/lang/Object;)V
+	public final fun unlinkAt-jXDDuk8 (ILjava/lang/String;I)V
+	public final fun write-qJGtvoU (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/fd/FdChannel;[Ljava/nio/ByteBuffer;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/ReadWriteStrategy;)J
+	public static synthetic fun write-qJGtvoU$default (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/FileSystem;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/fd/FdChannel;[Ljava/nio/ByteBuffer;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/ReadWriteStrategy;ILjava/lang/Object;)J
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/FileSystemExtKt {
+	public static final fun resolveAbsolutePath (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/FileSystem;ILjava/lang/String;Z)Ljava/nio/file/Path;
+	public static final fun resolveAbsolutePath (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/FileSystem;ILjava/nio/file/Path;Z)Ljava/nio/file/Path;
+	public static synthetic fun resolveAbsolutePath$default (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/FileSystem;ILjava/lang/String;ZILjava/lang/Object;)Ljava/nio/file/Path;
+	public static synthetic fun resolveAbsolutePath$default (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/FileSystem;ILjava/nio/file/Path;ZILjava/lang/Object;)Ljava/nio/file/Path;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/ReadWriteStrategy : java/lang/Enum {
+	public static final field CHANGE_POSITION Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/ReadWriteStrategy;
+	public static final field DO_NOT_CHANGE_POSITION Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/ReadWriteStrategy;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/ReadWriteStrategy;
+	public static fun values ()[Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/ReadWriteStrategy;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/SysException : java/lang/RuntimeException {
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getErrNo ()Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/fd/FdChannel {
+	public synthetic fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/FileSystem;ILjava/nio/file/Path;Ljava/nio/channels/FileChannel;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getChannel ()Ljava/nio/channels/FileChannel;
+	public final fun getFd-W39Gj_Q ()I
+	public final fun getFileSystem ()Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/FileSystem;
+	public final fun getPath ()Ljava/nio/file/Path;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/fd/FdChannelKt {
+	public static final fun getPosition (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/fd/FdChannel;)J
+	public static final fun setPosition (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/fd/FdChannel;J)V
+}
+
+public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/functiontable/IndirectFunctionRef {
+	public abstract fun getRef ()I
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/functiontable/IndirectFunctionRef$ExternalRef : ru/pixnews/wasm/sqlite/open/helper/host/functiontable/IndirectFunctionRef {
+	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/host/functiontable/IndirectFunctionRef$ExternalRef;
+	public static fun constructor-impl (I)I
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (ILjava/lang/Object;)Z
+	public static final fun equals-impl0 (II)Z
+	public fun getRef ()I
+	public fun hashCode ()I
+	public static fun hashCode-impl (I)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (I)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()I
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/functiontable/IndirectFunctionRef$FuncRef : ru/pixnews/wasm/sqlite/open/helper/host/functiontable/IndirectFunctionRef {
+	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/host/functiontable/IndirectFunctionRef$FuncRef;
+	public static fun constructor-impl (I)I
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (ILjava/lang/Object;)Z
+	public static final fun equals-impl0 (II)Z
+	public fun getRef ()I
+	public fun hashCode ()I
+	public static fun hashCode-impl (I)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (I)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()I
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/functiontable/IndirectFunctionTableIndex {
+	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/host/functiontable/IndirectFunctionTableIndex;
+	public static fun constructor-impl (I)I
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (ILjava/lang/Object;)Z
+	public static final fun equals-impl0 (II)Z
+	public final fun getFuncId ()I
+	public fun hashCode ()I
+	public static fun hashCode-impl (I)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (I)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()I
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/include/Fcntl {
+	public static final field AT_EACCESS I
+	public static final field AT_FDCWD I
+	public static final field AT_REMOVEDIR I
+	public static final field AT_SYMLINK_FOLLOW I
+	public static final field AT_SYMLINK_NOFOLLOW I
+	public static final field INSTANCE Lru/pixnews/wasm/sqlite/open/helper/host/include/Fcntl;
+	public static final field O_ACCMODE I
+	public static final field O_APPEND I
+	public static final field O_ASYNC I
+	public static final field O_CLOEXEC I
+	public static final field O_CREAT I
+	public static final field O_DIRECT I
+	public static final field O_DIRECTORY I
+	public static final field O_DSYNC I
+	public static final field O_EXCL I
+	public static final field O_LARGEFILE I
+	public static final field O_NDELAY I
+	public static final field O_NOATIME I
+	public static final field O_NOCTTY I
+	public static final field O_NOFOLLOW I
+	public static final field O_NONBLOCK I
+	public static final field O_PATH I
+	public static final field O_RDONLY I
+	public static final field O_RDWR I
+	public static final field O_SEARCH I
+	public static final field O_SYNC I
+	public static final field O_TMPFILE I
+	public static final field O_TRUNC I
+	public static final field O_WRONLY I
+	public static final field S_IRGRP I
+	public static final field S_IROTH I
+	public static final field S_IRUSR I
+	public static final field S_IRWXG I
+	public static final field S_IRWXO I
+	public static final field S_IRWXU I
+	public static final field S_ISGID I
+	public static final field S_ISUID I
+	public static final field S_ISVTX I
+	public static final field S_IWGRP I
+	public static final field S_IWOTH I
+	public static final field S_IWUSR I
+	public static final field S_IXGRP I
+	public static final field S_IXOTH I
+	public static final field S_IXUSR I
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/include/FcntlExtKt {
+	public static final fun oMaskToString-Qn1smSk (Lru/pixnews/wasm/sqlite/open/helper/host/include/Fcntl;I)Ljava/lang/String;
+	public static final fun sMaskToString-Qn1smSk (Lru/pixnews/wasm/sqlite/open/helper/host/include/Fcntl;I)Ljava/lang/String;
+	public static final fun sMaskToStringLong-Qn1smSk (Lru/pixnews/wasm/sqlite/open/helper/host/include/Fcntl;I)Ljava/lang/String;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/include/StructTimespec {
+	public synthetic fun <init> (JJLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-s-VKNKU ()J
+	public final fun component2-s-VKNKU ()J
+	public final fun copy-PWzV0Is (JJ)Lru/pixnews/wasm/sqlite/open/helper/host/include/StructTimespec;
+	public static synthetic fun copy-PWzV0Is$default (Lru/pixnews/wasm/sqlite/open/helper/host/include/StructTimespec;JJILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/host/include/StructTimespec;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getTv_nsec-s-VKNKU ()J
+	public final fun getTv_sec-s-VKNKU ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/include/StructTimespecKt {
+	public static final fun getTimeMillis (Lru/pixnews/wasm/sqlite/open/helper/host/include/StructTimespec;)J
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/include/sys/StructStat {
+	public synthetic fun <init> (JJJJJJJJJJLru/pixnews/wasm/sqlite/open/helper/host/include/StructTimespec;Lru/pixnews/wasm/sqlite/open/helper/host/include/StructTimespec;Lru/pixnews/wasm/sqlite/open/helper/host/include/StructTimespec;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-s-VKNKU ()J
+	public final fun component10-s-VKNKU ()J
+	public final fun component11 ()Lru/pixnews/wasm/sqlite/open/helper/host/include/StructTimespec;
+	public final fun component12 ()Lru/pixnews/wasm/sqlite/open/helper/host/include/StructTimespec;
+	public final fun component13 ()Lru/pixnews/wasm/sqlite/open/helper/host/include/StructTimespec;
+	public final fun component2-s-VKNKU ()J
+	public final fun component3-s-VKNKU ()J
+	public final fun component4-s-VKNKU ()J
+	public final fun component5-s-VKNKU ()J
+	public final fun component6-s-VKNKU ()J
+	public final fun component7-s-VKNKU ()J
+	public final fun component8-s-VKNKU ()J
+	public final fun component9-s-VKNKU ()J
+	public final fun copy-VlflfjI (JJJJJJJJJJLru/pixnews/wasm/sqlite/open/helper/host/include/StructTimespec;Lru/pixnews/wasm/sqlite/open/helper/host/include/StructTimespec;Lru/pixnews/wasm/sqlite/open/helper/host/include/StructTimespec;)Lru/pixnews/wasm/sqlite/open/helper/host/include/sys/StructStat;
+	public static synthetic fun copy-VlflfjI$default (Lru/pixnews/wasm/sqlite/open/helper/host/include/sys/StructStat;JJJJJJJJJJLru/pixnews/wasm/sqlite/open/helper/host/include/StructTimespec;Lru/pixnews/wasm/sqlite/open/helper/host/include/StructTimespec;Lru/pixnews/wasm/sqlite/open/helper/host/include/StructTimespec;ILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/host/include/sys/StructStat;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getSt_atim ()Lru/pixnews/wasm/sqlite/open/helper/host/include/StructTimespec;
+	public final fun getSt_blksize-s-VKNKU ()J
+	public final fun getSt_blocks-s-VKNKU ()J
+	public final fun getSt_ctim ()Lru/pixnews/wasm/sqlite/open/helper/host/include/StructTimespec;
+	public final fun getSt_dev-s-VKNKU ()J
+	public final fun getSt_gid-s-VKNKU ()J
+	public final fun getSt_ino-s-VKNKU ()J
+	public final fun getSt_mode-s-VKNKU ()J
+	public final fun getSt_mtim ()Lru/pixnews/wasm/sqlite/open/helper/host/include/StructTimespec;
+	public final fun getSt_nlink-s-VKNKU ()J
+	public final fun getSt_rdev-s-VKNKU ()J
+	public final fun getSt_size-s-VKNKU ()J
+	public final fun getSt_uid-s-VKNKU ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/include/sys/StructStatKt {
+	public static final fun pack (Lru/pixnews/wasm/sqlite/open/helper/host/include/sys/StructStat;)[B
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/memory/DefaultWasiMemoryReader : ru/pixnews/wasm/sqlite/open/helper/host/memory/WasiMemoryReader {
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;)V
+	public fun read-dPCOrck (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/fd/FdChannel;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/ReadWriteStrategy;Ljava/util/List;)J
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/memory/DefaultWasiMemoryWriter : ru/pixnews/wasm/sqlite/open/helper/host/memory/WasiMemoryWriter {
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;)V
+	public fun write-ullT8eY (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/fd/FdChannel;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/ReadWriteStrategy;Ljava/util/List;)J
+}
+
+public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/memory/Memory {
+	public abstract fun readBytes-OCuHDVA (II)[B
+	public abstract fun readFromChannel-dPCOrck (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/fd/FdChannel;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/ReadWriteStrategy;Ljava/util/List;)J
+	public abstract fun readI32-MYs6Txo (I)I
+	public abstract fun readI8-MYs6Txo (I)B
+	public abstract fun write-QS5n4iw (I[BII)V
+	public abstract fun writeByte-OCuHDVA (IB)V
+	public abstract fun writeI32-OCuHDVA (II)V
+	public abstract fun writeI64-OCuHDVA (IJ)V
+	public abstract fun writeToChannel-ullT8eY (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/fd/FdChannel;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/ReadWriteStrategy;Ljava/util/List;)J
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/memory/MemoryKt {
+	public static final fun readPtr-wTLQxr0 (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;I)I
+	public static final fun readU32-wTLQxr0 (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;I)I
+	public static final fun readU8-wTLQxr0 (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;I)B
+	public static final fun write--6ori6s (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;I[B)V
+	public static final fun writePtr-0BaN380 (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;II)V
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/memory/MemoryUtilKt {
+	public static final fun encodeToNullTerminatedByteArray (Ljava/lang/String;)[B
+	public static final fun encodedNullTerminatedStringLength (Ljava/lang/String;)I
+	public static final fun encodedStringLength (Ljava/lang/String;)I
+	public static final fun readNullableZeroTerminatedString-wTLQxr0 (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;I)Ljava/lang/String;
+	public static final fun readZeroTerminatedString-wTLQxr0 (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;I)Ljava/lang/String;
+	public static final fun writeZeroTerminatedString--6ori6s (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;ILjava/lang/String;)I
+}
+
+public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/memory/WasiMemoryReader {
+	public abstract fun read-dPCOrck (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/fd/FdChannel;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/ReadWriteStrategy;Ljava/util/List;)J
+}
+
+public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/memory/WasiMemoryWriter {
+	public abstract fun write-ullT8eY (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/fd/FdChannel;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/ReadWriteStrategy;Ljava/util/List;)J
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/ext/FdReadExt {
+	public static final field INSTANCE Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/ext/FdReadExt;
+	public final fun readIovecs-quAwz-A (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;II)Ljava/util/List;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/ext/FdWriteExt {
+	public static final field INSTANCE Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/ext/FdWriteExt;
+	public final fun readCiovecs-t8kZyqQ (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;II)Ljava/util/List;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/ext/WasiEnvironmentFunc {
+	public static final field INSTANCE Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/ext/WasiEnvironmentFunc;
+	public final fun environGet-10gfWN8 (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;IILkotlin/jvm/functions/Function0;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public final fun environSizesGet-10gfWN8 (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;IILkotlin/jvm/functions/Function0;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Advice : java/lang/Enum {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Advice$Companion;
+	public static final field DONTNEED Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Advice;
+	public static final field NOREUSE Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Advice;
+	public static final field NORMAL Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Advice;
+	public static final field RANDOM Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Advice;
+	public static final field SEQUENTIAL Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Advice;
+	public static final field WILLNEED Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Advice;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getId ()I
+	public static fun valueOf (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Advice;
+	public static fun values ()[Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Advice;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Advice$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/CioVec {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/CioVec$Companion;
+	public synthetic fun <init> (IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-LEMrgXI ()I
+	public final fun component2-ctIz7Xw ()I
+	public final fun copy-83bhdMI (II)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/CioVec;
+	public static synthetic fun copy-83bhdMI$default (Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/CioVec;IIILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/CioVec;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBuf-LEMrgXI ()I
+	public final fun getBufLen-ctIz7Xw ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/CioVec$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/CiovecArray {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/CiovecArray$Companion;
+	public static final synthetic fun box-impl (Ljava/util/List;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/CiovecArray;
+	public static fun constructor-impl (Ljava/util/List;)Ljava/util/List;
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (Ljava/util/List;Ljava/lang/Object;)Z
+	public static final fun equals-impl0 (Ljava/util/List;Ljava/util/List;)Z
+	public final fun getCiovecList ()Ljava/util/List;
+	public fun hashCode ()I
+	public static fun hashCode-impl (Ljava/util/List;)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (Ljava/util/List;)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()Ljava/util/List;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/CiovecArray$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/ClockId : java/lang/Enum {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/ClockId$Companion;
+	public static final field MONOTONIC Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/ClockId;
+	public static final field PROCESS_CPUTIME_ID Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/ClockId;
+	public static final field REALTIME Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/ClockId;
+	public static final field THREAD_CPUTIME_ID Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/ClockId;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getId ()I
+	public static fun valueOf (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/ClockId;
+	public static fun values ()[Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/ClockId;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/ClockId$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Device {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Device$Companion;
+	public static final synthetic fun box-impl (J)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Device;
+	public static fun constructor-impl (J)J
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (JLjava/lang/Object;)Z
+	public static final fun equals-impl0 (JJ)Z
+	public final fun getRawValue-s-VKNKU ()J
+	public fun hashCode ()I
+	public static fun hashCode-impl (J)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (J)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()J
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Device$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Dircookie {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Dircookie$Companion;
+	public static final synthetic fun box-impl (J)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Dircookie;
+	public static fun constructor-impl (J)J
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (JLjava/lang/Object;)Z
+	public static final fun equals-impl0 (JJ)Z
+	public final fun getRawValue-s-VKNKU ()J
+	public fun hashCode ()I
+	public static fun hashCode-impl (J)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (J)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()J
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Dircookie$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Dirent {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Dirent$Companion;
+	public synthetic fun <init> (JJILru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Filetype;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-3Xfu5dM ()J
+	public final fun component2-ZvvAtig ()J
+	public final fun component3-9Uoe2qM ()I
+	public final fun component4 ()Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Filetype;
+	public final fun copy-ldxSGDc (JJILru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Filetype;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Dirent;
+	public static synthetic fun copy-ldxSGDc$default (Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Dirent;JJILru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Filetype;ILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Dirent;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDIno-ZvvAtig ()J
+	public final fun getDNamlen-9Uoe2qM ()I
+	public final fun getDNext-3Xfu5dM ()J
+	public final fun getDType ()Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Filetype;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Dirent$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Dirnamlen {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Dirnamlen$Companion;
+	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Dirnamlen;
+	public static fun constructor-impl (I)I
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (ILjava/lang/Object;)Z
+	public static final fun equals-impl0 (II)Z
+	public final fun getRawValue-pVg5ArA ()I
+	public fun hashCode ()I
+	public static fun hashCode-impl (I)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (I)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()I
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Dirnamlen$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno : java/lang/Enum {
+	public static final field ACCES Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field ADDRINUSE Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field ADDRNOTAVAIL Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field AFNOSUPPORT Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field AGAIN Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field ALREADY Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field BADF Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field BADMSG Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field BUSY Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field CANCELED Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field CHILD Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field CONNABORTED Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field CONNREFUSED Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field CONNRESET Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno$Companion;
+	public static final field DEADLK Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field DESTADDRREQ Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field DOM Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field DQUOT Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field EXIST Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field FAULT Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field FBIG Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field HOSTUNREACH Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field IDRM Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field ILSEQ Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field INPROGRESS Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field INTR Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field INVAL Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field IO Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field ISCONN Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field ISDIR Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field LOOP Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field MFILE Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field MLINK Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field MSGSIZE Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field MULTIHOP Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field NAMETOOLONG Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field NETDOWN Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field NETRESET Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field NETUNREACH Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field NFILE Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field NOBUFS Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field NODEV Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field NOENT Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field NOEXEC Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field NOLCK Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field NOLINK Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field NOMEM Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field NOMSG Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field NOPROTOOPT Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field NOSPC Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field NOSYS Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field NOTCAPABLE Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field NOTCONN Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field NOTDIR Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field NOTEMPTY Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field NOTRECOVERABLE Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field NOTSOCK Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field NOTSUP Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field NOTTY Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field NXIO Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field OVERFLOW Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field OWNERDEAD Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field PERM Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field PIPE Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field PROTO Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field PROTONOSUPPORT Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field PROTOTYPE Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field RANGE Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field ROFS Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field SPIPE Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field SRCH Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field STALE Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field SUCCESS Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field TIMEDOUT Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field TOO_BIG Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field TXTBSY Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static final field XDEV Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public final fun getCode ()I
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public static fun values ()[Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public final fun fromErrNoCode (I)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Event {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Event$Companion;
+	public synthetic fun <init> (JLru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Eventtype;Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/EventFdReadwrite;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-aA9InzQ ()J
+	public final fun component2 ()Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public final fun component3 ()Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Eventtype;
+	public final fun component4 ()Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/EventFdReadwrite;
+	public final fun copy-UFo-f9I (JLru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Eventtype;Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/EventFdReadwrite;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Event;
+	public static synthetic fun copy-UFo-f9I$default (Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Event;JLru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Eventtype;Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/EventFdReadwrite;ILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Event;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getError ()Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public final fun getFdReadwrite ()Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/EventFdReadwrite;
+	public final fun getType ()Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Eventtype;
+	public final fun getUserdata-aA9InzQ ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Event$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/EventFdReadwrite {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/EventFdReadwrite$Companion;
+	public synthetic fun <init> (JSLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-ZuuQA54 ()J
+	public final fun component2-DSrHEoQ ()S
+	public final fun copy-2sZ0KZc (JS)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/EventFdReadwrite;
+	public static synthetic fun copy-2sZ0KZc$default (Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/EventFdReadwrite;JSILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/EventFdReadwrite;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFlags-DSrHEoQ ()S
+	public final fun getNbytes-ZuuQA54 ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/EventFdReadwrite$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Eventrwflags {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Eventrwflags$Companion;
+	public static final synthetic fun box-impl (S)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Eventrwflags;
+	public static fun constructor-impl (S)S
+	public static fun constructor-impl ([Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Eventrwflags$Eventrwflags;)S
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (SLjava/lang/Object;)Z
+	public static final fun equals-impl0 (SS)Z
+	public final fun getRawMask-Mh2AYeg ()S
+	public fun hashCode ()I
+	public static fun hashCode-impl (S)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (S)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()S
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Eventrwflags$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Eventrwflags$Eventrwflags : java/lang/Enum {
+	public static final field FD_READWRITE_HANGUP Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Eventrwflags$Eventrwflags;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getMask-Mh2AYeg ()S
+	public static fun valueOf (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Eventrwflags$Eventrwflags;
+	public static fun values ()[Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Eventrwflags$Eventrwflags;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Eventtype : java/lang/Enum {
+	public static final field CLOCK Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Eventtype;
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Eventtype$Companion;
+	public static final field FD_READ Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Eventtype;
+	public static final field FD_WRITE Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Eventtype;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getId ()I
+	public static fun valueOf (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Eventtype;
+	public static fun values ()[Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Eventtype;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Eventtype$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/ExitCode {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/ExitCode$Companion;
+	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/ExitCode;
+	public static fun constructor-impl (I)I
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (ILjava/lang/Object;)Z
+	public static final fun equals-impl0 (II)Z
+	public final fun getRawValue-pVg5ArA ()I
+	public fun hashCode ()I
+	public static fun hashCode-impl (I)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (I)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()I
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/ExitCode$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Fd {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Fd$Companion;
+	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Fd;
+	public static fun constructor-impl (I)I
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (ILjava/lang/Object;)Z
+	public static final fun equals-impl0 (II)Z
+	public final fun getFd ()I
+	public fun hashCode ()I
+	public static fun hashCode-impl (I)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (I)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()I
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Fd$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/FdFlags {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/FdFlags$Companion;
+	public static final synthetic fun box-impl (S)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/FdFlags;
+	public static fun constructor-impl (S)S
+	public static fun constructor-impl ([Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/FdFlags$Flags;)S
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (SLjava/lang/Object;)Z
+	public static final fun equals-impl0 (SS)Z
+	public final fun getRawMask-Mh2AYeg ()S
+	public fun hashCode ()I
+	public static fun hashCode-impl (S)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (S)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()S
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/FdFlags$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/FdFlags$Flags : java/lang/Enum {
+	public static final field APPEND Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/FdFlags$Flags;
+	public static final field DSYNC Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/FdFlags$Flags;
+	public static final field NONBLOCK Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/FdFlags$Flags;
+	public static final field RSYNC Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/FdFlags$Flags;
+	public static final field SYNC Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/FdFlags$Flags;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getMask-Mh2AYeg ()S
+	public static fun valueOf (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/FdFlags$Flags;
+	public static fun values ()[Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/FdFlags$Flags;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/FdStat {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/FdStat$Companion;
+	public synthetic fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Filetype;SJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Filetype;
+	public final fun component2-VGUU5rc ()S
+	public final fun component3-hHD0Dl0 ()J
+	public final fun component4-hHD0Dl0 ()J
+	public final fun copy-B8mPXIM (Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Filetype;SJJ)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/FdStat;
+	public static synthetic fun copy-B8mPXIM$default (Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/FdStat;Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Filetype;SJJILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/FdStat;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFsFiletype ()Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Filetype;
+	public final fun getFsFlags-VGUU5rc ()S
+	public final fun getFsRightsBase-hHD0Dl0 ()J
+	public final fun getFsRightsInheriting-hHD0Dl0 ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/FdStat$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/FileDelta {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/FileDelta$Companion;
+	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/FileDelta;
+	public static fun constructor-impl (I)I
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (ILjava/lang/Object;)Z
+	public static final fun equals-impl0 (II)Z
+	public final fun getRawValue ()I
+	public fun hashCode ()I
+	public static fun hashCode-impl (I)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (I)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()I
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/FileDelta$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/FileSize {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/FileSize$Companion;
+	public static final synthetic fun box-impl (J)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/FileSize;
+	public static fun constructor-impl (J)J
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (JLjava/lang/Object;)Z
+	public static final fun equals-impl0 (JJ)Z
+	public final fun getValue-s-VKNKU ()J
+	public fun hashCode ()I
+	public static fun hashCode-impl (J)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (J)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()J
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/FileSize$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Filestat {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Filestat$Companion;
+	public synthetic fun <init> (JJLru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Filetype;JJJJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-xlNHqPo ()J
+	public final fun component2-ZvvAtig ()J
+	public final fun component3 ()Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Filetype;
+	public final fun component4-qLhXkHE ()J
+	public final fun component5-ZuuQA54 ()J
+	public final fun component6-8NXW-Lw ()J
+	public final fun component7-8NXW-Lw ()J
+	public final fun component8-8NXW-Lw ()J
+	public final fun copy-8wvBayA (JJLru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Filetype;JJJJJ)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Filestat;
+	public static synthetic fun copy-8wvBayA$default (Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Filestat;JJLru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Filetype;JJJJJILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Filestat;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAtim-8NXW-Lw ()J
+	public final fun getCtim-8NXW-Lw ()J
+	public final fun getDev-xlNHqPo ()J
+	public final fun getFileType ()Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Filetype;
+	public final fun getIno-ZvvAtig ()J
+	public final fun getMtim-8NXW-Lw ()J
+	public final fun getNlink-qLhXkHE ()J
+	public final fun getSize-ZuuQA54 ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Filestat$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Filetype : java/lang/Enum {
+	public static final field BLOCK_DEVICE Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Filetype;
+	public static final field CHARACTER_DEVICE Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Filetype;
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Filetype$Companion;
+	public static final field DIRECTORY Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Filetype;
+	public static final field REGULAR_FILE Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Filetype;
+	public static final field SOCKET_DGRAM Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Filetype;
+	public static final field SOCKET_STREAM Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Filetype;
+	public static final field SYMBOLIC_LINK Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Filetype;
+	public static final field UNKNOWN Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Filetype;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getId ()I
+	public static fun valueOf (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Filetype;
+	public static fun values ()[Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Filetype;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Filetype$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Fstflags {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Fstflags$Companion;
+	public static final synthetic fun box-impl (S)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Fstflags;
+	public static fun constructor-impl (S)S
+	public static fun constructor-impl ([Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Fstflags$Fstflags;)S
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (SLjava/lang/Object;)Z
+	public static final fun equals-impl0 (SS)Z
+	public final fun getRawMask-Mh2AYeg ()S
+	public fun hashCode ()I
+	public static fun hashCode-impl (S)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (S)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()S
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Fstflags$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Fstflags$Fstflags : java/lang/Enum {
+	public static final field ATIM Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Fstflags$Fstflags;
+	public static final field ATIM_NOW Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Fstflags$Fstflags;
+	public static final field MTIM Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Fstflags$Fstflags;
+	public static final field MTIM_NOW Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Fstflags$Fstflags;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getMask-Mh2AYeg ()S
+	public static fun valueOf (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Fstflags$Fstflags;
+	public static fun values ()[Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Fstflags$Fstflags;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Inode {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Inode$Companion;
+	public static final synthetic fun box-impl (J)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Inode;
+	public static fun constructor-impl (J)J
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (JLjava/lang/Object;)Z
+	public static final fun equals-impl0 (JJ)Z
+	public final fun getRawValue-s-VKNKU ()J
+	public fun hashCode ()I
+	public static fun hashCode-impl (J)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (J)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()J
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Inode$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Iovec {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Iovec$Companion;
+	public synthetic fun <init> (IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-LEMrgXI ()I
+	public final fun component2-ctIz7Xw ()I
+	public final fun copy-83bhdMI (II)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Iovec;
+	public static synthetic fun copy-83bhdMI$default (Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Iovec;IIILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Iovec;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBuf-LEMrgXI ()I
+	public final fun getBufLen-ctIz7Xw ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Iovec$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/IovecArray {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/IovecArray$Companion;
+	public static final synthetic fun box-impl (Ljava/util/List;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/IovecArray;
+	public static fun constructor-impl (Ljava/util/List;)Ljava/util/List;
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (Ljava/util/List;Ljava/lang/Object;)Z
+	public static final fun equals-impl0 (Ljava/util/List;Ljava/util/List;)Z
+	public final fun getIovecList ()Ljava/util/List;
+	public fun hashCode ()I
+	public static fun hashCode-impl (Ljava/util/List;)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (Ljava/util/List;)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()Ljava/util/List;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/IovecArray$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Linkcount {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Linkcount$Companion;
+	public static final synthetic fun box-impl (J)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Linkcount;
+	public static fun constructor-impl (J)J
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (JLjava/lang/Object;)Z
+	public static final fun equals-impl0 (JJ)Z
+	public final fun getRawValue-s-VKNKU ()J
+	public fun hashCode ()I
+	public static fun hashCode-impl (J)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (J)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()J
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Linkcount$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/LookupFlags {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/LookupFlags$Companion;
+	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/LookupFlags;
+	public static fun constructor-impl (I)I
+	public static fun constructor-impl ([Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/LookupFlags$LookupFlag;)I
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (ILjava/lang/Object;)Z
+	public static final fun equals-impl0 (II)Z
+	public final fun getRawMask-pVg5ArA ()I
+	public fun hashCode ()I
+	public static fun hashCode-impl (I)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (I)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()I
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/LookupFlags$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/LookupFlags$LookupFlag : java/lang/Enum {
+	public static final field SYMLINK_FOLLOW Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/LookupFlags$LookupFlag;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getMask-pVg5ArA ()I
+	public static fun valueOf (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/LookupFlags$LookupFlag;
+	public static fun values ()[Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/LookupFlags$LookupFlag;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Oflags {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Oflags$Companion;
+	public static final synthetic fun box-impl (S)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Oflags;
+	public static fun constructor-impl (S)S
+	public static fun constructor-impl ([Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Oflags$Oflags;)S
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (SLjava/lang/Object;)Z
+	public static final fun equals-impl0 (SS)Z
+	public final fun getRawMask-Mh2AYeg ()S
+	public fun hashCode ()I
+	public static fun hashCode-impl (S)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (S)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()S
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Oflags$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Oflags$Oflags : java/lang/Enum {
+	public static final field CREAT Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Oflags$Oflags;
+	public static final field DIRECTORY Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Oflags$Oflags;
+	public static final field EXCL Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Oflags$Oflags;
+	public static final field TRUNC Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Oflags$Oflags;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getMask-Mh2AYeg ()S
+	public static fun valueOf (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Oflags$Oflags;
+	public static fun values ()[Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Oflags$Oflags;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Preopentype : java/lang/Enum {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Preopentype$Companion;
+	public static final field DIR Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Preopentype;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getValue-pVg5ArA ()I
+	public static fun valueOf (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Preopentype;
+	public static fun values ()[Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Preopentype;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Preopentype$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public abstract class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Prestat {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Prestat$Companion;
+	public synthetic fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Preopentype;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun getTag ()Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Preopentype;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Prestat$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Prestat$Dir : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Prestat {
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/PrestatDir;)V
+	public final fun component1 ()Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/PrestatDir;
+	public final fun copy (Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/PrestatDir;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Prestat$Dir;
+	public static synthetic fun copy$default (Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Prestat$Dir;Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/PrestatDir;ILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Prestat$Dir;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getPrestatDir ()Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/PrestatDir;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/PrestatDir {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/PrestatDir$Companion;
+	public synthetic fun <init> (ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-ctIz7Xw ()I
+	public final fun copy-Tw8Uh3E (I)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/PrestatDir;
+	public static synthetic fun copy-Tw8Uh3E$default (Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/PrestatDir;IILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/PrestatDir;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getPrNameLen-ctIz7Xw ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/PrestatDir$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Riflags {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Riflags$Companion;
+	public static final synthetic fun box-impl (S)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Riflags;
+	public static fun constructor-impl (S)S
+	public static fun constructor-impl ([Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Riflags$RiFlags;)S
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (SLjava/lang/Object;)Z
+	public static final fun equals-impl0 (SS)Z
+	public final fun getRawMask-Mh2AYeg ()S
+	public fun hashCode ()I
+	public static fun hashCode-impl (S)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (S)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()S
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Riflags$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Riflags$RiFlags : java/lang/Enum {
+	public static final field RECV_PEEK Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Riflags$RiFlags;
+	public static final field RECV_WAITALL Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Riflags$RiFlags;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getMask-Mh2AYeg ()S
+	public static fun valueOf (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Riflags$RiFlags;
+	public static fun values ()[Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Riflags$RiFlags;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Rights {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Rights$Companion;
+	public static final synthetic fun box-impl (J)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Rights;
+	public static fun constructor-impl (J)J
+	public static fun constructor-impl ([Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Rights$Flags;)J
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (JLjava/lang/Object;)Z
+	public static final fun equals-impl0 (JJ)Z
+	public final fun getMask-s-VKNKU ()J
+	public fun hashCode ()I
+	public static fun hashCode-impl (J)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (J)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()J
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Rights$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Rights$Flags : java/lang/Enum {
+	public static final field FD_ADVISE Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Rights$Flags;
+	public static final field FD_ALLOCATE Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Rights$Flags;
+	public static final field FD_DATASYNC Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Rights$Flags;
+	public static final field FD_FDSTAT_SET_FLAGS Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Rights$Flags;
+	public static final field FD_FILESTAT_GET Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Rights$Flags;
+	public static final field FD_FILESTAT_SET_SIZE Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Rights$Flags;
+	public static final field FD_FILESTAT_SET_TIMES Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Rights$Flags;
+	public static final field FD_READ Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Rights$Flags;
+	public static final field FD_READDIR Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Rights$Flags;
+	public static final field FD_SEEK Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Rights$Flags;
+	public static final field FD_SYNC Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Rights$Flags;
+	public static final field FD_TELL Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Rights$Flags;
+	public static final field FD_WRITE Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Rights$Flags;
+	public static final field PATH_CREATE_DIRECTORY Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Rights$Flags;
+	public static final field PATH_CREATE_FILE Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Rights$Flags;
+	public static final field PATH_FILESTAT_GET Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Rights$Flags;
+	public static final field PATH_FILESTAT_SET_SIZE Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Rights$Flags;
+	public static final field PATH_FILESTAT_SET_TIMES Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Rights$Flags;
+	public static final field PATH_LINK_SOURCE Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Rights$Flags;
+	public static final field PATH_LINK_TARGET Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Rights$Flags;
+	public static final field PATH_OPEN Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Rights$Flags;
+	public static final field PATH_READLINK Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Rights$Flags;
+	public static final field PATH_REMOVE_DIRECTORY Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Rights$Flags;
+	public static final field PATH_RENAME_SOURCE Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Rights$Flags;
+	public static final field PATH_RENAME_TARGET Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Rights$Flags;
+	public static final field PATH_SYMLINK Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Rights$Flags;
+	public static final field PATH_UNLINK_FILE Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Rights$Flags;
+	public static final field POLL_FD_READWRITE Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Rights$Flags;
+	public static final field SOCK_ACCEPT Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Rights$Flags;
+	public static final field SOCK_SHUTDOWN Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Rights$Flags;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getMask-s-VKNKU ()J
+	public static fun valueOf (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Rights$Flags;
+	public static fun values ()[Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Rights$Flags;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Roflags {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Roflags$Companion;
+	public static final synthetic fun box-impl (S)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Roflags;
+	public static fun constructor-impl (S)S
+	public static fun constructor-impl ([Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Roflags$RoFlags;)S
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (SLjava/lang/Object;)Z
+	public static final fun equals-impl0 (SS)Z
+	public final fun getRawMask-Mh2AYeg ()S
+	public fun hashCode ()I
+	public static fun hashCode-impl (S)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (S)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()S
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Roflags$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Roflags$RoFlags : java/lang/Enum {
+	public static final field RECV_DATA_TRUNCATED Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Roflags$RoFlags;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getMask-Mh2AYeg ()S
+	public static fun valueOf (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Roflags$RoFlags;
+	public static fun values ()[Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Roflags$RoFlags;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Sdflags {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Sdflags$Companion;
+	public static final synthetic fun box-impl (B)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Sdflags;
+	public static fun constructor-impl (B)B
+	public static fun constructor-impl ([Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Sdflags$Sdflags;)B
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (BLjava/lang/Object;)Z
+	public static final fun equals-impl0 (BB)Z
+	public final fun getRawMask-w2LRezQ ()B
+	public fun hashCode ()I
+	public static fun hashCode-impl (B)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (B)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()B
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Sdflags$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Sdflags$Sdflags : java/lang/Enum {
+	public static final field RD Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Sdflags$Sdflags;
+	public static final field WR Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Sdflags$Sdflags;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getMask-w2LRezQ ()B
+	public static fun valueOf (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Sdflags$Sdflags;
+	public static fun values ()[Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Sdflags$Sdflags;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SiFlags {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SiFlags$Companion;
+	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SiFlags;
+	public static fun constructor-impl (I)I
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (ILjava/lang/Object;)Z
+	public static final fun equals-impl0 (II)Z
+	public final fun getRawValue-pVg5ArA ()I
+	public fun hashCode ()I
+	public static fun hashCode-impl (I)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (I)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()I
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SiFlags$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Signal : java/lang/Enum {
+	public static final field ABRT Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Signal;
+	public static final field ALRM Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Signal;
+	public static final field BUS Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Signal;
+	public static final field CHLD Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Signal;
+	public static final field CONT Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Signal;
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Signal$Companion;
+	public static final field FPE Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Signal;
+	public static final field HUP Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Signal;
+	public static final field ILL Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Signal;
+	public static final field INT Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Signal;
+	public static final field KILL Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Signal;
+	public static final field NONE Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Signal;
+	public static final field PIPE Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Signal;
+	public static final field POLL Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Signal;
+	public static final field PROF Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Signal;
+	public static final field PWR Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Signal;
+	public static final field QUIT Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Signal;
+	public static final field SEGV Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Signal;
+	public static final field STOP Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Signal;
+	public static final field SYS Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Signal;
+	public static final field TERM Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Signal;
+	public static final field TRAP Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Signal;
+	public static final field TSTP Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Signal;
+	public static final field TTIN Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Signal;
+	public static final field TTOU Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Signal;
+	public static final field URG Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Signal;
+	public static final field USR1 Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Signal;
+	public static final field USR2 Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Signal;
+	public static final field VTALRM Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Signal;
+	public static final field WINCH Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Signal;
+	public static final field XCPU Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Signal;
+	public static final field XFSZ Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Signal;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getValue ()I
+	public static fun valueOf (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Signal;
+	public static fun values ()[Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Signal;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Signal$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Size {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Size$Companion;
+	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Size;
+	public static fun constructor-impl (I)I
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (ILjava/lang/Object;)Z
+	public static final fun equals-impl0 (II)Z
+	public final fun getValue-pVg5ArA ()I
+	public fun hashCode ()I
+	public static fun hashCode-impl (I)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (I)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()I
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Size$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Subclockflags {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Subclockflags$Companion;
+	public static final synthetic fun box-impl (S)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Subclockflags;
+	public static fun constructor-impl (S)S
+	public static fun constructor-impl ([Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Subclockflags$Subclockflags;)S
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (SLjava/lang/Object;)Z
+	public static final fun equals-impl0 (SS)Z
+	public final fun getRawMask-Mh2AYeg ()S
+	public fun hashCode ()I
+	public static fun hashCode-impl (S)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (S)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()S
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Subclockflags$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Subclockflags$Subclockflags : java/lang/Enum {
+	public static final field SUBSCRIPTION_CLOCK_ABSTIME Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Subclockflags$Subclockflags;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getMask-Mh2AYeg ()S
+	public static fun valueOf (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Subclockflags$Subclockflags;
+	public static fun values ()[Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Subclockflags$Subclockflags;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Subscription {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Subscription$Companion;
+	public synthetic fun <init> (JLru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionU;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-aA9InzQ ()J
+	public final fun component2 ()Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionU;
+	public final fun copy-I48JhC8 (JLru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionU;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Subscription;
+	public static synthetic fun copy-I48JhC8$default (Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Subscription;JLru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionU;ILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Subscription;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getU ()Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionU;
+	public final fun getUserdata-aA9InzQ ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Subscription$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionClock {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionClock$Companion;
+	public synthetic fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/ClockId;JJSLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/ClockId;
+	public final fun component2-8NXW-Lw ()J
+	public final fun component3-8NXW-Lw ()J
+	public final fun component4-3L7_H_k ()S
+	public final fun copy-UOR3lxI (Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/ClockId;JJS)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionClock;
+	public static synthetic fun copy-UOR3lxI$default (Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionClock;Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/ClockId;JJSILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionClock;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFlags-3L7_H_k ()S
+	public final fun getId ()Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/ClockId;
+	public final fun getPrecision-8NXW-Lw ()J
+	public final fun getTimeout-8NXW-Lw ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionClock$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionFdReadwrite {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionFdReadwrite$Companion;
+	public synthetic fun <init> (ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-W39Gj_Q ()I
+	public final fun copy-l5Tu65g (I)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionFdReadwrite;
+	public static synthetic fun copy-l5Tu65g$default (Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionFdReadwrite;IILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionFdReadwrite;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFileDescriptor-W39Gj_Q ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionFdReadwrite$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public abstract class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionU {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionU$Companion;
+	public synthetic fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Eventtype;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun getEventType ()Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Eventtype;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionU$Clock : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionU {
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionClock;)V
+	public final fun component1 ()Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionClock;
+	public final fun copy (Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionClock;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionU$Clock;
+	public static synthetic fun copy$default (Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionU$Clock;Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionClock;ILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionU$Clock;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getSubscriptionClock ()Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionClock;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionU$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionU$FdRead : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionU {
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionFdReadwrite;)V
+	public final fun component1 ()Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionFdReadwrite;
+	public final fun copy (Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionFdReadwrite;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionU$FdRead;
+	public static synthetic fun copy$default (Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionU$FdRead;Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionFdReadwrite;ILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionU$FdRead;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getSubscriptionFdReadwrite ()Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionFdReadwrite;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionU$FdWrite : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionU {
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionFdReadwrite;)V
+	public final fun component1 ()Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionFdReadwrite;
+	public final fun copy (Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionFdReadwrite;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionU$FdWrite;
+	public static synthetic fun copy$default (Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionU$FdWrite;Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionFdReadwrite;ILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionU$FdWrite;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getSubscriptionFdReadwrite ()Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/SubscriptionFdReadwrite;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Timestamp {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Timestamp$Companion;
+	public static final synthetic fun box-impl (J)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Timestamp;
+	public static fun constructor-impl (J)J
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (JLjava/lang/Object;)Z
+	public static final fun equals-impl0 (JJ)Z
+	public final fun getValue-s-VKNKU ()J
+	public fun hashCode ()I
+	public static fun hashCode-impl (J)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (J)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()J
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Timestamp$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Userdata {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Userdata$Companion;
+	public static final synthetic fun box-impl (J)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Userdata;
+	public static fun constructor-impl (J)J
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (JLjava/lang/Object;)Z
+	public static final fun equals-impl0 (JJ)Z
+	public final fun getRawValue-s-VKNKU ()J
+	public fun hashCode ()I
+	public static fun hashCode-impl (J)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (J)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()J
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Userdata$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public abstract fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiValueTypes {
+	public static final field INSTANCE Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiValueTypes;
+	public final fun getHandle-dU_UwH0 ()Ljava/lang/Byte;
+	public final fun getS32-dU_UwH0 ()Ljava/lang/Byte;
+	public final fun getS64-dU_UwH0 ()Ljava/lang/Byte;
+	public final fun getU16-dU_UwH0 ()Ljava/lang/Byte;
+	public final fun getU32-dU_UwH0 ()Ljava/lang/Byte;
+	public final fun getU64-dU_UwH0 ()Ljava/lang/Byte;
+	public final fun getU8-dU_UwH0 ()Ljava/lang/Byte;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Whence : java/lang/Enum {
+	public static final field CUR Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Whence;
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Whence$Companion;
+	public static final field END Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Whence;
+	public static final field SET Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Whence;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Whence;
+	public static fun values ()[Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Whence;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Whence$Companion : ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename {
+	public final fun fromIdOrNull (I)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Whence;
+	public fun getWasmValueType-dU_UwH0 ()Ljava/lang/Byte;
+}
+

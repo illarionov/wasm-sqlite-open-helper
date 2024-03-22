@@ -1,0 +1,428 @@
+public abstract interface annotation class ru/pixnews/wasm/sqlite/open/helper/WasmSqliteOpenHelperDsl : java/lang/annotation/Annotation {
+}
+
+public abstract interface class ru/pixnews/wasm/sqlite/open/helper/embedder/SqliteCapi {
+	public abstract fun readSqliteErrorInfo-MYs6Txo (I)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteErrorInfo;
+	public abstract fun sqlite3BindBlobTransient-nSDRFtM (II[B)I
+	public abstract fun sqlite3BindDouble-nSDRFtM (IID)I
+	public abstract fun sqlite3BindLong-nSDRFtM (IIJ)I
+	public abstract fun sqlite3BindNull-gui4nbY (II)I
+	public abstract fun sqlite3BindParameterCount-MYs6Txo (I)I
+	public abstract fun sqlite3BindStringTransient-nSDRFtM (IILjava/lang/String;)I
+	public abstract fun sqlite3BusyTimeout-OCuHDVA (II)V
+	public abstract fun sqlite3Changes-MYs6Txo (I)I
+	public abstract fun sqlite3ClearBindings-0ofqlBw (I)I
+	public abstract fun sqlite3Close-MYs6Txo (I)V
+	public abstract fun sqlite3ColumnBlob-OCuHDVA (II)[B
+	public abstract fun sqlite3ColumnCount-MYs6Txo (I)I
+	public abstract fun sqlite3ColumnDouble-OCuHDVA (II)D
+	public abstract fun sqlite3ColumnInt64-OCuHDVA (II)J
+	public abstract fun sqlite3ColumnName-OCuHDVA (II)Ljava/lang/String;
+	public abstract fun sqlite3ColumnText-OCuHDVA (II)Ljava/lang/String;
+	public abstract fun sqlite3ColumnType-O3iCJ6k (II)I
+	public abstract fun sqlite3CreateCollation-Q32f7bY (ILjava/lang/String;Lkotlin/jvm/functions/Function2;)V
+	public abstract fun sqlite3DbReadonly-OCuHDVA (ILjava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/embedder/SqliteCapi$SqliteDbReadonlyResult;
+	public abstract fun sqlite3DbStatus-1Nu_FJo (IIZ)Lru/pixnews/wasm/sqlite/open/helper/embedder/SqliteCapi$SqliteDbStatusResult;
+	public abstract fun sqlite3ExpandedSql-MYs6Txo (I)Ljava/lang/String;
+	public abstract fun sqlite3Finalize-Dyx77Y0 (II)V
+	public abstract fun sqlite3LastInsertRowId-MYs6Txo (I)J
+	public abstract fun sqlite3OpenV2-sn_LqpM (Ljava/lang/String;ILjava/lang/String;)I
+	public abstract fun sqlite3PrepareV2-8DFCcHs (ILjava/lang/String;)I
+	public abstract fun sqlite3ProgressHandler-Q32f7bY (IILkotlin/jvm/functions/Function1;)V
+	public abstract fun sqlite3Reset-0ofqlBw (I)I
+	public abstract fun sqlite3Step-0ofqlBw (I)I
+	public abstract fun sqlite3StmtReadonly-MYs6Txo (I)Z
+	public abstract fun sqlite3Trace-wF_UhGc (IILkotlin/jvm/functions/Function1;)V
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/embedder/SqliteCapi$SqliteDbReadonlyResult : java/lang/Enum {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/embedder/SqliteCapi$SqliteDbReadonlyResult$Companion;
+	public static final field INVALID_NAME Lru/pixnews/wasm/sqlite/open/helper/embedder/SqliteCapi$SqliteDbReadonlyResult;
+	public static final field READ_ONLY Lru/pixnews/wasm/sqlite/open/helper/embedder/SqliteCapi$SqliteDbReadonlyResult;
+	public static final field READ_WRITE Lru/pixnews/wasm/sqlite/open/helper/embedder/SqliteCapi$SqliteDbReadonlyResult;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getId ()I
+	public static fun valueOf (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/embedder/SqliteCapi$SqliteDbReadonlyResult;
+	public static fun values ()[Lru/pixnews/wasm/sqlite/open/helper/embedder/SqliteCapi$SqliteDbReadonlyResult;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/embedder/SqliteCapi$SqliteDbReadonlyResult$Companion {
+	public final fun fromId (I)Lru/pixnews/wasm/sqlite/open/helper/embedder/SqliteCapi$SqliteDbReadonlyResult;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/embedder/SqliteCapi$SqliteDbStatusResult {
+	public fun <init> (II)V
+	public final fun getCurrent ()I
+	public final fun getHighestInstantaneousValue ()I
+}
+
+public abstract interface class ru/pixnews/wasm/sqlite/open/helper/embedder/SqliteEmbedder {
+	public abstract fun createCapi (Lru/pixnews/wasm/sqlite/open/helper/embedder/WasmSqliteCommonConfig;Lkotlin/jvm/functions/Function1;)Lru/pixnews/wasm/sqlite/open/helper/embedder/SqliteCapi;
+}
+
+public abstract interface class ru/pixnews/wasm/sqlite/open/helper/embedder/SqliteEmbedderConfig {
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteColumnType$Companion {
+	public final fun getSQLITE3_TEXT-6bi_7KY ()I
+	public final fun getSQLITE_BLOB-6bi_7KY ()I
+	public final fun getSQLITE_FLOAT-6bi_7KY ()I
+	public final fun getSQLITE_INTEGER-6bi_7KY ()I
+	public final fun getSQLITE_NULL-6bi_7KY ()I
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteDbStatusParameter {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteDbStatusParameter$Companion;
+	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteDbStatusParameter;
+	public static fun constructor-impl (I)I
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (ILjava/lang/Object;)Z
+	public static final fun equals-impl0 (II)Z
+	public final fun getId ()I
+	public fun hashCode ()I
+	public static fun hashCode-impl (I)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (I)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()I
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteDbStatusParameter$Companion {
+	public final fun getSQLITE_DBSTATUS_CACHE_HIT-09Hpdys ()I
+	public final fun getSQLITE_DBSTATUS_CACHE_MISS-09Hpdys ()I
+	public final fun getSQLITE_DBSTATUS_CACHE_SPILL-09Hpdys ()I
+	public final fun getSQLITE_DBSTATUS_CACHE_USED-09Hpdys ()I
+	public final fun getSQLITE_DBSTATUS_CACHE_USED_SHARED-09Hpdys ()I
+	public final fun getSQLITE_DBSTATUS_CACHE_WRITE-09Hpdys ()I
+	public final fun getSQLITE_DBSTATUS_DEFERRED_FKS-09Hpdys ()I
+	public final fun getSQLITE_DBSTATUS_LOOKASIDE_HIT-09Hpdys ()I
+	public final fun getSQLITE_DBSTATUS_LOOKASIDE_MISS_FULL-09Hpdys ()I
+	public final fun getSQLITE_DBSTATUS_LOOKASIDE_MISS_SIZE-09Hpdys ()I
+	public final fun getSQLITE_DBSTATUS_LOOKASIDE_USED-09Hpdys ()I
+	public final fun getSQLITE_DBSTATUS_MAX-09Hpdys ()I
+	public final fun getSQLITE_DBSTATUS_SCHEMA_USED-09Hpdys ()I
+	public final fun getSQLITE_DBSTATUS_STMT_USED-09Hpdys ()I
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteDestructorType {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteDestructorType$Companion;
+	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteDestructorType;
+	public static fun constructor-impl (I)I
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (ILjava/lang/Object;)Z
+	public static final fun equals-impl0 (II)Z
+	public final fun getId ()I
+	public fun hashCode ()I
+	public static fun hashCode-impl (I)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (I)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()I
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteDestructorType$Companion {
+	public final fun getSQLITE_STATIC-jk1Xn-E ()I
+	public final fun getSQLITE_TRANSIENT-jk1Xn-E ()I
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteErrno {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteErrno$Companion;
+	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteErrno;
+	public static fun constructor-impl (I)I
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (ILjava/lang/Object;)Z
+	public static final fun equals-impl0 (II)Z
+	public final fun getId ()I
+	public fun hashCode ()I
+	public static fun hashCode-impl (I)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (I)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()I
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteErrno$Companion {
+	public final fun fromErrNoCode-aQlEAg0 (I)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteErrno;
+	public final fun getEntriesMap ()Ljava/util/Map;
+	public final fun getSQLITE_ABORT-8JmpfWM ()I
+	public final fun getSQLITE_ABORT_ROLLBACK-8JmpfWM ()I
+	public final fun getSQLITE_AUTH-8JmpfWM ()I
+	public final fun getSQLITE_AUTH_USER-8JmpfWM ()I
+	public final fun getSQLITE_BUSY-8JmpfWM ()I
+	public final fun getSQLITE_BUSY_RECOVERY-8JmpfWM ()I
+	public final fun getSQLITE_BUSY_SNAPSHOT-8JmpfWM ()I
+	public final fun getSQLITE_BUSY_TIMEOUT-8JmpfWM ()I
+	public final fun getSQLITE_CANTOPEN-8JmpfWM ()I
+	public final fun getSQLITE_CANTOPEN_CONVPATH-8JmpfWM ()I
+	public final fun getSQLITE_CANTOPEN_DIRTYWAL-8JmpfWM ()I
+	public final fun getSQLITE_CANTOPEN_FULLPATH-8JmpfWM ()I
+	public final fun getSQLITE_CANTOPEN_ISDIR-8JmpfWM ()I
+	public final fun getSQLITE_CANTOPEN_NOTEMPDIR-8JmpfWM ()I
+	public final fun getSQLITE_CANTOPEN_SYMLINK-8JmpfWM ()I
+	public final fun getSQLITE_CONSTRAINT-8JmpfWM ()I
+	public final fun getSQLITE_CONSTRAINT_CHECK-8JmpfWM ()I
+	public final fun getSQLITE_CONSTRAINT_COMMITHOOK-8JmpfWM ()I
+	public final fun getSQLITE_CONSTRAINT_DATATYPE-8JmpfWM ()I
+	public final fun getSQLITE_CONSTRAINT_FOREIGNKEY-8JmpfWM ()I
+	public final fun getSQLITE_CONSTRAINT_FUNCTION-8JmpfWM ()I
+	public final fun getSQLITE_CONSTRAINT_NOTNULL-8JmpfWM ()I
+	public final fun getSQLITE_CONSTRAINT_PINNED-8JmpfWM ()I
+	public final fun getSQLITE_CONSTRAINT_PRIMARYKEY-8JmpfWM ()I
+	public final fun getSQLITE_CONSTRAINT_ROWID-8JmpfWM ()I
+	public final fun getSQLITE_CONSTRAINT_TRIGGER-8JmpfWM ()I
+	public final fun getSQLITE_CONSTRAINT_UNIQUE-8JmpfWM ()I
+	public final fun getSQLITE_CONSTRAINT_VTAB-8JmpfWM ()I
+	public final fun getSQLITE_CORRUPT-8JmpfWM ()I
+	public final fun getSQLITE_CORRUPT_INDEX-8JmpfWM ()I
+	public final fun getSQLITE_CORRUPT_SEQUENCE-8JmpfWM ()I
+	public final fun getSQLITE_CORRUPT_VTAB-8JmpfWM ()I
+	public final fun getSQLITE_DONE-8JmpfWM ()I
+	public final fun getSQLITE_EMPTY-8JmpfWM ()I
+	public final fun getSQLITE_ERROR-8JmpfWM ()I
+	public final fun getSQLITE_ERROR_MISSING_COLLSEQ-8JmpfWM ()I
+	public final fun getSQLITE_ERROR_RETRY-8JmpfWM ()I
+	public final fun getSQLITE_ERROR_SNAPSHOT-8JmpfWM ()I
+	public final fun getSQLITE_FORMAT-8JmpfWM ()I
+	public final fun getSQLITE_FULL-8JmpfWM ()I
+	public final fun getSQLITE_INTERNAL-8JmpfWM ()I
+	public final fun getSQLITE_INTERRUPT-8JmpfWM ()I
+	public final fun getSQLITE_IOERR-8JmpfWM ()I
+	public final fun getSQLITE_IOERR_ACCESS-8JmpfWM ()I
+	public final fun getSQLITE_IOERR_AUTH-8JmpfWM ()I
+	public final fun getSQLITE_IOERR_BEGIN_ATOMIC-8JmpfWM ()I
+	public final fun getSQLITE_IOERR_BLOCKED-8JmpfWM ()I
+	public final fun getSQLITE_IOERR_CHECKRESERVEDLOCK-8JmpfWM ()I
+	public final fun getSQLITE_IOERR_CLOSE-8JmpfWM ()I
+	public final fun getSQLITE_IOERR_COMMIT_ATOMIC-8JmpfWM ()I
+	public final fun getSQLITE_IOERR_CONVPATH-8JmpfWM ()I
+	public final fun getSQLITE_IOERR_CORRUPTFS-8JmpfWM ()I
+	public final fun getSQLITE_IOERR_DATA-8JmpfWM ()I
+	public final fun getSQLITE_IOERR_DELETE-8JmpfWM ()I
+	public final fun getSQLITE_IOERR_DELETE_NOENT-8JmpfWM ()I
+	public final fun getSQLITE_IOERR_DIR_CLOSE-8JmpfWM ()I
+	public final fun getSQLITE_IOERR_DIR_FSYNC-8JmpfWM ()I
+	public final fun getSQLITE_IOERR_FSTAT-8JmpfWM ()I
+	public final fun getSQLITE_IOERR_FSYNC-8JmpfWM ()I
+	public final fun getSQLITE_IOERR_GETTEMPPATH-8JmpfWM ()I
+	public final fun getSQLITE_IOERR_IN_PAGE-8JmpfWM ()I
+	public final fun getSQLITE_IOERR_LOCK-8JmpfWM ()I
+	public final fun getSQLITE_IOERR_MMAP-8JmpfWM ()I
+	public final fun getSQLITE_IOERR_NOMEM-8JmpfWM ()I
+	public final fun getSQLITE_IOERR_RDLOCK-8JmpfWM ()I
+	public final fun getSQLITE_IOERR_READ-8JmpfWM ()I
+	public final fun getSQLITE_IOERR_ROLLBACK_ATOMIC-8JmpfWM ()I
+	public final fun getSQLITE_IOERR_SEEK-8JmpfWM ()I
+	public final fun getSQLITE_IOERR_SHMLOCK-8JmpfWM ()I
+	public final fun getSQLITE_IOERR_SHMMAP-8JmpfWM ()I
+	public final fun getSQLITE_IOERR_SHMOPEN-8JmpfWM ()I
+	public final fun getSQLITE_IOERR_SHMSIZE-8JmpfWM ()I
+	public final fun getSQLITE_IOERR_SHORT_READ-8JmpfWM ()I
+	public final fun getSQLITE_IOERR_TRUNCATE-8JmpfWM ()I
+	public final fun getSQLITE_IOERR_UNLOCK-8JmpfWM ()I
+	public final fun getSQLITE_IOERR_VNODE-8JmpfWM ()I
+	public final fun getSQLITE_IOERR_WRITE-8JmpfWM ()I
+	public final fun getSQLITE_LOCKED-8JmpfWM ()I
+	public final fun getSQLITE_LOCKED_SHAREDCACHE-8JmpfWM ()I
+	public final fun getSQLITE_LOCKED_VTAB-8JmpfWM ()I
+	public final fun getSQLITE_MISMATCH-8JmpfWM ()I
+	public final fun getSQLITE_MISUSE-8JmpfWM ()I
+	public final fun getSQLITE_NOLFS-8JmpfWM ()I
+	public final fun getSQLITE_NOMEM-8JmpfWM ()I
+	public final fun getSQLITE_NOTADB-8JmpfWM ()I
+	public final fun getSQLITE_NOTFOUND-8JmpfWM ()I
+	public final fun getSQLITE_NOTICE-8JmpfWM ()I
+	public final fun getSQLITE_NOTICE_RBU-8JmpfWM ()I
+	public final fun getSQLITE_NOTICE_RECOVER_ROLLBACK-8JmpfWM ()I
+	public final fun getSQLITE_NOTICE_RECOVER_WAL-8JmpfWM ()I
+	public final fun getSQLITE_OK-8JmpfWM ()I
+	public final fun getSQLITE_OK_LOAD_PERMANENTLY-8JmpfWM ()I
+	public final fun getSQLITE_OK_SYMLINK-8JmpfWM ()I
+	public final fun getSQLITE_PERM-8JmpfWM ()I
+	public final fun getSQLITE_PROTOCOL-8JmpfWM ()I
+	public final fun getSQLITE_RANGE-8JmpfWM ()I
+	public final fun getSQLITE_READONLY-8JmpfWM ()I
+	public final fun getSQLITE_READONLY_CANTINIT-8JmpfWM ()I
+	public final fun getSQLITE_READONLY_CANTLOCK-8JmpfWM ()I
+	public final fun getSQLITE_READONLY_DBMOVED-8JmpfWM ()I
+	public final fun getSQLITE_READONLY_DIRECTORY-8JmpfWM ()I
+	public final fun getSQLITE_READONLY_RECOVERY-8JmpfWM ()I
+	public final fun getSQLITE_READONLY_ROLLBACK-8JmpfWM ()I
+	public final fun getSQLITE_ROW-8JmpfWM ()I
+	public final fun getSQLITE_SCHEMA-8JmpfWM ()I
+	public final fun getSQLITE_TOOBIG-8JmpfWM ()I
+	public final fun getSQLITE_WARNING-8JmpfWM ()I
+	public final fun getSQLITE_WARNING_AUTOINDEX-8JmpfWM ()I
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteErrorInfo {
+	public fun <init> (IILjava/lang/String;)V
+	public synthetic fun <init> (IILjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()I
+	public final fun component2 ()I
+	public final fun component3 ()Ljava/lang/String;
+	public final fun copy (IILjava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteErrorInfo;
+	public static synthetic fun copy$default (Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteErrorInfo;IILjava/lang/String;ILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteErrorInfo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getSqliteErrorCode ()I
+	public final fun getSqliteExtendedErrorCode ()I
+	public final fun getSqliteMsg ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteException : java/lang/RuntimeException {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteException$Companion;
+	public fun <init> (IILjava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (IILjava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteErrorInfo;Ljava/lang/String;)V
+	public synthetic fun <init> (Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteErrorInfo;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getErrorInfo ()Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteErrorInfo;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteException$Companion {
+	public final fun getSqlite3ErrNoName (Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteException;)Ljava/lang/String;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteOpenFlags : ru/pixnews/wasm/sqlite/open/helper/common/api/SqliteUintBitMask {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteOpenFlags$Companion;
+	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteOpenFlags;
+	public static fun constructor-impl (I)I
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (ILjava/lang/Object;)Z
+	public static final fun equals-impl0 (II)Z
+	public fun getMask-pVg5ArA ()I
+	public fun getNewInstance ()Lkotlin/jvm/functions/Function1;
+	public static fun getNewInstance-impl (I)Lkotlin/jvm/functions/Function1;
+	public fun hashCode ()I
+	public static fun hashCode-impl (I)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (I)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()I
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteOpenFlags$Companion {
+	public final fun getEMPTY-KSZ_SCI ()I
+	public final fun getSQLITE_OPEN_AUTOPROXY-KSZ_SCI ()I
+	public final fun getSQLITE_OPEN_CREATE-KSZ_SCI ()I
+	public final fun getSQLITE_OPEN_DELETEONCLOSE-KSZ_SCI ()I
+	public final fun getSQLITE_OPEN_EXCLUSIVE-KSZ_SCI ()I
+	public final fun getSQLITE_OPEN_EXRESCODE-KSZ_SCI ()I
+	public final fun getSQLITE_OPEN_FULLMUTEX-KSZ_SCI ()I
+	public final fun getSQLITE_OPEN_MAIN_DB-KSZ_SCI ()I
+	public final fun getSQLITE_OPEN_MAIN_JOURNAL-KSZ_SCI ()I
+	public final fun getSQLITE_OPEN_MEMORY-KSZ_SCI ()I
+	public final fun getSQLITE_OPEN_NOFOLLOW-KSZ_SCI ()I
+	public final fun getSQLITE_OPEN_NOMUTEX-KSZ_SCI ()I
+	public final fun getSQLITE_OPEN_PRIVATECACHE-KSZ_SCI ()I
+	public final fun getSQLITE_OPEN_READONLY-KSZ_SCI ()I
+	public final fun getSQLITE_OPEN_READWRITE-KSZ_SCI ()I
+	public final fun getSQLITE_OPEN_SHAREDCACHE-KSZ_SCI ()I
+	public final fun getSQLITE_OPEN_SUBJOURNAL-KSZ_SCI ()I
+	public final fun getSQLITE_OPEN_SUPER_JOURNAL-KSZ_SCI ()I
+	public final fun getSQLITE_OPEN_TEMP_DB-KSZ_SCI ()I
+	public final fun getSQLITE_OPEN_TEMP_JOURNAL-KSZ_SCI ()I
+	public final fun getSQLITE_OPEN_TRANSIENT_DB-KSZ_SCI ()I
+	public final fun getSQLITE_OPEN_URI-KSZ_SCI ()I
+	public final fun getSQLITE_OPEN_WAL-KSZ_SCI ()I
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteResult$Error : ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteResult {
+	public fun <init> (IILjava/lang/String;)V
+	public synthetic fun <init> (IILjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()I
+	public final fun component2 ()I
+	public final fun component3 ()Ljava/lang/String;
+	public final fun copy (IILjava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteResult$Error;
+	public static synthetic fun copy$default (Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteResult$Error;IILjava/lang/String;ILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteResult$Error;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getSqliteErrorCode ()I
+	public final fun getSqliteExtendedErrorCode ()I
+	public final fun getSqliteMsg ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteResult$Success : ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteResult {
+	public fun <init> (Ljava/lang/Object;)V
+	public final fun component1 ()Ljava/lang/Object;
+	public final fun copy (Ljava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteResult$Success;
+	public static synthetic fun copy$default (Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteResult$Success;Ljava/lang/Object;ILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteResult$Success;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/lang/Object;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteTextEncoding {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteTextEncoding$Companion;
+	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteTextEncoding;
+	public static fun constructor-impl (I)I
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (ILjava/lang/Object;)Z
+	public static final fun equals-impl0 (II)Z
+	public final fun getId ()I
+	public fun hashCode ()I
+	public static fun hashCode-impl (I)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (I)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()I
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteTextEncoding$Companion {
+	public final fun getEntriesMap ()Ljava/util/Map;
+	public final fun getSQLITE_UTF16-jXrCREs ()I
+	public final fun getSQLITE_UTF16BE-jXrCREs ()I
+	public final fun getSQLITE_UTF16LE-jXrCREs ()I
+	public final fun getSQLITE_UTF16_ALIGNED-jXrCREs ()I
+	public final fun getSQLITE_UTF8-jXrCREs ()I
+}
+
+public abstract class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteTrace {
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteTrace$TraceClose : ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteTrace {
+	public synthetic fun <init> (ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getDb-LEMrgXI ()I
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteTrace$TraceProfile : ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteTrace {
+	public synthetic fun <init> (IIJLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getDb-LEMrgXI ()I
+	public final fun getStatement-LEMrgXI ()I
+	public final fun getTime-UwyO8pc ()J
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteTrace$TraceRow : ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteTrace {
+	public synthetic fun <init> (IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getDb-LEMrgXI ()I
+	public final fun getStatement-LEMrgXI ()I
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteTrace$TraceStmt : ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteTrace {
+	public synthetic fun <init> (IILjava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getDb-LEMrgXI ()I
+	public final fun getStatement-LEMrgXI ()I
+	public final fun getUnexpandedSql ()Ljava/lang/String;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteTraceEventCode : ru/pixnews/wasm/sqlite/open/helper/common/api/SqliteUintBitMask {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteTraceEventCode$Companion;
+	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteTraceEventCode;
+	public static fun constructor-impl (I)I
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (ILjava/lang/Object;)Z
+	public static final fun equals-impl0 (II)Z
+	public fun getMask-pVg5ArA ()I
+	public fun getNewInstance ()Lkotlin/jvm/functions/Function1;
+	public static fun getNewInstance-impl (I)Lkotlin/jvm/functions/Function1;
+	public fun hashCode ()I
+	public static fun hashCode-impl (I)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (I)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()I
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteTraceEventCode$Companion {
+	public final fun getSQLITE_TRACE_CLOSE-Lvl4CJ4 ()I
+	public final fun getSQLITE_TRACE_PROFILE-Lvl4CJ4 ()I
+	public final fun getSQLITE_TRACE_ROW-Lvl4CJ4 ()I
+	public final fun getSQLITE_TRACE_STMT-Lvl4CJ4 ()I
+}
+

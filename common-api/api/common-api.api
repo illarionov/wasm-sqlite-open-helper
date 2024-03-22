@@ -1,0 +1,62 @@
+public abstract interface annotation class ru/pixnews/wasm/sqlite/open/helper/common/api/InternalWasmSqliteHelperApi : java/lang/annotation/Annotation {
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/common/api/Locale {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/common/api/Locale$Companion;
+	public static final synthetic fun box-impl (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/common/api/Locale;
+	public static fun constructor-impl (Ljava/lang/String;)Ljava/lang/String;
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (Ljava/lang/String;Ljava/lang/Object;)Z
+	public static final fun equals-impl0 (Ljava/lang/String;Ljava/lang/String;)Z
+	public final fun getIcuId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public static fun hashCode-impl (Ljava/lang/String;)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (Ljava/lang/String;)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()Ljava/lang/String;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/common/api/Locale$Companion {
+	public final fun getEN_US-i7jP64M ()Ljava/lang/String;
+}
+
+public abstract interface class ru/pixnews/wasm/sqlite/open/helper/common/api/Logger {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger$Companion;
+	public abstract fun a (Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;)V
+	public static synthetic fun a$default (Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
+	public abstract fun d (Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;)V
+	public static synthetic fun d$default (Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
+	public abstract fun e (Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;)V
+	public static synthetic fun e$default (Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
+	public abstract fun i (Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;)V
+	public static synthetic fun i$default (Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
+	public abstract fun v (Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;)V
+	public static synthetic fun v$default (Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
+	public abstract fun w (Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;)V
+	public static synthetic fun w$default (Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
+	public abstract fun withTag (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/common/api/Logger$Companion : ru/pixnews/wasm/sqlite/open/helper/common/api/Logger {
+	public fun a (Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;)V
+	public fun d (Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;)V
+	public fun e (Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;)V
+	public fun i (Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;)V
+	public fun v (Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;)V
+	public fun w (Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;)V
+	public fun withTag (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;
+}
+
+public abstract interface class ru/pixnews/wasm/sqlite/open/helper/common/api/SqliteUintBitMask {
+	public abstract fun getMask-pVg5ArA ()I
+	public abstract fun getNewInstance ()Lkotlin/jvm/functions/Function1;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/common/api/SqliteUintBitMaskKt {
+	public static final fun and (Lru/pixnews/wasm/sqlite/open/helper/common/api/SqliteUintBitMask;Lru/pixnews/wasm/sqlite/open/helper/common/api/SqliteUintBitMask;)Lru/pixnews/wasm/sqlite/open/helper/common/api/SqliteUintBitMask;
+	public static final fun clear (Lru/pixnews/wasm/sqlite/open/helper/common/api/SqliteUintBitMask;Lru/pixnews/wasm/sqlite/open/helper/common/api/SqliteUintBitMask;)Lru/pixnews/wasm/sqlite/open/helper/common/api/SqliteUintBitMask;
+	public static final fun contains (Lru/pixnews/wasm/sqlite/open/helper/common/api/SqliteUintBitMask;Lru/pixnews/wasm/sqlite/open/helper/common/api/SqliteUintBitMask;)Z
+	public static final fun or (Lru/pixnews/wasm/sqlite/open/helper/common/api/SqliteUintBitMask;Lru/pixnews/wasm/sqlite/open/helper/common/api/SqliteUintBitMask;)Lru/pixnews/wasm/sqlite/open/helper/common/api/SqliteUintBitMask;
+	public static final fun xor (Lru/pixnews/wasm/sqlite/open/helper/common/api/SqliteUintBitMask;Lru/pixnews/wasm/sqlite/open/helper/common/api/SqliteUintBitMask;)Lru/pixnews/wasm/sqlite/open/helper/common/api/SqliteUintBitMask;
+}
+
