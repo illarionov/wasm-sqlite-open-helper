@@ -8,7 +8,6 @@ package ru.pixnews.wasm.sqlite.open.helper.internal.interop
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr.Companion.sqlite3Null
 import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
 import ru.pixnews.wasm.sqlite.open.helper.common.api.isSqlite3Null
 import ru.pixnews.wasm.sqlite.open.helper.common.api.or
@@ -67,10 +66,6 @@ internal class GraalNativeBindings(
     private val logger = rootLogger.withTag("GraalNativeBindings")
     private val localizedComparator = LocalizedComparator()
     private val connections = Sqlite3ConnectionRegistry()
-
-    override fun connectionNullPtr(): GraalSqlite3ConnectionPtr = GraalSqlite3ConnectionPtr(sqlite3Null())
-
-    override fun connectionStatementPtr(): GraalSqlite3StatementPtr = GraalSqlite3StatementPtr(sqlite3Null())
 
     override fun nativeOpen(
         path: String,
