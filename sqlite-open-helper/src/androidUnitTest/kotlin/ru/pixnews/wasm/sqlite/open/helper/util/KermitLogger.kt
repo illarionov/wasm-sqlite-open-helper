@@ -4,18 +4,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper
+package ru.pixnews.wasm.sqlite.open.helper.util
 
 import co.touchlab.kermit.Severity
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
-import co.touchlab.kermit.Logger as KermitLogger
+import co.touchlab.kermit.Logger.Companion as KermitLogger
 
 @Suppress("IDENTIFIER_LENGTH")
 public class KermitLogger(
     tag: String = "WSOH",
     private val minSeverity: Severity = Severity.Verbose,
 ) : Logger {
-    private val delegate: KermitLogger = KermitLogger.apply { setMinSeverity(minSeverity) }.withTag(tag)
+    private val delegate: co.touchlab.kermit.Logger = KermitLogger.apply { setMinSeverity(minSeverity) }.withTag(tag)
 
     override fun withTag(tag: String): Logger = KermitLogger(tag, minSeverity)
 

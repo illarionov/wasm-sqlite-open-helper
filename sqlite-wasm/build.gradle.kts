@@ -8,6 +8,7 @@
 
 import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.SqliteCodeGenerationOptions
 import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.SqliteConfigurationOptions
+import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.SqliteConfigurationOptions.DefaultUnixVfs.UNIX_NONE
 
 plugins {
     id("ru.pixnews.sqlite-wasm-builder")
@@ -23,7 +24,7 @@ version = wasmSqliteVersions.getSubmoduleVersionProvider(
     envVariableName = "WSOH_SQLITE_WASM_VERSION",
 ).get()
 
-val androidSaliteSpecifics = listOf(
+val androidSqliteSpecifics = listOf(
     "-DSQLITE_DEFAULT_AUTOVACUUM=1",
     "-DSQLITE_DEFAULT_FILE_FORMAT=4",
     "-DSQLITE_DEFAULT_FILE_PERMISSIONS=0600",
@@ -36,21 +37,21 @@ sqlite3Build {
     builds {
         create("main") {
             sqliteVersion = defaultSqliteVersion
-        }
-        create("main-mt") {
-            sqliteVersion = defaultSqliteVersion
-            sqliteConfigOptions = SqliteConfigurationOptions.wasmConfig -
-                    listOf("-DSQLITE_THREADSAFE=0") +
-                    listOf("-DSQLITE_THREADSAFE=2")
+            sqliteConfigOptions = SqliteConfigurationOptions.wasmConfig(UNIX_NONE) + androidSqliteSpecifics
         }
         create("main-mt-pthread") {
             sqliteVersion = defaultSqliteVersion
-            codeGenerationOptions = SqliteCodeGenerationOptions.codeGenerationOptions + listOf(
-                "-pthread",
-            )
-            sqliteConfigOptions = SqliteConfigurationOptions.wasmConfig -
-                    listOf("-DSQLITE_THREADSAFE=0") +
-                    listOf("-DSQLITE_THREADSAFE=2")
+            codeGenerationOptions = SqliteCodeGenerationOptions.codeGenerationOptions +
+                    "-pthread"
+            emscriptenConfigurationOptions = SqliteCodeGenerationOptions.emscriptenConfigurationOptions +
+                    "-sSHARED_MEMORY=1"
+            sqliteConfigOptions = buildList {
+                addAll(SqliteConfigurationOptions.wasmConfig(UNIX_NONE))
+                remove("-DSQLITE_THREADSAFE=0")
+                addAll(androidSqliteSpecifics)
+                add("-DSQLITE_THREADSAFE=2")
+                add("-DSQLITE_MAX_WORKER_THREADS=0") // Do not create threads from SQLITE
+            }
         }
     }
 }

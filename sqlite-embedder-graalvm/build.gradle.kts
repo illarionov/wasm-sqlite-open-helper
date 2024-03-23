@@ -9,6 +9,7 @@ plugins {
     id("ru.pixnews.wasm-sqlite-open-helper.gradle.lint.binary.compatibility.validator")
     id("ru.pixnews.wasm-sqlite-open-helper.gradle.multiplatform.kotlin")
     id("ru.pixnews.wasm-sqlite-open-helper.gradle.multiplatform.publish")
+    kotlin("kapt")
 }
 
 group = "ru.pixnews.wasm-sqlite-open-helper"
@@ -18,16 +19,28 @@ version = wasmSqliteVersions.getSubmoduleVersionProvider(
 ).get()
 
 kotlin {
-    jvm()
+    jvm {
+        withJava()
+    }
 
     sourceSets {
         jvmMain.dependencies {
             api(projects.sqliteCommonApi)
-            implementation(projects.sqliteWasm)
+            api(projects.sqliteWasm)
             implementation(projects.wasiEmscriptenHost)
             api(libs.graalvm.polyglot.polyglot)
-            implementation(libs.graalvm.polyglot.wasm)
             compileOnly(libs.graalvm.wasm.language)
+            implementation(libs.graalvm.polyglot.wasm)
+            implementation(libs.graalvm.truffle.api)
         }
     }
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+dependencies {
+    add("kapt", libs.graalvm.truffle.dsl.processor)
 }

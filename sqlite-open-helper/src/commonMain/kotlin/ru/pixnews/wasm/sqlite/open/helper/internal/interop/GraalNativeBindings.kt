@@ -497,9 +497,9 @@ internal class GraalNativeBindings(
 
     private fun sqliteTraceCallback(trace: SqliteTrace) {
         when (trace) {
-            is SqliteTrace.TraceStmt -> logger.v { """${trace.db}: "${trace.unexpandedSql}"""" }
-            is SqliteTrace.TraceClose -> logger.v { """${trace.db} closed""" }
-            is SqliteTrace.TraceProfile -> logger.v {
+            is SqliteTrace.TraceStmt -> logger.d { """${trace.db}: "${trace.unexpandedSql}"""" }
+            is SqliteTrace.TraceClose -> logger.d { """${trace.db} closed""" }
+            is SqliteTrace.TraceProfile -> logger.d {
                 val sql = sqlite3Api.sqlite3ExpandedSql(trace.statement) ?: trace.statement.toString()
                 """${trace.db}: "$sql" took ${trace.time}"""
             }

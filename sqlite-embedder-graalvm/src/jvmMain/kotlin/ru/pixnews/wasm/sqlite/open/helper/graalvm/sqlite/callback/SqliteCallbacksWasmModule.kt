@@ -114,13 +114,20 @@ internal class SqliteCallbacksModuleBuilder(
         )
     }
 
-    fun setupModule(): WasmInstance {
+    fun setupModule(
+        sharedMemory: Boolean = false,
+        useUnsafeMemory: Boolean = false,
+    ): WasmInstance {
         val module = WasmModule.create(
             SQLITE3_CALLBACK_MANAGER_MODULE_NAME,
             null,
         )
         graalContext.withWasmContext { wasmContext ->
-            module.setupImportedEnvMemory(wasmContext)
+            module.setupImportedEnvMemory(
+                wasmContext,
+                sharedMemory = sharedMemory,
+                useUnsafeMemory = useUnsafeMemory,
+            )
             return setupWasmModuleFunctions(wasmContext, host, module, sqliteCallbackHostFunctions)
         }
     }

@@ -40,6 +40,8 @@ chicory = { group = "com.dylibso.chicory", name = "runtime", version.ref = "chic
 graalvm-polyglot-js = { group = "org.graalvm.polyglot", name = "js-community", version.ref = "graalvm" }
 graalvm-polyglot-polyglot = { group = "org.graalvm.polyglot", name = "polyglot", version.ref = "graalvm" }
 graalvm-polyglot-wasm = { group = "org.graalvm.polyglot", name = "wasm-community", version.ref = "graalvm" }
+graalvm-truffle-api = { group = "org.graalvm.truffle", name = "truffle-api", version.ref = "graalvm" }
+graalvm-truffle-dsl-processor = { group = "org.graalvm.truffle", name = "truffle-dsl-processor", version.ref = "graalvm" }
 graalvm-wasm-language = { group = "org.graalvm.wasm", name = "wasm-language", version.ref = "graalvm" }
 junit-bom = { group = "org.junit", name = "junit-bom", version.ref = "junit5" }
 junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junit5" }

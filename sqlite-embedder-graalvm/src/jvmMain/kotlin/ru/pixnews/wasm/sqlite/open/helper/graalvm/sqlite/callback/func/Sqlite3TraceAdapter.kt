@@ -29,7 +29,7 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode.Companion.SQLITE_TRACE_PROFILE
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode.Companion.SQLITE_TRACE_ROW
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode.Companion.SQLITE_TRACE_STMT
-import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.nanoseconds
 
 internal const val SQLITE3_TRACE_CB_FUNCTION_NAME = "sqlite3_trace_cb"
 
@@ -62,7 +62,6 @@ internal class Sqlite3TraceAdapter(
         arg1: WasmPtr<Nothing>,
         arg2: Long,
     ): Int {
-        logger.v { "invokeTraceCallback() flags: $flags db: $contextPointer arg1: $arg1 arg3: $arg2" }
         val delegate: (trace: SqliteTrace) -> Unit =
             callbackStore.sqlite3TraceCallbacks[contextPointer] ?: error("Callback $contextPointer not registered")
 
@@ -75,10 +74,11 @@ internal class Sqlite3TraceAdapter(
             delegate.invoke(traceInfo)
         }
         if (flags.contains(SQLITE_TRACE_PROFILE)) {
+            val timeNs = memory.load_i64(this, arg2)
             val traceInfo = SqliteTrace.TraceProfile(
                 db = contextPointer,
                 statement = arg1 as WasmPtr<SqliteStatement>,
-                time = arg2.milliseconds,
+                time = timeNs.nanoseconds,
             )
             delegate.invoke(traceInfo)
         }

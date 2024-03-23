@@ -9,19 +9,23 @@ package ru.pixnews.wasm.sqlite.open.helper.graalvm
 import org.graalvm.polyglot.Context
 import org.graalvm.polyglot.Engine
 import org.graalvm.polyglot.Source
+import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteCapi
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedder
 import ru.pixnews.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.bindings.EmscriptenPthreadBindings
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.bindings.SqliteBindings
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.withWasmContext
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.EmscriptenEnvModuleBuilder
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.preview1.WasiSnapshotPreview1MobuleBuilder
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.pthread.Pthread
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.GraalvmSqliteCapiImpl
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.Sqlite3CallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.SqliteCallbacksModuleBuilder
-import java.net.URL
+import java.util.concurrent.atomic.AtomicReference
 
 public object GraalvmSqliteEmbedder : SqliteEmbedder<GraalvmSqliteEmbedderConfig> {
+    private const val USE_UNSAFE_MEMORY: Boolean = false
+
     override fun createCapi(
         commonConfig: WasmSqliteCommonConfig,
         embedderConfigBuilder: GraalvmSqliteEmbedderConfig.() -> Unit,
@@ -30,43 +34,81 @@ public object GraalvmSqliteEmbedder : SqliteEmbedder<GraalvmSqliteEmbedderConfig
         return createGraalvmSqliteCapi(
             config.graalvmEngine,
             config.host,
-            config.sqlite3WasmBinaryUrl,
+            config.sqlite3Binary,
         )
     }
 
     private fun createGraalvmSqliteCapi(
         graalvmEngine: Engine,
         host: SqliteEmbedderHost,
-        sqlite3WasmBinaryUrl: URL,
+        sqlite3Binary: WasmSqliteConfiguration,
     ): SqliteCapi {
+        val useSharedMemory = USE_UNSAFE_MEMORY || sqlite3Binary.requireSharedMemory
         val callbackStore = Sqlite3CallbackStore()
-        val graalContext: Context = Context.newBuilder("wasm")
-            .engine(graalvmEngine)
-            .allowAllAccess(true)
-            .build()
-        graalContext.initialize("wasm")
+        val graalContext: Context = setupWasmGraalContext(graalvmEngine, useSharedMemory, sqlite3Binary.requireThreads)
+        val ptreadRef: AtomicReference<Pthread> = AtomicReference()
 
         val sqliteCallbacksModuleBuilder = SqliteCallbacksModuleBuilder(graalContext, host, callbackStore)
-        graalContext.withWasmContext {
-            EmscriptenEnvModuleBuilder(graalContext, host).setupModule()
-            WasiSnapshotPreview1MobuleBuilder(graalContext, host).setupModule()
-            sqliteCallbacksModuleBuilder.setupModule()
-        }
+        EmscriptenEnvModuleBuilder(graalContext, host, ptreadRef::get).setupModule(
+            sharedMemory = sqlite3Binary.requireSharedMemory,
+            useUnsafeMemory = useSharedMemory,
+        )
+        WasiSnapshotPreview1MobuleBuilder(graalContext, host).setupModule(
+            sharedMemory = sqlite3Binary.requireSharedMemory,
+            useUnsafeMemory = useSharedMemory,
+        )
+        sqliteCallbacksModuleBuilder.setupModule(
+            sharedMemory = sqlite3Binary.requireSharedMemory,
+            useUnsafeMemory = useSharedMemory,
+        )
 
         val sourceName = "sqlite3"
-        val sqliteSource = Source.newBuilder("wasm", sqlite3WasmBinaryUrl)
+        val sqliteSource = Source.newBuilder("wasm", sqlite3Binary.sqliteUrl)
             .name(sourceName)
             .build()
         graalContext.eval(sqliteSource)
 
         val indirectFunctionIndexes = sqliteCallbacksModuleBuilder.setupIndirectFunctionTable()
 
-        val wamBindings = graalContext.getBindings("wasm")
+        val wasmBindings = graalContext.getBindings("wasm")
+        val mainBindings = wasmBindings.getMember(sourceName)
+        val pthreadBindings = EmscriptenPthreadBindings(graalContext, mainBindings)
+        @Suppress("DEPRECATION")
+        ptreadRef.set(
+            Pthread(
+                host.rootLogger,
+                Thread.currentThread().id,
+                pthreadBindings,
+            ),
+        )
+
         val bindings = SqliteBindings(
             context = graalContext,
-            envBindings = wamBindings.getMember("env"),
-            mainBindings = wamBindings.getMember(sourceName),
+            envBindings = wasmBindings.getMember("env"),
+            mainBindings = mainBindings,
         )
         return GraalvmSqliteCapiImpl(bindings, callbackStore, indirectFunctionIndexes)
+    }
+
+    private fun setupWasmGraalContext(
+        graalvmEngine: Engine,
+        useSharedMemory: Boolean,
+        requireThreads: Boolean,
+    ): Context {
+        val graalContext = Context.newBuilder("wasm")
+            .engine(graalvmEngine)
+            .allowAllAccess(true)
+            .apply {
+                if (useSharedMemory) {
+                    this.option("wasm.UseUnsafeMemory", "true")
+                }
+                if (requireThreads) {
+                    this.option("wasm.Threads", "true")
+                    this.option("wasm.BulkMemoryAndRefTypes", "true")
+                }
+            }
+            .build()
+        graalContext.initialize("wasm")
+        return graalContext
     }
 }

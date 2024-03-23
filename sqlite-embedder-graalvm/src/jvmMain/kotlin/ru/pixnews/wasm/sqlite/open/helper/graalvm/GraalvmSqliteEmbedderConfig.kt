@@ -8,16 +8,16 @@ package ru.pixnews.wasm.sqlite.open.helper.graalvm
 
 import org.graalvm.polyglot.Engine
 import ru.pixnews.wasm.sqlite.open.helper.Sqlite3Wasm
+import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
-import java.net.URL
 
 @WasmSqliteOpenHelperDsl
 public class GraalvmSqliteEmbedderConfig internal constructor(
     rootLogger: Logger,
 ) : SqliteEmbedderConfig {
     public var graalvmEngine: Engine = Engine.create("wasm")
-    public var sqlite3WasmBinaryUrl: URL = Sqlite3Wasm.Emscripten.sqlite3_345
+    public var sqlite3Binary: WasmSqliteConfiguration = Sqlite3Wasm.Emscripten.sqlite3_345
     public var host: SqliteEmbedderHost = SqliteEmbedderHost(rootLogger = rootLogger)
 }

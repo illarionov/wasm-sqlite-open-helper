@@ -73,7 +73,7 @@ internal fun declareExportedFunctions(
 
 internal fun SymbolTable.setupImportedEnvMemory(
     context: WasmContext,
-    shared: Boolean = false,
+    sharedMemory: Boolean = false,
     useUnsafeMemory: Boolean = false,
     supportMemory64: Boolean = context.contextOptions.supportMemory64(),
 ) {
@@ -96,7 +96,7 @@ internal fun SymbolTable.setupImportedEnvMemory(
         minSize,
         maxSize,
         is64Bit,
-        shared,
+        sharedMemory,
         false,
         useUnsafeMemory,
     )

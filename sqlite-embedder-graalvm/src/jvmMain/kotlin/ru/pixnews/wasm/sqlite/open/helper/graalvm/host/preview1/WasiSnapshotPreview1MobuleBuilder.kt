@@ -191,9 +191,16 @@ internal class WasiSnapshotPreview1MobuleBuilder(
         )
     }
 
-    fun setupModule(): WasmInstance = graalContext.withWasmContext { wasmContext ->
+    fun setupModule(
+        sharedMemory: Boolean = false,
+        useUnsafeMemory: Boolean = false,
+    ): WasmInstance = graalContext.withWasmContext { wasmContext ->
         val wasiModule = WasmModule.create(moduleName, null)
-        wasiModule.setupImportedEnvMemory(wasmContext)
+        wasiModule.setupImportedEnvMemory(
+            wasmContext,
+            sharedMemory = sharedMemory,
+            useUnsafeMemory = useUnsafeMemory,
+        )
         return setupWasmModuleFunctions(wasmContext, host, wasiModule, preview1Functions)
     }
 
