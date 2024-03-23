@@ -11,10 +11,13 @@ import com.oracle.truffle.api.frame.VirtualFrame
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
+import org.graalvm.wasm.WasmModule
+import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.asWasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
 import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.StructStat
@@ -25,30 +28,32 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 
 internal class SyscallFstat64(
     language: WasmLanguage,
-    instance: WasmInstance,
+    module: WasmModule,
     private val host: SqliteEmbedderHost,
     functionName: String = "__syscall_fstat64",
-) : BaseWasmNode(language, instance, functionName) {
+) : BaseWasmNode(language, module, functionName) {
     private val logger: Logger = host.rootLogger.withTag(SyscallFstat64::class.qualifiedName!!)
 
-    override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
+    override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {
         val args = frame.arguments
         return syscallFstat64(
-            Fd(args[0] as Int),
-            args.asWasmPtr(1),
+            memory(frame),
+            Fd(args.getArgAsInt(0)),
+            args.getArgAsWasmPtr(1),
         )
     }
 
     @TruffleBoundary
     @Suppress("MemberNameEqualsClassName")
     private fun syscallFstat64(
+        memory: WasmMemory,
         fd: Fd,
         dst: WasmPtr<StructStat>,
     ): Int = try {
         val stat = host.fileSystem.stat(fd).also {
             logger.v { "fStat64($fd): OK $it" }
         }.pack()
-        memory.write(dst, stat)
+        memory.toHostMemory().write(dst, stat)
         Errno.SUCCESS.code
     } catch (e: SysException) {
         logger.v { "fStat64($fd): Error ${e.errNo}" }

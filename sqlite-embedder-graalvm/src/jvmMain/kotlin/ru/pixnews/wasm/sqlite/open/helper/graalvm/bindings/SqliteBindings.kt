@@ -15,8 +15,8 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteException
 @Suppress("VariableNaming", "BLANK_LINE_BETWEEN_PROPERTIES")
 internal class SqliteBindings(
     val context: Context,
-    envBindings: Value = context.getBindings("wasm").getMember("env"),
-    mainBindings: Value = context.getBindings("wasm").getMember("main"),
+    envBindings: Value,
+    mainBindings: Value,
 ) {
     val _initialize: Value? = mainBindings.getMember("_initialize") // 34
     val __errno_location = mainBindings.getMember("__errno_location") // 2644

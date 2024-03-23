@@ -11,40 +11,45 @@ import com.oracle.truffle.api.frame.VirtualFrame
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
+import org.graalvm.wasm.WasmModule
+import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.asWasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.AssertionFailedException
 
 internal class AssertFail(
     language: WasmLanguage,
-    instance: WasmInstance,
+    module: WasmModule,
     functionName: String = "__assert_fail",
-) : BaseWasmNode(language, instance, functionName) {
+) : BaseWasmNode(language, module, functionName) {
     @Suppress("MagicNumber")
-    override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Nothing {
+    override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Nothing {
         val args = frame.arguments
         assertFail(
-            args.asWasmPtr(0),
-            args.asWasmPtr(1),
-            args[2] as Int,
-            args.asWasmPtr(3),
+            memory(frame),
+            args.getArgAsWasmPtr(0),
+            args.getArgAsWasmPtr(1),
+            args.getArgAsInt(2),
+            args.getArgAsWasmPtr(3),
         )
     }
 
     @TruffleBoundary
     @Suppress("MemberNameEqualsClassName")
     private fun assertFail(
+        memory: WasmMemory,
         condition: WasmPtr<Byte>,
         filename: WasmPtr<Byte>,
         line: Int,
         func: WasmPtr<Byte>,
     ): Nothing {
         throw AssertionFailedException(
-            condition = memory.readNullTerminatedString(condition),
-            filename = memory.readNullTerminatedString(filename),
+            condition = memory.readString(condition.addr, null),
+            filename = memory.readString(filename.addr, null),
             line = line,
-            func = memory.readNullTerminatedString(func),
+            func = memory.readString(func.addr, null),
         )
     }
 }

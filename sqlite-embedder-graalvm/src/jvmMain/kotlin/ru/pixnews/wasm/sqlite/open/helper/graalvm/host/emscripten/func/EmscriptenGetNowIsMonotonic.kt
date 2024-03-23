@@ -10,15 +10,18 @@ import com.oracle.truffle.api.frame.VirtualFrame
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
+import org.graalvm.wasm.WasmModule
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
 
 internal class EmscriptenGetNowIsMonotonic(
     language: WasmLanguage,
-    instance: WasmInstance,
+    module: WasmModule,
     @Suppress("UnusedPrivateProperty") private val host: SqliteEmbedderHost,
     functionName: String = "_emscripten_get_now_is_monotonic",
     private val isMonotonic: Boolean = true,
-) : BaseWasmNode(language, instance, functionName) {
-    override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int = if (isMonotonic) 1 else 0
+) : BaseWasmNode(language, module, functionName) {
+    override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
+        return if (isMonotonic) 1 else 0
+    }
 }

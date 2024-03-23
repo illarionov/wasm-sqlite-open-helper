@@ -11,10 +11,14 @@ import com.oracle.truffle.api.frame.VirtualFrame
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
+import org.graalvm.wasm.WasmModule
+import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.asWasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsUint
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.Sqlite3CallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
@@ -31,26 +35,28 @@ internal const val SQLITE3_TRACE_CB_FUNCTION_NAME = "sqlite3_trace_cb"
 
 internal class Sqlite3TraceAdapter(
     language: WasmLanguage,
-    instance: WasmInstance,
+    module: WasmModule,
     private val callbackStore: Sqlite3CallbackStore,
     logger: Logger,
     functionName: String,
-) : BaseWasmNode(language, instance, functionName) {
+) : BaseWasmNode(language, module, functionName) {
     private val logger: Logger = logger.withTag(Sqlite3TraceAdapter::class.qualifiedName!!)
 
     @Suppress("MagicNumber")
-    override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
+    override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {
         val args = frame.arguments
         return invokeTraceCallback(
-            SqliteTraceEventCode((args[0] as Int).toUInt()),
-            args.asWasmPtr(1),
-            args.asWasmPtr(2),
-            (args[3] as Int).toLong(),
+            memory(frame),
+            SqliteTraceEventCode(args.getArgAsUint(0)),
+            args.getArgAsWasmPtr(1),
+            args.getArgAsWasmPtr(2),
+            (args.getArgAsInt(3)).toLong(),
         )
     }
 
     @CompilerDirectives.TruffleBoundary
     private fun invokeTraceCallback(
+        memory: WasmMemory,
         flags: SqliteTraceEventCode,
         contextPointer: WasmPtr<SqliteDb>,
         arg1: WasmPtr<Nothing>,
@@ -64,7 +70,7 @@ internal class Sqlite3TraceAdapter(
             val traceInfo = SqliteTrace.TraceStmt(
                 db = contextPointer,
                 statement = arg1 as WasmPtr<SqliteStatement>,
-                unexpandedSql = memory.readNullTerminatedString(WasmPtr(arg2.toInt())),
+                unexpandedSql = memory.readString(arg2.toInt(), null),
             )
             delegate.invoke(traceInfo)
         }

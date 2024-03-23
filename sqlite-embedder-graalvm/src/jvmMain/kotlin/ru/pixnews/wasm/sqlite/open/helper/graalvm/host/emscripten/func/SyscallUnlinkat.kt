@@ -11,37 +11,43 @@ import com.oracle.truffle.api.frame.VirtualFrame
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
+import org.graalvm.wasm.WasmModule
+import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.asWasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsUint
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 
 internal class SyscallUnlinkat(
     language: WasmLanguage,
-    instance: WasmInstance,
+    module: WasmModule,
     private val host: SqliteEmbedderHost,
     functionName: String = "__syscall_unlinkat",
-) : BaseWasmNode(language, instance, functionName) {
-    override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
+) : BaseWasmNode(language, module, functionName) {
+    override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {
         val args = frame.arguments
         return syscallUnlinkat(
-            args[0] as Int,
-            args.asWasmPtr(1),
-            (args[2] as Int).toUInt(),
+            memory(frame),
+            args.getArgAsInt(0),
+            args.getArgAsWasmPtr(1),
+            args.getArgAsUint(2),
         )
     }
 
     @TruffleBoundary
     @Suppress("MemberNameEqualsClassName")
     private fun syscallUnlinkat(
+        memory: WasmMemory,
         dirfd: Int,
         pathnamePtr: WasmPtr<Byte>,
         flags: UInt,
     ): Int {
         val errNo = try {
-            val path = memory.readNullTerminatedString(pathnamePtr)
+            val path = memory.readString(pathnamePtr.addr, null)
             host.fileSystem.unlinkAt(dirfd, path, flags)
             Errno.SUCCESS
         } catch (e: SysException) {

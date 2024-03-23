@@ -11,10 +11,14 @@ import com.oracle.truffle.api.frame.VirtualFrame
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
+import org.graalvm.wasm.WasmModule
+import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.asWasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsLong
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.FdChannel
@@ -25,26 +29,28 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Whence
 
 internal class FdSeek(
     language: WasmLanguage,
-    instance: WasmInstance,
+    module: WasmModule,
     private val host: SqliteEmbedderHost,
     functionName: String = "fd_seek",
-) : BaseWasmNode(language, instance, functionName) {
+) : BaseWasmNode(language, module, functionName) {
     private val logger: Logger = host.rootLogger.withTag(FdSeek::class.qualifiedName!!)
 
     @Suppress("MagicNumber")
-    override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
+    override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {
         val args = frame.arguments
         return fdSeek(
-            Fd(args[0] as Int),
-            args[1] as Long,
-            args[2] as Int,
-            args.asWasmPtr(3),
+            memory(frame),
+            Fd(args.getArgAsInt(0)),
+            args.getArgAsLong(1),
+            args.getArgAsInt(2),
+            args.getArgAsWasmPtr(3),
         )
     }
 
     @TruffleBoundary
     @Suppress("MemberNameEqualsClassName", "VARIABLE_HAS_PREFIX")
     private fun fdSeek(
+        memory: WasmMemory,
         fd: Fd,
         offset: Long,
         whenceInt: Int,
@@ -57,7 +63,7 @@ internal class FdSeek(
 
             val newPosition = channel.position
 
-            memory.writeI64(pNewOffset, newPosition)
+            memory.store_i64(this, pNewOffset.addr.toLong(), newPosition)
 
             Errno.SUCCESS
         } catch (sysException: SysException) {

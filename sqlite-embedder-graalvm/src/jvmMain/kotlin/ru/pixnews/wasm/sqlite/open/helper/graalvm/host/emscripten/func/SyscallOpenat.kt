@@ -8,13 +8,18 @@ package ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func
 
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary
 import com.oracle.truffle.api.frame.VirtualFrame
+import org.graalvm.wasm.WasmArguments
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
+import org.graalvm.wasm.WasmModule
+import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.asWasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsUint
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.resolveAbsolutePath
@@ -26,40 +31,42 @@ import java.nio.file.Path
 
 internal class SyscallOpenat(
     language: WasmLanguage,
-    instance: WasmInstance,
+    module: WasmModule,
     private val host: SqliteEmbedderHost,
     functionName: String = "__syscall_openat",
-) : BaseWasmNode(language, instance, functionName) {
+) : BaseWasmNode(language, module, functionName) {
     private val logger: Logger = host.rootLogger.withTag(SyscallOpenat::class.qualifiedName!!)
 
     @Suppress("MagicNumber")
-    override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
+    override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
         val args = frame.arguments
-        val mode = if (args.lastIndex == 3) {
-            memory.readI32(args.asWasmPtr<UInt>(3)).toUInt()
+        val memory = memory(frame)
+        val mode = if (WasmArguments.getArgumentCount(args) >= 4) {
+            memory.load_i32(this, args.getArgAsInt(3).toLong()).toUInt()
         } else {
             0U
         }
 
         val fdOrErrno = openAt(
-            dirfd = args[0] as Int,
-            pathnamePtr = args.asWasmPtr(1),
-            flags = (args[2] as Int).toUInt(),
+            memory,
+            dirfd = args.getArgAsInt(0),
+            pathnamePtr = args.getArgAsWasmPtr(1),
+            flags = args.getArgAsUint(2),
             mode = mode,
         )
         return fdOrErrno
     }
 
-    // XXX: copy of chicory version
     @TruffleBoundary
     private fun openAt(
+        memory: WasmMemory,
         dirfd: Int,
         pathnamePtr: WasmPtr<Byte>,
         flags: UInt,
         mode: UInt,
     ): Int {
         val fs = host.fileSystem
-        val path = memory.readNullTerminatedString(pathnamePtr)
+        val path = memory.readString(pathnamePtr.addr, null)
         val absolutePath = fs.resolveAbsolutePath(dirfd, path)
 
         return try {

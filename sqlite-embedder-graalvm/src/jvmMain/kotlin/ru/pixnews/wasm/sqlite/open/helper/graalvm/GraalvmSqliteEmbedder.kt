@@ -53,12 +53,20 @@ public object GraalvmSqliteEmbedder : SqliteEmbedder<GraalvmSqliteEmbedderConfig
             sqliteCallbacksModuleBuilder.setupModule()
         }
 
-        val sqliteSource = Source.newBuilder("wasm", sqlite3WasmBinaryUrl).build()
+        val sourceName = "sqlite3"
+        val sqliteSource = Source.newBuilder("wasm", sqlite3WasmBinaryUrl)
+            .name(sourceName)
+            .build()
         graalContext.eval(sqliteSource)
 
         val indirectFunctionIndexes = sqliteCallbacksModuleBuilder.setupIndirectFunctionTable()
 
-        val bindings = SqliteBindings(graalContext)
+        val wamBindings = graalContext.getBindings("wasm")
+        val bindings = SqliteBindings(
+            context = graalContext,
+            envBindings = wamBindings.getMember("env"),
+            mainBindings = wamBindings.getMember(sourceName),
+        )
         return GraalvmSqliteCapiImpl(bindings, callbackStore, indirectFunctionIndexes)
     }
 }

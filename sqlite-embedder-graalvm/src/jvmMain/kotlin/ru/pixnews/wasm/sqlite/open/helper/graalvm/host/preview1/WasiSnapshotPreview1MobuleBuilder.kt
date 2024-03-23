@@ -7,12 +7,10 @@
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.host.preview1
 
 import org.graalvm.polyglot.Context
-import org.graalvm.wasm.SymbolTable
-import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmModule
-import org.graalvm.wasm.constants.Sizes
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.setupImportedEnvMemory
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.setupWasmModuleFunctions
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.withWasmContext
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.HostFunction
@@ -195,37 +193,8 @@ internal class WasiSnapshotPreview1MobuleBuilder(
 
     fun setupModule(): WasmInstance = graalContext.withWasmContext { wasmContext ->
         val wasiModule = WasmModule.create(moduleName, null)
-        importMemory(wasiModule, wasmContext)
+        wasiModule.setupImportedEnvMemory(wasmContext)
         return setupWasmModuleFunctions(wasmContext, host, wasiModule, preview1Functions)
-    }
-
-    @Suppress("LOCAL_VARIABLE_EARLY_DECLARATION")
-    private fun importMemory(
-        symbolTable: SymbolTable,
-        context: WasmContext,
-    ) {
-        val minSize = 0L
-        val maxSize: Long
-        val is64Bit: Boolean
-        if (context.contextOptions.supportMemory64()) {
-            maxSize = Sizes.MAX_MEMORY_64_DECLARATION_SIZE
-            is64Bit = true
-        } else {
-            maxSize = @Suppress("MagicNumber") 32768
-            is64Bit = false
-        }
-
-        val index = symbolTable.memoryCount()
-        symbolTable.importMemory(
-            "env",
-            "memory",
-            index,
-            minSize,
-            maxSize,
-            is64Bit,
-            false,
-            false,
-        )
     }
 
     companion object {
