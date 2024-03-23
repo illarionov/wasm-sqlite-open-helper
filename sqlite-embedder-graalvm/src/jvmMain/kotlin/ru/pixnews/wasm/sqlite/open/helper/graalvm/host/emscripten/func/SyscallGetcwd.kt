@@ -11,34 +11,38 @@ import com.oracle.truffle.api.frame.VirtualFrame
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
+import org.graalvm.wasm.WasmModule
+import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.asWasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.encodeToNullTerminatedByteArray
-import ru.pixnews.wasm.sqlite.open.helper.host.memory.write
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 
 internal class SyscallGetcwd(
     language: WasmLanguage,
-    instance: WasmInstance,
+    module: WasmModule,
     private val host: SqliteEmbedderHost,
     functionName: String = "__syscall_getcwd",
-) : BaseWasmNode(language, instance, functionName) {
+) : BaseWasmNode(language, module, functionName) {
     private val logger: Logger = host.rootLogger.withTag(SyscallGetcwd::class.qualifiedName!!)
 
-    override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
+    override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {
         val args = frame.arguments
         return syscallGetcwd(
-            args.asWasmPtr(0),
-            args[1] as Int,
+            memory(frame),
+            args.getArgAsWasmPtr(0),
+            args.getArgAsInt(1),
         )
     }
 
     @TruffleBoundary
     @Suppress("MemberNameEqualsClassName")
     private fun syscallGetcwd(
+        memory: WasmMemory,
         dst: WasmPtr<Byte>,
         size: Int,
     ): Int {
@@ -53,7 +57,7 @@ internal class SyscallGetcwd(
         if (size < pathBytes.size) {
             return -Errno.RANGE.code
         }
-        memory.write(dst, pathBytes)
+        memory.initialize(pathBytes, 0, dst.addr.toLong(), pathBytes.size)
 
         return pathBytes.size
     }

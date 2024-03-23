@@ -15,7 +15,7 @@ public object Sqlite3Wasm {
         public val sqlite3_345_mt: URL
             get() = getUrl("sqlite3-main-mt-3450100.wasm")
         public val sqlite3_345_mt_pthread: URL
-            get() = getUrl("sqlite3-main-mt-3450100.wasm")
+            get() = getUrl("sqlite3-main-mt-pthread-3450100.wasm")
     }
 
     private fun getUrl(fileName: String): URL = requireNotNull(Sqlite3Wasm::class.java.getResource(fileName))

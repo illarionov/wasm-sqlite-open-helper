@@ -11,9 +11,12 @@ import com.oracle.truffle.api.frame.VirtualFrame
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
+import org.graalvm.wasm.WasmModule
+import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.asWasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.Sqlite3CallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteComparatorCallback
@@ -22,27 +25,29 @@ internal const val SQLITE3_COMPARATOR_CALL_FUNCTION_NAME = "sqlite3_comparator_c
 
 internal class Sqlite3ComparatorAdapter(
     language: WasmLanguage,
-    instance: WasmInstance,
+    module: WasmModule,
     private val callbackStore: Sqlite3CallbackStore,
     logger: Logger,
     functionName: String,
-) : BaseWasmNode(language, instance, functionName) {
+) : BaseWasmNode(language, module, functionName) {
     private val logger: Logger = logger.withTag(Sqlite3ProgressAdapter::class.qualifiedName!!)
 
     @Suppress("MagicNumber")
-    override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
+    override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {
         val args = frame.arguments
         return invokeComparator(
-            Sqlite3CallbackStore.Sqlite3ComparatorId(args[0] as Int),
-            args[1] as Int,
-            args.asWasmPtr(2),
-            args[3] as Int,
-            args.asWasmPtr(4),
+            memory(frame),
+            Sqlite3CallbackStore.Sqlite3ComparatorId(args.getArgAsInt(0)),
+            args.getArgAsInt(1),
+            args.getArgAsWasmPtr(2),
+            args.getArgAsInt(3),
+            args.getArgAsWasmPtr(4),
         )
     }
 
     @CompilerDirectives.TruffleBoundary
     private fun invokeComparator(
+        memory: WasmMemory,
         comparatorId: Sqlite3CallbackStore.Sqlite3ComparatorId,
         str1Size: Int,
         str1: WasmPtr<Byte>,
@@ -50,11 +55,12 @@ internal class Sqlite3ComparatorAdapter(
         str2: WasmPtr<Byte>,
     ): Int {
         logger.v { "invokeComparator() db: $comparatorId" }
+        val hostMemory = memory.toHostMemory()
         val delegate: SqliteComparatorCallback = callbackStore.sqlite3Comparators[comparatorId]
             ?: error("Comparator $comparatorId not registered")
 
-        val str1Bytes = memory.readBytes(str1, str1Size)
-        val str2Bytes = memory.readBytes(str2, str2Size)
+        val str1Bytes = hostMemory.readBytes(str1, str1Size)
+        val str2Bytes = hostMemory.readBytes(str2, str2Size)
 
         return delegate.invoke(String(str1Bytes), String(str2Bytes))
     }

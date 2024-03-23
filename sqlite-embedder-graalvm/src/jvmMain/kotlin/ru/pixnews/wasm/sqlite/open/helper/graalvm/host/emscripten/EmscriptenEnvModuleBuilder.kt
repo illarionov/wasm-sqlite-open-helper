@@ -44,12 +44,12 @@ internal class EmscriptenEnvModuleBuilder(
         fnVoid(
             name = "abort",
             paramTypes = listOf(),
-            nodeFactory = { language, instance, _, functionName -> Abort(language, instance, functionName) },
+            nodeFactory = { language, module, _, functionName -> Abort(language, module, functionName) },
         )
         fnVoid(
             name = "__assert_fail",
             paramTypes = List(4) { I32 },
-            nodeFactory = { language, instance, _, functionName -> AssertFail(language, instance, functionName) },
+            nodeFactory = { language, module, _, functionName -> AssertFail(language, module, functionName) },
         )
         fn(
             name = "emscripten_date_now",
@@ -156,7 +156,7 @@ internal class EmscriptenEnvModuleBuilder(
 
         envModule.symbolTable().apply {
             val memoryIndex = memoryCount()
-            allocateMemory(memoryIndex, minSize, maxSize, is64Bit, false, false)
+            allocateMemory(memoryIndex, minSize, maxSize, is64Bit, false, false, false)
             exportMemory(memoryIndex, "memory")
         }
     }

@@ -11,10 +11,13 @@ import com.oracle.truffle.api.frame.VirtualFrame
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
+import org.graalvm.wasm.WasmModule
+import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.asWasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy.CHANGE_POSITION
@@ -28,51 +31,54 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 
 internal fun fdWrite(
     language: WasmLanguage,
-    instance: WasmInstance,
+    module: WasmModule,
     host: SqliteEmbedderHost,
     functionName: String = "fd_write",
-): BaseWasmNode = FdWrite(language, instance, host, CHANGE_POSITION, functionName)
+): BaseWasmNode = FdWrite(language, module, host, CHANGE_POSITION, functionName)
 
 internal fun fdPwrite(
     language: WasmLanguage,
-    instance: WasmInstance,
+    module: WasmModule,
     host: SqliteEmbedderHost,
     functionName: String = "fd_pwrite",
-): BaseWasmNode = FdWrite(language, instance, host, DO_NOT_CHANGE_POSITION, functionName)
+): BaseWasmNode = FdWrite(language, module, host, DO_NOT_CHANGE_POSITION, functionName)
 
 private class FdWrite(
     language: WasmLanguage,
-    instance: WasmInstance,
+    module: WasmModule,
     private val host: SqliteEmbedderHost,
     private val strategy: ReadWriteStrategy,
     functionName: String = "fd_write",
-) : BaseWasmNode(language, instance, functionName) {
+) : BaseWasmNode(language, module, functionName) {
     private val logger: Logger = host.rootLogger.withTag(FdWrite::class.qualifiedName!!)
 
     @Suppress("MagicNumber")
-    override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
+    override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
         val args = frame.arguments
         return fdWrite(
-            Fd(args[0] as Int),
-            args.asWasmPtr(1),
-            args[2] as Int,
-            args.asWasmPtr(3),
+            memory(frame),
+            Fd(args.getArgAsInt(0)),
+            args.getArgAsWasmPtr(1),
+            args.getArgAsInt(2),
+            args.getArgAsWasmPtr(3),
         )
     }
 
     @TruffleBoundary
     @Suppress("MemberNameEqualsClassName", "VARIABLE_HAS_PREFIX")
     private fun fdWrite(
+        memory: WasmMemory,
         fd: Fd,
         pCiov: WasmPtr<CioVec>,
         cIovCnt: Int,
         pNum: WasmPtr<Int>,
     ): Int {
-        val cioVecs: CiovecArray = readCiovecs(memory, pCiov, cIovCnt)
+        val hostMemory = memory.toHostMemory()
+        val cioVecs: CiovecArray = readCiovecs(hostMemory, pCiov, cIovCnt)
         return try {
             val channel = host.fileSystem.getStreamByFd(fd)
-            val writtenBytes = memory.writeToChannel(channel, strategy, cioVecs)
-            memory.writeI32(pNum, writtenBytes.toInt())
+            val writtenBytes = hostMemory.writeToChannel(channel, strategy, cioVecs)
+            hostMemory.writeI32(pNum, writtenBytes.toInt())
             Errno.SUCCESS
         } catch (e: SysException) {
             logger.i(e) { "write() error" }

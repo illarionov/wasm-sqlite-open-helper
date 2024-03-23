@@ -11,6 +11,7 @@ import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmFunction
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmModule
+import org.graalvm.wasm.constants.Sizes
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.HostFunction
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.HostFunctionType
@@ -28,7 +29,7 @@ internal fun setupWasmModuleFunctions(
     val moduleInstance: WasmInstance = context.readInstance(module)
 
     functions.forEach { fn: HostFunction ->
-        val node = fn.nodeFactory(context.language(), moduleInstance, host, fn.name)
+        val node = fn.nodeFactory(context.language(), module, host, fn.name)
         val exportedIndex = exportedFunctions.getValue(fn.name).index()
         moduleInstance.setTarget(exportedIndex, node.callTarget)
     }
@@ -68,4 +69,35 @@ internal fun declareExportedFunctions(
         val functionIdx = symbolTable.declareExportedFunction(typeIdx, fn.name)
         fn.name to functionIdx
     }
+}
+
+internal fun SymbolTable.setupImportedEnvMemory(
+    context: WasmContext,
+    shared: Boolean = false,
+    useUnsafeMemory: Boolean = false,
+    supportMemory64: Boolean = context.contextOptions.supportMemory64(),
+) {
+    val maxSize: Long
+    val is64Bit: Boolean
+    if (supportMemory64) {
+        maxSize = Sizes.MAX_MEMORY_64_DECLARATION_SIZE
+        is64Bit = true
+    } else {
+        maxSize = @Suppress("MagicNumber") 32768
+        is64Bit = false
+    }
+    val minSize = 0L
+
+    val index = this.memoryCount()
+    this.importMemory(
+        "env",
+        "memory",
+        index,
+        minSize,
+        maxSize,
+        is64Bit,
+        shared,
+        false,
+        useUnsafeMemory,
+    )
 }

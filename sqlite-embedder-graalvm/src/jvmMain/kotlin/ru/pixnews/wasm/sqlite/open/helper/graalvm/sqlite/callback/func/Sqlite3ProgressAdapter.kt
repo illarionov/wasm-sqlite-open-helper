@@ -11,9 +11,10 @@ import com.oracle.truffle.api.frame.VirtualFrame
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
+import org.graalvm.wasm.WasmModule
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.asWasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.Sqlite3CallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
@@ -23,17 +24,17 @@ internal const val SQLITE3_PROGRESS_CB_FUNCTION_NAME = "sqlite3_progress_cb"
 
 internal class Sqlite3ProgressAdapter(
     language: WasmLanguage,
-    instance: WasmInstance,
+    module: WasmModule,
     private val callbackStore: Sqlite3CallbackStore,
     logger: Logger,
     functionName: String,
-) : BaseWasmNode(language, instance, functionName) {
+) : BaseWasmNode(language, module, functionName) {
     private val logger: Logger = logger.withTag(Sqlite3ProgressAdapter::class.qualifiedName!!)
 
-    override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
+    override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {
         val args = frame.arguments
         return invokeProgressCallback(
-            args.asWasmPtr(0),
+            args.getArgAsWasmPtr(0),
         )
     }
 

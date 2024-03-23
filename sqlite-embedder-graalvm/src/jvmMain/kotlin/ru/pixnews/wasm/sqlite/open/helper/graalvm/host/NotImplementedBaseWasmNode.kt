@@ -10,17 +10,18 @@ import com.oracle.truffle.api.frame.VirtualFrame
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
+import org.graalvm.wasm.WasmModule
 
-internal val notImplementedFunctionNodeFactory: NodeFactory = { language, instance, _, name ->
-    NotImplementedBaseWasmNode(language, instance, name)
+internal val notImplementedFunctionNodeFactory: NodeFactory = { language, module, _, name ->
+    NotImplementedBaseWasmNode(language, module, name)
 }
 
 private class NotImplementedBaseWasmNode(
     language: WasmLanguage,
-    instance: WasmInstance,
+    module: WasmModule,
     private val name: String,
-) : BaseWasmNode(language, instance, name) {
-    override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Any {
+) : BaseWasmNode(language, module, name) {
+    override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
         error("`$name`not implemented")
     }
 }

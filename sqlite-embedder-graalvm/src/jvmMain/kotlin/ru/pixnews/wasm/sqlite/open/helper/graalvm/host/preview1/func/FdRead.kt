@@ -11,10 +11,13 @@ import com.oracle.truffle.api.frame.VirtualFrame
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
+import org.graalvm.wasm.WasmModule
+import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.asWasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy.CHANGE_POSITION
@@ -28,51 +31,54 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.IovecArray
 
 internal fun fdRead(
     language: WasmLanguage,
-    instance: WasmInstance,
+    module: WasmModule,
     host: SqliteEmbedderHost,
     functionName: String = "fd_read",
-): BaseWasmNode = FdRead(language, instance, host, CHANGE_POSITION, functionName)
+): BaseWasmNode = FdRead(language, module, host, CHANGE_POSITION, functionName)
 
 internal fun fdPread(
     language: WasmLanguage,
-    instance: WasmInstance,
+    module: WasmModule,
     host: SqliteEmbedderHost,
     functionName: String = "fd_pread",
-): BaseWasmNode = FdRead(language, instance, host, DO_NOT_CHANGE_POSITION, functionName)
+): BaseWasmNode = FdRead(language, module, host, DO_NOT_CHANGE_POSITION, functionName)
 
 private class FdRead(
     language: WasmLanguage,
-    instance: WasmInstance,
+    module: WasmModule,
     private val host: SqliteEmbedderHost,
     private val strategy: ReadWriteStrategy,
     functionName: String = "fd_read",
-) : BaseWasmNode(language, instance, functionName) {
+) : BaseWasmNode(language, module, functionName) {
     private val logger: Logger = host.rootLogger.withTag(FdRead::class.qualifiedName!!)
 
     @Suppress("MagicNumber")
-    override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
+    override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {
         val args = frame.arguments
         return fdRead(
-            Fd(args[0] as Int),
-            args.asWasmPtr(1),
-            args[2] as Int,
-            args.asWasmPtr(3),
+            memory(frame),
+            Fd(args.getArgAsInt(0)),
+            args.getArgAsWasmPtr(1),
+            args.getArgAsInt(2),
+            args.getArgAsWasmPtr(3),
         )
     }
 
     @TruffleBoundary
     @Suppress("MemberNameEqualsClassName", "VARIABLE_HAS_PREFIX")
     private fun fdRead(
+        memory: WasmMemory,
         fd: Fd,
         pIov: WasmPtr<Iovec>,
         iovCnt: Int,
         pNum: WasmPtr<Int>,
     ): Int {
-        val ioVecs: IovecArray = readIovecs(memory, pIov, iovCnt)
+        val hostMemory = memory.toHostMemory()
+        val ioVecs: IovecArray = readIovecs(hostMemory, pIov, iovCnt)
         return try {
             val channel = host.fileSystem.getStreamByFd(fd)
-            val readBytes = memory.readFromChannel(channel, strategy, ioVecs)
-            memory.writeI32(pNum, readBytes.toInt())
+            val readBytes = hostMemory.readFromChannel(channel, strategy, ioVecs)
+            hostMemory.writeI32(pNum, readBytes.toInt())
             Errno.SUCCESS
         } catch (e: SysException) {
             logger.i(e) { "read() error" }

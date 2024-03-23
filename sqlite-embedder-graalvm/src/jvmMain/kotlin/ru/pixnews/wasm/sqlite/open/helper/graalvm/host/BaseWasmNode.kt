@@ -6,29 +6,20 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.host
 
-import org.graalvm.wasm.WasmContext
-import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
+import org.graalvm.wasm.WasmModule
+import org.graalvm.wasm.memory.WasmMemory
 import org.graalvm.wasm.nodes.WasmRootNode
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.WasmHostMemoryImpl
-import kotlin.LazyThreadSafetyMode.PUBLICATION
 
 internal open class BaseWasmNode(
     language: WasmLanguage,
-    val instance: WasmInstance,
+    private val module: WasmModule,
     val functionName: String,
 ) : WasmRootNode(language, null, null) {
-    val memory: WasmHostMemoryImpl by lazy(PUBLICATION) {
-        WasmHostMemoryImpl(
-            instance.context().memories().memory(0),
-            this,
-        )
-    }
-
-    override fun tryInitialize(context: WasmContext) {
-        // Copied from WasmBuiltinRootNode.tryInitialize
-        context.linker().tryLink(instance)
-    }
-
     override fun getName(): String = "wasm-function:$functionName"
+
+    override fun module(): WasmModule = module
+
+    fun WasmMemory.toHostMemory() = WasmHostMemoryImpl(this, this@BaseWasmNode)
 }

@@ -7,15 +7,22 @@
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.ext
 
 import org.graalvm.polyglot.Value
+import org.graalvm.wasm.WasmArguments
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.readZeroTerminatedString
 
-// TODO: remove
 internal fun <P : Any?> Value.asWasmAddr(): WasmPtr<P> = WasmPtr(asInt())
 
-// TODO: remove
-internal fun <P : Any?> Array<Any>.asWasmPtr(idx: Int): WasmPtr<P> = WasmPtr(this[idx] as Int)
+internal fun Array<Any>.getArgAsInt(idx: Int): Int = WasmArguments.getArgument(this, idx) as Int
+internal fun Array<Any>.getArgAsUint(idx: Int): UInt = (WasmArguments.getArgument(this, idx) as Int).toUInt()
+internal fun Array<Any>.getArgAsLong(idx: Int): Long = WasmArguments.getArgument(this, idx) as Long
+internal fun Array<Any>.getArgAsUlong(idx: Int): ULong = (WasmArguments.getArgument(this, idx) as Long)
+    .toULong()
+
+internal fun <P : Any?> Array<Any>.getArgAsWasmPtr(idx: Int): WasmPtr<P> = WasmPtr(
+    WasmArguments.getArgument(this, idx) as Int,
+)
 
 internal fun Memory.readNullTerminatedString(offsetValue: Value): String? {
     return if (!offsetValue.isNull) {

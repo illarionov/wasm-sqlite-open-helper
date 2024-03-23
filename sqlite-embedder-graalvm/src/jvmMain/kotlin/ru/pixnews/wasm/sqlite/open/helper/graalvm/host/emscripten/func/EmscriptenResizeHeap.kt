@@ -11,29 +11,37 @@ import com.oracle.truffle.api.frame.VirtualFrame
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
+import org.graalvm.wasm.WasmModule
+import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 
 internal class EmscriptenResizeHeap(
     language: WasmLanguage,
-    instance: WasmInstance,
+    module: WasmModule,
     host: SqliteEmbedderHost,
     functionName: String = "emscripten_resize_heap",
-) : BaseWasmNode(language, instance, functionName) {
+) : BaseWasmNode(language, module, functionName) {
     private val logger = host.rootLogger.withTag(EmscriptenResizeHeap::class.qualifiedName!!)
-    override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
-        return emscriptenResizeheap((frame.arguments[0] as Int).toLong())
+
+    override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
+        return emscriptenResizeheap(
+            memory(frame),
+            frame.arguments.getArgAsInt(0).toLong(),
+        )
     }
 
     @CompilerDirectives.TruffleBoundary
     @Suppress("MemberNameEqualsClassName")
     private fun emscriptenResizeheap(
+        memory: WasmMemory,
         requestedSize: Long,
     ): Int = try {
-        val currentPages = memory.memory.size()
-        val declaredMaxPages = memory.memory.declaredMaxSize()
+        val currentPages = memory.size()
+        val declaredMaxPages = memory.declaredMaxSize()
         val newSizePages = calculateNewSizePages(requestedSize, currentPages, declaredMaxPages)
 
         logger.v {
@@ -41,12 +49,12 @@ internal class EmscriptenResizeHeap(
                     "Requested: ${newSizePages * PAGE_SIZE} bytes ($newSizePages pages)"
         }
 
-        val memoryAdded = memory.memory.grow(newSizePages - currentPages)
+        val memoryAdded = memory.grow(newSizePages - currentPages)
         if (!memoryAdded) {
             throw SysException(
                 Errno.NOMEM,
                 "Cannot enlarge memory, requested $newSizePages pages, but the limit is " +
-                        "${memory.memory.declaredMaxSize()} pages!",
+                        "${memory.declaredMaxSize()} pages!",
             )
         }
         1

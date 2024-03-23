@@ -6,8 +6,8 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.host
 
-import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
+import org.graalvm.wasm.WasmModule
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType
 import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType.WebAssemblyTypes.I32
@@ -32,7 +32,7 @@ internal data class HostFunctionType(
 
 internal typealias NodeFactory = (
     language: WasmLanguage,
-    instance: WasmInstance,
+    module: WasmModule,
     host: SqliteEmbedderHost,
     functionName: String,
 ) -> BaseWasmNode

@@ -10,14 +10,15 @@ import com.oracle.truffle.api.frame.VirtualFrame
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
+import org.graalvm.wasm.WasmModule
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
 
 internal class Abort(
     language: WasmLanguage,
-    instance: WasmInstance,
+    module: WasmModule,
     functionName: String = "abort",
-) : BaseWasmNode(language, instance, functionName) {
-    override fun executeWithContext(frame: VirtualFrame, context: WasmContext): Int {
+) : BaseWasmNode(language, module, functionName) {
+    override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
         error("native code called abort()")
     }
 }
