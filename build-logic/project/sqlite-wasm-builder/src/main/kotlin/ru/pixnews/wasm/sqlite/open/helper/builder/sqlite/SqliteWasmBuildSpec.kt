@@ -57,7 +57,7 @@ public open class SqliteWasmBuildSpec @Inject internal constructor(
         .convention(SqliteExportedFunctions.openHelperExportedFunctions)
 
     public val sqliteConfigOptions: ListProperty<String> = objects.listProperty(String::class.java)
-        .convention(SqliteConfigurationOptions.wasmConfig)
+        .convention(SqliteConfigurationOptions.wasmConfig())
 
     override fun getName(): String = name
 

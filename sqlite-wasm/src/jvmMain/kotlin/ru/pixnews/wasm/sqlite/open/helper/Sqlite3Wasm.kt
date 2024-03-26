@@ -10,12 +10,16 @@ import java.net.URL
 
 public object Sqlite3Wasm {
     public object Emscripten {
-        public val sqlite3_345: URL
-            get() = getUrl("sqlite3-main-3450100.wasm")
-        public val sqlite3_345_mt: URL
-            get() = getUrl("sqlite3-main-mt-3450100.wasm")
-        public val sqlite3_345_mt_pthread: URL
-            get() = getUrl("sqlite3-main-mt-pthread-3450100.wasm")
+        public val sqlite3_345: WasmSqliteConfiguration = object : WasmSqliteConfiguration {
+            override val sqliteUrl: URL get() = getUrl("sqlite3-main-3450100.wasm")
+            override val requireThreads: Boolean = false
+            override val requireSharedMemory: Boolean = false
+        }
+        public val sqlite3_345_mt_pthread: WasmSqliteConfiguration = object : WasmSqliteConfiguration {
+            override val sqliteUrl: URL get() = getUrl("sqlite3-main-mt-pthread-3450100.wasm")
+            override val requireThreads: Boolean = true
+            override val requireSharedMemory: Boolean = true
+        }
     }
 
     private fun getUrl(fileName: String): URL = requireNotNull(Sqlite3Wasm::class.java.getResource(fileName))

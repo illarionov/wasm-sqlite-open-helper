@@ -20,7 +20,9 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.AssertFai
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.EmscriptenDateNow
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.EmscriptenGetNow
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.EmscriptenGetNowIsMonotonic
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.EmscriptenInitMainThreadJs
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.EmscriptenResizeHeap
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.EmscriptenThreadMailboxAwait
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.SyscallFchown32
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.SyscallFstat64
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.SyscallFtruncate64
@@ -31,6 +33,10 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.syscallLs
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.syscallStat64
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.fn
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.fnVoid
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.SharedMemoryWaiterListStore
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.WasmMemoryNotifyCallback
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.WasmMemoryWaitCallback
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.pthread.Pthread
 import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType.WebAssemblyTypes.F64
 import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType.WebAssemblyTypes.I32
 import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType.WebAssemblyTypes.I64
@@ -38,6 +44,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType.WebAssemblyTypes.I6
 internal class EmscriptenEnvModuleBuilder(
     private val graalContext: Context,
     private val host: SqliteEmbedderHost,
+    private val pthreadRef: () -> Pthread,
     private val moduleName: String = ENV_MODULE_NAME,
 ) {
     private val envFunctions: List<HostFunction> = buildList {
@@ -130,11 +137,48 @@ internal class EmscriptenEnvModuleBuilder(
         )
         fn("__syscall_utimensat", List(4) { I32 })
         fnVoid("_tzset_js", List(4) { I32 })
+
+        fnVoid("_emscripten_thread_set_strongref", listOf(I32))
+        fnVoid("emscripten_exit_with_live_runtime", listOf())
+        fnVoid(
+            name = "__emscripten_init_main_thread_js",
+            paramTypes = listOf(I32),
+            nodeFactory = { language, module, host, functionName ->
+                EmscriptenInitMainThreadJs(
+                    language = language,
+                    module = module,
+                    functionName = functionName,
+                    posixThreadRef = pthreadRef,
+                )
+            },
+        )
+        fnVoid(
+            "_emscripten_thread_mailbox_await",
+            listOf(I32),
+            nodeFactory = { language, module, _, functionName ->
+                EmscriptenThreadMailboxAwait(
+                    language = language,
+                    module = module,
+                    functionName = functionName,
+                    posixThreadRef = pthreadRef,
+                    rootLogger = host.rootLogger,
+                )
+            },
+        )
+        fn("_emscripten_receive_on_main_thread_js", List(5) { I32 }, F64)
+        fnVoid("emscripten_check_blocking_allowed", listOf())
+        fn("__pthread_create_js", List(4) { I32 }, I32)
+        fnVoid("exit", listOf(I32))
+        fnVoid("__emscripten_thread_cleanup", listOf(I32))
+        fnVoid("_emscripten_notify_mailbox_postmessage", listOf(I32, I32, I32))
     }
 
-    fun setupModule(): WasmInstance = graalContext.withWasmContext { wasmContext ->
+    fun setupModule(
+        sharedMemory: Boolean = false,
+        useUnsafeMemory: Boolean = false,
+    ): WasmInstance = graalContext.withWasmContext { wasmContext ->
         val envModule = WasmModule.create(moduleName, null)
-        setupMemory(wasmContext, envModule)
+        setupMemory(wasmContext, envModule, sharedMemory, useUnsafeMemory)
         return setupWasmModuleFunctions(wasmContext, host, envModule, envFunctions)
     }
 
@@ -142,6 +186,8 @@ internal class EmscriptenEnvModuleBuilder(
     private fun setupMemory(
         context: WasmContext,
         envModule: WasmModule,
+        sharedMemory: Boolean = false,
+        useUnsafeMemory: Boolean = false,
     ) {
         val minSize = 256L
         val maxSize: Long
@@ -156,8 +202,15 @@ internal class EmscriptenEnvModuleBuilder(
 
         envModule.symbolTable().apply {
             val memoryIndex = memoryCount()
-            allocateMemory(memoryIndex, minSize, maxSize, is64Bit, false, false, false)
+            allocateMemory(memoryIndex, minSize, maxSize, is64Bit, sharedMemory, false, useUnsafeMemory)
             exportMemory(memoryIndex, "memory")
+        }
+        val memoryWaiters = SharedMemoryWaiterListStore()
+        envModule.addLinkAction { _: WasmContext, instance: WasmInstance ->
+            instance.memory(0).apply {
+                waitCallback = WasmMemoryWaitCallback(memoryWaiters, host.rootLogger)
+                notifyCallback = WasmMemoryNotifyCallback(memoryWaiters, host.rootLogger)
+            }
         }
     }
 

@@ -26,7 +26,7 @@ public object SqliteCodeGenerationOptions {
         "-sALLOW_MEMORY_GROWTH",
         "-sALLOW_TABLE_GROWTH",
         "-sDYNAMIC_EXECUTION=0",
-        "-sENVIRONMENT=node",
+        "-sENVIRONMENT=worker",
         "-sERROR_ON_UNDEFINED_SYMBOLS=1",
         "-sEXPORTED_RUNTIME_METHODS=wasmMemory",
         "-sEXPORT_NAME=sqlite3InitModule",

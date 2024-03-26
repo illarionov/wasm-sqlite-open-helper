@@ -9,9 +9,9 @@ package ru.pixnews.wasm.sqlite.open.helper.graalvm.bindings
 import org.graalvm.polyglot.Value
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.asWasmAddr
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.member
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.GraalHostMemoryImpl
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.readNullableZeroTerminatedString
-import ru.pixnews.wasm.sqlite.open.helper.host.memory.writePtr
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.writeZeroTerminatedString
 
 @Suppress("VariableNaming", "MagicNumber", "UnusedPrivateProperty", "BLANK_LINE_BETWEEN_PROPERTIES")
@@ -19,26 +19,26 @@ internal class SqliteMemoryBindings(
     mainBindings: Value,
     val memory: GraalHostMemoryImpl,
 ) {
-    val malloc = mainBindings.getMember("malloc") // 2815
-    val free = mainBindings.getMember("free") // 2816
-    val realloc = mainBindings.getMember("realloc") // 2817
+    val malloc by mainBindings.member()
+    val free by mainBindings.member()
+    val realloc by mainBindings.member()
 
-    val stackSave = mainBindings.getMember("stackSave") // 2838
-    val stackRestore = mainBindings.getMember("stackRestore") // 2839
-    val stackAlloc = mainBindings.getMember("stackAlloc") // 2840
+    val stackSave by mainBindings.member()
+    val stackRestore by mainBindings.member()
+    val stackAlloc by mainBindings.member()
 
-    private val emscripten_builtin_memalign = mainBindings.getMember("emscripten_builtin_memalign") // 2819
-    private val emscripten_stack_init = mainBindings.getMember("emscripten_stack_init")
-    private val emscripten_stack_get_free = mainBindings.getMember("emscripten_stack_get_free")
-    private val emscripten_stack_get_base = mainBindings.getMember("emscripten_stack_get_base")
-    private val emscripten_stack_get_end = mainBindings.getMember("emscripten_stack_get_end")
-    private val emscripten_stack_get_current = mainBindings.getMember("emscripten_stack_get_end")
+    private val emscripten_builtin_memalign by mainBindings.member()
+    private val emscripten_stack_init: Value? = mainBindings.getMember("emscripten_stack_init")
+    private val emscripten_stack_get_free by mainBindings.member()
+    private val emscripten_stack_get_base by mainBindings.member()
+    private val emscripten_stack_get_end by mainBindings.member()
+    private val emscripten_stack_get_current by mainBindings.member()
 
-    private val sqlite3_malloc = mainBindings.getMember("sqlite3_malloc") // 63
-    private val sqlite3_free = mainBindings.getMember("sqlite3_free") // 64
-    private val sqlite3_realloc = mainBindings.getMember("sqlite3_realloc") // 74
-    private val sqlite3_malloc64 = mainBindings.getMember("sqlite3_malloc64") // 73
-    private val sqlite3_realloc64 = mainBindings.getMember("sqlite3_realloc64") // 76
+    private val sqlite3_malloc by mainBindings.member()
+    private val sqlite3_free by mainBindings.member()
+    private val sqlite3_realloc by mainBindings.member()
+    private val sqlite3_malloc64 by mainBindings.member()
+    private val sqlite3_realloc64 by mainBindings.member()
 
     // https://github.com/emscripten-core/emscripten/blob/main/system/lib/README.md
     public fun init() {
@@ -73,11 +73,6 @@ internal class SqliteMemoryBindings(
 
     @Suppress("UNCHECKED_CAST")
     fun <P : WasmPtr<*>> readAddr(offset: WasmPtr<P>): P = WasmPtr<Unit>(memory.readI32(offset)) as P
-
-    fun writeAddr(offset: WasmPtr<*>, addr: Value) {
-        // TODO: check if null
-        memory.writePtr(offset, if (!addr.isNull) addr.asWasmAddr<Unit>() else WasmPtr.SQLITE3_NULL)
-    }
 
     fun readZeroTerminatedString(
         offsetValue: Value,

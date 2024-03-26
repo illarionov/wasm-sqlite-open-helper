@@ -21,6 +21,7 @@ import androidx.core.os.CancellationSignal
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.ENABLE_WRITE_AHEAD_LOGGING
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.OPEN_READONLY
 import ru.pixnews.wasm.sqlite.open.helper.SqliteDatabaseConfiguration
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale.Companion.EN_US
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
 import ru.pixnews.wasm.sqlite.open.helper.common.api.xor
@@ -144,7 +145,7 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
             setWalMode(configuration.isWalEnabled)
         }
         setForeignKeyMode(configuration.foreignKeyConstraintsEnabled)
-        setLocale(configuration.locale.toString())
+        setLocale((configuration.locale ?: EN_US).icuId)
     }
 
     // Called by SQLiteConnectionPool only.
@@ -174,7 +175,7 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
 
             // Update locale.
             if (localeChanged) {
-                setLocale(configuration.locale.toString())
+                setLocale((configuration.locale ?: EN_US).icuId)
             }
         }
     }

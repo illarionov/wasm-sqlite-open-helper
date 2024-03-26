@@ -6,33 +6,9 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.builder.sqlite
 
-public object SqliteConfigurationOptions {
-    /**
-     * Build configuration from sqlite3-wasm
-     * https://sqlite.org/src/file?name=ext/wasm/GNUmakefile&ci=trunk
-     */
-    public val wasmConfig: List<String> = listOf(
-        """-DSQLITE_DEFAULT_UNIX_VFS="unix-none"""",
-        "-DSQLITE_ENABLE_BYTECODE_VTAB",
-        "-DSQLITE_ENABLE_DBPAGE_VTAB",
-        "-DSQLITE_ENABLE_DBSTAT_VTAB",
-        "-DSQLITE_ENABLE_EXPLAIN_COMMENTS",
-        "-DSQLITE_ENABLE_FTS5",
-        "-DSQLITE_ENABLE_OFFSET_SQL_FUNC",
-        "-DSQLITE_ENABLE_RTREE",
-        "-DSQLITE_ENABLE_STMTVTAB",
-        "-DSQLITE_ENABLE_UNKNOWN_SQL_FUNCTION",
-        "-DSQLITE_OMIT_DEPRECATED",
-        "-DSQLITE_OMIT_LOAD_EXTENSION",
-        "-DSQLITE_OMIT_SHARED_CACHE",
-        "-DSQLITE_OMIT_UTF16",
-        "-DSQLITE_OS_KV_OPTIONAL=1",
-        "-DSQLITE_TEMP_STORE=2",
-        "-DSQLITE_THREADSAFE=0",
-        "-DSQLITE_USE_URI=1",
-        "-DSQLITE_WASM_ENABLE_C_TESTS",
-    )
+import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.SqliteConfigurationOptions.DefaultUnixVfs.UNIX_NONE
 
+public object SqliteConfigurationOptions {
     /**
      * Build configuration from https://github.com/requery/sqlite-android.git
      *
@@ -69,4 +45,43 @@ public object SqliteConfigurationOptions {
         "-DSQLITE_USE_ALLOCA",
         "-O3",
     )
+
+    /**
+     * Build configuration from sqlite3-wasm
+     * https://sqlite.org/src/file?name=ext/wasm/GNUmakefile&ci=trunk
+     */
+    public fun wasmConfig(
+        defaultUnixVfs: DefaultUnixVfs = UNIX_NONE,
+    ): List<String> = listOf(
+        defaultUnixVfs.sqliteBuildOption,
+        "-DSQLITE_ENABLE_BYTECODE_VTAB",
+        "-DSQLITE_ENABLE_DBPAGE_VTAB",
+        "-DSQLITE_ENABLE_DBSTAT_VTAB",
+        "-DSQLITE_ENABLE_EXPLAIN_COMMENTS",
+        "-DSQLITE_ENABLE_FTS5",
+        "-DSQLITE_ENABLE_OFFSET_SQL_FUNC",
+        "-DSQLITE_ENABLE_RTREE",
+        "-DSQLITE_ENABLE_STMTVTAB",
+        "-DSQLITE_ENABLE_UNKNOWN_SQL_FUNCTION",
+        "-DSQLITE_OMIT_DEPRECATED",
+        "-DSQLITE_OMIT_LOAD_EXTENSION",
+        "-DSQLITE_OMIT_SHARED_CACHE",
+        "-DSQLITE_OMIT_UTF16",
+        "-DSQLITE_OS_KV_OPTIONAL=1",
+        "-DSQLITE_TEMP_STORE=2",
+        "-DSQLITE_THREADSAFE=0",
+        "-DSQLITE_USE_URI=1",
+        "-DSQLITE_WASM_ENABLE_C_TESTS",
+    )
+
+    public enum class DefaultUnixVfs(public val id: String) {
+        UNIX("unix"),
+        UNIX_DOTFILE("unix-dotfile"),
+        UNIX_EXCL("unix-excl"),
+        UNIX_NONE("unix-none"),
+        UNIX_NAMEDSEM("unix-namedsem"),
+        ;
+
+        public val sqliteBuildOption: String get() = """-DSQLITE_DEFAULT_UNIX_VFS="${this.id}""""
+    }
 }

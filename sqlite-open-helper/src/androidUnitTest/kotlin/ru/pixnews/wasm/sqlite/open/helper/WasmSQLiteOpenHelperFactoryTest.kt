@@ -9,28 +9,26 @@ package ru.pixnews.wasm.sqlite.open.helper
 import android.content.ContextWrapper
 import androidx.room.Room
 import androidx.sqlite.db.SupportSQLiteDatabase
-import androidx.sqlite.db.SupportSQLiteOpenHelper
 import co.touchlab.kermit.Severity.Info
-import org.graalvm.polyglot.Engine
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmSqliteEmbedder
-import ru.pixnews.wasm.sqlite.open.helper.path.DatabasePathResolver
 import ru.pixnews.wasm.sqlite.open.helper.room.AppDatabase1
 import ru.pixnews.wasm.sqlite.open.helper.room.User
+import ru.pixnews.wasm.sqlite.open.helper.util.KermitLogger
+import ru.pixnews.wasm.sqlite.open.helper.util.createWasmSQLiteOpenHelper
+import ru.pixnews.wasm.sqlite.open.helper.util.createWasmSqliteOpenHelperFactory
 import java.io.File
 
 class WasmSQLiteOpenHelperFactoryTest {
     val logger = KermitLogger("RequerySQLiteOpenHelperFactoryTest")
-    val mockContext = ContextWrapper(null)
+    val dbLogger = KermitLogger(tag = "WSOH", minSeverity = Info)
 
     @TempDir
     lateinit var tempDir: File
 
     @Test
     fun `Factory initialization should work`() {
-        val helper = createHelper()
+        val helper = createWasmSQLiteOpenHelper(tempDir, dbLogger)
         helper.writableDatabase.use { db: SupportSQLiteDatabase ->
             logger.i { "db: $db; version: ${db.version}" }
             db.execSQL("CREATE TABLE IF NOT EXISTS User(id INTEGER PRIMARY KEY, name TEXT)")
@@ -50,7 +48,8 @@ class WasmSQLiteOpenHelperFactoryTest {
 
     @Test
     fun `Test Room`() {
-        val helperFactory = createHelperFactory()
+        val helperFactory = createWasmSqliteOpenHelperFactory(tempDir, dbLogger)
+        val mockContext = ContextWrapper(null)
         val db: AppDatabase1 = Room.databaseBuilder(mockContext, AppDatabase1::class.java, "database-name")
             .openHelperFactory(helperFactory)
             .allowMainThreadQueries()
@@ -72,44 +71,5 @@ class WasmSQLiteOpenHelperFactoryTest {
         logger.i { "users by ids: $usersByIds; user by name: $userByName; users: $users;" }
 
         db.close()
-    }
-
-    private fun createHelper(
-        dbName: String = "test.db",
-        openHelperCallback: SupportSQLiteOpenHelper.Callback = LoggingOpenHelperCallback(logger),
-    ): SupportSQLiteOpenHelper {
-        val factory = createHelperFactory()
-        val config = SupportSQLiteOpenHelper.Configuration(mockContext, dbName, openHelperCallback)
-        return factory.create(config)
-    }
-
-    private fun createHelperFactory(): SupportSQLiteOpenHelper.Factory {
-        return WasmSqliteOpenHelperFactory(GraalvmSqliteEmbedder) {
-            pathResolver = DatabasePathResolver { name -> File(tempDir, name) }
-            logger = KermitLogger(tag = "WSOH", minSeverity = Info)
-            embedder {
-                graalvmEngine = Engine.create("wasm")
-                sqlite3WasmBinaryUrl = Sqlite3Wasm.Emscripten.sqlite3_345
-            }
-            debug {
-                sqlLog = true
-                sqlTime = true
-                sqlStatements = true
-                logSlowQueries = true
-            }
-        }
-    }
-
-    private class LoggingOpenHelperCallback(
-        private val logger: Logger = Logger.withTag("SupportSQLiteOpenHelperCallback"),
-        version: Int = 1,
-    ) : SupportSQLiteOpenHelper.Callback(version) {
-        override fun onCreate(db: SupportSQLiteDatabase) {
-            logger.i { "onCreate() $db" }
-        }
-
-        override fun onUpgrade(db: SupportSQLiteDatabase, oldVersion: Int, newVersion: Int) {
-            logger.i { "onUpgrade() $db, $oldVersion, $newVersion" }
-        }
     }
 }
