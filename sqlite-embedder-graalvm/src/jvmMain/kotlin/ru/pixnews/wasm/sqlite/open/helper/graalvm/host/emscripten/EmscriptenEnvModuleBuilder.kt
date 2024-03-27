@@ -27,8 +27,11 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.SyscallFc
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.SyscallFstat64
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.SyscallFtruncate64
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.SyscallGetcwd
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.SyscallMkdirat
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.SyscallOpenat
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.SyscallRmdir
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.SyscallUnlinkat
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.SyscallUtimensat
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.syscallLstat64
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.syscallStat64
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.fn
@@ -107,7 +110,7 @@ internal class EmscriptenEnvModuleBuilder(
             nodeFactory = ::SyscallGetcwd,
         )
         fn("__syscall_ioctl", List(3) { I32 })
-        fn("__syscall_mkdirat", List(3) { I32 })
+        fn("__syscall_mkdirat", List(3) { I32 }, I32, ::SyscallMkdirat)
         fn("__syscall_newfstatat", List(4) { I32 })
         fn(
             name = "__syscall_openat",
@@ -116,7 +119,7 @@ internal class EmscriptenEnvModuleBuilder(
             nodeFactory = ::SyscallOpenat,
         )
         fn("__syscall_readlinkat", List(4) { I32 })
-        fn("__syscall_rmdir", listOf(I32))
+        fn("__syscall_rmdir", listOf(I32), I32, ::SyscallRmdir)
         fn(
             name = "__syscall_stat64",
             paramTypes = listOf(I32, I32),
@@ -135,7 +138,7 @@ internal class EmscriptenEnvModuleBuilder(
             retType = I32,
             nodeFactory = ::SyscallUnlinkat,
         )
-        fn("__syscall_utimensat", List(4) { I32 })
+        fn("__syscall_utimensat", List(4) { I32 }, I32, ::SyscallUtimensat)
         fnVoid("_tzset_js", List(4) { I32 })
 
         fnVoid("_emscripten_thread_set_strongref", listOf(I32))

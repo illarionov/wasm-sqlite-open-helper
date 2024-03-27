@@ -8,6 +8,9 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.include
 
+/**
+ * Constants from Emscripten include/fcntl.h
+ */
 public object Fcntl {
     public const val O_RDONLY: UInt = 0x0U
     public const val O_WRONLY: UInt = 0x1U

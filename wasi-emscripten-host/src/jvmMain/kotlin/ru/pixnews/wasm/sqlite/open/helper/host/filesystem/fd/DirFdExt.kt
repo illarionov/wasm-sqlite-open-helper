@@ -4,17 +4,20 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.host.filesystem
+package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd
 
-import ru.pixnews.wasm.sqlite.open.helper.host.include.Fcntl.AT_FDCWD
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
+import ru.pixnews.wasm.sqlite.open.helper.host.include.DirFd
+import ru.pixnews.wasm.sqlite.open.helper.host.include.DirFd.Cwd
+import ru.pixnews.wasm.sqlite.open.helper.host.include.DirFd.FileDescriptor
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno.BADF
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno.NOENT
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 import java.nio.file.Path
 import kotlin.io.path.pathString
 
 public fun FileSystem.resolveAbsolutePath(
-    dirFd: Int,
+    dirFd: DirFd,
     path: String,
     allowEmpty: Boolean = false,
 ): Path {
@@ -22,7 +25,7 @@ public fun FileSystem.resolveAbsolutePath(
 }
 
 public fun FileSystem.resolveAbsolutePath(
-    dirFd: Int,
+    dirFd: DirFd,
     path: Path,
     allowEmpty: Boolean = false,
 ): Path {
@@ -30,11 +33,10 @@ public fun FileSystem.resolveAbsolutePath(
         return path
     }
 
-    val root: Path = if (dirFd == AT_FDCWD) {
-        getCwdPath()
-    } else {
-        try {
-            getStreamByFd(Fd(dirFd)).path
+    val root: Path = when (dirFd) {
+        is Cwd -> getCwdPath()
+        is FileDescriptor -> try {
+            getStreamByFd(dirFd.fd).path
         } catch (e: SysException) {
             throw SysException(BADF, "File descriptor $dirFd is not open", cause = e)
         }

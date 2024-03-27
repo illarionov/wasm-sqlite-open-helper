@@ -10,10 +10,10 @@ import com.oracle.truffle.api.interop.InteropLibrary
 import com.oracle.truffle.api.interop.TruffleObject
 import com.oracle.truffle.api.library.ExportLibrary
 import com.oracle.truffle.api.library.ExportMessage
+import org.graalvm.wasm.WasmArguments
 import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsLong
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.SharedMemoryWaiterListStore.AtomicsWaitResult
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.SharedMemoryWaiterListStore.WaiterListRecord
@@ -36,11 +36,11 @@ internal class WasmMemoryWaitCallback(
     @ExportMessage
     public fun execute(arguments: Array<Any>): Any {
         val wasmMemory = arguments[0] as WasmMemory
-        val addr = arguments.getArgAsInt(0)
+        val addr = arguments.getArgAsLong(0).toInt()
         val expectedValue = arguments.getArgAsLong(1)
         val timeout = arguments.getArgAsLong(2)
-        val is64 = arguments.getArgAsInt(3) != 0
-        logger.v { "execute(): $addr $expectedValue $timeout" }
+        val is64 = WasmArguments.getArgument(arguments, 3) as Boolean
+        logger.v { "execute(): $addr $expectedValue $timeout $is64" }
 
         val list: WaiterListRecord = waitersStore.getListForIndex(
             if (is64) addr * 8 else addr * 4,
