@@ -30,7 +30,7 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrorInfo
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteException
 
 internal fun SqliteException.rethrowAndroidSqliteException(msg: String? = null): Nothing {
-    throwAndroidSqliteException(errorInfo, msg)
+    throwAndroidSqliteException(errorInfo, msg, this)
 }
 
 internal fun throwAndroidSqliteException(message: String?): Nothing = throwAndroidSqliteException(
@@ -42,6 +42,7 @@ internal fun throwAndroidSqliteException(message: String?): Nothing = throwAndro
 internal fun throwAndroidSqliteException(
     errorInfo: SqliteErrorInfo,
     message: String?,
+    cause: Throwable? = null,
 ): Nothing {
     val fullErMsg = if (errorInfo.sqliteMsg != null) {
         buildString {
@@ -54,6 +55,10 @@ internal fun throwAndroidSqliteException(
                     separator = ", ",
                     prefix = ": ",
                 )
+            }
+            if (cause != null) {
+                append("; ")
+                append(cause.toString())
             }
         }
     } else {
@@ -78,7 +83,7 @@ internal fun throwAndroidSqliteException(
         SqliteErrno.SQLITE_NOMEM -> AndroidSqliteOutOfMemoryException(fullErMsg)
         SqliteErrno.SQLITE_MISMATCH -> AndroidSqliteDatatypeMismatchException(fullErMsg)
         SqliteErrno.SQLITE_INTERRUPT -> AndroidOperationCanceledException(fullErMsg)
-        else -> AndroidSqliteException(fullErMsg)
+        else -> AndroidSqliteException(fullErMsg, cause)
     }
     throw androidException
 }

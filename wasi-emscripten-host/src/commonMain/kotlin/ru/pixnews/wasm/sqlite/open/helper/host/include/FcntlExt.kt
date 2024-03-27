@@ -44,30 +44,7 @@ public fun Fcntl.oMaskToString(mask: UInt): String {
     )
 }
 
-public fun Fcntl.sMaskToString(mask: UInt): String = "0${mask.toString(8)}"
-
-public fun Fcntl.sMaskToStringLong(mask: UInt): String = maskToString(
-    mask,
-    listOf(
-        Fcntl::S_ISUID,
-        Fcntl::S_ISGID,
-        Fcntl::S_ISVTX,
-        Fcntl::S_IRUSR,
-        Fcntl::S_IWUSR,
-        Fcntl::S_IXUSR,
-        Fcntl::S_IRWXU,
-        Fcntl::S_IRGRP,
-        Fcntl::S_IWGRP,
-        Fcntl::S_IXGRP,
-        Fcntl::S_IRWXG,
-        Fcntl::S_IROTH,
-        Fcntl::S_IWOTH,
-        Fcntl::S_IXOTH,
-        Fcntl::S_IRWXO,
-    ),
-)
-
-private fun maskToString(
+internal fun maskToString(
     mask: UInt,
     maskProps: List<KProperty0<UInt>>,
     startNames: List<String> = emptyList(),

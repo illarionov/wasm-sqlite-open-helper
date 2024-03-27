@@ -22,10 +22,11 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsUint
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.resolveAbsolutePath
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.resolveAbsolutePath
+import ru.pixnews.wasm.sqlite.open.helper.host.include.DirFd
 import ru.pixnews.wasm.sqlite.open.helper.host.include.Fcntl
+import ru.pixnews.wasm.sqlite.open.helper.host.include.FileMode
 import ru.pixnews.wasm.sqlite.open.helper.host.include.oMaskToString
-import ru.pixnews.wasm.sqlite.open.helper.host.include.sMaskToString
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 import java.nio.file.Path
 
@@ -49,10 +50,10 @@ internal class SyscallOpenat(
 
         val fdOrErrno = openAt(
             memory,
-            dirfd = args.getArgAsInt(0),
+            rawDirFd = args.getArgAsInt(0),
             pathnamePtr = args.getArgAsWasmPtr(1),
             flags = args.getArgAsUint(2),
-            mode = mode,
+            rawMode = mode,
         )
         return fdOrErrno
     }
@@ -60,22 +61,24 @@ internal class SyscallOpenat(
     @TruffleBoundary
     private fun openAt(
         memory: WasmMemory,
-        dirfd: Int,
+        rawDirFd: Int,
         pathnamePtr: WasmPtr<Byte>,
         flags: UInt,
-        mode: UInt,
+        rawMode: UInt,
     ): Int {
         val fs = host.fileSystem
+        val dirFd = DirFd(rawDirFd)
+        val mode = FileMode(rawMode)
         val path = memory.readString(pathnamePtr.addr, null)
-        val absolutePath = fs.resolveAbsolutePath(dirfd, path)
+        val absolutePath = fs.resolveAbsolutePath(dirFd, path)
 
         return try {
             val fd = fs.open(absolutePath, flags, mode).fd
-            logger.v { formatCallString(dirfd, path, absolutePath, flags, mode, fd) }
+            logger.v { formatCallString(dirFd, path, absolutePath, flags, mode, fd) }
             fd.fd
         } catch (e: SysException) {
             logger.v {
-                formatCallString(dirfd, path, absolutePath, flags, mode, null) +
+                formatCallString(dirFd, path, absolutePath, flags, mode, null) +
                         "openAt() error ${e.errNo}"
             }
             -e.errNo.code
@@ -84,17 +87,17 @@ internal class SyscallOpenat(
 
     @Suppress("MagicNumber")
     private fun formatCallString(
-        dirfd: Int,
+        dirfd: DirFd,
         path: String,
         absolutePath: Path,
         flags: UInt,
-        mode: UInt,
+        mode: FileMode,
         fd: Fd?,
     ): String = "openAt() dirfd: " +
             "$dirfd, " +
             "path: `$path`, " +
             "full path: `$absolutePath`, " +
             "flags: 0${flags.toString(8)} (${Fcntl.oMaskToString(flags)}), " +
-            "mode: ${Fcntl.sMaskToString(mode)}" +
+            "mode: $mode" +
             if (fd != null) ": $fd" else ""
 }

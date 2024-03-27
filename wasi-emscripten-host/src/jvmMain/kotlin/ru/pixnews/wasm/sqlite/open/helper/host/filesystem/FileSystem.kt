@@ -15,7 +15,10 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy.DO_N
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.FdChannel
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.FileDescriptorMap
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.position
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.resolveAbsolutePath
+import ru.pixnews.wasm.sqlite.open.helper.host.include.DirFd
 import ru.pixnews.wasm.sqlite.open.helper.host.include.Fcntl
+import ru.pixnews.wasm.sqlite.open.helper.host.include.FileMode
 import ru.pixnews.wasm.sqlite.open.helper.host.include.StructTimespec
 import ru.pixnews.wasm.sqlite.open.helper.host.include.oMaskToString
 import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.StructStat
@@ -24,7 +27,6 @@ import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.blksize_t
 import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.dev_t
 import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.gid_t
 import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.ino_t
-import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.mode_t
 import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.nlink_t
 import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.off_t
 import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.uid_t
@@ -49,23 +51,26 @@ import java.nio.channels.ClosedChannelException
 import java.nio.channels.FileChannel
 import java.nio.channels.NonReadableChannelException
 import java.nio.file.DirectoryNotEmptyException
+import java.nio.file.FileAlreadyExistsException
 import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.LinkOption
+import java.nio.file.LinkOption.NOFOLLOW_LINKS
+import java.nio.file.NoSuchFileException
 import java.nio.file.OpenOption
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
+import java.nio.file.attribute.BasicFileAttributeView
 import java.nio.file.attribute.BasicFileAttributes
-import java.nio.file.attribute.FileAttribute
 import java.nio.file.attribute.FileTime
 import java.nio.file.attribute.PosixFileAttributeView
-import java.nio.file.attribute.PosixFilePermission
-import java.nio.file.attribute.PosixFilePermissions
+import java.util.concurrent.TimeUnit.NANOSECONDS
 import kotlin.io.path.exists
 import kotlin.io.path.fileAttributesView
 import kotlin.io.path.isDirectory
 import kotlin.io.path.pathString
 import kotlin.io.path.readAttributes
+import kotlin.time.Duration
 
 public class FileSystem(
     rootLogger: Logger,
@@ -124,7 +129,7 @@ public class FileSystem(
         val dev: dev_t = (unixAttrs[ATTR_UNI_DEV] as? Long)?.toULong() ?: 1UL
         val ino: ino_t = (unixAttrs[ATTR_UNI_INO] as? Long)?.toULong()
             ?: basicFileAttrs.fileKey().hashCode().toULong()
-        val mode: mode_t = getMode(basicFileAttrs, unixAttrs)
+        val mode: FileMode = getMode(basicFileAttrs, unixAttrs)
         val nlink: nlink_t = (unixAttrs[ATTR_UNI_NLINK] as? Int)?.toULong() ?: 1UL
         val uid: uid_t = (unixAttrs[ATTR_UNI_UID] as? Int)?.toULong() ?: 0UL
         val gid: gid_t = (unixAttrs[ATTR_UNI_GID] as? Int)?.toULong() ?: 0UL
@@ -160,7 +165,7 @@ public class FileSystem(
     public fun open(
         path: Path,
         flags: UInt,
-        mode: UInt,
+        mode: FileMode,
     ): FdChannel {
         if (path.pathString.isEmpty()) {
             throw SysException(NOENT)
@@ -168,7 +173,7 @@ public class FileSystem(
 
         val channel = try {
             val openOptions = getOpenOptions(flags)
-            val fileAttributes = getOpenFileAttributes(mode)
+            val fileAttributes = mode.toPosixFilePermissions()
             FileChannel.open(
                 path,
                 openOptions,
@@ -191,7 +196,7 @@ public class FileSystem(
     }
 
     public fun unlinkAt(
-        dirfd: Int,
+        dirfd: DirFd,
         path: String,
         flags: UInt,
     ) {
@@ -411,6 +416,67 @@ public class FileSystem(
         }
     }
 
+    public fun mkdirAt(dirFd: DirFd, path: String, mode: FileMode) {
+        val absolutePath = resolveAbsolutePath(dirFd, path)
+        logger.v { "mkdirAt($absolutePath, $mode}" }
+        try {
+            Files.createDirectory(absolutePath, mode.toPosixFilePermissions())
+        } catch (uoe: UnsupportedOperationException) {
+            throw SysException(PERM, "Unsupported file mode", uoe)
+        } catch (fae: FileAlreadyExistsException) {
+            throw SysException(EXIST, "`$absolutePath` exists", fae)
+        } catch (ioe: IOException) {
+            throw SysException(IO, ioe.message, ioe)
+        }
+    }
+
+    public fun setTimesAt(
+        dirFd: DirFd,
+        path: String,
+        atime: Duration?,
+        mtime: Duration?,
+        noFolowSymlinks: Boolean,
+    ) {
+        val absolutePath = resolveAbsolutePath(dirFd, path)
+        logger.v { "utimensat($absolutePath, $atime, $mtime, $noFolowSymlinks)" }
+        try {
+            val options = if (noFolowSymlinks) {
+                arrayOf(NOFOLLOW_LINKS)
+            } else {
+                arrayOf()
+            }
+            absolutePath.fileAttributesView<BasicFileAttributeView>(options = options)
+                .setTimes(
+                    mtime?.let { FileTime.from(it.inWholeNanoseconds, NANOSECONDS) },
+                    atime?.let { FileTime.from(it.inWholeNanoseconds, NANOSECONDS) },
+                    null,
+                )
+        } catch (ioe: IOException) {
+            logger.v(ioe) { "utimensat($absolutePath, $atime, $mtime, $noFolowSymlinks) error: $ioe" }
+            throw SysException(IO, ioe.message, ioe)
+        }
+    }
+
+    public fun rmdir(path: String) {
+        logger.v { "rmdir($path}" }
+        try {
+            val absolutePath = javaFs.getPath(path)
+            if (!absolutePath.isDirectory()) {
+                throw SysException(NOTDIR, "`$path` is not a directory")
+            }
+            if (absolutePath.endsWith(".")) {
+                throw SysException(INVAL, "`$path` has . as last component")
+            }
+            Files.delete(absolutePath)
+        } catch (nse: NoSuchFileException) {
+            throw SysException(NOENT, "`$path` not exists", nse)
+        } catch (dne: DirectoryNotEmptyException) {
+            throw SysException(NOTEMPTY, "`$path` not empty", dne)
+        } catch (ioe: IOException) {
+            throw SysException(IO, ioe.message, ioe)
+        }
+    }
+
     @Suppress("CyclomaticComplexMethod")
     private fun getOpenOptions(
         flags: UInt,
@@ -481,33 +547,6 @@ public class FileSystem(
         return options
     }
 
-    private fun getOpenFileAttributes(
-        mode: UInt,
-    ): FileAttribute<Set<PosixFilePermission>> {
-        val permissions: MutableSet<PosixFilePermission> = mutableSetOf()
-
-        if (mode and Fcntl.S_IRUSR != 0U) permissions += PosixFilePermission.OWNER_READ
-        if (mode and Fcntl.S_IWUSR != 0U) permissions += PosixFilePermission.OWNER_WRITE
-        if (mode and Fcntl.S_IXUSR != 0U) permissions += PosixFilePermission.OWNER_EXECUTE
-
-        if (mode and Fcntl.S_IRGRP != 0U) permissions += PosixFilePermission.GROUP_READ
-        if (mode and Fcntl.S_IWGRP != 0U) permissions += PosixFilePermission.GROUP_WRITE
-        if (mode and Fcntl.S_IXGRP != 0U) permissions += PosixFilePermission.GROUP_EXECUTE
-
-        if (mode and Fcntl.S_IROTH != 0U) permissions += PosixFilePermission.OTHERS_READ
-        if (mode and Fcntl.S_IWOTH != 0U) permissions += PosixFilePermission.OTHERS_WRITE
-        if (mode and Fcntl.S_IXOTH != 0U) permissions += PosixFilePermission.OTHERS_EXECUTE
-
-        mode.and(SUPPORTED_MODES.inv()).let { unsupportedModes ->
-            if (unsupportedModes != 0U) {
-                @Suppress("MagicNumber")
-                logger.i { "Mode 0${unsupportedModes.toString(8)} not supported" }
-            }
-        }
-
-        return PosixFilePermissions.asFileAttribute(permissions)
-    }
-
     private companion object {
         private const val ATTR_UNI_CTIME = "ctime"
         private const val ATTR_UNI_DEV = "dev"
@@ -517,9 +556,6 @@ public class FileSystem(
         private const val ATTR_UNI_NLINK = "nlink"
         private const val ATTR_UNI_RDEV = "rdev"
         private const val ATTR_UNI_UID = "uid"
-        private val SUPPORTED_MODES = Fcntl.S_IRUSR or Fcntl.S_IWUSR or Fcntl.S_IXUSR or
-                Fcntl.S_IRGRP or Fcntl.S_IWGRP or Fcntl.S_IXGRP or
-                Fcntl.S_IROTH or Fcntl.S_IWOTH or Fcntl.S_IXOTH
         private val UNIX_REQUESTED_ATTRIBUTES = "unix:" + listOf(
             ATTR_UNI_DEV,
             ATTR_UNI_INO,
@@ -534,15 +570,15 @@ public class FileSystem(
         private fun getMode(
             @Suppress("UnusedParameter") basicAttrs: BasicFileAttributes,
             unixAttrs: Map<String, Any?>,
-        ): mode_t {
+        ): FileMode {
             val unixMode = unixAttrs[ATTR_UNI_MODE] as? Int
             if (unixMode != null) {
-                return unixMode.toULong()
+                return FileMode(unixMode.toUInt())
             }
 
             // TODO: guess from Basic mode?
 
-            return "777".toULong(radix = 8)
+            return FileMode("777".toUInt(radix = 8))
         }
 
         private fun FileTime.toTimeSpec(): StructTimespec = toInstant().run {

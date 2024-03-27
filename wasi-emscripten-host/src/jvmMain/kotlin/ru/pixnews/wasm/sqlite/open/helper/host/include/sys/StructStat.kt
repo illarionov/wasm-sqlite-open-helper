@@ -8,6 +8,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.include.sys
 
+import ru.pixnews.wasm.sqlite.open.helper.host.include.FileMode
 import ru.pixnews.wasm.sqlite.open.helper.host.include.StructTimespec
 import ru.pixnews.wasm.sqlite.open.helper.host.include.timeMillis
 import java.nio.ByteBuffer
@@ -34,7 +35,7 @@ import java.nio.ByteOrder
 public data class StructStat(
     val st_dev: dev_t,
     val st_ino: ino_t,
-    val st_mode: mode_t,
+    val st_mode: FileMode,
     val st_nlink: nlink_t,
     val st_uid: uid_t,
     val st_gid: gid_t,
@@ -52,7 +53,6 @@ public typealias blksize_t = ULong
 public typealias dev_t = ULong
 public typealias gid_t = ULong
 public typealias ino_t = ULong
-public typealias mode_t = ULong
 public typealias nlink_t = ULong
 public typealias off_t = ULong
 public typealias uid_t = ULong
@@ -64,7 +64,7 @@ public fun StructStat.pack(): ByteArray {
     }
 
     dst.putInt(0, st_dev.toInt())
-    dst.putInt(4, st_mode.toInt())
+    dst.putInt(4, st_mode.mask.toInt())
     dst.putInt(8, st_nlink.toInt())
     dst.putInt(12, st_uid.toInt())
     dst.putInt(16, st_gid.toInt())
