@@ -8,7 +8,7 @@
 
 import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.SqliteCodeGenerationOptions
 import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.SqliteConfigurationOptions
-import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.SqliteConfigurationOptions.DefaultUnixVfs.UNIX_DOTFILE
+import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.SqliteConfigurationOptions.DefaultUnixVfs.UNIX_EXCL
 
 plugins {
     id("ru.pixnews.sqlite-wasm-builder")
@@ -37,7 +37,7 @@ sqlite3Build {
     builds {
         create("main") {
             sqliteVersion = defaultSqliteVersion
-            sqliteConfigOptions = SqliteConfigurationOptions.wasmConfig(UNIX_DOTFILE) + androidSqliteSpecifics
+            sqliteConfigOptions = SqliteConfigurationOptions.wasmConfig(UNIX_EXCL) + androidSqliteSpecifics
         }
         create("main-mt-pthread") {
             sqliteVersion = defaultSqliteVersion
@@ -46,7 +46,7 @@ sqlite3Build {
             emscriptenConfigurationOptions = SqliteCodeGenerationOptions.emscriptenConfigurationOptions +
                     "-sSHARED_MEMORY=1"
             sqliteConfigOptions = buildList {
-                addAll(SqliteConfigurationOptions.wasmConfig(UNIX_DOTFILE))
+                addAll(SqliteConfigurationOptions.wasmConfig(UNIX_EXCL))
                 remove("-DSQLITE_THREADSAFE=0")
                 addAll(androidSqliteSpecifics)
                 add("-DSQLITE_THREADSAFE=2")

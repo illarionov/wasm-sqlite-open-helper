@@ -6,6 +6,8 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.functiontable
 
+import kotlin.jvm.JvmInline
+
 @JvmInline
 public value class IndirectFunctionTableIndex(
     public val funcId: Int,

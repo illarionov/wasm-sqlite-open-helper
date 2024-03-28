@@ -20,6 +20,13 @@ public object Sqlite3Wasm {
             override val requireThreads: Boolean = true
             override val requireSharedMemory: Boolean = true
         }
+
+        // If enabled
+        public val sqlite3_345_mt_pthread_unstripped: WasmSqliteConfiguration = object : WasmSqliteConfiguration {
+            override val sqliteUrl: URL get() = getUrl("sqlite3-main-mt-pthread-3450100-unstripped.wasm")
+            override val requireThreads: Boolean = true
+            override val requireSharedMemory: Boolean = true
+        }
     }
 
     private fun getUrl(fileName: String): URL = requireNotNull(Sqlite3Wasm::class.java.getResource(fileName))

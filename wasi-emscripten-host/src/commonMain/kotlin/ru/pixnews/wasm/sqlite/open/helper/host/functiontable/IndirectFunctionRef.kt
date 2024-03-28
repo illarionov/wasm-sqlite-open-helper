@@ -6,6 +6,8 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.functiontable
 
+import kotlin.jvm.JvmInline
+
 public sealed interface IndirectFunctionRef {
     public val ref: Int
 

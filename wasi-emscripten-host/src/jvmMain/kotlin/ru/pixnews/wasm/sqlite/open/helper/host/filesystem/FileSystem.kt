@@ -16,20 +16,21 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.FdChannel
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.FileDescriptorMap
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.position
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.resolveAbsolutePath
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.resolvePosition
 import ru.pixnews.wasm.sqlite.open.helper.host.include.DirFd
 import ru.pixnews.wasm.sqlite.open.helper.host.include.Fcntl
 import ru.pixnews.wasm.sqlite.open.helper.host.include.FileMode
 import ru.pixnews.wasm.sqlite.open.helper.host.include.StructTimespec
+import ru.pixnews.wasm.sqlite.open.helper.host.include.blkcnt_t
+import ru.pixnews.wasm.sqlite.open.helper.host.include.blksize_t
+import ru.pixnews.wasm.sqlite.open.helper.host.include.dev_t
+import ru.pixnews.wasm.sqlite.open.helper.host.include.gid_t
+import ru.pixnews.wasm.sqlite.open.helper.host.include.ino_t
+import ru.pixnews.wasm.sqlite.open.helper.host.include.nlink_t
 import ru.pixnews.wasm.sqlite.open.helper.host.include.oMaskToString
+import ru.pixnews.wasm.sqlite.open.helper.host.include.off_t
 import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.StructStat
-import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.blkcnt_t
-import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.blksize_t
-import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.dev_t
-import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.gid_t
-import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.ino_t
-import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.nlink_t
-import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.off_t
-import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.uid_t
+import ru.pixnews.wasm.sqlite.open.helper.host.include.uid_t
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno.ACCES
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno.BADF
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno.EXIST
@@ -255,11 +256,7 @@ public class FileSystem(
         whence: Whence,
     ) {
         logger.v { "seek(${channel.fd}, $offset, $whence)" }
-        val newPosition = when (whence) {
-            Whence.SET -> offset
-            Whence.CUR -> channel.position + offset
-            Whence.END -> channel.channel.size() - offset
-        }
+        val newPosition = channel.resolvePosition(offset, whence)
         if (newPosition < 0) {
             throw SysException(INVAL, "Incorrect new position: $newPosition")
         }

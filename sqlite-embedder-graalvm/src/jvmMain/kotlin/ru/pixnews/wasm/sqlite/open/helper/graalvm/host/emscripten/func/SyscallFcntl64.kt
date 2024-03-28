@@ -6,54 +6,51 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func
 
-import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary
 import com.oracle.truffle.api.frame.VirtualFrame
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.memory.WasmMemory
-import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsUint
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
+import ru.pixnews.wasm.sqlite.open.helper.host.FcntlHandler
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
-import ru.pixnews.wasm.sqlite.open.helper.host.include.DirFd
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 
-internal class SyscallUnlinkat(
+internal class SyscallFcntl64(
     language: WasmLanguage,
     module: WasmModule,
     private val host: SqliteEmbedderHost,
-    functionName: String = "__syscall_unlinkat",
+    functionName: String = "__syscall_fcntl64",
 ) : BaseWasmNode(language, module, functionName) {
+    private val logger: Logger = host.rootLogger.withTag(SyscallFcntl64::class.qualifiedName!!)
+    private val fcntlHandler = FcntlHandler(host.fileSystem, host.rootLogger)
+
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {
         val args = frame.arguments
-        return syscallUnlinkat(
+        return syscallFcntl64(
             memory(frame),
-            args.getArgAsInt(0),
-            args.getArgAsWasmPtr(1),
-            args.getArgAsUint(2),
+            Fd(args.getArgAsInt(0)),
+            args.getArgAsInt(1),
+            args.getArgAsInt(2),
         )
     }
 
-    @TruffleBoundary
     @Suppress("MemberNameEqualsClassName")
-    private fun syscallUnlinkat(
+    private fun syscallFcntl64(
         memory: WasmMemory,
-        rawDirfd: Int,
-        pathnamePtr: WasmPtr<Byte>,
-        flags: UInt,
+        fd: Fd,
+        cmd: Int,
+        thirdArg: Int,
     ): Int {
-        val errNo = try {
-            val path = memory.readString(pathnamePtr.addr, null)
-            host.fileSystem.unlinkAt(DirFd(rawDirfd), path, flags)
-            Errno.SUCCESS
+        return try {
+            fcntlHandler.invoke(memory.toHostMemory(), fd, cmd.toUInt(), thirdArg)
         } catch (e: SysException) {
-            e.errNo
+            logger.v(e) { "__syscall_fcntl64() failed: ${e.message}" }
+            e.errNo.code
         }
-        return -errNo.code
     }
 }

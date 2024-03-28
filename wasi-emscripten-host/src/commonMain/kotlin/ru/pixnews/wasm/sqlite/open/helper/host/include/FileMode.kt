@@ -7,6 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.host.include
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.SqliteUintBitMask
+import kotlin.jvm.JvmInline
 
 /**
  * File mode bits (st_mode)

@@ -18,6 +18,7 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 
 internal class SyscallRmdir(
     language: WasmLanguage,
@@ -40,11 +41,11 @@ internal class SyscallRmdir(
     ): Int {
         val fs = host.fileSystem
         val path = memory.readString(pathnamePtr.addr, null)
-        try {
+        return try {
             fs.rmdir(path)
-            return 0
+            Errno.SUCCESS.code
         } catch (e: SysException) {
-            return -e.errNo.code
+            -e.errNo.code
         }
     }
 }

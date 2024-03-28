@@ -15,13 +15,24 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 import java.io.IOException
 import java.nio.channels.ClosedChannelException
 import java.nio.channels.FileChannel
+import java.nio.channels.FileLock
 import java.nio.file.Path
+import java.util.concurrent.locks.Lock
+import java.util.concurrent.locks.ReentrantLock
 
 public class FdChannel(
     public val fileSystem: FileSystem,
     public val fd: Fd,
     public val path: Path,
     public val channel: FileChannel,
+) {
+    public val lock: Lock = ReentrantLock()
+    internal val fileLocks: MutableMap<FileLockKey, FileLock> = mutableMapOf()
+}
+
+public data class FileLockKey(
+    val position: Long,
+    val length: Long,
 )
 
 public var FdChannel.position: Long

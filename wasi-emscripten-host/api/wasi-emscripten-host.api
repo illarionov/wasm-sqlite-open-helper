@@ -1,3 +1,8 @@
+public final class ru/pixnews/wasm/sqlite/open/helper/host/FcntlHandler {
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/FileSystem;Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;)V
+	public final fun invoke-y81n00A (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;IILjava/lang/Integer;)I
+}
+
 public final class ru/pixnews/wasm/sqlite/open/helper/host/WasmValueType {
 	public static final field WebAssemblyTypes Lru/pixnews/wasm/sqlite/open/helper/host/WasmValueType$WebAssemblyTypes;
 	public static final synthetic fun box-impl (Ljava/lang/Byte;)Lru/pixnews/wasm/sqlite/open/helper/host/WasmValueType;
@@ -88,12 +93,30 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/fd/FdChann
 	public final fun getChannel ()Ljava/nio/channels/FileChannel;
 	public final fun getFd-W39Gj_Q ()I
 	public final fun getFileSystem ()Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/FileSystem;
+	public final fun getLock ()Ljava/util/concurrent/locks/Lock;
 	public final fun getPath ()Ljava/nio/file/Path;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/fd/FdChannelKt {
 	public static final fun getPosition (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/fd/FdChannel;)J
 	public static final fun setPosition (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/fd/FdChannel;J)V
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/fd/FileChannelWhenceExtKt {
+	public static final fun resolvePosition (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/fd/FdChannel;JLru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Whence;)J
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/fd/FileLockKey {
+	public fun <init> (JJ)V
+	public final fun component1 ()J
+	public final fun component2 ()J
+	public final fun copy (JJ)Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/fd/FileLockKey;
+	public static synthetic fun copy$default (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/fd/FileLockKey;JJILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/fd/FileLockKey;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLength ()J
+	public final fun getPosition ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/functiontable/IndirectFunctionRef {
@@ -159,7 +182,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/include/DirFd$Cwd : r
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/host/include/DirFd$Fd : ru/pixnews/wasm/sqlite/open/helper/host/include/DirFd {
+public final class ru/pixnews/wasm/sqlite/open/helper/host/include/DirFd$FileDescriptor : ru/pixnews/wasm/sqlite/open/helper/host/include/DirFd {
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getFd-W39Gj_Q ()I
 	public fun getRawValue ()I
@@ -173,6 +196,25 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/include/Fcntl {
 	public static final field AT_REMOVEDIR I
 	public static final field AT_SYMLINK_FOLLOW I
 	public static final field AT_SYMLINK_NOFOLLOW I
+	public static final field F_DUPFD I
+	public static final field F_DUPFD_CLOEXEC I
+	public static final field F_GETFD I
+	public static final field F_GETFL I
+	public static final field F_GETLK I
+	public static final field F_GETOWN I
+	public static final field F_GETOWNER_UIDS I
+	public static final field F_GETOWN_EX I
+	public static final field F_GETSIG I
+	public static final field F_RDLCK S
+	public static final field F_SETFD I
+	public static final field F_SETFL I
+	public static final field F_SETLK I
+	public static final field F_SETLKW I
+	public static final field F_SETOWN I
+	public static final field F_SETOWN_EX I
+	public static final field F_SETSIG I
+	public static final field F_UNLCK S
+	public static final field F_WRLCK S
 	public static final field INSTANCE Lru/pixnews/wasm/sqlite/open/helper/host/include/Fcntl;
 	public static final field O_ACCMODE I
 	public static final field O_APPEND I
@@ -237,6 +279,32 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/include/FileMode : ru
 public final class ru/pixnews/wasm/sqlite/open/helper/host/include/FileModeKt {
 	public static final fun fileModeToString-V5_AT8g (I)Ljava/lang/String;
 	public static final fun fileModeToStringLong-V5_AT8g (I)Ljava/lang/String;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/include/StructFlock {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/include/StructFlock$Companion;
+	public static final field STRUCT_FLOCK_SIZE I
+	public synthetic fun <init> (SSJJILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()S
+	public final fun component2 ()S
+	public final fun component3-s-VKNKU ()J
+	public final fun component4-s-VKNKU ()J
+	public final fun component5 ()I
+	public final fun copy-orKg6c4 (SSJJI)Lru/pixnews/wasm/sqlite/open/helper/host/include/StructFlock;
+	public static synthetic fun copy-orKg6c4$default (Lru/pixnews/wasm/sqlite/open/helper/host/include/StructFlock;SSJJIILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/host/include/StructFlock;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getL_len-s-VKNKU ()J
+	public final fun getL_pid ()I
+	public final fun getL_start-s-VKNKU ()J
+	public final fun getL_type ()S
+	public final fun getL_whence ()S
+	public final fun getWhence ()Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Whence;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/include/StructFlock$Companion {
+	public final fun unpack ([B)Lru/pixnews/wasm/sqlite/open/helper/host/include/StructFlock;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/include/StructTimespec {

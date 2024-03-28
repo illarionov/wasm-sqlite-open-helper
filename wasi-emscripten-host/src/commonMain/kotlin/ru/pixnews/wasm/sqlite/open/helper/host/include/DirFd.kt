@@ -26,7 +26,7 @@ public sealed class DirFd(
             if (this === other) {
                 return true
             }
-            if (javaClass != other?.javaClass) {
+            if (other == null || this::class != other::class) {
                 return false
             }
 

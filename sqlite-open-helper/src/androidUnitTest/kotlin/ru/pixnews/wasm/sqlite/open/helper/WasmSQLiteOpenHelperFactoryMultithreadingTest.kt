@@ -22,7 +22,7 @@ import kotlin.time.Duration.Companion.seconds
 import kotlin.time.TimedValue
 import kotlin.time.measureTimedValue
 
-class WasmSQLiteOpenHelperFactoryMultiplatformTest {
+class WasmSQLiteOpenHelperFactoryMultithreadingTest {
     val logger = KermitLogger("RequerySQLiteOpenHelperFactoryTest")
     val dbLogger = KermitLogger(tag = "WSOH", minSeverity = Debug)
 

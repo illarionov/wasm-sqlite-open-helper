@@ -7,6 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type
 
 import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType
+import kotlin.jvm.JvmInline
 
 /**
  * Relative offset within a file.

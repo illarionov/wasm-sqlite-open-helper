@@ -12,6 +12,31 @@ package ru.pixnews.wasm.sqlite.open.helper.host.include
  * Constants from Emscripten include/fcntl.h
  */
 public object Fcntl {
+    public const val F_DUPFD: UInt = 0U
+    public const val F_DUPFD_CLOEXEC: UInt = 1030U
+
+    public const val F_GETFD: UInt = 1U
+    public const val F_SETFD: UInt = 2U
+    public const val F_GETFL: UInt = 3U
+    public const val F_SETFL: UInt = 4U
+
+    public const val F_SETOWN: UInt = 8U
+    public const val F_GETOWN: UInt = 9U
+    public const val F_SETSIG: UInt = 10U
+    public const val F_GETSIG: UInt = 11U
+
+    public const val F_GETLK: UInt = 12U
+    public const val F_SETLK: UInt = 13U
+    public const val F_SETLKW: UInt = 14U
+
+    public const val F_SETOWN_EX: UInt = 15U
+    public const val F_GETOWN_EX: UInt = 16U
+    public const val F_GETOWNER_UIDS: UInt = 17U
+
+    public const val F_RDLCK: Short = 0
+    public const val F_WRLCK: Short = 1
+    public const val F_UNLCK: Short = 2
+
     public const val O_RDONLY: UInt = 0x0U
     public const val O_WRONLY: UInt = 0x1U
     public const val O_RDWR: UInt = 0x2U
