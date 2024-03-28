@@ -23,6 +23,7 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
 import ru.pixnews.wasm.sqlite.open.helper.host.include.DirFd
 import ru.pixnews.wasm.sqlite.open.helper.host.include.FileMode
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 
 internal class SyscallMkdirat(
     language: WasmLanguage,
@@ -30,7 +31,7 @@ internal class SyscallMkdirat(
     private val host: SqliteEmbedderHost,
     functionName: String = "__syscall_mkdirat",
 ) : BaseWasmNode(language, module, functionName) {
-    private val logger: Logger = host.rootLogger.withTag(SyscallFtruncate64::class.qualifiedName!!)
+    private val logger: Logger = host.rootLogger.withTag(SyscallMkdirat::class.qualifiedName!!)
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
         val args: Array<Any> = frame.arguments
         return syscallMkdirat(
@@ -53,12 +54,12 @@ internal class SyscallMkdirat(
         val dirFd = DirFd(rawDirFd)
         val mode = FileMode(rawMode)
         val path = memory.readString(pathnamePtr.addr, null)
-        try {
+        return try {
             fs.mkdirAt(dirFd, path, mode)
-            return 0
+            Errno.SUCCESS.code
         } catch (e: SysException) {
             logger.v(e) { "__syscall_mkdirat($dirFd, $path, $mode) error: ${e.errNo}" }
-            return -e.errNo.code
+            -e.errNo.code
         }
     }
 }

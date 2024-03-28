@@ -8,11 +8,18 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.include.sys
 
+import okio.Buffer
 import ru.pixnews.wasm.sqlite.open.helper.host.include.FileMode
 import ru.pixnews.wasm.sqlite.open.helper.host.include.StructTimespec
+import ru.pixnews.wasm.sqlite.open.helper.host.include.blkcnt_t
+import ru.pixnews.wasm.sqlite.open.helper.host.include.blksize_t
+import ru.pixnews.wasm.sqlite.open.helper.host.include.dev_t
+import ru.pixnews.wasm.sqlite.open.helper.host.include.gid_t
+import ru.pixnews.wasm.sqlite.open.helper.host.include.ino_t
+import ru.pixnews.wasm.sqlite.open.helper.host.include.nlink_t
+import ru.pixnews.wasm.sqlite.open.helper.host.include.off_t
 import ru.pixnews.wasm.sqlite.open.helper.host.include.timeMillis
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
+import ru.pixnews.wasm.sqlite.open.helper.host.include.uid_t
 
 /**
  * <sys/stat.h> struct stat
@@ -48,44 +55,36 @@ public data class StructStat(
     val st_ctim: StructTimespec,
 )
 
-public typealias blkcnt_t = ULong
-public typealias blksize_t = ULong
-public typealias dev_t = ULong
-public typealias gid_t = ULong
-public typealias ino_t = ULong
-public typealias nlink_t = ULong
-public typealias off_t = ULong
-public typealias uid_t = ULong
-
 public fun StructStat.pack(): ByteArray {
-    val dstByteArray = ByteArray(96)
-    val dst = ByteBuffer.wrap(dstByteArray).apply {
-        order(ByteOrder.LITTLE_ENDIAN)
-    }
+    val bytes: ByteArray = Buffer().run {
+        writeIntLe(st_dev.toInt()) // 0
+        writeIntLe(st_mode.mask.toInt()) // 4
+        writeIntLe(st_nlink.toInt()) // 8
+        writeIntLe(st_uid.toInt()) // 12
+        writeIntLe(st_gid.toInt()) // 16
+        writeIntLe(st_rdev.toInt()) // 20
+        writeLongLe(st_size.toLong()) // 24
+        writeIntLe(4096) // 32
+        writeIntLe(st_blocks.toInt()) // 36
 
-    dst.putInt(0, st_dev.toInt())
-    dst.putInt(4, st_mode.mask.toInt())
-    dst.putInt(8, st_nlink.toInt())
-    dst.putInt(12, st_uid.toInt())
-    dst.putInt(16, st_gid.toInt())
-    dst.putInt(20, st_rdev.toInt())
-    dst.putLong(24, st_size.toLong())
-    dst.putInt(32, 4096)
-    dst.putInt(36, st_blocks.toInt())
-
-    st_atim.timeMillis.let {
-        dst.putLong(40, (it / 1000U).toLong())
-        dst.putInt(48, (1000U * (it % 1000U)).toInt())
+        st_atim.timeMillis.let {
+            writeLongLe((it / 1000U).toLong()) // 40
+            writeIntLe((1000U * (it % 1000U)).toInt()) // 48
+            writeIntLe(0) // 52, padding
+        }
+        st_mtim.timeMillis.let {
+            writeLongLe((it / 1000U).toLong()) // 56
+            writeIntLe((1000U * (it % 1000U)).toInt()) // 64
+            writeIntLe(0) // 68, padding
+        }
+        st_ctim.timeMillis.let {
+            writeLongLe((it / 1000U).toLong()) // 72
+            writeIntLe((1000U * (it % 1000U)).toInt()) // 80
+            writeIntLe(0) // 84, padding
+        }
+        writeLongLe(st_ino.toLong()) // 88
+        readByteArray()
     }
-    st_mtim.timeMillis.let {
-        dst.putLong(56, (it / 1000U).toLong())
-        dst.putInt(64, (1000U * (it % 1000U)).toInt())
-    }
-    st_ctim.timeMillis.let {
-        dst.putLong(72, (it / 1000U).toLong())
-        dst.putInt(80, (1000U * (it % 1000U)).toInt())
-    }
-    dst.putLong(88, st_ino.toLong())
-
-    return dstByteArray
+    check(bytes.size == 96)
+    return bytes
 }

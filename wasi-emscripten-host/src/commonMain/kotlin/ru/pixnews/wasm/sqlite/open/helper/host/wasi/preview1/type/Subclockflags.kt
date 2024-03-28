@@ -7,6 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type
 
 import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType
+import kotlin.jvm.JvmInline
 
 /**
  * Flags determining how to interpret the timestamp provided in `subscription_clock::timeout`.

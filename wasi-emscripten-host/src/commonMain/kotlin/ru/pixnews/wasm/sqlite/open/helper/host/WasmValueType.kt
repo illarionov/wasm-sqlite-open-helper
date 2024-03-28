@@ -6,6 +6,8 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host
 
+import kotlin.jvm.JvmInline
+
 // https://webassembly.github.io/spec/core/appendix/index-types.html
 @JvmInline
 public value class WasmValueType(

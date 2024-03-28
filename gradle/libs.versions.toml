@@ -24,6 +24,7 @@ kotlin = "1.9.23"
 kotlinx-binary-compatibility-validator = "0.14.0"
 kermit = "2.0.3"
 ksp = "1.9.23-1.0.19"
+okio = "3.9.0"
 spotless = "6.25.0"
 
 [libraries]
@@ -53,6 +54,7 @@ junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform
 kermit = { group = "co.touchlab", name = "kermit", version.ref = "kermit" }
 kermit-jvm = { group = "co.touchlab", name = "kermit-jvm", version.ref = "kermit" }
 kotlin-bom = { group = "org.jetbrains.kotlin", name = "kotlin-bom", version.ref = "kotlin" }
+okio-okio = { group = "com.squareup.okio", name = "okio", version.ref = "okio" }
 
 # Dependencies of the included build-logic
 agp-plugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }

@@ -22,6 +22,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(projects.commonApi)
+            implementation(libs.okio.okio)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
