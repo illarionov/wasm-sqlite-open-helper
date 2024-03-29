@@ -146,9 +146,9 @@
 #ifndef SQLITE_OMIT_SHARED_CACHE
 # define SQLITE_OMIT_SHARED_CACHE 1
 #endif
-#ifndef SQLITE_OMIT_UTF16
-# define SQLITE_OMIT_UTF16 1
-#endif
+// #ifndef SQLITE_OMIT_UTF16
+// # define SQLITE_OMIT_UTF16 1
+// #endif
 #ifndef SQLITE_OS_KV_OPTIONAL
 # define SQLITE_OS_KV_OPTIONAL 1
 #endif

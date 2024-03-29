@@ -11,7 +11,6 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.ProjectLayout
-import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
@@ -68,7 +67,7 @@ public abstract class EmscriptenBuildTask @Inject constructor(
 
     @get:Internal
     public val emccExecutable: Property<File> = objects.property(File::class.java).convention(
-        emscriptenRoot.zip<String?, File>(emccExecutablePath) { root, fileName -> File(root, fileName) },
+        emscriptenRoot.zip(emccExecutablePath) { root, fileName -> File(root, fileName) },
     )
 
     @get:Input
@@ -97,7 +96,7 @@ public abstract class EmscriptenBuildTask @Inject constructor(
 
     @get:Internal
     public val outputFile: RegularFileProperty = objects.fileProperty().convention(
-        outputDirectory.zip<String, RegularFile>(outputFileName, Directory::file),
+        outputDirectory.zip(outputFileName, Directory::file),
     )
 
     @get:InputFiles

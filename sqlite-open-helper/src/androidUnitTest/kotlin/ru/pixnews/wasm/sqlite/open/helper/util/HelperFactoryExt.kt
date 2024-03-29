@@ -11,6 +11,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import org.graalvm.polyglot.Engine
 import ru.pixnews.wasm.sqlite.open.helper.Sqlite3Wasm.Emscripten
+import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperFactory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmSqliteEmbedder
@@ -21,9 +22,11 @@ fun createWasmSQLiteOpenHelper(
     dstDir: File,
     dbLogger: Logger,
     dbName: String = "test.db",
+    wasmGraalvmEngine: Engine = Engine.create("wasm"),
+    sqlite3Binary: WasmSqliteConfiguration = Emscripten.sqlite3_345_android_icu_mt_pthread,
     openHelperCallback: SupportSQLiteOpenHelper.Callback = LoggingOpenHelperCallback(dbLogger),
 ): SupportSQLiteOpenHelper {
-    val factory = createWasmSqliteOpenHelperFactory(dstDir, dbLogger)
+    val factory = createWasmSqliteOpenHelperFactory(dstDir, dbLogger, wasmGraalvmEngine, sqlite3Binary)
     val mockContext = ContextWrapper(null)
     val config = SupportSQLiteOpenHelper.Configuration(mockContext, dbName, openHelperCallback)
     return factory.create(config)
@@ -32,13 +35,15 @@ fun createWasmSQLiteOpenHelper(
 fun createWasmSqliteOpenHelperFactory(
     dstDir: File,
     dbLogger: Logger,
+    wasmGraalvmEngine: Engine = Engine.create("wasm"),
+    sqlite3Binary: WasmSqliteConfiguration = Emscripten.sqlite3_345_android_icu_mt_pthread,
 ): SupportSQLiteOpenHelper.Factory {
     return WasmSqliteOpenHelperFactory(GraalvmSqliteEmbedder) {
         pathResolver = DatabasePathResolver { name -> File(dstDir, name) }
         logger = dbLogger
         embedder {
-            graalvmEngine = Engine.create("wasm")
-            sqlite3Binary = Emscripten.sqlite3_345_mt_pthread
+            graalvmEngine = wasmGraalvmEngine
+            this.sqlite3Binary = sqlite3Binary
         }
         debug {
             sqlLog = true
