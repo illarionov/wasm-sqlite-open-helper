@@ -37,41 +37,17 @@ sqlite3Build {
     builds {
         create("main") {
             sqliteVersion = defaultSqliteVersion
+            codeGenerationOptions = SqliteCodeGenerationOptions.codeGenerationOptions - "-pthread"
+            emscriptenConfigurationOptions = SqliteCodeGenerationOptions.emscriptenConfigurationOptions -
+                    "-sSHARED_MEMORY"
             sqliteConfigOptions = SqliteConfigurationOptions.wasmConfig(UNIX_EXCL) + androidSqliteSpecifics
-        }
-        create("main-mt-pthread") {
-            sqliteVersion = defaultSqliteVersion
-            codeGenerationOptions = SqliteCodeGenerationOptions.codeGenerationOptions +
-                    "-pthread"
-            emscriptenConfigurationOptions = SqliteCodeGenerationOptions.emscriptenConfigurationOptions +
-                    "-sSHARED_MEMORY=1"
-            sqliteConfigOptions = buildList {
-                addAll(SqliteConfigurationOptions.wasmConfig(UNIX_EXCL))
-                remove("-DSQLITE_THREADSAFE=0")
-                addAll(androidSqliteSpecifics)
-                add("-DSQLITE_THREADSAFE=2")
-                add("-DSQLITE_MAX_WORKER_THREADS=0") // Do not create threads from SQLITE
-            }
         }
         create("android-icu-mt-pthread") {
             sqliteVersion = defaultSqliteVersion
-            codeGenerationOptions = SqliteCodeGenerationOptions.codeGenerationOptions + "-pthread"
-            emscriptenConfigurationOptions = SqliteCodeGenerationOptions.emscriptenConfigurationOptions +
-                    listOf(
-                        "-sSHARED_MEMORY=1",
-                        "-sUSE_ICU=1",
-                    )
-            sqliteConfigOptions = buildList {
-                addAll(SqliteConfigurationOptions.wasmConfig(UNIX_EXCL))
-                remove("-DSQLITE_THREADSAFE=0")
-                addAll(androidSqliteSpecifics)
-                add("-DSQLITE_THREADSAFE=2")
-                add("-DSQLITE_MAX_WORKER_THREADS=0") // Do not create threads from SQLITE
-
-                // ICU flags
-                add("-DSQLITE_ENABLE_ICU")
-                remove("-DSQLITE_OMIT_UTF16")
-            }
+            emscriptenConfigurationOptions = SqliteCodeGenerationOptions.emscriptenConfigurationOptions + listOf(
+                "-sUSE_ICU=1",
+            )
+            sqliteConfigOptions = SqliteConfigurationOptions.openHelperConfig
         }
     }
 }

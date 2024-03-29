@@ -15,6 +15,7 @@ public object SqliteCodeGenerationOptions {
         "--minify", "0",
         "--no-entry",
         "-Wno-limited-postlink-optimizations",
+        "-pthread",
     )
 
     public val codeOptimizationOptionsO2: List<String> = listOf(
@@ -27,7 +28,7 @@ public object SqliteCodeGenerationOptions {
         "-sALLOW_TABLE_GROWTH",
         "-sDYNAMIC_EXECUTION=0",
         "-sENVIRONMENT=worker",
-        "-sERROR_ON_UNDEFINED_SYMBOLS=1",
+        "-sERROR_ON_UNDEFINED_SYMBOLS",
         "-sEXPORT_ES6",
         "-sEXPORTED_RUNTIME_METHODS=wasmMemory",
         "-sEXPORT_NAME=sqlite3InitModule",
@@ -42,6 +43,7 @@ public object SqliteCodeGenerationOptions {
         "-sSTRICT_JS=0",
         "-sUSE_CLOSURE_COMPILER=0",
         "-sUSE_ES6_IMPORT_META",
-        "-sWASM_BIGINT=1",
+        "-sWASM_BIGINT",
+        "-sSHARED_MEMORY",
     )
 }
