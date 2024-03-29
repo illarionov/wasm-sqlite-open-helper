@@ -28,6 +28,7 @@ public object SqliteCodeGenerationOptions {
         "-sDYNAMIC_EXECUTION=0",
         "-sENVIRONMENT=worker",
         "-sERROR_ON_UNDEFINED_SYMBOLS=1",
+        "-sEXPORT_ES6",
         "-sEXPORTED_RUNTIME_METHODS=wasmMemory",
         "-sEXPORT_NAME=sqlite3InitModule",
         "-sGLOBAL_BASE=4096",
@@ -40,6 +41,7 @@ public object SqliteCodeGenerationOptions {
         "-sSTANDALONE_WASM=0",
         "-sSTRICT_JS=0",
         "-sUSE_CLOSURE_COMPILER=0",
+        "-sUSE_ES6_IMPORT_META",
         "-sWASM_BIGINT=1",
     )
 }

@@ -57,7 +57,7 @@ private fun setupTasksForBuild(buildSpec: SqliteWasmBuildSpec) {
         buildSpec.sqlite3Source
     }
     val unstrippedWasmFileName = buildSpec.wasmUnstrippedFileName.get()
-    val unstrippedJsFileName = unstrippedWasmFileName.substringBeforeLast(".wasm") + ".js"
+    val unstrippedJsFileName = unstrippedWasmFileName.substringBeforeLast(".wasm") + ".mjs"
     val strippedWasm = buildSpec.wasmFileName.get()
 
     val compileSqliteTask = tasks.register<EmscriptenBuildTask>("compileSqlite$buildName") {
