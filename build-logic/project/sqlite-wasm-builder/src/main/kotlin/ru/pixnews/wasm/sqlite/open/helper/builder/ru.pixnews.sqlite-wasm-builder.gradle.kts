@@ -22,7 +22,9 @@ plugins {
     base
 }
 
-setupUnpackSqliteAttributes()
+setupUnpackSqliteAttributes(
+    androidSqlitePatchFile = project.layout.projectDirectory.file(provider { "src/main/cpp/android/Android.patch" }),
+)
 
 configurations {
     dependencyScope("wasmLibraries")
