@@ -21,6 +21,7 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.bindings.SqliteBindings
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.bindings.SqliteMemoryBindings
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.asWasmAddr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.readNullTerminatedString
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.toInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.Sqlite3CallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.Sqlite3CallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.Sqlite3CallbackStore.Sqlite3ExecCallbackId
@@ -393,6 +394,26 @@ internal class GraalvmSqliteCapiImpl internal constructor(
             columnIndex,
         ).asInt()
         return memory.memory.readBytes(ptr, bytes)
+    }
+
+    override fun registerAndroidFunctions(db: WasmPtr<SqliteDb>, utf16Storage: Boolean) {
+        sqliteBindings.register_android_functions.execute(db.addr, utf16Storage.toInt())
+            .throwOnSqliteError("register_android_functions() failed", db)
+    }
+
+    override fun nativeRegisterLocalizedCollators(ptr: WasmPtr<SqliteDb>, newLocale: String, utf16Storage: Boolean) {
+        var pNewLocale: WasmPtr<Byte> = sqlite3Null()
+        try {
+            pNewLocale = memory.allocZeroTerminatedString(newLocale)
+            val errCode = sqliteBindings.register_localized_collators.execute(
+                ptr.addr,
+                pNewLocale.addr,
+                utf16Storage.toInt(),
+            )
+            errCode.throwOnSqliteError("register_localized_collators($newLocale) failed", ptr)
+        } finally {
+            memory.freeSilent(pNewLocale)
+        }
     }
 
     override fun sqlite3Step(

@@ -10,6 +10,6 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteComparatorCall
 
 internal class LocalizedComparator : SqliteComparatorCallback {
     override fun invoke(stringA: String, stringB: String): Int {
-        return stringA.compareTo(stringB) // TODO
+        return stringA.compareTo(stringB)
     }
 }

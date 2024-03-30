@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+@file:Suppress("FunctionNaming")
+
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.host.preview1.func
 
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary
@@ -20,11 +22,26 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 
-internal class FdSync(
+internal fun FdSync(
+    language: WasmLanguage,
+    module: WasmModule,
+    host: SqliteEmbedderHost,
+    functionName: String = "fd_sync",
+): BaseWasmNode = FdSync(language, module, host, functionName, syncMetadata = true)
+
+internal fun SyscallFdatasync(
+    language: WasmLanguage,
+    module: WasmModule,
+    host: SqliteEmbedderHost,
+    functionName: String = "__syscall_fdatasync",
+): BaseWasmNode = FdSync(language, module, host, functionName, syncMetadata = false)
+
+private class FdSync(
     language: WasmLanguage,
     module: WasmModule,
     private val host: SqliteEmbedderHost,
     functionName: String = "fd_sync",
+    private val syncMetadata: Boolean = true,
 ) : BaseWasmNode(language, module, functionName) {
     private val logger: Logger = host.rootLogger.withTag(FdSync::class.qualifiedName!!)
 
@@ -39,7 +56,7 @@ internal class FdSync(
         fd: Fd,
     ): Int {
         return try {
-            host.fileSystem.sync(fd, metadata = true)
+            host.fileSystem.sync(fd, metadata = syncMetadata)
             Errno.SUCCESS
         } catch (e: SysException) {
             logger.i(e) { "sync() error" }

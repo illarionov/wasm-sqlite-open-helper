@@ -40,6 +40,7 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.fnVoid
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.SharedMemoryWaiterListStore
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.WasmMemoryNotifyCallback
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.WasmMemoryWaitCallback
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.preview1.func.SyscallFdatasync
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.pthread.Pthread
 import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType.WebAssemblyTypes.F64
 import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType.WebAssemblyTypes.I32
@@ -99,6 +100,7 @@ internal class EmscriptenEnvModuleBuilder(
             nodeFactory = ::SyscallFchown32,
         )
         fn("__syscall_fcntl64", List(3) { I32 }, I32, ::SyscallFcntl64)
+        fn("__syscall_fdatasync", listOf(I32), I32, ::SyscallFdatasync)
         fn("__syscall_fstat64", listOf(I32, I32), I32, ::SyscallFstat64)
         fn("__syscall_ftruncate64", listOf(I32, I64), I32, ::SyscallFtruncate64)
         fn(

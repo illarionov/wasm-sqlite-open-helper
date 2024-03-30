@@ -141,4 +141,9 @@ internal interface SqlOpenHelperNativeBindings<
         connectionPtr: CP,
         cancelable: Boolean,
     )
+
+    fun nativeRegisterLocalizedCollators(
+        connectionPtr: CP,
+        newLocale: String,
+    )
 }

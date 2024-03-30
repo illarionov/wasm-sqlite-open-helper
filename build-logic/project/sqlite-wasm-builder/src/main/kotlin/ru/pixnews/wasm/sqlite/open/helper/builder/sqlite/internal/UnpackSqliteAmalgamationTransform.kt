@@ -50,6 +50,6 @@ internal abstract class UnpackSqliteAmalgamationTransform : TransformAction<Tran
     }
 
     internal companion object {
-        val SQLITE_EXTRACTED_FILES = listOf("sqlite3.c", "sqlite3.h")
+        val SQLITE_EXTRACTED_FILES = listOf("sqlite3.c", "sqlite3.h", "shell.c")
     }
 }

@@ -67,6 +67,9 @@ internal class SqliteBindings(
     val sqlite3_wasm_enum_json = mainBindings.getMember("sqlite3__wasm_enum_json") // 661
         ?: mainBindings.getMember("sqlite3_wasm_enum_json") // 661
 
+    val register_localized_collators by mainBindings.member()
+    val register_android_functions by mainBindings.member()
+
     private val memory = GraalHostMemoryImpl(envBindings.getMember("memory"))
 
     val memoryBindings = SqliteMemoryBindings(mainBindings, memory)
@@ -75,14 +78,12 @@ internal class SqliteBindings(
         initSqlite()
     }
 
-    // globalThis.sqlite3InitModule
     private fun initSqlite() {
          requireNotNull(__wasm_call_ctors) {
              "__wasm_call_ctors not defined"
          }.execute()
         memoryBindings.init()
         postRun()
-        // _initialize.execute()
     }
 
     private fun postRun() {
