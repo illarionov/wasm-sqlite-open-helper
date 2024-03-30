@@ -117,7 +117,7 @@ internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> SQLiteConnect
     newLocale: String,
 ) {
      // TODO: Register the localized collators.
-     // nativeRegisterLocalizedCollators(newLocale)
+     nativeRegisterLocalizedCollators(newLocale)
 
     try {
         // Ensure the android metadata table exists.

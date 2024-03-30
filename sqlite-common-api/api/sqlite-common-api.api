@@ -2,9 +2,9 @@ public abstract interface annotation class ru/pixnews/wasm/sqlite/open/helper/Wa
 }
 
 public abstract interface class ru/pixnews/wasm/sqlite/open/helper/embedder/SqliteCapi {
-	public abstract fun nativeRegisterLocalizedCollators-Q32f7bY (ILjava/lang/String;Z)V
 	public abstract fun readSqliteErrorInfo-MYs6Txo (I)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteErrorInfo;
 	public abstract fun registerAndroidFunctions-OCuHDVA (IZ)V
+	public abstract fun registerLocalizedCollators-Q32f7bY (ILjava/lang/String;Z)V
 	public abstract fun sqlite3BindBlobTransient-nSDRFtM (II[B)I
 	public abstract fun sqlite3BindDouble-nSDRFtM (IID)I
 	public abstract fun sqlite3BindLong-nSDRFtM (IIJ)I

@@ -95,8 +95,11 @@ private fun setupTasksForBuild(buildSpec: SqliteWasmBuildSpec) {
 
     configurations.named("wasmSqliteElements").get().outgoing {
         artifacts {
-            artifact(stripSqliteTask.flatMap(WasmStripTask::destination)) {
-                builtBy(stripSqliteTask)
+//            artifact(stripSqliteTask.flatMap(WasmStripTask::destination)) {
+//                builtBy(stripSqliteTask)
+//            }
+            artifact(compileSqliteTask.flatMap { it.outputDirectory.file(unstrippedWasmFileName) }) {
+                builtBy(compileSqliteTask)
             }
         }
     }

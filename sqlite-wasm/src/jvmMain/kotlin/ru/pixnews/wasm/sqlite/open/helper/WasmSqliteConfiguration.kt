@@ -10,6 +10,7 @@ import java.net.URL
 
 public interface WasmSqliteConfiguration {
     public val sqliteUrl: URL
+    public val wasmMinMemorySize: Long
     public val requireThreads: Boolean
     public val requireSharedMemory: Boolean
 }

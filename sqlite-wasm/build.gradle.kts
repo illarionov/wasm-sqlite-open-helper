@@ -6,6 +6,7 @@
 
 @file:Suppress("GENERIC_VARIABLE_WRONG_DECLARATION")
 
+import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.SqliteCodeGenerationOptions
 import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.SqliteConfigurationOptions
 import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.SqliteExportedFunctions
 
@@ -29,6 +30,12 @@ sqlite3Build {
             sqliteVersion = defaultSqliteVersion
             sqliteConfigOptions = SqliteConfigurationOptions.openHelperConfig
             val sqlite3AndroidSourcesDir = layout.projectDirectory.dir("src/main/cpp/android/android")
+            codeGenerationOptions = SqliteCodeGenerationOptions.codeGenerationOptions + listOf(
+                "-L/home/work/icu/icu/dst/lib",
+                "-licuuc",
+                "-licui18n",
+                "-licudata",
+            )
             additionalSourceFiles.from(
                 sqlite3AndroidSourcesDir.files(
                     "sqlite3_android.cpp",
@@ -36,7 +43,12 @@ sqlite3Build {
                     "OldPhoneNumberUtils.cpp",
                 ),
             )
-            additionalIncludes.from(sqlite3AndroidSourcesDir)
+            additionalIncludes.from(
+                sqlite3AndroidSourcesDir,
+                "/home/work/icu/icu/dst/include",
+            )
+            emscriptenConfigurationOptions = SqliteCodeGenerationOptions.emscriptenConfigurationOptions -
+                    "-sINITIAL_MEMORY=50331648" + "-sINITIAL_MEMORY=50331648"
             exportedFunctions = SqliteExportedFunctions.openHelperExportedFunctions + listOf(
                 "_register_localized_collators",
                 "_register_android_functions",
