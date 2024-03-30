@@ -14,7 +14,7 @@ public object SqliteConfigurationOptions {
         "-DUSE_PREAD64",
         "-Werror",
     ) + listOf(
-        // Do not create threads from SQLITE
+        // Do not create threads from Sqlite native code
         "-DSQLITE_MAX_WORKER_THREADS=0",
 
         // default file system
@@ -64,7 +64,7 @@ public object SqliteConfigurationOptions {
     )
 
     /**
-     * Build configuration defaults from Android port of SQLite (The Android Open Source Project)
+     * Build configurations from Android port of SQLite (The Android Open Source Project)
      * https://android.googlesource.com/platform/external/sqlite
      * 3cfcc6cc2e54ab58ed8114194d54da5ac1ab16b2 (2024-03-25)
      */
@@ -137,6 +137,12 @@ public object SqliteConfigurationOptions {
         "-DSQLITE_WASM_ENABLE_C_TESTS",
     )
 
+    /**
+     * Sqlite Standard UNIX Filesystems
+     *
+     * https://www.sqlite.org/vfs.html
+     * https://www.sqlite.org/src/doc/trunk/src/os_unix.c
+     */
     public enum class DefaultUnixVfs(public val id: String) {
         UNIX("unix"),
         UNIX_DOTFILE("unix-dotfile"),

@@ -52,7 +52,6 @@ sqliteExtension.builds.configureEach {
 
 private fun setupTasksForBuild(buildSpec: SqliteWasmBuildSpec) {
     val buildName = buildSpec.name.capitalizeAscii()
-    val sqliteWasmFilesSrdDir = layout.projectDirectory.dir("src/main/cpp/sqlite")
     val sqlite3c: FileCollection = if (buildSpec.sqlite3Source.isEmpty) {
         createSqliteSourceConfiguration(buildSpec.sqliteVersion.get())
     } else {
@@ -67,13 +66,13 @@ private fun setupTasksForBuild(buildSpec: SqliteWasmBuildSpec) {
 
         group = "Build"
         description = "Compiles SQLite `$buildName` to Wasm"
-        source.from(sqliteWasmFilesSrdDir.file("wasm/api/sqlite3-wasm.c"))
+        sourceFiles.from(buildSpec.additionalSourceFiles)
         outputFileName = unstrippedJsFileName
         outputDirectory = layout.buildDirectory.dir(compileUnstrippedResultDir(buildName))
         emccVersion = versionCatalogs.named("libs").findVersion("emscripten").get().toString()
         includes.setFrom(
             sqlite3cFile.map { it.parentFile },
-            sqliteWasmFilesSrdDir.dir("wasm/api"),
+            buildSpec.additionalIncludes,
         )
 
         val additionalArgsProvider = SqliteAdditionalArgumentProvider(

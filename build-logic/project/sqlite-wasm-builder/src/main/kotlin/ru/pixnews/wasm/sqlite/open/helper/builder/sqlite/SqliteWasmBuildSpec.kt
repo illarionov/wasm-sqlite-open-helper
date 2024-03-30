@@ -10,6 +10,7 @@ package ru.pixnews.wasm.sqlite.open.helper.builder.sqlite
 
 import org.gradle.api.Named
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.ProjectLayout
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
@@ -20,12 +21,23 @@ import javax.inject.Inject
 public open class SqliteWasmBuildSpec @Inject internal constructor(
     objects: ObjectFactory,
     providers: ProviderFactory,
+    projectLayout: ProjectLayout,
     private val name: String,
 ) : Named, Serializable {
+    private val sqliteWasmFilesSrdDir = projectLayout.projectDirectory.dir("src/main/cpp/sqlite")
+
     public val sqliteVersion: Property<String> = objects.property(String::class.java)
         .convention("3450100")
 
     public val sqlite3Source: ConfigurableFileCollection = objects.fileCollection()
+
+    public val additionalSourceFiles: ConfigurableFileCollection = objects.fileCollection().apply {
+        this.from(sqliteWasmFilesSrdDir.file("wasm/api/sqlite3-wasm.c"))
+    }
+
+    public val additionalIncludes: ConfigurableFileCollection = objects.fileCollection().apply {
+        this.from(sqliteWasmFilesSrdDir.dir("wasm/api"))
+    }
 
     public val wasmBaseFileName: Property<String> = objects.property(String::class.java)
         .convention("sqlite3")
@@ -57,7 +69,7 @@ public open class SqliteWasmBuildSpec @Inject internal constructor(
         .convention(SqliteExportedFunctions.openHelperExportedFunctions)
 
     public val sqliteConfigOptions: ListProperty<String> = objects.listProperty(String::class.java)
-        .convention(SqliteConfigurationOptions.wasmConfig())
+        .convention(SqliteConfigurationOptions.openHelperConfig)
 
     override fun getName(): String = name
 

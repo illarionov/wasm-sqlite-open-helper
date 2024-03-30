@@ -45,5 +45,6 @@ public object SqliteCodeGenerationOptions {
         "-sUSE_ES6_IMPORT_META",
         "-sWASM_BIGINT",
         "-sSHARED_MEMORY",
+        "-sUSE_ICU=1",
     )
 }

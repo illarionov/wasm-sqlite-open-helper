@@ -6,9 +6,8 @@
 
 @file:Suppress("GENERIC_VARIABLE_WRONG_DECLARATION")
 
-import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.SqliteCodeGenerationOptions
 import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.SqliteConfigurationOptions
-import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.SqliteConfigurationOptions.DefaultUnixVfs.UNIX_EXCL
+import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.SqliteExportedFunctions
 
 plugins {
     id("ru.pixnews.sqlite-wasm-builder")
@@ -24,30 +23,24 @@ version = wasmSqliteVersions.getSubmoduleVersionProvider(
     envVariableName = "WSOH_SQLITE_WASM_VERSION",
 ).get()
 
-val androidSqliteSpecifics = listOf(
-    "-DSQLITE_DEFAULT_AUTOVACUUM=1",
-    "-DSQLITE_DEFAULT_FILE_FORMAT=4",
-    "-DSQLITE_DEFAULT_FILE_PERMISSIONS=0600",
-    "-DSQLITE_DEFAULT_JOURNAL_SIZE_LIMIT=1048576",
-    "-DSQLITE_ENABLE_BATCH_ATOMIC_WRITE",
-    "-DSQLITE_ENABLE_MEMORY_MANAGEMENT=1",
-)
-
 sqlite3Build {
     builds {
-        create("main") {
-            sqliteVersion = defaultSqliteVersion
-            codeGenerationOptions = SqliteCodeGenerationOptions.codeGenerationOptions - "-pthread"
-            emscriptenConfigurationOptions = SqliteCodeGenerationOptions.emscriptenConfigurationOptions -
-                    "-sSHARED_MEMORY"
-            sqliteConfigOptions = SqliteConfigurationOptions.wasmConfig(UNIX_EXCL) + androidSqliteSpecifics
-        }
         create("android-icu-mt-pthread") {
             sqliteVersion = defaultSqliteVersion
-            emscriptenConfigurationOptions = SqliteCodeGenerationOptions.emscriptenConfigurationOptions + listOf(
-                "-sUSE_ICU=1",
-            )
             sqliteConfigOptions = SqliteConfigurationOptions.openHelperConfig
+            val sqlite3AndroidSourcesDir = layout.projectDirectory.dir("src/main/cpp/android/android")
+            additionalSourceFiles.from(
+                sqlite3AndroidSourcesDir.files(
+                    "sqlite3_android.cpp",
+                    "PhoneNumberUtils.cpp",
+                    "OldPhoneNumberUtils.cpp",
+                ),
+            )
+            additionalIncludes.from(sqlite3AndroidSourcesDir)
+            exportedFunctions = SqliteExportedFunctions.openHelperExportedFunctions + listOf(
+                "_register_localized_collators",
+                "_register_android_functions",
+            )
         }
     }
 }

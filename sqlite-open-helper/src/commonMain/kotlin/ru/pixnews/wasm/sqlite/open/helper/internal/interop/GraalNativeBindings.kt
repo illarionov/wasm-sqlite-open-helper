@@ -82,7 +82,9 @@ internal class GraalNativeBindings(
                 vfsName = null,
             )
 
+            // TODO: remove
             sqlite3Api.sqlite3CreateCollation(db, "localized", localizedComparator)
+            // TODO: lookaside
 
             // Check that the database is really read/write when that is what we asked for.
             if (openFlags.contains(SQLITE_OPEN_READWRITE) &&
@@ -93,6 +95,9 @@ internal class GraalNativeBindings(
 
             // Set the default busy handler to retry automatically before returning SQLITE_BUSY.
             sqlite3Api.sqlite3BusyTimeout(db, BUSY_TIMEOUT_MS)
+
+            // TODO: Register custom Android functions.
+            // sqlite3Api.registerAndroidFunctions(db, false)
 
             // Register wrapper object
             connections.add(db, path)
@@ -120,6 +125,17 @@ internal class GraalNativeBindings(
                 sqlite3Api.sqlite3Close(it)
             }
             throw otherException
+        }
+    }
+
+    override fun nativeRegisterLocalizedCollators(connectionPtr: GraalSqlite3ConnectionPtr, newLocale: String) {
+        try {
+            sqlite3Api.nativeRegisterLocalizedCollators(connectionPtr.ptr, newLocale, false)
+        } catch (e: SqliteException) {
+            logger.i {
+                "nativeRegisterLocalizedCollators(${connectionPtr.ptr}, $newLocale) failed: ${e.sqlite3ErrNoName}"
+            }
+            e.rethrowAndroidSqliteException()
         }
     }
 

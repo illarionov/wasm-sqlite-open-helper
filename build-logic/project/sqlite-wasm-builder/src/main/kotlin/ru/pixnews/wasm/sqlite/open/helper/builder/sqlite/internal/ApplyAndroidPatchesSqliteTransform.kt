@@ -39,7 +39,7 @@ internal abstract class ApplyAndroidPatchesSqliteTransform @Inject constructor(
 
         val androidPatchFile = parameters.androidSqlitePatchFile.get().asFile
         execOperations.exec {
-            this.commandLine("patch", "-p0")
+            this.commandLine("patch", "--strip=0", "--silent")
             this.setStandardInput(androidPatchFile.inputStream())
             this.workingDir = outputDir
         }

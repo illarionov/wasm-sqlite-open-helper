@@ -49,7 +49,7 @@ public abstract class EmscriptenBuildTask @Inject constructor(
     @get:SkipWhenEmpty
     @get:IgnoreEmptyDirectories
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    public val source: ConfigurableFileCollection = objects.fileCollection()
+    public val sourceFiles: ConfigurableFileCollection = objects.fileCollection()
 
     @get:Input
     @Optional
@@ -154,7 +154,7 @@ public abstract class EmscriptenBuildTask @Inject constructor(
             addAll(argumentProvider.asArguments())
         }
 
-        source.forEach { sourcePath ->
+        sourceFiles.forEach { sourcePath ->
             val relativePath = sourcePath.relativeToOrSelf(workDir)
             add(relativePath.toString())
         }

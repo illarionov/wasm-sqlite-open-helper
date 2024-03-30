@@ -27,7 +27,7 @@
 #include <unicode/ustring.h>
 #include <unicode/utypes.h>
 #endif //SQLITE_ENABLE_ICU
-#include <log/log.h>
+// #include <log/log.h>
 
 #include "sqlite3_android.h"
 #include "PhoneNumberUtils.h"
@@ -504,7 +504,6 @@ extern "C" int register_localized_collators(sqlite3* handle __attribute((unused)
 
     return SQLITE_OK;
 }
-
 
 extern "C" int register_android_functions(sqlite3 * handle, int utf16Storage __attribute((unused)))
 {

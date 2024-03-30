@@ -180,6 +180,10 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
         }
     }
 
+    internal fun nativeRegisterLocalizedCollators(newLocale: String) {
+        bindings.nativeRegisterLocalizedCollators(connectionPtr, newLocale)
+    }
+
     // Called by SQLiteConnectionPool only.
     // When set to true, executing write operations will throw SQLiteException.
     // Preparing statements that might write is ok, just don't execute them.

@@ -9,7 +9,7 @@ package ru.pixnews.wasm.sqlite.open.helper.graalvm.ext
 import org.graalvm.polyglot.Value
 import kotlin.properties.ReadOnlyProperty
 
-internal fun Value.member(): ReadOnlyProperty<Any?, Value> = ReadOnlyProperty<Any?, Value> { _, property ->
+internal fun Value.member(): ReadOnlyProperty<Any?, Value> = ReadOnlyProperty { _, property ->
     this@member.getMember(property.name) ?: error("No member ${property.name}")
 }
 
