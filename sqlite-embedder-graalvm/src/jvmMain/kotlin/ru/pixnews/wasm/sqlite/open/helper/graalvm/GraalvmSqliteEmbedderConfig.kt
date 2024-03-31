@@ -18,6 +18,6 @@ public class GraalvmSqliteEmbedderConfig internal constructor(
     rootLogger: Logger,
 ) : SqliteEmbedderConfig {
     public var graalvmEngine: Engine = Engine.create("wasm")
-    public var sqlite3Binary: WasmSqliteConfiguration = Sqlite3Wasm.Emscripten.sqlite3_345
+    public var sqlite3Binary: WasmSqliteConfiguration = Sqlite3Wasm.Emscripten.sqlite3_345_android_icu_mt_pthread
     public var host: SqliteEmbedderHost = SqliteEmbedderHost(rootLogger = rootLogger)
 }

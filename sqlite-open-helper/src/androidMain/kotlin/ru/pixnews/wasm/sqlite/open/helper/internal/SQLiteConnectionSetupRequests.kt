@@ -116,7 +116,7 @@ internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> SQLiteConnect
 internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> SQLiteConnection<CP, SP>.setLocale(
     newLocale: String,
 ) {
-     // TODO: Register the localized collators.
+     // Register the localized collators.
      nativeRegisterLocalizedCollators(newLocale)
 
     try {

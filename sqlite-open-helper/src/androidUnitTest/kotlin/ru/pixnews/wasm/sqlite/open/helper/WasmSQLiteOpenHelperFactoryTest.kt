@@ -10,7 +10,6 @@ import android.content.ContextWrapper
 import androidx.room.Room
 import androidx.sqlite.db.SupportSQLiteDatabase
 import co.touchlab.kermit.Severity.Info
-import co.touchlab.kermit.Severity.Verbose
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import ru.pixnews.wasm.sqlite.open.helper.room.AppDatabase1
@@ -22,7 +21,7 @@ import java.io.File
 
 class WasmSQLiteOpenHelperFactoryTest {
     val logger = KermitLogger("RequerySQLiteOpenHelperFactoryTest")
-    val dbLogger = KermitLogger(tag = "WSOH", minSeverity = Verbose)
+    val dbLogger = KermitLogger(tag = "WSOH", minSeverity = Info)
 
     @TempDir
     lateinit var tempDir: File

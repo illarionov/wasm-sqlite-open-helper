@@ -14,7 +14,6 @@ import co.touchlab.kermit.Severity.Info
 import org.graalvm.polyglot.Engine
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import ru.pixnews.wasm.sqlite.open.helper.Sqlite3Wasm.Emscripten
@@ -73,10 +72,9 @@ class WasmSQLiteOpenHelperIcuCollationTest {
         assertThat(caseInsensitiveLike).isEqualTo(1)
     }
 
-    @Disabled("Fails with ICU error: ucol_open(): U_FILE_ACCESS_ERROR")
     @Test
     fun `Icu Collation should work`() {
-        database.execSQL("SELECT icu_load_collation('tr_TR', 'turkish')")
+        database.query("SELECT icu_load_collation('tr_TR', 'turkish')").readValues()
         database.execSQL("""CREATE TABLE Penpal(name TEXT COLLATE turkish)""".trimIndent())
 
         database.execSQL(

@@ -10,7 +10,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isTrue
-import co.touchlab.kermit.Severity.Debug
+import co.touchlab.kermit.Severity.Info
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import ru.pixnews.wasm.sqlite.open.helper.util.KermitLogger
@@ -24,7 +24,7 @@ import kotlin.time.measureTimedValue
 
 class WasmSQLiteOpenHelperFactoryMultithreadingTest {
     val logger = KermitLogger("RequerySQLiteOpenHelperFactoryTest")
-    val dbLogger = KermitLogger(tag = "WSOH", minSeverity = Debug)
+    val dbLogger = KermitLogger(tag = "WSOH", minSeverity = Info)
 
     @TempDir
     lateinit var tempDir: File

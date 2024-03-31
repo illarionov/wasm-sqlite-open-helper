@@ -1,6 +1,6 @@
 [versions]
 emscripten = "3.1.55"
-sqlite = "3450100"
+sqlite = "3450200"
 
 androidMinSdk = "26"
 androidCompileSdk = "34"

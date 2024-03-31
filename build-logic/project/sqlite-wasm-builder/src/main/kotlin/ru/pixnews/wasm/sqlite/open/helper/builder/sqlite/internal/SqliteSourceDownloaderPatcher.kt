@@ -58,15 +58,18 @@ internal fun Project.setupUnpackSqliteAttributes(
 }
 
 internal fun Project.createSqliteSourceConfiguration(
-    sqliteVersion: String,
+    sqliteVersion: Provider<String>,
     applyAndroidPatch: Boolean = true,
 ): FileCollection {
-    val sqliteConfiguration = configurations.detachedConfiguration(
-        dependencyFactory.create("sqlite", "amalgamation", sqliteVersion, null, "zip"),
-    ).attributes {
+    val sqliteConfiguration = configurations.detachedConfiguration().attributes {
         attribute(EXTRACTED_SQLITE_ATTRIBUTE, false)
         attribute(PATCHED_SQLITE_ATTRIBUTE, false)
     }
+    sqliteConfiguration.dependencies.addLater(
+        provider {
+            dependencyFactory.create("sqlite", "amalgamation", sqliteVersion.get(), null, "zip")
+        },
+    )
 
     val unpackedSqliteSrc = sqliteConfiguration
         .incoming

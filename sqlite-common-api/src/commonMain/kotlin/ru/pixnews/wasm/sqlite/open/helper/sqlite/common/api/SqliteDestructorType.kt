@@ -27,6 +27,6 @@ public value class SqliteDestructorType(
          * The content will likely change in the near future and SQLite should make its own private copy of the content
          * before returning.
          */
-        public val SQLITE_TRANSIENT: SqliteDestructorType = SqliteDestructorType(1)
+        public val SQLITE_TRANSIENT: SqliteDestructorType = SqliteDestructorType(-1)
     }
 }

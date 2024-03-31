@@ -7,7 +7,6 @@
 @file:Suppress("GENERIC_VARIABLE_WRONG_DECLARATION")
 
 import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.SqliteCodeGenerationOptions
-import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.SqliteConfigurationOptions
 import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.SqliteExportedFunctions
 
 plugins {
@@ -28,7 +27,6 @@ sqlite3Build {
     builds {
         create("android-icu-mt-pthread") {
             sqliteVersion = defaultSqliteVersion
-            sqliteConfigOptions = SqliteConfigurationOptions.openHelperConfig
             val sqlite3AndroidSourcesDir = layout.projectDirectory.dir("src/main/cpp/android/android")
             codeGenerationOptions = SqliteCodeGenerationOptions.codeGenerationOptions + listOf(
                 "-L/home/work/icu/icu/dst/lib",

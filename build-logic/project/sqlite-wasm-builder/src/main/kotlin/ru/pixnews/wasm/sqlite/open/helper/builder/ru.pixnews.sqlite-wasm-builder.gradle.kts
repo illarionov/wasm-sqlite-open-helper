@@ -46,14 +46,16 @@ configurations {
 
 private val sqliteExtension = extensions.create("sqlite3Build", SqliteWasmBuilderExtension::class.java)
 
-sqliteExtension.builds.configureEach {
-    setupTasksForBuild(this)
+afterEvaluate {
+    sqliteExtension.builds.configureEach {
+        setupTasksForBuild(this)
+    }
 }
 
 private fun setupTasksForBuild(buildSpec: SqliteWasmBuildSpec) {
     val buildName = buildSpec.name.capitalizeAscii()
     val sqlite3c: FileCollection = if (buildSpec.sqlite3Source.isEmpty) {
-        createSqliteSourceConfiguration(buildSpec.sqliteVersion.get())
+        createSqliteSourceConfiguration(buildSpec.sqliteVersion)
     } else {
         buildSpec.sqlite3Source
     }
@@ -90,16 +92,21 @@ private fun setupTasksForBuild(buildSpec: SqliteWasmBuildSpec) {
         group = "Build"
         description = "Strips compiled SQLite `$buildName` Wasm binary"
         source.set(compileSqliteTask.flatMap { it.outputDirectory.file(unstrippedWasmFileName) })
-        destination.set(layout.buildDirectory.dir(STRIPPED_RESULT_DIR).map { it.file(strippedWasm) })
+        val dstDir = layout.buildDirectory.dir(STRIPPED_RESULT_DIR)
+        destination.set(dstDir.map { it.file(strippedWasm) })
+        doFirst {
+            dstDir.get().asFile.let { dir ->
+                dir.walkBottomUp()
+                    .filter { it != dir }
+                    .forEach(File::delete)
+            }
+        }
     }
 
     configurations.named("wasmSqliteElements").get().outgoing {
         artifacts {
-//            artifact(stripSqliteTask.flatMap(WasmStripTask::destination)) {
-//                builtBy(stripSqliteTask)
-//            }
-            artifact(compileSqliteTask.flatMap { it.outputDirectory.file(unstrippedWasmFileName) }) {
-                builtBy(compileSqliteTask)
+            artifact(stripSqliteTask.flatMap(WasmStripTask::destination)) {
+                builtBy(stripSqliteTask)
             }
         }
     }
