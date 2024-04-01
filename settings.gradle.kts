@@ -18,7 +18,7 @@ buildscript {
         classpath("com.diffplug.spotless:spotless-plugin-gradle:6.25.0")
         classpath("com.google.devtools.ksp:symbol-processing-gradle-plugin:1.9.23-1.0.19")
         classpath("com.saveourtool.diktat:diktat-gradle-plugin:2.0.0")
-        classpath("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.5")
+        classpath("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.6")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.23")
     }
 }
