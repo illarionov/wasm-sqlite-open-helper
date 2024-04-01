@@ -6,6 +6,7 @@
 
 @file:Suppress("GENERIC_VARIABLE_WRONG_DECLARATION")
 
+import ru.pixnews.wasm.sqlite.open.helper.builder.icu.internal.IcuBuildTask
 import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.SqliteCodeGenerationOptions
 import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.SqliteExportedFunctions
 
@@ -24,17 +25,22 @@ version = wasmSqliteVersions.getSubmoduleVersionProvider(
     envVariableName = "WSOH_SQLITE_WASM_VERSION",
 ).get()
 
+private val buildIcuTask = tasks.named<IcuBuildTask>("buildIcu")
+
 sqlite3Build {
     builds {
         create("android-icu-mt-pthread") {
             sqliteVersion = defaultSqliteVersion
             val sqlite3AndroidSourcesDir = layout.projectDirectory.dir("src/main/cpp/android/android")
             codeGenerationOptions = SqliteCodeGenerationOptions.codeGenerationOptions + listOf(
-                "-L/home/work/icu/icu/dst/lib",
                 "-licuuc",
                 "-licui18n",
                 "-licudata",
             )
+            codeOptimizationOptions.add(
+                buildIcuTask.flatMap { it.outputDirectory.dir("lib") }.map { "-L${it.asFile.absolutePath}" },
+            )
+
             additionalSourceFiles.from(
                 sqlite3AndroidSourcesDir.files(
                     "sqlite3_android.cpp",
@@ -44,10 +50,11 @@ sqlite3Build {
             )
             additionalIncludes.from(
                 sqlite3AndroidSourcesDir,
-                "/home/work/icu/icu/dst/include",
+                buildIcuTask.flatMap { it.outputDirectory.dir("include") }.map { it.asFile.absolutePath },
             )
             emscriptenConfigurationOptions = SqliteCodeGenerationOptions.emscriptenConfigurationOptions -
-                    "-sINITIAL_MEMORY=50331648" + "-sINITIAL_MEMORY=50331648"
+                    "-sINITIAL_MEMORY=16777216" +
+                    "-sINITIAL_MEMORY=50331648"
             exportedFunctions = SqliteExportedFunctions.openHelperExportedFunctions + listOf(
                 "_register_localized_collators",
                 "_register_android_functions",

@@ -10,6 +10,7 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
@@ -37,14 +38,6 @@ public abstract class EmscriptenSdk @Inject constructor(
             .map(::File),
     )
 
-    @get:Internal
-    public val emccExecutablePath: Property<String> = objects.property(String::class.java)
-        .convention("upstream/emscripten/emcc")
-
-    @get:Internal
-    public val emccExecutable: Property<File> = objects.property(File::class.java)
-        .convention(emscriptenRoot.zip(emccExecutablePath, ::File))
-
     @get:Input
     @get:Optional
     public val emccVersion: Property<String> = objects.property(String::class.java)
@@ -58,10 +51,22 @@ public abstract class EmscriptenSdk @Inject constructor(
     @PathSensitive(PathSensitivity.NONE)
     public val emscriptenConfigFile: ConfigurableFileCollection = objects.fileCollection()
 
+    @get:Internal
+    public val emccExecutablePath: Property<String> = objects.property(String::class.java)
+        .convention("upstream/emscripten/emcc")
+
+    @get:Internal
+    public val emConfigureExecutablePath: Property<String> = objects.property(String::class.java)
+        .convention("upstream/emscripten/emconfigure")
+
+    @get:Internal
+    public val emMakeExecutablePath: Property<String> = objects.property(String::class.java)
+        .convention("upstream/emscripten/emmake")
+
     internal fun buildEmccCommandLine(
         builderAction: MutableList<String>.() -> Unit,
     ): List<String> = buildList {
-        val emcc = getEmccExecutableOrThrow()
+        val emcc = getEmscriptenExecutableOrThrow(emccExecutablePath)
         add(emcc.toString())
         // Do not depend on ~/.emscripten
         add("--em-config")
@@ -73,6 +78,22 @@ public abstract class EmscriptenSdk @Inject constructor(
             add(cacheDir.toString())
         }
 
+        builderAction()
+    }
+
+    internal fun buildEmconfigureCommandLine(
+        builderAction: MutableList<String>.() -> Unit,
+    ): List<String> = buildList {
+        val emConfigure = getEmscriptenExecutableOrThrow(emConfigureExecutablePath)
+        add(emConfigure.toString())
+        builderAction()
+    }
+
+    internal fun buildEmMakeCommandLine(
+        builderAction: MutableList<String>.() -> Unit,
+    ) = buildList {
+        val emMake = getEmscriptenExecutableOrThrow(emMakeExecutablePath)
+        add(emMake.toString())
         builderAction()
     }
 
@@ -92,12 +113,12 @@ public abstract class EmscriptenSdk @Inject constructor(
     }
 
     @Internal
-    internal fun getEmsdkEnvironment(): Map<String, Any> = buildMap {
+    internal fun getEmsdkEnvironment(): Map<String, String> = buildMap {
         put("EMSDK", emscriptenRoot.get().toString())
     }
 
     private fun readEmsdkVersion(): String {
-        val emcc = getEmccExecutableOrThrow().toString()
+        val emcc = getEmscriptenExecutableOrThrow(emccExecutablePath).toString()
 
         val stdErr = ByteArrayOutputStream()
         execOperations.exec {
@@ -114,12 +135,15 @@ public abstract class EmscriptenSdk @Inject constructor(
             ?: error("Can not parse EMSDK version from `$firstLine`. ")
     }
 
-    private fun getEmccExecutableOrThrow(): File {
-        val path = emccExecutable.orNull ?: error(
+    private fun getEmscriptenExecutableOrThrow(
+        commandPath: Provider<String>,
+    ): File {
+        val pathProvider = emscriptenRoot.zip(commandPath, ::File)
+        val path = pathProvider.orNull ?: error(
             "Can not find Emscripten SDK installation directory. EMSDK environment variable should be defined",
         )
         check(path.isFile) {
-            "Can not find Emscripten Compiler (emcc) executable. `$path` is not a file"
+            "Can not find Emscripten executable. `$path` is not a file"
         }
         return path
     }

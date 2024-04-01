@@ -22,6 +22,6 @@ public fun RepositoryHandler.icuRepository(): Unit = exclusiveContent {
         }
     }
     filter {
-        includeModule("icu", "source")
+        includeModule("icu", "sources")
     }
 }

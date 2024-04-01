@@ -90,7 +90,7 @@ private fun setupTasksForBuild(buildSpec: SqliteWasmBuildSpec) {
 
     val stripSqliteTask: TaskProvider<WasmStripTask> = tasks.register<WasmStripTask>("stripSqlite$buildName") {
         group = "Build"
-        description = "Strips compiled SQLite `$buildName` Wasm binary"
+        description = "Strip compiled SQLite `$buildName` Wasm binary"
         source.set(compileSqliteTask.flatMap { it.outputDirectory.file(unstrippedWasmFileName) })
         val dstDir = layout.buildDirectory.dir(STRIPPED_RESULT_DIR)
         destination.set(dstDir.map { it.file(strippedWasm) })
