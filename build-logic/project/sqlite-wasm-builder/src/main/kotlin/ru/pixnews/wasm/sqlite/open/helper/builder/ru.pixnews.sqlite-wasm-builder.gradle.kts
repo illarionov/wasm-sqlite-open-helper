@@ -15,14 +15,14 @@ import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.internal.BuildDirPath.S
 import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.internal.BuildDirPath.compileUnstrippedResultDir
 import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.internal.SqliteAdditionalArgumentProvider
 import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.internal.createSqliteSourceConfiguration
-import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.internal.setupUnpackSqliteAttributes
+import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.internal.setupUnpackingSqliteAttributes
 
 // Convention Plugin for building Sqlite WASM using Emscripten
 plugins {
     base
 }
 
-setupUnpackSqliteAttributes(
+setupUnpackingSqliteAttributes(
     androidSqlitePatchFile = project.layout.projectDirectory.file(provider { "src/main/cpp/android/Android.patch" }),
 )
 
@@ -71,7 +71,7 @@ private fun setupTasksForBuild(buildSpec: SqliteWasmBuildSpec) {
         sourceFiles.from(buildSpec.additionalSourceFiles)
         outputFileName = unstrippedJsFileName
         outputDirectory = layout.buildDirectory.dir(compileUnstrippedResultDir(buildName))
-        emccVersion = versionCatalogs.named("libs").findVersion("emscripten").get().toString()
+        emscriptenSdk.emccVersion = versionCatalogs.named("libs").findVersion("emscripten").get().toString()
         includes.setFrom(
             sqlite3cFile.map { it.parentFile },
             buildSpec.additionalIncludes,

@@ -18,16 +18,16 @@ import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.dependencies
 
-internal val EXTRACTED_SQLITE_ATTRIBUTE: Attribute<Boolean> = Attribute.of(
+public val EXTRACTED_SQLITE_ATTRIBUTE: Attribute<Boolean> = Attribute.of(
     "extracted-sqlite",
     Boolean::class.javaObjectType,
 )
-internal val PATCHED_SQLITE_ATTRIBUTE: Attribute<Boolean> = Attribute.of(
+public val PATCHED_SQLITE_ATTRIBUTE: Attribute<Boolean> = Attribute.of(
     "patched-sqlite",
     Boolean::class.javaObjectType,
 )
 
-internal fun Project.setupUnpackSqliteAttributes(
+public fun Project.setupUnpackingSqliteAttributes(
     androidSqlitePatchFile: Provider<RegularFile>,
 ) {
     project.dependencies {

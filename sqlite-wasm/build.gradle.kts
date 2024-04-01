@@ -10,6 +10,7 @@ import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.SqliteCodeGenerationOpt
 import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.SqliteExportedFunctions
 
 plugins {
+    id("ru.pixnews.icu-wasm-builder")
     id("ru.pixnews.sqlite-wasm-builder")
     id("ru.pixnews.wasm-sqlite-open-helper.gradle.multiplatform.kotlin")
     id("ru.pixnews.wasm-sqlite-open-helper.gradle.multiplatform.publish")

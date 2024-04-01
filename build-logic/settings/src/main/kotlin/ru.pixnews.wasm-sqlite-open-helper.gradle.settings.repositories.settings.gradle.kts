@@ -5,6 +5,7 @@
  */
 
 import ru.pixnews.wasm.sqlite.open.helper.gradle.settings.googleFiltered
+import ru.pixnews.wasm.sqlite.open.helper.gradle.settings.icuRepository
 import ru.pixnews.wasm.sqlite.open.helper.gradle.settings.sqliteRepository
 
 /*
@@ -40,5 +41,6 @@ dependencyResolutionManagement {
         mavenCentral()
         googleFiltered()
         sqliteRepository()
+        icuRepository()
     }
 }
