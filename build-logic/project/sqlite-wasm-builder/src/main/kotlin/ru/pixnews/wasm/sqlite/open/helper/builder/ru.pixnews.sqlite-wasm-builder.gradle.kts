@@ -15,14 +15,14 @@ import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.internal.BuildDirPath.S
 import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.internal.BuildDirPath.compileUnstrippedResultDir
 import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.internal.SqliteAdditionalArgumentProvider
 import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.internal.createSqliteSourceConfiguration
-import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.internal.setupUnpackSqliteAttributes
+import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.internal.setupUnpackingSqliteAttributes
 
 // Convention Plugin for building Sqlite WASM using Emscripten
 plugins {
     base
 }
 
-setupUnpackSqliteAttributes(
+setupUnpackingSqliteAttributes(
     androidSqlitePatchFile = project.layout.projectDirectory.file(provider { "src/main/cpp/android/Android.patch" }),
 )
 
@@ -46,14 +46,16 @@ configurations {
 
 private val sqliteExtension = extensions.create("sqlite3Build", SqliteWasmBuilderExtension::class.java)
 
-sqliteExtension.builds.configureEach {
-    setupTasksForBuild(this)
+afterEvaluate {
+    sqliteExtension.builds.configureEach {
+        setupTasksForBuild(this)
+    }
 }
 
 private fun setupTasksForBuild(buildSpec: SqliteWasmBuildSpec) {
     val buildName = buildSpec.name.capitalizeAscii()
     val sqlite3c: FileCollection = if (buildSpec.sqlite3Source.isEmpty) {
-        createSqliteSourceConfiguration(buildSpec.sqliteVersion.get())
+        createSqliteSourceConfiguration(buildSpec.sqliteVersion)
     } else {
         buildSpec.sqlite3Source
     }
@@ -69,7 +71,7 @@ private fun setupTasksForBuild(buildSpec: SqliteWasmBuildSpec) {
         sourceFiles.from(buildSpec.additionalSourceFiles)
         outputFileName = unstrippedJsFileName
         outputDirectory = layout.buildDirectory.dir(compileUnstrippedResultDir(buildName))
-        emccVersion = versionCatalogs.named("libs").findVersion("emscripten").get().toString()
+        emscriptenSdk.emccVersion = versionCatalogs.named("libs").findVersion("emscripten").get().toString()
         includes.setFrom(
             sqlite3cFile.map { it.parentFile },
             buildSpec.additionalIncludes,
@@ -88,9 +90,17 @@ private fun setupTasksForBuild(buildSpec: SqliteWasmBuildSpec) {
 
     val stripSqliteTask: TaskProvider<WasmStripTask> = tasks.register<WasmStripTask>("stripSqlite$buildName") {
         group = "Build"
-        description = "Strips compiled SQLite `$buildName` Wasm binary"
+        description = "Strip compiled SQLite `$buildName` Wasm binary"
         source.set(compileSqliteTask.flatMap { it.outputDirectory.file(unstrippedWasmFileName) })
-        destination.set(layout.buildDirectory.dir(STRIPPED_RESULT_DIR).map { it.file(strippedWasm) })
+        val dstDir = layout.buildDirectory.dir(STRIPPED_RESULT_DIR)
+        destination.set(dstDir.map { it.file(strippedWasm) })
+        doFirst {
+            dstDir.get().asFile.let { dir ->
+                dir.walkBottomUp()
+                    .filter { it != dir }
+                    .forEach(File::delete)
+            }
+        }
     }
 
     configurations.named("wasmSqliteElements").get().outgoing {

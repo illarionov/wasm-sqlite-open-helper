@@ -15,7 +15,6 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.IgnoreEmptyDirectories
 import org.gradle.api.tasks.Input
@@ -29,12 +28,11 @@ import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.SkipWhenEmpty
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.listProperty
+import org.gradle.kotlin.dsl.newInstance
 import org.gradle.process.CommandLineArgumentProvider
 import org.gradle.process.ExecOperations
 import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.internal.BuildDirPath.COMPILE_WORK_DIR
 import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.internal.BuildDirPath.compileUnstrippedResultDir
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
 import java.io.File
 import javax.inject.Inject
 
@@ -43,7 +41,6 @@ public abstract class EmscriptenBuildTask @Inject constructor(
     private val execOperations: ExecOperations,
     objects: ObjectFactory,
     layout: ProjectLayout,
-    providers: ProviderFactory,
 ) : DefaultTask() {
     @get:InputFiles
     @get:SkipWhenEmpty
@@ -51,28 +48,8 @@ public abstract class EmscriptenBuildTask @Inject constructor(
     @get:PathSensitive(PathSensitivity.RELATIVE)
     public val sourceFiles: ConfigurableFileCollection = objects.fileCollection()
 
-    @get:Input
-    @Optional
-    public val emscriptenRoot: Property<File> = objects.property(File::class.java).convention(
-        providers
-            .environmentVariable("EMSDK")
-            .orElse(providers.gradleProperty("emsdkRoot"))
-            .map { File(it) },
-    )
-
-    @get:Internal
-    public val emccExecutablePath: Property<String> = objects.property(String::class.java).convention(
-        "upstream/emscripten/emcc",
-    )
-
-    @get:Internal
-    public val emccExecutable: Property<File> = objects.property(File::class.java).convention(
-        emscriptenRoot.zip(emccExecutablePath) { root, fileName -> File(root, fileName) },
-    )
-
-    @get:Input
-    @get:Optional
-    public val emccVersion: Property<String> = objects.property(String::class.java).convention("3.1.55")
+    @get:Nested
+    public val emscriptenSdk: EmscriptenSdk = objects.newInstance()
 
     @get:Input
     public val outputFileName: Property<String> = objects.property(String::class.java)
@@ -99,20 +76,12 @@ public abstract class EmscriptenBuildTask @Inject constructor(
         outputDirectory.zip(outputFileName, Directory::file),
     )
 
-    @get:InputFiles
-    @Optional
-    @PathSensitive(PathSensitivity.NONE)
-    public val emscriptenConfigFile: ConfigurableFileCollection = objects.fileCollection()
-
     @get:Nested
     public val additionalArgumentProviders: ListProperty<CommandLineArgumentProvider> = objects.listProperty()
 
-    @get:Internal
-    public val emscriptenCacheDir: DirectoryProperty = objects.directoryProperty()
-
     @TaskAction
     public fun build() {
-        checkEmsdkVersion()
+        emscriptenSdk.checkEmsdkVersion()
 
         val workingDir = this@EmscriptenBuildTask.workingDir.get()
         workingDir.mkdirs()
@@ -122,28 +91,15 @@ public abstract class EmscriptenBuildTask @Inject constructor(
         execOperations.exec {
             this.commandLine = cmdLine
             this.workingDir = workingDir
-            this.environment = getEmsdkEnvironment()
+            this.environment = emscriptenSdk.getEmsdkEnvironment()
         }.rethrowFailure().assertNormalExitValue()
     }
 
-    private fun buildCommandLine(): List<String> = buildList {
-        val emcc = getEmccExecutableOrThrow()
+    private fun buildCommandLine(): List<String> = emscriptenSdk.buildEmccCommandLine {
         val workDir = this@EmscriptenBuildTask.workingDir.get()
-
-        add(emcc.toString())
 
         add("-o")
         add(outputFile.get().toString())
-
-        // Do not depend on ~/.emscripten
-        add("--em-config")
-        add(getEmscriptenConfigFile().toString())
-
-        if (emscriptenCacheDir.isPresent) {
-            val cacheDir = emscriptenCacheDir.get()
-            add("--cache")
-            add(cacheDir.toString())
-        }
 
         includes.forEach { includePath ->
             val relativePath = includePath.relativeToOrSelf(workDir)
@@ -158,61 +114,5 @@ public abstract class EmscriptenBuildTask @Inject constructor(
             val relativePath = sourcePath.relativeToOrSelf(workDir)
             add(relativePath.toString())
         }
-    }
-
-    private fun checkEmsdkVersion() {
-        if (!emccVersion.isPresent) {
-            return
-        }
-
-        val emcc = getEmccExecutableOrThrow().toString()
-        val requiredVersion = emccVersion.get()
-
-        val stdErr = ByteArrayOutputStream()
-        execOperations.exec {
-            commandLine = listOf(emcc, "-v")
-            errorOutput = stdErr
-            environment = getEmsdkEnvironment()
-        }.rethrowFailure().assertNormalExitValue()
-
-        val firstLine: String = ByteArrayInputStream(stdErr.toByteArray()).bufferedReader().use {
-            it.readLine()
-        } ?: error("Can not read Emscripten SDK version")
-
-        val version = EMCC_VERSION_REGEX.matchEntire(firstLine)?.groups?.get(1)?.value
-
-        if (requiredVersion != version) {
-            throw IllegalStateException(
-                "The installed version of Emscripten SDK `$version` differs from the required" +
-                        " version `$requiredVersion`",
-            )
-        }
-    }
-
-    private fun getEmsdkEnvironment(): Map<String, Any> = buildMap {
-        put("EMSDK", emscriptenRoot.get().toString())
-    }
-
-    private fun getEmccExecutableOrThrow(): File {
-        val path = emccExecutable.orNull ?: error(
-            "Can not find Emscripten SDK installation directory. EMSDK environment variable should be defined",
-        )
-        check(path.isFile) {
-            "Can not find Emscripten Compiler (emcc) executable. `$path` is not a file"
-        }
-        return path
-    }
-
-    private fun getEmscriptenConfigFile(): File {
-        val files = emscriptenConfigFile.files
-        return if (files.isNotEmpty()) {
-            files.first()
-        } else {
-            emscriptenRoot.get().resolve(".emscripten")
-        }
-    }
-
-    private companion object {
-        private val EMCC_VERSION_REGEX = """emcc\s+\(Emscripten.+\)\s+(\S+)\s+.*""".toRegex()
     }
 }

@@ -18,16 +18,16 @@ import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.dependencies
 
-internal val EXTRACTED_SQLITE_ATTRIBUTE: Attribute<Boolean> = Attribute.of(
+public val EXTRACTED_SQLITE_ATTRIBUTE: Attribute<Boolean> = Attribute.of(
     "extracted-sqlite",
     Boolean::class.javaObjectType,
 )
-internal val PATCHED_SQLITE_ATTRIBUTE: Attribute<Boolean> = Attribute.of(
+public val PATCHED_SQLITE_ATTRIBUTE: Attribute<Boolean> = Attribute.of(
     "patched-sqlite",
     Boolean::class.javaObjectType,
 )
 
-internal fun Project.setupUnpackSqliteAttributes(
+public fun Project.setupUnpackingSqliteAttributes(
     androidSqlitePatchFile: Provider<RegularFile>,
 ) {
     project.dependencies {
@@ -58,15 +58,18 @@ internal fun Project.setupUnpackSqliteAttributes(
 }
 
 internal fun Project.createSqliteSourceConfiguration(
-    sqliteVersion: String,
+    sqliteVersion: Provider<String>,
     applyAndroidPatch: Boolean = true,
 ): FileCollection {
-    val sqliteConfiguration = configurations.detachedConfiguration(
-        dependencyFactory.create("sqlite", "amalgamation", sqliteVersion, null, "zip"),
-    ).attributes {
+    val sqliteConfiguration = configurations.detachedConfiguration().attributes {
         attribute(EXTRACTED_SQLITE_ATTRIBUTE, false)
         attribute(PATCHED_SQLITE_ATTRIBUTE, false)
     }
+    sqliteConfiguration.dependencies.addLater(
+        provider {
+            dependencyFactory.create("sqlite", "amalgamation", sqliteVersion.get(), null, "zip")
+        },
+    )
 
     val unpackedSqliteSrc = sqliteConfiguration
         .incoming

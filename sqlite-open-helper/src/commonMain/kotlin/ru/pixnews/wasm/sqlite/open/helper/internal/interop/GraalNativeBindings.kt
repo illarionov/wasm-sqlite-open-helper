@@ -64,7 +64,6 @@ internal class GraalNativeBindings(
     rootLogger: Logger,
 ) : SqlOpenHelperNativeBindings<GraalSqlite3ConnectionPtr, GraalSqlite3StatementPtr> {
     private val logger = rootLogger.withTag("GraalNativeBindings")
-    private val localizedComparator = LocalizedComparator()
     private val connections = Sqlite3ConnectionRegistry()
 
     override fun nativeOpen(
@@ -82,8 +81,6 @@ internal class GraalNativeBindings(
                 vfsName = null,
             )
 
-            // TODO: remove
-            sqlite3Api.sqlite3CreateCollation(db, "localized", localizedComparator)
             // TODO: lookaside
 
             // Check that the database is really read/write when that is what we asked for.
@@ -96,8 +93,8 @@ internal class GraalNativeBindings(
             // Set the default busy handler to retry automatically before returning SQLITE_BUSY.
             sqlite3Api.sqlite3BusyTimeout(db, BUSY_TIMEOUT_MS)
 
-            // TODO: Register custom Android functions.
-            // sqlite3Api.registerAndroidFunctions(db, false)
+            // Register custom Android functions.
+            sqlite3Api.registerAndroidFunctions(db, false)
 
             // Register wrapper object
             connections.add(db, path)
@@ -129,8 +126,9 @@ internal class GraalNativeBindings(
     }
 
     override fun nativeRegisterLocalizedCollators(connectionPtr: GraalSqlite3ConnectionPtr, newLocale: String) {
+        logger.v { "nativeRegisterLocalizedCollators($connectionPtr, $newLocale)" }
         try {
-            sqlite3Api.nativeRegisterLocalizedCollators(connectionPtr.ptr, newLocale, false)
+            sqlite3Api.registerLocalizedCollators(connectionPtr.ptr, newLocale, false)
         } catch (e: SqliteException) {
             logger.i {
                 "nativeRegisterLocalizedCollators(${connectionPtr.ptr}, $newLocale) failed: ${e.sqlite3ErrNoName}"

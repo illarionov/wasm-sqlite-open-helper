@@ -10,13 +10,9 @@ import java.net.URL
 
 public object Sqlite3Wasm {
     public object Emscripten {
-        public val sqlite3_345: WasmSqliteConfiguration = object : WasmSqliteConfiguration {
-            override val sqliteUrl: URL get() = getUrl("sqlite3-main-3450100.wasm")
-            override val requireThreads: Boolean = false
-            override val requireSharedMemory: Boolean = false
-        }
         public val sqlite3_345_android_icu_mt_pthread: WasmSqliteConfiguration = object : WasmSqliteConfiguration {
-            override val sqliteUrl: URL get() = getUrl("sqlite3-android-icu-mt-pthread-3450100.wasm")
+            override val sqliteUrl: URL get() = getUrl("sqlite3-android-icu-mt-pthread-3450200.wasm")
+            override val wasmMinMemorySize: Long = 50_331_648L
             override val requireThreads: Boolean = true
             override val requireSharedMemory: Boolean = true
         }

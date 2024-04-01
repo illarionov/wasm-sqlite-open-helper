@@ -50,6 +50,7 @@ public object GraalvmSqliteEmbedder : SqliteEmbedder<GraalvmSqliteEmbedderConfig
 
         val sqliteCallbacksModuleBuilder = SqliteCallbacksModuleBuilder(graalContext, host, callbackStore)
         EmscriptenEnvModuleBuilder(graalContext, host, ptreadRef::get).setupModule(
+            minMemorySize = sqlite3Binary.wasmMinMemorySize,
             sharedMemory = sqlite3Binary.requireSharedMemory,
             useUnsafeMemory = useSharedMemory,
         )

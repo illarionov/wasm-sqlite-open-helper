@@ -186,7 +186,7 @@ internal class GraalvmSqliteCapiImpl internal constructor(
             pName.addr,
             SqliteTextEncoding.SQLITE_UTF8.id,
             pCallbackId?.id,
-            if (pCallbackId != null) callbackFunctionIndexes.execCallbackFunction.funcId else 0,
+            if (pCallbackId != null) callbackFunctionIndexes.comparatorFunction.funcId else 0,
             if (pCallbackId != null) callbackFunctionIndexes.destroyComparatorFunction.funcId else 0,
         )
         memory.freeSilent(pName)
@@ -239,7 +239,7 @@ internal class GraalvmSqliteCapiImpl internal constructor(
     override fun sqlite3DbReadonly(
         sqliteDb: WasmPtr<SqliteDb>,
         dbName: String?,
-    ): SqliteCapi.SqliteDbReadonlyResult {
+    ): SqliteDbReadonlyResult {
         val pDbName = if (dbName != null) {
             memory.allocZeroTerminatedString(dbName)
         } else {
@@ -401,7 +401,7 @@ internal class GraalvmSqliteCapiImpl internal constructor(
             .throwOnSqliteError("register_android_functions() failed", db)
     }
 
-    override fun nativeRegisterLocalizedCollators(ptr: WasmPtr<SqliteDb>, newLocale: String, utf16Storage: Boolean) {
+    override fun registerLocalizedCollators(ptr: WasmPtr<SqliteDb>, newLocale: String, utf16Storage: Boolean) {
         var pNewLocale: WasmPtr<Byte> = sqlite3Null()
         try {
             pNewLocale = memory.allocZeroTerminatedString(newLocale)

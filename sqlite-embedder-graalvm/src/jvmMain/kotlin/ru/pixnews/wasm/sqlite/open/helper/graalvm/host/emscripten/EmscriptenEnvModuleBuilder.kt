@@ -177,11 +177,12 @@ internal class EmscriptenEnvModuleBuilder(
     }
 
     fun setupModule(
+        minMemorySize: Long = 50331648L,
         sharedMemory: Boolean = false,
         useUnsafeMemory: Boolean = false,
     ): WasmInstance = graalContext.withWasmContext { wasmContext ->
         val envModule = WasmModule.create(moduleName, null)
-        setupMemory(wasmContext, envModule, sharedMemory, useUnsafeMemory)
+        setupMemory(wasmContext, envModule, minMemorySize, sharedMemory, useUnsafeMemory)
         return setupWasmModuleFunctions(wasmContext, host, envModule, envFunctions)
     }
 
@@ -189,10 +190,11 @@ internal class EmscriptenEnvModuleBuilder(
     private fun setupMemory(
         context: WasmContext,
         envModule: WasmModule,
+        minMemorySize: Long = 50331648L,
         sharedMemory: Boolean = false,
         useUnsafeMemory: Boolean = false,
     ) {
-        val minSize = 256L
+        val minSize = minMemorySize / WASM_MEMORY_PAGE_SIZE
         val maxSize: Long
         val is64Bit: Boolean
         if (context.contextOptions.supportMemory64()) {
@@ -219,5 +221,6 @@ internal class EmscriptenEnvModuleBuilder(
 
     companion object {
         private const val ENV_MODULE_NAME = "env"
+        private const val WASM_MEMORY_PAGE_SIZE = 65536L
     }
 }

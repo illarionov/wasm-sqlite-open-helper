@@ -207,7 +207,7 @@ public interface SqliteCapi {
     ): ByteArray
 
     @Throws(SqliteException::class)
-    public fun nativeRegisterLocalizedCollators(ptr: WasmPtr<SqliteDb>, newLocale: String, utf16Storage: Boolean)
+    public fun registerLocalizedCollators(ptr: WasmPtr<SqliteDb>, newLocale: String, utf16Storage: Boolean)
 
     @Throws(SqliteException::class)
     public fun registerAndroidFunctions(db: WasmPtr<SqliteDb>, utf16Storage: Boolean)
