@@ -82,7 +82,7 @@ sqlite3Build {
 
 val wasmResourcesDir = layout.buildDirectory.dir("wasmLibraries")
 val copyResourcesTask = tasks.register<Copy>("copyWasmLibrariesToResources") {
-    from(configurations.named("wasmSqliteElements").get().artifacts.files)
+    from(configurations.named("wasmSqliteReleaseElements").get().artifacts.files)
     into(wasmResourcesDir.map { it.dir("ru/pixnews/wasm/sqlite/open/helper") })
     include("*.wasm")
 }

@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.builder.icu
+package ru.pixnews.wasm.sqlite.open.helper.builder.attribute
 
 import org.gradle.api.attributes.Attribute
 
 /**
- * Attribute of the uncompressed ICU source code archive
+ * Attribute of the ICU source code archive
  */
-internal val EXTRACTED_ICU_ATTRIBUTE: Attribute<Boolean> = Attribute.of(
-    "extracted-icu",
+internal val ICU_SOURCE_CODE_ATTRIBUTE: Attribute<Boolean> = Attribute.of(
+    "ru.pixnews.wasm.sqlite.open.helper.builder.source.icu",
     Boolean::class.javaObjectType,
 )

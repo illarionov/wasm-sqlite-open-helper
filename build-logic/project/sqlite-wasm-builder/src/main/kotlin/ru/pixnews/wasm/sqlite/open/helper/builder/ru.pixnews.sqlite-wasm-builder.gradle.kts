@@ -6,6 +6,19 @@
 
 @file:Suppress("UnstableApiUsage", "GENERIC_VARIABLE_WRONG_DECLARATION")
 
+import org.gradle.api.attributes.Category.CATEGORY_ATTRIBUTE
+import org.gradle.api.attributes.LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE
+import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
+import org.gradle.language.cpp.CppBinary.DEBUGGABLE_ATTRIBUTE
+import org.gradle.language.cpp.CppBinary.LINKAGE_ATTRIBUTE
+import org.gradle.language.cpp.CppBinary.OPTIMIZED_ATTRIBUTE
+import org.gradle.nativeplatform.MachineArchitecture.ARCHITECTURE_ATTRIBUTE
+import org.gradle.nativeplatform.OperatingSystemFamily.OPERATING_SYSTEM_ATTRIBUTE
+import ru.pixnews.wasm.sqlite.open.helper.builder.attribute.emscriptenOperatingSystem
+import ru.pixnews.wasm.sqlite.open.helper.builder.attribute.wasm32Architecture
+import ru.pixnews.wasm.sqlite.open.helper.builder.attribute.wasmApiUsage
+import ru.pixnews.wasm.sqlite.open.helper.builder.attribute.wasmBinaryLibraryElements
+import ru.pixnews.wasm.sqlite.open.helper.builder.attribute.wasmRuntimeUsage
 import ru.pixnews.wasm.sqlite.open.helper.builder.emscripten.EmscriptenBuildTask
 import ru.pixnews.wasm.sqlite.open.helper.builder.emscripten.WasmStripTask
 import ru.pixnews.wasm.sqlite.open.helper.builder.ext.capitalizeAscii
@@ -29,19 +42,41 @@ setupUnpackingSqliteAttributes(
 configurations {
     dependencyScope("wasmLibraries")
 
-    consumable("wasmSqliteElements") {
+    consumable("wasmSqliteReleaseElements") {
         attributes {
-            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
-            attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named("wasm-library"))
+            addConsumableWasmBinaryAttributes()
+            addEmscriptenOsArchitectureAttributes()
+            attribute(DEBUGGABLE_ATTRIBUTE, false)
+        }
+    }
+    consumable("wasmSqliteDebugElements") {
+        attributes {
+            addConsumableWasmBinaryAttributes()
+            addEmscriptenOsArchitectureAttributes()
+            attribute(DEBUGGABLE_ATTRIBUTE, true)
         }
     }
     resolvable("wasmLibrariesClasspath") {
         extendsFrom(configurations["wasmLibraries"])
         attributes {
-            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
-            attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named("wasm-library"))
+            addEmscriptenOsArchitectureAttributes()
+            attribute(USAGE_ATTRIBUTE, objects.wasmApiUsage)
+            attribute(CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+            attribute(LINKAGE_ATTRIBUTE, Linkage.STATIC)
         }
     }
+}
+
+private fun AttributeContainer.addConsumableWasmBinaryAttributes() {
+    attribute(USAGE_ATTRIBUTE, objects.wasmRuntimeUsage)
+    attribute(CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+    attribute(LIBRARY_ELEMENTS_ATTRIBUTE, objects.wasmBinaryLibraryElements)
+    attribute(OPTIMIZED_ATTRIBUTE, true)
+}
+
+private fun AttributeContainer.addEmscriptenOsArchitectureAttributes() {
+    attribute(OPERATING_SYSTEM_ATTRIBUTE, objects.emscriptenOperatingSystem)
+    attribute(ARCHITECTURE_ATTRIBUTE, objects.wasm32Architecture)
 }
 
 private val sqliteExtension = extensions.create("sqlite3Build", SqliteWasmBuilderExtension::class.java)
@@ -103,10 +138,17 @@ private fun setupTasksForBuild(buildSpec: SqliteWasmBuildSpec) {
         }
     }
 
-    configurations.named("wasmSqliteElements").get().outgoing {
+    configurations.named("wasmSqliteReleaseElements").get().outgoing {
         artifacts {
             artifact(stripSqliteTask.flatMap(WasmStripTask::destination)) {
                 builtBy(stripSqliteTask)
+            }
+        }
+    }
+    configurations.named("wasmSqliteDebugElements").get().outgoing {
+        artifacts {
+            artifact(compileSqliteTask.flatMap { it.outputDirectory.file(unstrippedWasmFileName) }) {
+                builtBy(compileSqliteTask)
             }
         }
     }
