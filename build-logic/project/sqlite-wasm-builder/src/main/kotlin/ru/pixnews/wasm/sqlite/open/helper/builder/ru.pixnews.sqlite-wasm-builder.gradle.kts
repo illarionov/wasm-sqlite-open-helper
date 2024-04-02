@@ -61,7 +61,7 @@ private fun setupTasksForBuild(buildSpec: SqliteWasmBuildSpec) {
     }
     val unstrippedWasmFileName = buildSpec.wasmUnstrippedFileName.get()
     val unstrippedJsFileName = unstrippedWasmFileName.substringBeforeLast(".wasm") + ".mjs"
-    val strippedWasm = buildSpec.wasmFileName.get()
+    val strippedWasmFileName = buildSpec.wasmFileName.get()
 
     val compileSqliteTask = tasks.register<EmscriptenBuildTask>("compileSqlite$buildName") {
         val sqlite3cFile = sqlite3c.elements.map { it.first().asFile }
@@ -91,9 +91,9 @@ private fun setupTasksForBuild(buildSpec: SqliteWasmBuildSpec) {
     val stripSqliteTask: TaskProvider<WasmStripTask> = tasks.register<WasmStripTask>("stripSqlite$buildName") {
         group = "Build"
         description = "Strip compiled SQLite `$buildName` Wasm binary"
-        source.set(compileSqliteTask.flatMap { it.outputDirectory.file(unstrippedWasmFileName) })
+        source = compileSqliteTask.flatMap { it.outputDirectory.file(unstrippedWasmFileName) }
         val dstDir = layout.buildDirectory.dir(STRIPPED_RESULT_DIR)
-        destination.set(dstDir.map { it.file(strippedWasm) })
+        destination = dstDir.map { it.file(strippedWasmFileName) }
         doFirst {
             dstDir.get().asFile.let { dir ->
                 dir.walkBottomUp()

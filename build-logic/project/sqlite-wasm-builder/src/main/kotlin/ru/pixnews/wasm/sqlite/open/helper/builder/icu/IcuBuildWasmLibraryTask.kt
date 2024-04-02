@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.builder.icu.internal
+package ru.pixnews.wasm.sqlite.open.helper.builder.icu
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
@@ -27,8 +27,11 @@ import ru.pixnews.wasm.sqlite.open.helper.builder.emscripten.EmscriptenSdk
 import java.io.File
 import javax.inject.Inject
 
+/**
+ * Builds the ICU for WASM using Emscripten
+ */
 @CacheableTask
-public abstract class IcuBuildTask @Inject constructor(
+public abstract class IcuBuildWasmLibraryTask @Inject constructor(
     private val execOperations: ExecOperations,
     objects: ObjectFactory,
     layout: ProjectLayout,
@@ -40,6 +43,10 @@ public abstract class IcuBuildTask @Inject constructor(
     @get:Nested
     public val emscriptenSdk: EmscriptenSdk = objects.newInstance()
 
+    @get:InputDirectory
+    @PathSensitive(RELATIVE)
+    public val icuBuildToolchainDirectory: DirectoryProperty = objects.directoryProperty()
+
     @get:OutputDirectory
     @Optional
     public val outputDirectory: DirectoryProperty = objects.directoryProperty().convention(
@@ -47,12 +54,7 @@ public abstract class IcuBuildTask @Inject constructor(
     )
 
     @get:Internal
-    public val icuBuildToolchainDirectory: DirectoryProperty = objects.directoryProperty().convention(
-        layout.buildDirectory.dir(ICU_BUILD_TOOLCHAIN_DIR),
-    )
-
-    @get:Internal
-    public val icuBuildDirectory: DirectoryProperty = objects.directoryProperty().convention(
+    public val buildDirectory: DirectoryProperty = objects.directoryProperty().convention(
         layout.buildDirectory.dir(ICU_BUILD_DIR),
     )
 
@@ -66,34 +68,11 @@ public abstract class IcuBuildTask @Inject constructor(
     @TaskAction
     public fun build() {
         emscriptenSdk.checkEmsdkVersion()
-        buildToolchain()
         buildWasmIcu()
     }
 
-    private fun buildToolchain() {
-        val dstDir = icuBuildToolchainDirectory.get().asFile
-        // dstDir.deleteRecursively()
-        dstDir.mkdirs()
-
-        val hostEnv = System.getenv().filterKeys {
-            it == "PATH"
-        } + emscriptenSdk.getEmsdkEnvironment()
-
-        execOperations.exec {
-            commandLine = listOf(icuConfigurePath.absolutePath)
-            workingDir = dstDir
-            environment = hostEnv
-        }.rethrowFailure().assertNormalExitValue()
-
-        execOperations.exec {
-            commandLine = listOf("gmake", "-j${maxJobs.get()}")
-            workingDir = dstDir
-            environment = hostEnv
-        }.rethrowFailure().assertNormalExitValue()
-    }
-
     private fun buildWasmIcu() {
-        val buildDir = icuBuildDirectory.get().asFile
+        val buildDir = buildDirectory.get().asFile
         val dstDir = outputDirectory.get().asFile
         val toolchainDir = icuBuildToolchainDirectory.get().asFile
 
@@ -123,6 +102,7 @@ public abstract class IcuBuildTask @Inject constructor(
             add("-j${maxJobs.get()}")
         }
 
+        buildDir.deleteRecursively()
         buildDir.mkdirs()
 
         listOf(
@@ -147,28 +127,6 @@ public abstract class IcuBuildTask @Inject constructor(
             "ICU_FORCE_LIBS" to ICU_FORCE_LIBS.joinToString(" "),
             "PKGDATA_OPTS" to ICU_PKGDATA_OPTS.joinToString(" "),
             "PATH" to (System.getenv()["PATH"] ?: ""),
-        )
-    }
-
-    internal companion object {
-        internal const val ICU_STATIC_LIBRARY_RESULT_DIR = "wasmIcu/out"
-        internal const val ICU_BUILD_TOOLCHAIN_DIR = "wasmIcu/buildA"
-        internal const val ICU_BUILD_DIR = "wasmIcu/buildB"
-        internal val ICU_CFLAGS = listOf(
-            "-O3",
-            "-pthread",
-            "-sUSE_PTHREADS",
-        )
-        internal val ICU_CXXFLAGS = ICU_CFLAGS
-        internal val ICU_FORCE_LIBS = listOf(
-            "-sUSE_PTHREADS",
-            "-sINITIAL_MEMORY=50331648",
-            " -pthread",
-            "-lm",
-        )
-        internal val ICU_PKGDATA_OPTS = listOf(
-            "--without-assembly",
-            "-O \$(top_builddir)/data/icupkg.inc",
         )
     }
 }
