@@ -24,10 +24,29 @@ internal val icuSources = createIcuSourceConfiguration(
 
 private val icuSourceDir: Provider<File> = icuSources.firstDirectory(providers)
 
-tasks.register<IcuBuildTask>("buildIcu") {
+private val buildIcuTask = tasks.register<IcuBuildTask>("buildIcu") {
     group = "Build"
     description = "Compiles ICU"
 
     this.icuSource.fileProvider(icuSourceDir)
     emscriptenSdk.emccVersion = versionCatalogs.named("libs").findVersion("emscripten").get().toString()
+}
+
+tasks.named("assemble").configure {
+    dependsOn(buildIcuTask)
+}
+
+private val wasmIcuElements = configurations.consumable("wasmIcuelements") {
+    attributes {
+        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named("wasm-library"))
+    }
+}
+
+wasmIcuElements.get().outgoing {
+    artifacts {
+        artifact(buildIcuTask.flatMap(IcuBuildTask::outputDirectory)) {
+            builtBy(buildIcuTask)
+        }
+    }
 }

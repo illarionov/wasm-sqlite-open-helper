@@ -26,6 +26,7 @@ buildscript {
 rootProject.name = "wasm-sqlite-open-helper"
 
 include("common-api")
+include("icu-wasm")
 include("sqlite-common-api")
 include("sqlite-embedder-graalvm")
 include("sqlite-open-helper")

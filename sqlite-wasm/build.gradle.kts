@@ -4,20 +4,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-@file:Suppress("GENERIC_VARIABLE_WRONG_DECLARATION")
+@file:Suppress("GENERIC_VARIABLE_WRONG_DECLARATION", "UnstableApiUsage")
 
-import ru.pixnews.wasm.sqlite.open.helper.builder.icu.internal.IcuBuildTask
 import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.SqliteCodeGenerationOptions
 import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.SqliteExportedFunctions
 
 plugins {
-    id("ru.pixnews.icu-wasm-builder")
     id("ru.pixnews.sqlite-wasm-builder")
     id("ru.pixnews.wasm-sqlite-open-helper.gradle.multiplatform.kotlin")
     id("ru.pixnews.wasm-sqlite-open-helper.gradle.multiplatform.publish")
 }
-
-val defaultSqliteVersion = versionCatalogs.named("libs").findVersion("sqlite").get().toString()
 
 group = "ru.pixnews.wasm-sqlite-open-helper"
 version = wasmSqliteVersions.getSubmoduleVersionProvider(
@@ -25,21 +21,42 @@ version = wasmSqliteVersions.getSubmoduleVersionProvider(
     envVariableName = "WSOH_SQLITE_WASM_VERSION",
 ).get()
 
-private val buildIcuTask = tasks.named<IcuBuildTask>("buildIcu")
+configurations {
+    dependencyScope("wasmStaticLibraries")
+    resolvable("wasmStaticLibrariesClasspath") {
+        extendsFrom(configurations["wasmStaticLibraries"])
+        attributes {
+            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+            attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named("wasm-library"))
+        }
+    }
+}
+
+dependencies {
+    "wasmStaticLibraries"(project(":icu-wasm"))
+}
+
+val icuLibrary = configurations["wasmStaticLibrariesClasspath"].asFileTree
+val icuLibraryLibs: Provider<File> = icuLibrary.filter { it.name == "libicuuc.a" }
+    .elements
+    .map { it.first().asFile.parentFile }
+val icuLibraryIncludes: Provider<File> = icuLibrary.filter { it.endsWith("include/unicode/ulocale.h") }
+    .elements
+    .map { it.first().asFile.parentFile.parentFile }
 
 sqlite3Build {
+    val defaultSqliteVersion = versionCatalogs.named("libs").findVersion("sqlite").get().toString()
+    val sqlite3AndroidSourcesDir = layout.projectDirectory.dir("src/main/cpp/android/android")
+
     builds {
         create("android-icu-mt-pthread") {
             sqliteVersion = defaultSqliteVersion
-            val sqlite3AndroidSourcesDir = layout.projectDirectory.dir("src/main/cpp/android/android")
             codeGenerationOptions = SqliteCodeGenerationOptions.codeGenerationOptions + listOf(
                 "-licuuc",
                 "-licui18n",
                 "-licudata",
             )
-            codeOptimizationOptions.add(
-                buildIcuTask.flatMap { it.outputDirectory.dir("lib") }.map { "-L${it.asFile.absolutePath}" },
-            )
+            codeGenerationOptions.add(icuLibraryLibs.map { "-L${it.absolutePath}" })
 
             additionalSourceFiles.from(
                 sqlite3AndroidSourcesDir.files(
@@ -50,7 +67,7 @@ sqlite3Build {
             )
             additionalIncludes.from(
                 sqlite3AndroidSourcesDir,
-                buildIcuTask.flatMap { it.outputDirectory.dir("include") }.map { it.asFile.absolutePath },
+                icuLibraryIncludes.map { it.absolutePath },
             )
             emscriptenConfigurationOptions = SqliteCodeGenerationOptions.emscriptenConfigurationOptions -
                     "-sINITIAL_MEMORY=16777216" +

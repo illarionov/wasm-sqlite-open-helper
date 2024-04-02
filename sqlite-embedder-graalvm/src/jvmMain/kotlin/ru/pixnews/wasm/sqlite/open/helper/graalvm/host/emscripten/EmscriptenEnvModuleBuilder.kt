@@ -146,7 +146,7 @@ internal class EmscriptenEnvModuleBuilder(
         fnVoid(
             name = "__emscripten_init_main_thread_js",
             paramTypes = listOf(I32),
-            nodeFactory = { language, module, host, functionName ->
+            nodeFactory = { language, module, _, functionName ->
                 EmscriptenInitMainThreadJs(
                     language = language,
                     module = module,
