@@ -7,9 +7,10 @@
 @file:Suppress("UnstableApiUsage", "GENERIC_VARIABLE_WRONG_DECLARATION")
 
 import ru.pixnews.wasm.sqlite.open.helper.builder.ext.firstDirectory
-import ru.pixnews.wasm.sqlite.open.helper.builder.icu.internal.IcuBuildTask
-import ru.pixnews.wasm.sqlite.open.helper.builder.icu.internal.createIcuSourceConfiguration
-import ru.pixnews.wasm.sqlite.open.helper.builder.icu.internal.setupUnpackingIcuAttributes
+import ru.pixnews.wasm.sqlite.open.helper.builder.icu.IcuBuildHostToolchainTask
+import ru.pixnews.wasm.sqlite.open.helper.builder.icu.IcuBuildWasmLibraryTask
+import ru.pixnews.wasm.sqlite.open.helper.builder.icu.createIcuSourceConfiguration
+import ru.pixnews.wasm.sqlite.open.helper.builder.icu.setupUnpackingIcuAttributes
 
 // Convention Plugin for building ICU for WASM using Emscripten
 plugins {
@@ -24,19 +25,28 @@ internal val icuSources = createIcuSourceConfiguration(
 
 private val icuSourceDir: Provider<File> = icuSources.firstDirectory(providers)
 
-private val buildIcuTask = tasks.register<IcuBuildTask>("buildIcu") {
+private val buildToolchainTask = tasks.register<IcuBuildHostToolchainTask>("buildHostIcuToolchain") {
     group = "Build"
-    description = "Compiles ICU"
+    description = "Compiles ICU Toolchain for local system"
 
-    this.icuSource.fileProvider(icuSourceDir)
+    icuSource.fileProvider(icuSourceDir)
     emscriptenSdk.emccVersion = versionCatalogs.named("libs").findVersion("emscripten").get().toString()
+}
+
+private val buildIcuTask = tasks.register<IcuBuildWasmLibraryTask>("buildIcu") {
+    group = "Build"
+    description = "Compiles ICU for WASM"
+
+    icuSource.fileProvider(icuSourceDir)
+    emscriptenSdk.emccVersion = versionCatalogs.named("libs").findVersion("emscripten").get().toString()
+    icuBuildToolchainDirectory = buildToolchainTask.flatMap(IcuBuildHostToolchainTask::outputDirectory)
 }
 
 tasks.named("assemble").configure {
     dependsOn(buildIcuTask)
 }
 
-private val wasmIcuElements = configurations.consumable("wasmIcuelements") {
+private val wasmIcuElements = configurations.consumable("wasmIcuElements") {
     attributes {
         attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
         attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named("wasm-library"))
@@ -45,7 +55,7 @@ private val wasmIcuElements = configurations.consumable("wasmIcuelements") {
 
 wasmIcuElements.get().outgoing {
     artifacts {
-        artifact(buildIcuTask.flatMap(IcuBuildTask::outputDirectory)) {
+        artifact(buildIcuTask.flatMap(IcuBuildWasmLibraryTask::outputDirectory)) {
             builtBy(buildIcuTask)
         }
     }

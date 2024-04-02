@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.builder.icu.internal
+package ru.pixnews.wasm.sqlite.open.helper.builder.icu
 
 import org.gradle.api.attributes.Attribute
 
@@ -13,16 +13,5 @@ import org.gradle.api.attributes.Attribute
  */
 internal val EXTRACTED_ICU_ATTRIBUTE: Attribute<Boolean> = Attribute.of(
     "extracted-icu",
-    Boolean::class.javaObjectType,
-)
-
-/**
- * An attribute that specifies the ICU toolchain built for the local system, which is then used in cross-compilation
- * to generate and package data.
- *
- * https://unicode-org.github.io/icu/userguide/icu4c/build.html#how-to-cross-compile-icu
- */
-internal val ICU_BUILD_TOOLCHAIN_ATTRIBUTE: Attribute<Boolean> = Attribute.of(
-    "icu-build-toolchain",
     Boolean::class.javaObjectType,
 )
