@@ -10,20 +10,20 @@ import org.gradle.api.artifacts.transform.InputArtifact
 import org.gradle.api.artifacts.transform.TransformAction
 import org.gradle.api.artifacts.transform.TransformOutputs
 import org.gradle.api.artifacts.transform.TransformParameters
+import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.FileSystemLocation
+import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.work.DisableCachingByDefault
-import java.nio.file.Files
-import java.nio.file.Path
-import java.util.zip.ZipEntry
-import java.util.zip.ZipFile
-import kotlin.io.path.Path
-import kotlin.io.path.name
+import javax.inject.Inject
 
 @DisableCachingByDefault(because = "Not worth caching")
-internal abstract class UnpackSqliteAmalgamationTransform : TransformAction<TransformParameters.None> {
+internal abstract class UnpackSqliteAmalgamationTransform @Inject constructor(
+    private val archiveOperations: ArchiveOperations,
+    private val fileSystemOperations: FileSystemOperations,
+) : TransformAction<TransformParameters.None> {
     @get:InputArtifact
     @get:PathSensitive(PathSensitivity.NAME_ONLY)
     abstract val inputZipFile: Provider<FileSystemLocation>
@@ -32,24 +32,17 @@ internal abstract class UnpackSqliteAmalgamationTransform : TransformAction<Tran
         val zipFile = inputZipFile.get().asFile
         val unzipDir = outputs.dir(zipFile.nameWithoutExtension).toPath()
 
-        ZipFile(zipFile).use { inputZip: ZipFile -> unpackRequiredEntries(inputZip, unzipDir) }
-    }
+        val fileTree = archiveOperations.zipTree(zipFile)
 
-    private fun unpackRequiredEntries(zipFile: ZipFile, dstDir: Path) {
-        for (entry: ZipEntry in zipFile.entries()) {
-            if (entry.isDirectory) {
-                continue
-            }
-            val fname = Path(entry.name).name
-            if (fname in SQLITE_EXTRACTED_FILES) {
-                zipFile.getInputStream(entry).use {
-                    Files.copy(it, dstDir.resolve(fname))
-                }
-            }
+        fileSystemOperations.sync {
+            from(fileTree)
+            into(unzipDir)
+            include { it.name in SQLITE_EXTRACTED_FILES }
+            eachFile { path = sourceName }
         }
     }
 
     internal companion object {
-        val SQLITE_EXTRACTED_FILES = listOf("sqlite3.c", "sqlite3.h", "shell.c")
+        val SQLITE_EXTRACTED_FILES = setOf("sqlite3.c", "sqlite3.h", "shell.c")
     }
 }

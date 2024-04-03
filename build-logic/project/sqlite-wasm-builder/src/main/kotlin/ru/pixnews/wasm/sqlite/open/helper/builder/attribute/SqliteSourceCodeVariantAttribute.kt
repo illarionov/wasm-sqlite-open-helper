@@ -21,4 +21,4 @@ internal const val SQLITE_ORIGINAL = "sqlite"
 /**
  * Sqlite source with Android patch applied, variant for [SQLITE_SOURCE_CODE_VARIANT_ATTRIBUTE]
  */
-internal const val SQLITE_WITH_ANDROID_PATCH = "sqlite"
+internal const val SQLITE_WITH_ANDROID_PATCH = "sqlite-patched"
