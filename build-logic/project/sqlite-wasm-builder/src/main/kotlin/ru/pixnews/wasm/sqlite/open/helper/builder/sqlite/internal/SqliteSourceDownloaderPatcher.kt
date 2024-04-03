@@ -20,7 +20,6 @@ import ru.pixnews.wasm.sqlite.open.helper.builder.attribute.SQLITE_ORIGINAL
 import ru.pixnews.wasm.sqlite.open.helper.builder.attribute.SQLITE_SOURCE_CODE_VARIANT_ATTRIBUTE
 import ru.pixnews.wasm.sqlite.open.helper.builder.attribute.SQLITE_WITH_ANDROID_PATCH
 
-
 public fun Project.setupUnpackingSqliteAttributes(
     androidSqlitePatchFile: Provider<RegularFile>,
 ) {

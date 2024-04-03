@@ -6,6 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.builder.attribute
 
+import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.attributes.LibraryElements.DYNAMIC_LIB
 import org.gradle.api.attributes.Usage
@@ -13,6 +14,14 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.kotlin.dsl.named
 import org.gradle.nativeplatform.MachineArchitecture
 import org.gradle.nativeplatform.OperatingSystemFamily
+
+/**
+ * Attribute to mark code compiled with multithreading support using pthread
+ */
+internal val EMSCRIPTEN_USE_PTHREADS_ATTRIBUTE: Attribute<Boolean> = Attribute.of(
+    "ru.pixnews.wasm.sqlite.open.helper.builder.emscripten.pthreads",
+    Boolean::class.javaObjectType,
+)
 
 public val ObjectFactory.wasm32Architecture: MachineArchitecture get() = named("wasm32")
 

@@ -17,6 +17,9 @@ import org.gradle.language.cpp.CppBinary.LINKAGE_ATTRIBUTE
 import org.gradle.language.cpp.CppBinary.OPTIMIZED_ATTRIBUTE
 import org.gradle.nativeplatform.MachineArchitecture.ARCHITECTURE_ATTRIBUTE
 import org.gradle.nativeplatform.OperatingSystemFamily.OPERATING_SYSTEM_ATTRIBUTE
+import ru.pixnews.wasm.sqlite.open.helper.builder.attribute.EMSCRIPTEN_USE_PTHREADS_ATTRIBUTE
+import ru.pixnews.wasm.sqlite.open.helper.builder.attribute.ICU_DATA_PACKAGING_ATTRIBUTE
+import ru.pixnews.wasm.sqlite.open.helper.builder.attribute.ICU_DATA_PACKAGING_STATIC
 import ru.pixnews.wasm.sqlite.open.helper.builder.attribute.emscriptenOperatingSystem
 import ru.pixnews.wasm.sqlite.open.helper.builder.attribute.wasm32Architecture
 import ru.pixnews.wasm.sqlite.open.helper.builder.ext.firstDirectory
@@ -67,6 +70,8 @@ configurations.consumable("wasmIcuElements") {
         attribute(ARTIFACT_TYPE_ATTRIBUTE, DIRECTORY_TYPE)
         attribute(LINKAGE_ATTRIBUTE, Linkage.STATIC)
         attribute(OPTIMIZED_ATTRIBUTE, true)
+        attribute(EMSCRIPTEN_USE_PTHREADS_ATTRIBUTE, true)
+        attribute(ICU_DATA_PACKAGING_ATTRIBUTE, ICU_DATA_PACKAGING_STATIC)
     }
     outgoing {
         variants {
