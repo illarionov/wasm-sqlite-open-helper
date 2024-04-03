@@ -65,9 +65,22 @@ public abstract class EmscriptenSdk @Inject constructor(
 
     internal fun buildEmccCommandLine(
         builderAction: MutableList<String>.() -> Unit,
+    ): List<String> = buildCommandLine(emccExecutablePath, builderAction)
+
+    internal fun buildEmconfigureCommandLine(
+        builderAction: MutableList<String>.() -> Unit,
+    ): List<String> = buildCommandLine(emConfigureExecutablePath, builderAction)
+
+    internal fun buildEmMakeCommandLine(
+        builderAction: MutableList<String>.() -> Unit,
+    ) = buildCommandLine(emMakeExecutablePath, builderAction)
+
+    private fun buildCommandLine(
+        commandExecutablePath: Property<String>,
+        builderAction: MutableList<String>.() -> Unit,
     ): List<String> = buildList {
-        val emcc = getEmscriptenExecutableOrThrow(emccExecutablePath)
-        add(emcc.toString())
+        val command = getEmscriptenExecutableOrThrow(commandExecutablePath)
+        add(command.toString())
         // Do not depend on ~/.emscripten
         add("--em-config")
         add(getEmscriptenConfigFile().toString())
@@ -78,22 +91,6 @@ public abstract class EmscriptenSdk @Inject constructor(
             add(cacheDir.toString())
         }
 
-        builderAction()
-    }
-
-    internal fun buildEmconfigureCommandLine(
-        builderAction: MutableList<String>.() -> Unit,
-    ): List<String> = buildList {
-        val emConfigure = getEmscriptenExecutableOrThrow(emConfigureExecutablePath)
-        add(emConfigure.toString())
-        builderAction()
-    }
-
-    internal fun buildEmMakeCommandLine(
-        builderAction: MutableList<String>.() -> Unit,
-    ) = buildList {
-        val emMake = getEmscriptenExecutableOrThrow(emMakeExecutablePath)
-        add(emMake.toString())
         builderAction()
     }
 
