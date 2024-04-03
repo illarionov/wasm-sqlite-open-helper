@@ -11,17 +11,15 @@ import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition.DIRECTORY_TYPE
 import org.gradle.api.file.FileTree
 import org.gradle.kotlin.dsl.dependencies
+import ru.pixnews.wasm.sqlite.open.helper.builder.attribute.ICU_SOURCE_CODE_ATTRIBUTE
 
 internal fun Project.setupUnpackingIcuAttributes() = dependencies {
-    attributesSchema.attribute(EXTRACTED_ICU_ATTRIBUTE)
-    artifactTypes.maybeCreate("zip").attributes.apply {
-        attribute(EXTRACTED_ICU_ATTRIBUTE, false)
-    }
+    attributesSchema.attribute(ICU_SOURCE_CODE_ATTRIBUTE)
     registerTransform(UnpackIcuTransform::class.java) {
         from.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, "tgz")
-        from.attribute(EXTRACTED_ICU_ATTRIBUTE, false)
+        from.attribute(ICU_SOURCE_CODE_ATTRIBUTE, true)
 
-        to.attribute(EXTRACTED_ICU_ATTRIBUTE, true)
+        to.attribute(ICU_SOURCE_CODE_ATTRIBUTE, true)
         to.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, DIRECTORY_TYPE)
     }
 }
@@ -30,7 +28,7 @@ internal fun Project.createIcuSourceConfiguration(
     icuVersion: String,
 ): FileTree {
     val icuConfiguration = configurations.detachedConfiguration().attributes {
-        attribute(EXTRACTED_ICU_ATTRIBUTE, false)
+        attribute(ICU_SOURCE_CODE_ATTRIBUTE, true)
     }
     icuConfiguration.dependencies.addLater(
         provider {
@@ -42,7 +40,7 @@ internal fun Project.createIcuSourceConfiguration(
         .incoming
         .artifactView {
             attributes {
-                attribute(EXTRACTED_ICU_ATTRIBUTE, true)
+                attribute(ICU_SOURCE_CODE_ATTRIBUTE, true)
                 attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, DIRECTORY_TYPE)
             }
         }.files.asFileTree

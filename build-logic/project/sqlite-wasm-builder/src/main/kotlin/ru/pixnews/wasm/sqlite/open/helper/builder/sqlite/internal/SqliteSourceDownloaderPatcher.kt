@@ -12,43 +12,32 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition.DIRECTORY_TYPE
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition.ZIP_TYPE
-import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.dependencies
-
-public val EXTRACTED_SQLITE_ATTRIBUTE: Attribute<Boolean> = Attribute.of(
-    "extracted-sqlite",
-    Boolean::class.javaObjectType,
-)
-public val PATCHED_SQLITE_ATTRIBUTE: Attribute<Boolean> = Attribute.of(
-    "patched-sqlite",
-    Boolean::class.javaObjectType,
-)
+import ru.pixnews.wasm.sqlite.open.helper.builder.attribute.SQLITE_ORIGINAL
+import ru.pixnews.wasm.sqlite.open.helper.builder.attribute.SQLITE_SOURCE_CODE_VARIANT_ATTRIBUTE
+import ru.pixnews.wasm.sqlite.open.helper.builder.attribute.SQLITE_WITH_ANDROID_PATCH
 
 public fun Project.setupUnpackingSqliteAttributes(
     androidSqlitePatchFile: Provider<RegularFile>,
 ) {
     project.dependencies {
-        attributesSchema.attribute(EXTRACTED_SQLITE_ATTRIBUTE)
-        artifactTypes.maybeCreate("zip").attributes.apply {
-            attribute(EXTRACTED_SQLITE_ATTRIBUTE, false)
-            attribute(PATCHED_SQLITE_ATTRIBUTE, false)
-        }
+        attributesSchema.attribute(SQLITE_SOURCE_CODE_VARIANT_ATTRIBUTE)
         registerTransform(UnpackSqliteAmalgamationTransform::class.java) {
+            from.attribute(SQLITE_SOURCE_CODE_VARIANT_ATTRIBUTE, SQLITE_ORIGINAL)
             from.attribute(ARTIFACT_TYPE_ATTRIBUTE, ZIP_TYPE)
-            from.attribute(EXTRACTED_SQLITE_ATTRIBUTE, false)
 
-            to.attribute(EXTRACTED_SQLITE_ATTRIBUTE, true)
+            to.attribute(SQLITE_SOURCE_CODE_VARIANT_ATTRIBUTE, SQLITE_ORIGINAL)
             to.attribute(ARTIFACT_TYPE_ATTRIBUTE, DIRECTORY_TYPE)
         }
         registerTransform(ApplyAndroidPatchesSqliteTransform::class.java) {
-            from.attribute(EXTRACTED_SQLITE_ATTRIBUTE, true)
-            from.attribute(PATCHED_SQLITE_ATTRIBUTE, false)
+            from.attribute(SQLITE_SOURCE_CODE_VARIANT_ATTRIBUTE, SQLITE_ORIGINAL)
             from.attribute(ARTIFACT_TYPE_ATTRIBUTE, DIRECTORY_TYPE)
 
-            to.attribute(PATCHED_SQLITE_ATTRIBUTE, true)
+            to.attribute(SQLITE_SOURCE_CODE_VARIANT_ATTRIBUTE, SQLITE_WITH_ANDROID_PATCH)
+            to.attribute(ARTIFACT_TYPE_ATTRIBUTE, DIRECTORY_TYPE)
 
             parameters {
                 this.androidSqlitePatchFile = androidSqlitePatchFile
@@ -62,8 +51,7 @@ internal fun Project.createSqliteSourceConfiguration(
     applyAndroidPatch: Boolean = true,
 ): FileCollection {
     val sqliteConfiguration = configurations.detachedConfiguration().attributes {
-        attribute(EXTRACTED_SQLITE_ATTRIBUTE, false)
-        attribute(PATCHED_SQLITE_ATTRIBUTE, false)
+        attribute(SQLITE_SOURCE_CODE_VARIANT_ATTRIBUTE, SQLITE_ORIGINAL)
     }
     sqliteConfiguration.dependencies.addLater(
         provider {
@@ -71,12 +59,17 @@ internal fun Project.createSqliteSourceConfiguration(
         },
     )
 
+    val requiredVariant = if (applyAndroidPatch) {
+        SQLITE_WITH_ANDROID_PATCH
+    } else {
+        SQLITE_ORIGINAL
+    }
+
     val unpackedSqliteSrc = sqliteConfiguration
         .incoming
         .artifactView {
             attributes {
-                attribute(EXTRACTED_SQLITE_ATTRIBUTE, true)
-                attribute(PATCHED_SQLITE_ATTRIBUTE, applyAndroidPatch)
+                attribute(SQLITE_SOURCE_CODE_VARIANT_ATTRIBUTE, requiredVariant)
                 attribute(ARTIFACT_TYPE_ATTRIBUTE, DIRECTORY_TYPE)
             }
         }.files.asFileTree

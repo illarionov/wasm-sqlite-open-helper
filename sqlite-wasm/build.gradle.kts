@@ -21,28 +21,9 @@ version = wasmSqliteVersions.getSubmoduleVersionProvider(
     envVariableName = "WSOH_SQLITE_WASM_VERSION",
 ).get()
 
-configurations {
-    dependencyScope("wasmStaticLibraries")
-    resolvable("wasmStaticLibrariesClasspath") {
-        extendsFrom(configurations["wasmStaticLibraries"])
-        attributes {
-            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
-            attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named("wasm-library"))
-        }
-    }
-}
-
 dependencies {
-    "wasmStaticLibraries"(project(":icu-wasm"))
+    "wasmLibraries"(project(":icu-wasm"))
 }
-
-val icuLibrary = configurations["wasmStaticLibrariesClasspath"].asFileTree
-val icuLibraryLibs: Provider<File> = icuLibrary.filter { it.name == "libicuuc.a" }
-    .elements
-    .map { it.first().asFile.parentFile }
-val icuLibraryIncludes: Provider<File> = icuLibrary.filter { it.endsWith("include/unicode/ulocale.h") }
-    .elements
-    .map { it.first().asFile.parentFile.parentFile }
 
 sqlite3Build {
     val defaultSqliteVersion = versionCatalogs.named("libs").findVersion("sqlite").get().toString()
@@ -56,7 +37,11 @@ sqlite3Build {
                 "-licui18n",
                 "-licudata",
             )
-            codeGenerationOptions.add(icuLibraryLibs.map { "-L${it.absolutePath}" })
+            codeGenerationOptions.addAll(
+                configurations["wasmStaticLibrariesClasspath"].elements.map { locations: Set<FileSystemLocation> ->
+                    locations.map { fileSystemLocation -> "-L${fileSystemLocation.asFile.absolutePath}" }
+                },
+            )
 
             additionalSourceFiles.from(
                 sqlite3AndroidSourcesDir.files(
@@ -67,7 +52,9 @@ sqlite3Build {
             )
             additionalIncludes.from(
                 sqlite3AndroidSourcesDir,
-                icuLibraryIncludes.map { it.absolutePath },
+                configurations["wasmHeadersClasspath"].elements.map { locations: Set<FileSystemLocation> ->
+                    locations.map { it.asFile.absolutePath }
+                },
             )
             emscriptenConfigurationOptions = SqliteCodeGenerationOptions.emscriptenConfigurationOptions -
                     "-sINITIAL_MEMORY=16777216" +
@@ -82,7 +69,7 @@ sqlite3Build {
 
 val wasmResourcesDir = layout.buildDirectory.dir("wasmLibraries")
 val copyResourcesTask = tasks.register<Copy>("copyWasmLibrariesToResources") {
-    from(configurations.named("wasmSqliteElements").get().artifacts.files)
+    from(configurations.named("wasmSqliteReleaseElements").get().artifacts.files)
     into(wasmResourcesDir.map { it.dir("ru/pixnews/wasm/sqlite/open/helper") })
     include("*.wasm")
 }

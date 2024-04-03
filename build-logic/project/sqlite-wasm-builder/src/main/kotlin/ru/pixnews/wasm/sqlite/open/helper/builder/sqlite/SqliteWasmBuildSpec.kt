@@ -18,7 +18,7 @@ import org.gradle.api.provider.ProviderFactory
 import java.io.Serializable
 import javax.inject.Inject
 
-@SqliteWasmBuildDsl
+@WasmBuildDsl
 public open class SqliteWasmBuildSpec @Inject internal constructor(
     objects: ObjectFactory,
     providers: ProviderFactory,

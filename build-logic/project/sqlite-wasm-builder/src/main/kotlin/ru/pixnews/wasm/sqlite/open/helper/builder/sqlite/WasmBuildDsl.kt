@@ -8,4 +8,4 @@ package ru.pixnews.wasm.sqlite.open.helper.builder.sqlite
 
 @DslMarker
 @Target(AnnotationTarget.CLASS, AnnotationTarget.TYPEALIAS, AnnotationTarget.TYPE, AnnotationTarget.FUNCTION)
-public annotation class SqliteWasmBuildDsl
+public annotation class WasmBuildDsl
