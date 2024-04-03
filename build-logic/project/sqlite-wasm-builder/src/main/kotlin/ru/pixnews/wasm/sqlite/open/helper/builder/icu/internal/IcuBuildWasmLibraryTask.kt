@@ -4,14 +4,17 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.builder.icu
+package ru.pixnews.wasm.sqlite.open.helper.builder.icu.internal
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.ProjectLayout
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.CacheableTask
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
@@ -23,7 +26,13 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.property
 import org.gradle.process.ExecOperations
+import ru.pixnews.wasm.sqlite.open.helper.builder.attribute.ICU_DATA_PACKAGING_STATIC
 import ru.pixnews.wasm.sqlite.open.helper.builder.emscripten.EmscriptenSdk
+import ru.pixnews.wasm.sqlite.open.helper.builder.icu.IcuBuildFeature
+import ru.pixnews.wasm.sqlite.open.helper.builder.icu.internal.IcuBuildDefaults.ICU_PKGDATA_OPTS
+import ru.pixnews.wasm.sqlite.open.helper.builder.icu.internal.IcuBuildDefaults.ICU_PTHREADS_CFLAGS
+import ru.pixnews.wasm.sqlite.open.helper.builder.icu.internal.IcuBuildDefaults.ICU_PTHREADS_CXXFLAGS
+import ru.pixnews.wasm.sqlite.open.helper.builder.icu.internal.IcuBuildDefaults.ICU_PTHREAD_FORCE_LIBS
 import java.io.File
 import javax.inject.Inject
 
@@ -34,7 +43,6 @@ import javax.inject.Inject
 public abstract class IcuBuildWasmLibraryTask @Inject constructor(
     private val execOperations: ExecOperations,
     objects: ObjectFactory,
-    layout: ProjectLayout,
 ) : DefaultTask() {
     @get:InputDirectory
     @PathSensitive(RELATIVE)
@@ -48,15 +56,45 @@ public abstract class IcuBuildWasmLibraryTask @Inject constructor(
     public val icuBuildToolchainDirectory: DirectoryProperty = objects.directoryProperty()
 
     @get:OutputDirectory
-    @Optional
-    public val outputDirectory: DirectoryProperty = objects.directoryProperty().convention(
-        layout.buildDirectory.dir(ICU_STATIC_LIBRARY_RESULT_DIR),
-    )
+    public val outputDirectory: DirectoryProperty = objects.directoryProperty()
 
     @get:Internal
-    public val buildDirectory: DirectoryProperty = objects.directoryProperty().convention(
-        layout.buildDirectory.dir(ICU_BUILD_DIR),
-    )
+    public val buildDirectory: DirectoryProperty = objects.directoryProperty()
+
+    @get:Input
+    @Optional
+    public val target: Property<String> = objects.property<String>()
+        .convention(IcuBuildDefaults.ICU_DEFAULT_TARGET)
+
+    @get:Input
+    @Optional
+    public val dataPackaging: Property<String> = objects.property(String::class.java)
+        .convention(ICU_DATA_PACKAGING_STATIC)
+
+    @get:Input
+    @Optional
+    public val buildFeatures: SetProperty<IcuBuildFeature> = objects.setProperty(IcuBuildFeature::class.java)
+        .convention(IcuBuildFeature.DEFAULT)
+
+    @get:Input
+    @Optional
+    public val icuAdditionalCflags: ListProperty<String> = objects.listProperty(String::class.java)
+        .convention(IcuBuildDefaults.ICU_CFLAGS)
+
+    @get:Input
+    @Optional
+    public val icuAdditionalCxxflags: ListProperty<String> = objects.listProperty(String::class.java)
+        .convention(IcuBuildDefaults.ICU_CXXFLAGS)
+
+    @get:Input
+    @Optional
+    public val icuForceLibs: ListProperty<String> = objects.listProperty(String::class.java)
+        .convention(IcuBuildDefaults.ICU_FORCE_LIBS)
+
+    @get:Input
+    @Optional
+    public val icuUsePthreads: Property<Boolean> = objects.property(Boolean::class.java)
+        .convention(IcuBuildDefaults.ICU_USE_PTHREADS)
 
     @get:Internal
     public val maxJobs: Property<Int> = objects.property<Int>().convention(
@@ -79,19 +117,12 @@ public abstract class IcuBuildWasmLibraryTask @Inject constructor(
         val hostEnv = getWasmBuildInstallEnvironment()
         val emConfigure = emscriptenSdk.buildEmconfigureCommandLine {
             add(icuConfigurePath.absolutePath)
-        } + listOf(
-            "--disable-extras",
-            "--disable-icu-config",
-            "--disable-samples",
-            "--disable-shared",
-            "--disable-tests",
-            "--enable-static",
-            "--enable-tools",
-            "--prefix=${dstDir.absolutePath}",
-            "--target=wasm32-unknown-emscripten",
-            "--with-cross-build=${toolchainDir.absolutePath}",
-            "--with-data-packaging=static",
-        )
+            addAll(buildFeatures.get().toCommandLineArgs())
+            add("--prefix=${dstDir.absolutePath}")
+            add("--target=${target.get()}")
+            add("--with-cross-build=${toolchainDir.absolutePath}")
+            add("--with-data-packaging=${dataPackaging.get()}")
+        }
         val emBuild = emscriptenSdk.buildEmMakeCommandLine {
             add("gmake")
             add("-j${maxJobs.get()}")
@@ -122,11 +153,29 @@ public abstract class IcuBuildWasmLibraryTask @Inject constructor(
         return System.getenv().filterKeys {
             it == "PATH"
         } + emscriptenSdk.getEmsdkEnvironment() + mapOf(
-            "CXXFLAGS" to ICU_CXXFLAGS.joinToString(" "),
-            "CFLAGS" to ICU_CFLAGS.joinToString(" "),
-            "ICU_FORCE_LIBS" to ICU_FORCE_LIBS.joinToString(" "),
+            "CXXFLAGS" to icuAdditionalCxxflags.getWithPhreadDefaults(ICU_PTHREADS_CXXFLAGS).joinToString(" "),
+            "CFLAGS" to icuAdditionalCflags.getWithPhreadDefaults(ICU_PTHREADS_CFLAGS).joinToString(" "),
+            "ICU_FORCE_LIBS" to icuForceLibs.getWithPhreadDefaults(ICU_PTHREAD_FORCE_LIBS).joinToString(" "),
             "PKGDATA_OPTS" to ICU_PKGDATA_OPTS.joinToString(" "),
             "PATH" to (System.getenv()["PATH"] ?: ""),
         )
+    }
+
+    private fun Provider<List<String>>.getWithPhreadDefaults(
+        pthreadDefaults: List<String>,
+    ) = this.get() + if (icuUsePthreads.get()) {
+        pthreadDefaults
+    } else {
+        emptyList()
+    }
+
+    private companion object {
+        private fun Set<IcuBuildFeature>.toCommandLineArgs(): List<String> = IcuBuildFeature.values().map { feature ->
+            if (feature in this) {
+                "--enable-${feature.id}"
+            } else {
+                "--disable-${feature.id}"
+            }
+        }
     }
 }

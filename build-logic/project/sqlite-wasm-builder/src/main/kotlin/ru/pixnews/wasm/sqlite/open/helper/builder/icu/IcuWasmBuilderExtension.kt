@@ -4,15 +4,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.builder.sqlite
+package ru.pixnews.wasm.sqlite.open.helper.builder.icu
 
 import org.gradle.api.NamedDomainObjectContainer
 import ru.pixnews.wasm.sqlite.open.helper.builder.ext.WasmBuildDsl
 import java.io.Serializable
 
 @WasmBuildDsl
-public abstract class SqliteWasmBuilderExtension : Serializable {
-    public abstract val builds: NamedDomainObjectContainer<SqliteWasmBuildSpec>
+public abstract class IcuWasmBuilderExtension : Serializable {
+    public abstract val builds: NamedDomainObjectContainer<IcuWasmBuildSpec>
 
     public companion object {
         private const val serialVersionUID: Long = -1

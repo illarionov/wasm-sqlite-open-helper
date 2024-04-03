@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.builder.icu
+package ru.pixnews.wasm.sqlite.open.helper.builder.icu.internal
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
@@ -24,6 +24,7 @@ import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.property
 import org.gradle.process.ExecOperations
 import ru.pixnews.wasm.sqlite.open.helper.builder.emscripten.EmscriptenSdk
+import ru.pixnews.wasm.sqlite.open.helper.builder.icu.internal.IcuBuildDefaults.ICU_BUILD_TOOLCHAIN_DIR
 import java.io.File
 import javax.inject.Inject
 

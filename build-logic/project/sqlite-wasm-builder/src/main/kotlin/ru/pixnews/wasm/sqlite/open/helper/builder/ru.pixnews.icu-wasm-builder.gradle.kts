@@ -19,47 +19,22 @@ import org.gradle.nativeplatform.MachineArchitecture.ARCHITECTURE_ATTRIBUTE
 import org.gradle.nativeplatform.OperatingSystemFamily.OPERATING_SYSTEM_ATTRIBUTE
 import ru.pixnews.wasm.sqlite.open.helper.builder.attribute.EMSCRIPTEN_USE_PTHREADS_ATTRIBUTE
 import ru.pixnews.wasm.sqlite.open.helper.builder.attribute.ICU_DATA_PACKAGING_ATTRIBUTE
-import ru.pixnews.wasm.sqlite.open.helper.builder.attribute.ICU_DATA_PACKAGING_STATIC
 import ru.pixnews.wasm.sqlite.open.helper.builder.attribute.emscriptenOperatingSystem
 import ru.pixnews.wasm.sqlite.open.helper.builder.attribute.wasm32Architecture
+import ru.pixnews.wasm.sqlite.open.helper.builder.ext.capitalizeAscii
 import ru.pixnews.wasm.sqlite.open.helper.builder.ext.firstDirectory
-import ru.pixnews.wasm.sqlite.open.helper.builder.icu.IcuBuildHostToolchainTask
-import ru.pixnews.wasm.sqlite.open.helper.builder.icu.IcuBuildWasmLibraryTask
-import ru.pixnews.wasm.sqlite.open.helper.builder.icu.createIcuSourceConfiguration
-import ru.pixnews.wasm.sqlite.open.helper.builder.icu.setupUnpackingIcuAttributes
+import ru.pixnews.wasm.sqlite.open.helper.builder.icu.IcuWasmBuildSpec
+import ru.pixnews.wasm.sqlite.open.helper.builder.icu.IcuWasmBuilderExtension
+import ru.pixnews.wasm.sqlite.open.helper.builder.icu.internal.IcuBuildDefaults.ICU_BUILD_DIR
+import ru.pixnews.wasm.sqlite.open.helper.builder.icu.internal.IcuBuildDefaults.ICU_STATIC_LIBRARY_RESULT_DIR
+import ru.pixnews.wasm.sqlite.open.helper.builder.icu.internal.IcuBuildHostToolchainTask
+import ru.pixnews.wasm.sqlite.open.helper.builder.icu.internal.IcuBuildWasmLibraryTask
+import ru.pixnews.wasm.sqlite.open.helper.builder.icu.internal.createIcuSourceConfiguration
+import ru.pixnews.wasm.sqlite.open.helper.builder.icu.internal.setupUnpackingIcuAttributes
 
 // Convention Plugin for building ICU for WASM using Emscripten
 plugins {
     base
-}
-
-setupUnpackingIcuAttributes()
-
-internal val icuSources = createIcuSourceConfiguration(
-    icuVersion = versionCatalogs.named("libs").findVersion("icu").get().toString(),
-).asFileTree
-
-private val icuSourceDir: Provider<File> = icuSources.firstDirectory(providers)
-
-private val buildToolchainTask = tasks.register<IcuBuildHostToolchainTask>("buildHostIcuToolchain") {
-    group = "Build"
-    description = "Compiles ICU Toolchain for local system"
-
-    icuSource.fileProvider(icuSourceDir)
-    emscriptenSdk.emccVersion = versionCatalogs.named("libs").findVersion("emscripten").get().toString()
-}
-
-private val buildIcuTask = tasks.register<IcuBuildWasmLibraryTask>("buildIcu") {
-    group = "Build"
-    description = "Compiles ICU for WASM"
-
-    icuSource.fileProvider(icuSourceDir)
-    emscriptenSdk.emccVersion = versionCatalogs.named("libs").findVersion("emscripten").get().toString()
-    icuBuildToolchainDirectory = buildToolchainTask.flatMap(IcuBuildHostToolchainTask::outputDirectory)
-}
-
-tasks.named("assemble").configure {
-    dependsOn(buildIcuTask)
 }
 
 configurations.consumable("wasmIcuElements") {
@@ -70,33 +45,102 @@ configurations.consumable("wasmIcuElements") {
         attribute(ARTIFACT_TYPE_ATTRIBUTE, DIRECTORY_TYPE)
         attribute(LINKAGE_ATTRIBUTE, Linkage.STATIC)
         attribute(OPTIMIZED_ATTRIBUTE, true)
-        attribute(EMSCRIPTEN_USE_PTHREADS_ATTRIBUTE, true)
-        attribute(ICU_DATA_PACKAGING_ATTRIBUTE, ICU_DATA_PACKAGING_STATIC)
     }
-    outgoing {
-        variants {
-            create("lib") {
-                attributes {
-                    attribute(USAGE_ATTRIBUTE, objects.named(Usage.NATIVE_LINK))
-                    attribute(LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LINK_ARCHIVE))
-                }
-                artifacts {
-                    artifact(buildIcuTask.flatMap { it.outputDirectory.dir("lib") }) {
-                        builtBy(buildIcuTask)
-                    }
-                }
+}
+
+setupUnpackingIcuAttributes()
+
+internal val icuSources = createIcuSourceConfiguration(
+    icuVersion = versionCatalogs.named("libs").findVersion("icu").get().toString(),
+).asFileTree
+
+private val icuSourceDir: Provider<File> = icuSources.firstDirectory(providers)
+
+private val icuBuildExtension = extensions.create("icuBuild", IcuWasmBuilderExtension::class.java)
+
+afterEvaluate {
+    icuBuildExtension.builds.all {
+        setupTasksForBuild(this)
+    }
+}
+
+private val buildToolchainTask = tasks.register<IcuBuildHostToolchainTask>("buildHostIcuToolchain") {
+    group = "Build"
+    description = "Compiles ICU Toolchain for local system"
+
+    icuSource.fileProvider(icuSourceDir)
+    emscriptenSdk.emccVersion = versionCatalogs.named("libs").findVersion("emscripten").get().toString()
+}
+
+private fun setupTasksForBuild(buildSpec: IcuWasmBuildSpec) {
+    val buildName = buildSpec.name.capitalizeAscii()
+    val outputDirectory = layout.buildDirectory.dir("$ICU_STATIC_LIBRARY_RESULT_DIR-$buildName")
+    val buildDirectory = layout.buildDirectory.dir("$ICU_BUILD_DIR-$buildName")
+
+    val buildIcuTask = tasks.register<IcuBuildWasmLibraryTask>("buildIcu$buildName") {
+        group = "Build"
+        description = "Compiles ICU `$buildName` for WASM"
+
+        icuSource.fileProvider(icuSourceDir)
+        emscriptenSdk.emccVersion = versionCatalogs.named("libs").findVersion("emscripten").get().toString()
+        icuBuildToolchainDirectory = buildToolchainTask.flatMap(IcuBuildHostToolchainTask::outputDirectory)
+
+        this.outputDirectory = outputDirectory
+        this.buildDirectory = buildDirectory
+        target = buildSpec.target
+        dataPackaging = buildSpec.dataPackaging
+        buildFeatures = buildSpec.buildFeatures
+        icuAdditionalCflags = buildSpec.icuAdditionalCflags
+        icuAdditionalCxxflags = buildSpec.icuAdditionalCxxflags
+        icuForceLibs = buildSpec.icuAdditionalForceLibs
+        icuUsePthreads = buildSpec.usePthreads
+    }
+
+    setupOutgoingArtifacts(buildSpec, buildIcuTask)
+
+    tasks.named("assemble").configure {
+        dependsOn(buildIcuTask)
+    }
+}
+
+private fun setupOutgoingArtifacts(
+    buildSpec: IcuWasmBuildSpec,
+    buildIcuTask: TaskProvider<IcuBuildWasmLibraryTask>,
+) = afterEvaluate {
+    configurations["wasmIcuElements"].outgoing.variants {
+        val usePthreads = buildSpec.usePthreads.get()
+        val dataPackaging = buildSpec.dataPackaging.get()
+        val variantSuffix = buildList<String> {
+            if (usePthreads) {
+                add("pthread")
             }
-            create("include") {
-                attributes {
-                    attribute(USAGE_ATTRIBUTE, objects.named(Usage.C_PLUS_PLUS_API))
-                    attribute(LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(HEADERS_CPLUSPLUS))
-                }
-                artifacts {
-                    artifact(buildIcuTask.flatMap { it.outputDirectory.dir("include") }) {
-                        builtBy(buildIcuTask)
-                    }
-                }
+            add(dataPackaging)
+        }
+        val libVariantName = (listOf("lib") + variantSuffix).joinToString("-")
+
+        val libVariant = findByName(libVariantName) ?: create(libVariantName) {
+            attributes {
+                attribute(USAGE_ATTRIBUTE, objects.named(Usage.NATIVE_LINK))
+                attribute(LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LINK_ARCHIVE))
+                attribute(EMSCRIPTEN_USE_PTHREADS_ATTRIBUTE, usePthreads)
+                attribute(ICU_DATA_PACKAGING_ATTRIBUTE, dataPackaging)
             }
+        }
+        libVariant.artifact(buildIcuTask.flatMap { it.outputDirectory.dir("lib") }) {
+            builtBy(buildIcuTask)
+        }
+
+        val includeVariantName = (listOf("include") + variantSuffix).joinToString("-")
+        val includeVariant = findByName(includeVariantName) ?: create(includeVariantName) {
+            attributes {
+                attribute(USAGE_ATTRIBUTE, objects.named(Usage.C_PLUS_PLUS_API))
+                attribute(LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(HEADERS_CPLUSPLUS))
+                attribute(EMSCRIPTEN_USE_PTHREADS_ATTRIBUTE, usePthreads)
+                attribute(ICU_DATA_PACKAGING_ATTRIBUTE, dataPackaging)
+            }
+        }
+        includeVariant.artifact(buildIcuTask.flatMap { it.outputDirectory.dir("include") }) {
+            builtBy(buildIcuTask)
         }
     }
 }
