@@ -9,7 +9,7 @@ package ru.pixnews.wasm.sqlite.open.helper.builder.sqlite
 import org.gradle.api.NamedDomainObjectContainer
 import java.io.Serializable
 
-@SqliteWasmBuildDsl
+@WasmBuildDsl
 public abstract class SqliteWasmBuilderExtension : Serializable {
     public abstract val builds: NamedDomainObjectContainer<SqliteWasmBuildSpec>
 
