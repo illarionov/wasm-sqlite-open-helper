@@ -94,6 +94,7 @@ private fun setupTasksForBuild(buildSpec: IcuWasmBuildSpec) {
         icuAdditionalCxxflags = buildSpec.icuAdditionalCxxflags
         icuForceLibs = buildSpec.icuAdditionalForceLibs
         icuUsePthreads = buildSpec.usePthreads
+        icuDataDir = buildSpec.icuDataDir
     }
 
     setupOutgoingArtifacts(buildSpec, buildIcuTask)

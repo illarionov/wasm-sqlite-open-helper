@@ -33,9 +33,9 @@ import java.nio.file.Path
 internal class SyscallOpenat(
     language: WasmLanguage,
     module: WasmModule,
-    private val host: SqliteEmbedderHost,
+    override val host: SqliteEmbedderHost,
     functionName: String = "__syscall_openat",
-) : BaseWasmNode(language, module, functionName) {
+) : BaseWasmNode(language, module, host, functionName) {
     private val logger: Logger = host.rootLogger.withTag(SyscallOpenat::class.qualifiedName!!)
 
     @Suppress("MagicNumber")

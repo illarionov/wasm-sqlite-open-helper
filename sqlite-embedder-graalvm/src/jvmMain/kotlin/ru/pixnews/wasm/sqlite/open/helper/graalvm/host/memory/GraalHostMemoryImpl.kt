@@ -7,6 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory
 
 import org.graalvm.polyglot.Value
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.FdChannel
@@ -22,9 +23,10 @@ import java.nio.ByteOrder.LITTLE_ENDIAN
 // TODO: remove?
 internal class GraalHostMemoryImpl(
     val memory: Value,
+    logger: Logger,
 ) : Memory {
-    private val memoryReader: WasiMemoryReader = DefaultWasiMemoryReader(this)
-    private val memoryWriter: WasiMemoryWriter = DefaultWasiMemoryWriter(this)
+    private val memoryReader: WasiMemoryReader = DefaultWasiMemoryReader(this, logger)
+    private val memoryWriter: WasiMemoryWriter = DefaultWasiMemoryWriter(this, logger)
 
     override fun readI8(addr: WasmPtr<*>): Byte {
         return memory.readBufferByte(addr.addr.toLong())

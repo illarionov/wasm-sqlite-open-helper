@@ -6,6 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.memory
 
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.FdChannel
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.IovecArray
@@ -21,8 +22,12 @@ public fun interface WasiMemoryReader {
 
 public class DefaultWasiMemoryReader(
     private val memory: Memory,
+    logger: Logger,
 ) : WasiMemoryReader {
+    private val logger: Logger = logger.withTag(DefaultWasiMemoryReader::class.qualifiedName!!)
+
     override fun read(channel: FdChannel, strategy: ReadWriteStrategy, iovecs: IovecArray): ULong {
+        logger.v { "read(${channel.fd}, ${iovecs.iovecList.map { it.bufLen.value }})" }
         val bbufs = iovecs.toByteBuffers()
         val readBytes = channel.fileSystem.read(channel, bbufs, strategy)
         iovecs.iovecList.forEachIndexed { idx, vec ->

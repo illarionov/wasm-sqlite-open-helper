@@ -6,6 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.memory
 
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.FdChannel
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.CiovecArray
@@ -21,8 +22,11 @@ public fun interface WasiMemoryWriter {
 
 public class DefaultWasiMemoryWriter(
     private val memory: Memory,
+    logger: Logger,
 ) : WasiMemoryWriter {
+    private val logger: Logger = logger.withTag(DefaultWasiMemoryWriter::class.qualifiedName!!)
     override fun write(channel: FdChannel, strategy: ReadWriteStrategy, cioVecs: CiovecArray): ULong {
+        logger.v { "write(${channel.fd}, ${cioVecs.ciovecList.map { it.bufLen.value }})" }
         val bufs = cioVecs.toByteBuffers(memory)
         return channel.fileSystem.write(channel, bufs, strategy)
     }

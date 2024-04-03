@@ -6,13 +6,17 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.builder.icu.internal
 
-internal object IcuBuildDefaults {
+public object IcuBuildDefaults {
     internal const val ICU_STATIC_LIBRARY_RESULT_DIR: String = "wasmIcu/out"
     internal const val ICU_BUILD_TOOLCHAIN_DIR: String = "wasmIcu/buildA"
     internal const val ICU_BUILD_DIR: String = "wasmIcu/buildB"
     internal const val ICU_DEFAULT_TARGET: String = "wasm32-unknown-emscripten"
     internal const val ICU_USE_PTHREADS: Boolean = true
-    internal val ICU_CFLAGS: List<String> = listOf("-O3")
+    internal const val ICU_DATA_DIR: String = "/usr/share/icu/74.2"
+    internal val ICU_CFLAGS: List<String> = listOf(
+        "-O3",
+        "-DU_HAVE_MMAP=0",
+    )
     internal val ICU_PTHREADS_CFLAGS: List<String> = listOf(
         "-pthread",
         "-sUSE_PTHREADS",

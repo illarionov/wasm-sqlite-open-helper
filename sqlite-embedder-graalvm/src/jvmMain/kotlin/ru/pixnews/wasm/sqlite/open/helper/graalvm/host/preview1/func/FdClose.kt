@@ -23,9 +23,9 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 internal class FdClose(
     language: WasmLanguage,
     module: WasmModule,
-    private val host: SqliteEmbedderHost,
+    override val host: SqliteEmbedderHost,
     functionName: String = "fd_close",
-) : BaseWasmNode(language, module, functionName) {
+) : BaseWasmNode(language, module, host, functionName) {
     private val logger: Logger = host.rootLogger.withTag(FdClose::class.qualifiedName!!)
 
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {

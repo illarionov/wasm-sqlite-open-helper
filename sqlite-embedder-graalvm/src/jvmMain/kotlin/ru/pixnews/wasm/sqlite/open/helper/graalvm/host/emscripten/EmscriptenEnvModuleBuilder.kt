@@ -23,6 +23,8 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.Emscripte
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.EmscriptenInitMainThreadJs
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.EmscriptenResizeHeap
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.EmscriptenThreadMailboxAwait
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.MmapJs
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.MunapJs
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.SyscallFchown32
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.SyscallFcntl64
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.SyscallFstat64
@@ -56,12 +58,12 @@ internal class EmscriptenEnvModuleBuilder(
         fnVoid(
             name = "abort",
             paramTypes = listOf(),
-            nodeFactory = { language, module, _, functionName -> Abort(language, module, functionName) },
+            nodeFactory = ::Abort,
         )
         fnVoid(
             name = "__assert_fail",
             paramTypes = List(4) { I32 },
-            nodeFactory = { language, module, _, functionName -> AssertFail(language, module, functionName) },
+            nodeFactory = ::AssertFail,
         )
         fn(
             name = "emscripten_date_now",
@@ -88,8 +90,18 @@ internal class EmscriptenEnvModuleBuilder(
             nodeFactory = ::EmscriptenResizeHeap,
         )
         fnVoid("_localtime_js", listOf(I64, I32))
-        fn("_mmap_js", listOf(I32, I32, I32, I32, I64, I32, I32))
-        fn("_munmap_js", listOf(I32, I32, I32, I32, I32, I64))
+        fn(
+            name = "_mmap_js",
+            paramTypes = listOf(I32, I32, I32, I32, I64, I32, I32),
+            retType = I32,
+            nodeFactory = ::MmapJs,
+        )
+        fn(
+            name = "_munmap_js",
+            paramTypes = listOf(I32, I32, I32, I32, I32, I64),
+            retType = I32,
+            nodeFactory = ::MunapJs,
+        )
         fn("__syscall_chmod", listOf(I32, I32))
         fn("__syscall_faccessat", List(4) { I32 })
         fn("__syscall_fchmod", listOf(I32, I32))
@@ -146,10 +158,11 @@ internal class EmscriptenEnvModuleBuilder(
         fnVoid(
             name = "__emscripten_init_main_thread_js",
             paramTypes = listOf(I32),
-            nodeFactory = { language, module, _, functionName ->
+            nodeFactory = { language, module, host: SqliteEmbedderHost, functionName ->
                 EmscriptenInitMainThreadJs(
                     language = language,
                     module = module,
+                    host = host,
                     functionName = functionName,
                     posixThreadRef = pthreadRef,
                 )
@@ -162,9 +175,9 @@ internal class EmscriptenEnvModuleBuilder(
                 EmscriptenThreadMailboxAwait(
                     language = language,
                     module = module,
+                    host = host,
                     functionName = functionName,
                     posixThreadRef = pthreadRef,
-                    rootLogger = host.rootLogger,
                 )
             },
         )

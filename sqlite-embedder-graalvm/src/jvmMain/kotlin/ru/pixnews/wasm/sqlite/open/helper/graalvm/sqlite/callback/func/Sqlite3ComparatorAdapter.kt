@@ -15,6 +15,7 @@ import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
@@ -27,10 +28,10 @@ internal class Sqlite3ComparatorAdapter(
     language: WasmLanguage,
     module: WasmModule,
     private val callbackStore: Sqlite3CallbackStore,
-    logger: Logger,
+    host: SqliteEmbedderHost,
     functionName: String,
-) : BaseWasmNode(language, module, functionName) {
-    private val logger: Logger = logger.withTag(Sqlite3ProgressAdapter::class.qualifiedName!!)
+) : BaseWasmNode(language, module, host, functionName) {
+    private val logger: Logger = host.rootLogger.withTag(Sqlite3ProgressAdapter::class.qualifiedName!!)
 
     @Suppress("MagicNumber")
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {

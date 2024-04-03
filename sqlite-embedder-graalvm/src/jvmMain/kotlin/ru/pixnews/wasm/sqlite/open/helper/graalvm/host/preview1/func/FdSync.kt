@@ -39,10 +39,10 @@ internal fun SyscallFdatasync(
 private class FdSync(
     language: WasmLanguage,
     module: WasmModule,
-    private val host: SqliteEmbedderHost,
+    override val host: SqliteEmbedderHost,
     functionName: String = "fd_sync",
     private val syncMetadata: Boolean = true,
-) : BaseWasmNode(language, module, functionName) {
+) : BaseWasmNode(language, module, host, functionName) {
     private val logger: Logger = host.rootLogger.withTag(FdSync::class.qualifiedName!!)
 
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {

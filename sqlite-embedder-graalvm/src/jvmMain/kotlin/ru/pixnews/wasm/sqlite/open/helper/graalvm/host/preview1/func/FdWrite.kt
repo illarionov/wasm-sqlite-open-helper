@@ -46,10 +46,10 @@ internal fun fdPwrite(
 private class FdWrite(
     language: WasmLanguage,
     module: WasmModule,
-    private val host: SqliteEmbedderHost,
+    override val host: SqliteEmbedderHost,
     private val strategy: ReadWriteStrategy,
     functionName: String = "fd_write",
-) : BaseWasmNode(language, module, functionName) {
+) : BaseWasmNode(language, module, host, functionName) {
     private val logger: Logger = host.rootLogger.withTag(FdWrite::class.qualifiedName!!)
 
     @Suppress("MagicNumber")

@@ -96,6 +96,11 @@ public abstract class IcuBuildWasmLibraryTask @Inject constructor(
     public val icuUsePthreads: Property<Boolean> = objects.property(Boolean::class.java)
         .convention(IcuBuildDefaults.ICU_USE_PTHREADS)
 
+    @get:Input
+    @Optional
+    public val icuDataDir: Property<String> = objects.property(String::class.java)
+        .convention(IcuBuildDefaults.ICU_DATA_DIR)
+
     @get:Internal
     public val maxJobs: Property<Int> = objects.property<Int>().convention(
         Runtime.getRuntime().availableProcessors(),
@@ -150,23 +155,32 @@ public abstract class IcuBuildWasmLibraryTask @Inject constructor(
     }
 
     private fun getWasmBuildInstallEnvironment(): Map<String, String> {
+        val cflags = icuAdditionalCflags.getWithPthreadDefaults(ICU_PTHREADS_CFLAGS) + getCflagsDataDirDefaults()
+        val cxxflags = icuAdditionalCxxflags.getWithPthreadDefaults(ICU_PTHREADS_CXXFLAGS) + getCflagsDataDirDefaults()
+
         return System.getenv().filterKeys {
             it == "PATH"
         } + emscriptenSdk.getEmsdkEnvironment() + mapOf(
-            "CXXFLAGS" to icuAdditionalCxxflags.getWithPhreadDefaults(ICU_PTHREADS_CXXFLAGS).joinToString(" "),
-            "CFLAGS" to icuAdditionalCflags.getWithPhreadDefaults(ICU_PTHREADS_CFLAGS).joinToString(" "),
-            "ICU_FORCE_LIBS" to icuForceLibs.getWithPhreadDefaults(ICU_PTHREAD_FORCE_LIBS).joinToString(" "),
+            "CFLAGS" to cflags.joinToString(" "),
+            "CXXFLAGS" to cxxflags.joinToString(" "),
+            "ICU_FORCE_LIBS" to icuForceLibs.getWithPthreadDefaults(ICU_PTHREAD_FORCE_LIBS).joinToString(" "),
             "PKGDATA_OPTS" to ICU_PKGDATA_OPTS.joinToString(" "),
             "PATH" to (System.getenv()["PATH"] ?: ""),
         )
     }
 
-    private fun Provider<List<String>>.getWithPhreadDefaults(
+    private fun Provider<List<String>>.getWithPthreadDefaults(
         pthreadDefaults: List<String>,
     ) = this.get() + if (icuUsePthreads.get()) {
         pthreadDefaults
     } else {
         emptyList()
+    }
+
+    private fun getCflagsDataDirDefaults(): List<String> = if (icuDataDir.isPresent) {
+        listOf("""-DICU_DATA_DIR='"${icuDataDir.get()}"'""")
+    } else {
+        listOf()
     }
 
     private companion object {

@@ -87,6 +87,7 @@ public object GraalvmSqliteEmbedder : SqliteEmbedder<GraalvmSqliteEmbedderConfig
             context = graalContext,
             envBindings = wasmBindings.getMember("env"),
             mainBindings = mainBindings,
+            logger = host.rootLogger,
         )
         return GraalvmSqliteCapiImpl(bindings, callbackStore, indirectFunctionIndexes)
     }

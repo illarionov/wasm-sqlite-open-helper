@@ -24,9 +24,9 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 internal class SyscallFtruncate64(
     language: WasmLanguage,
     module: WasmModule,
-    private val host: SqliteEmbedderHost,
+    override val host: SqliteEmbedderHost,
     functionName: String = "__syscall_ftruncate64",
-) : BaseWasmNode(language, module, functionName) {
+) : BaseWasmNode(language, module, host, functionName) {
     private val logger: Logger = host.rootLogger.withTag(SyscallFtruncate64::class.qualifiedName!!)
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
         val args: Array<Any> = frame.arguments

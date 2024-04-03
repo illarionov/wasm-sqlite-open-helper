@@ -24,7 +24,7 @@ internal class EmscriptenResizeHeap(
     module: WasmModule,
     host: SqliteEmbedderHost,
     functionName: String = "emscripten_resize_heap",
-) : BaseWasmNode(language, module, functionName) {
+) : BaseWasmNode(language, module, host, functionName) {
     private val logger = host.rootLogger.withTag(EmscriptenResizeHeap::class.qualifiedName!!)
 
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {

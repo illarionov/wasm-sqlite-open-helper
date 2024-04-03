@@ -46,10 +46,10 @@ internal fun fdPread(
 private class FdRead(
     language: WasmLanguage,
     module: WasmModule,
-    private val host: SqliteEmbedderHost,
+    override val host: SqliteEmbedderHost,
     private val strategy: ReadWriteStrategy,
     functionName: String = "fd_read",
-) : BaseWasmNode(language, module, functionName) {
+) : BaseWasmNode(language, module, host, functionName) {
     private val logger: Logger = host.rootLogger.withTag(FdRead::class.qualifiedName!!)
 
     @Suppress("MagicNumber")

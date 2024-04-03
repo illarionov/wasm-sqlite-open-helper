@@ -26,9 +26,9 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 internal class SyscallUnlinkat(
     language: WasmLanguage,
     module: WasmModule,
-    private val host: SqliteEmbedderHost,
+    override val host: SqliteEmbedderHost,
     functionName: String = "__syscall_unlinkat",
-) : BaseWasmNode(language, module, functionName) {
+) : BaseWasmNode(language, module, host, functionName) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {
         val args = frame.arguments
         return syscallUnlinkat(

@@ -11,6 +11,7 @@ import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.pthread.Pthread
@@ -20,9 +21,10 @@ private const val DEFAULT_STACK_SIZE = 524288
 internal class EmscriptenInitMainThreadJs(
     language: WasmLanguage,
     module: WasmModule,
+    override val host: SqliteEmbedderHost,
     functionName: String = "__emscripten_init_main_thread_js",
     private val posixThreadRef: () -> Pthread,
-) : BaseWasmNode(language, module, functionName) {
+) : BaseWasmNode(language, module, host, functionName) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance) {
         val args = frame.arguments
         val pthread = posixThreadRef()

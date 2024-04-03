@@ -6,6 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory
 
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy.CHANGE_POSITION
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
@@ -20,23 +21,33 @@ import java.nio.channels.Channels
 import java.nio.channels.ClosedByInterruptException
 import java.nio.channels.ClosedChannelException
 import java.nio.channels.NonReadableChannelException
+import kotlin.time.measureTimedValue
 
 internal class GraalIInputStreamWasiMemoryReader(
     private val memory: WasmHostMemoryImpl,
+    logger: Logger,
 ) : WasiMemoryReader {
+    private val logger: Logger = logger.withTag(GraalIInputStreamWasiMemoryReader::class.qualifiedName!!)
     private val wasmMemory = memory.memory
-    private val defaultMemoryReader = DefaultWasiMemoryReader(memory)
+    private val defaultMemoryReader = DefaultWasiMemoryReader(memory, logger)
 
     override fun read(
         channel: FdChannel,
         strategy: ReadWriteStrategy,
         iovecs: IovecArray,
     ): ULong {
-        return if (strategy == CHANGE_POSITION) {
-            read(channel, iovecs)
-        } else {
-            defaultMemoryReader.read(channel, strategy, iovecs)
+        val bytesRead = measureTimedValue {
+            if (strategy == CHANGE_POSITION) {
+                read(channel, iovecs)
+            } else {
+                defaultMemoryReader.read(channel, strategy, iovecs)
+            }
         }
+        logger.v {
+            "read(${channel.fd}, $strategy, ${iovecs.iovecList.map { it.bufLen.value }}): " +
+                    "${bytesRead.value} in ${bytesRead.duration}"
+        }
+        return bytesRead.value
     }
 
     @Suppress("ThrowsCount")
@@ -46,8 +57,8 @@ internal class GraalIInputStreamWasiMemoryReader(
     ): ULong {
         var totalBytesRead: ULong = 0U
         try {
+            val inputStream = Channels.newInputStream(channel.channel).buffered()
             for (vec in iovecs.iovecList) {
-                val inputStream = Channels.newInputStream(channel.channel)
                 val limit = vec.bufLen.value.toInt()
                 val bytesRead = wasmMemory.copyFromStream(memory.node, inputStream, vec.buf.addr, limit)
                 if (bytesRead > 0) {
