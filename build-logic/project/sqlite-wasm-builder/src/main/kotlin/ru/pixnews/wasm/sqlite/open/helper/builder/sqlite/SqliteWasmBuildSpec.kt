@@ -15,6 +15,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.ProviderFactory
+import ru.pixnews.wasm.sqlite.open.helper.builder.ext.WasmBuildDsl
 import java.io.Serializable
 import javax.inject.Inject
 

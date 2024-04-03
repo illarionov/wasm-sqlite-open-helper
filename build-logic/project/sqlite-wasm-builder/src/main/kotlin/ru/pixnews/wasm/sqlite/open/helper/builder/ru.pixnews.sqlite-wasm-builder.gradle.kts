@@ -131,7 +131,7 @@ private fun setupTasksForBuild(buildSpec: SqliteWasmBuildSpec) {
         val sqlite3cFile = sqlite3c.elements.map { it.first().asFile }
 
         group = "Build"
-        description = "Compiles SQLite `$buildName` to Wasm"
+        description = "Compiles SQLite `$buildName` for Wasm"
         sourceFiles.from(buildSpec.additionalSourceFiles)
         outputFileName = unstrippedJsFileName
         outputDirectory = layout.buildDirectory.dir(compileUnstrippedResultDir(buildName))

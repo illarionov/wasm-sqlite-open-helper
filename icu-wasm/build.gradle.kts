@@ -9,3 +9,10 @@ plugins {
 }
 
 group = "ru.pixnews.icu-wasm"
+
+icuBuild {
+    builds {
+        create("main") {
+        }
+    }
+}
