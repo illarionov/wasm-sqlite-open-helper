@@ -6,6 +6,19 @@
 
 @file:Suppress("UnstableApiUsage", "GENERIC_VARIABLE_WRONG_DECLARATION")
 
+import org.gradle.api.artifacts.type.ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE
+import org.gradle.api.artifacts.type.ArtifactTypeDefinition.DIRECTORY_TYPE
+import org.gradle.api.attributes.Category.CATEGORY_ATTRIBUTE
+import org.gradle.api.attributes.LibraryElements.HEADERS_CPLUSPLUS
+import org.gradle.api.attributes.LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE
+import org.gradle.api.attributes.LibraryElements.LINK_ARCHIVE
+import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
+import org.gradle.language.cpp.CppBinary.LINKAGE_ATTRIBUTE
+import org.gradle.language.cpp.CppBinary.OPTIMIZED_ATTRIBUTE
+import org.gradle.nativeplatform.MachineArchitecture.ARCHITECTURE_ATTRIBUTE
+import org.gradle.nativeplatform.OperatingSystemFamily.OPERATING_SYSTEM_ATTRIBUTE
+import ru.pixnews.wasm.sqlite.open.helper.builder.attribute.emscriptenOperatingSystem
+import ru.pixnews.wasm.sqlite.open.helper.builder.attribute.wasm32Architecture
 import ru.pixnews.wasm.sqlite.open.helper.builder.ext.firstDirectory
 import ru.pixnews.wasm.sqlite.open.helper.builder.icu.IcuBuildHostToolchainTask
 import ru.pixnews.wasm.sqlite.open.helper.builder.icu.IcuBuildWasmLibraryTask
@@ -46,17 +59,39 @@ tasks.named("assemble").configure {
     dependsOn(buildIcuTask)
 }
 
-private val wasmIcuElements = configurations.consumable("wasmIcuElements") {
+configurations.consumable("wasmIcuElements") {
     attributes {
-        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
-        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named("wasm-library"))
+        attribute(CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+        attribute(ARCHITECTURE_ATTRIBUTE, objects.wasm32Architecture)
+        attribute(OPERATING_SYSTEM_ATTRIBUTE, objects.emscriptenOperatingSystem)
+        attribute(ARTIFACT_TYPE_ATTRIBUTE, DIRECTORY_TYPE)
+        attribute(LINKAGE_ATTRIBUTE, Linkage.STATIC)
+        attribute(OPTIMIZED_ATTRIBUTE, true)
     }
-}
-
-wasmIcuElements.get().outgoing {
-    artifacts {
-        artifact(buildIcuTask.flatMap(IcuBuildWasmLibraryTask::outputDirectory)) {
-            builtBy(buildIcuTask)
+    outgoing {
+        variants {
+            create("lib") {
+                attributes {
+                    attribute(USAGE_ATTRIBUTE, objects.named(Usage.NATIVE_LINK))
+                    attribute(LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LINK_ARCHIVE))
+                }
+                artifacts {
+                    artifact(buildIcuTask.flatMap { it.outputDirectory.dir("lib") }) {
+                        builtBy(buildIcuTask)
+                    }
+                }
+            }
+            create("include") {
+                attributes {
+                    attribute(USAGE_ATTRIBUTE, objects.named(Usage.C_PLUS_PLUS_API))
+                    attribute(LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(HEADERS_CPLUSPLUS))
+                }
+                artifacts {
+                    artifact(buildIcuTask.flatMap { it.outputDirectory.dir("include") }) {
+                        builtBy(buildIcuTask)
+                    }
+                }
+            }
         }
     }
 }
