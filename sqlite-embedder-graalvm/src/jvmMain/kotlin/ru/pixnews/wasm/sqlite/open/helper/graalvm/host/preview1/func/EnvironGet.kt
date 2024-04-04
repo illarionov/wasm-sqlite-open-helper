@@ -22,9 +22,9 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.ext.WasiEnvironment
 internal class EnvironGet(
     language: WasmLanguage,
     module: WasmModule,
-    private val host: SqliteEmbedderHost,
+    override val host: SqliteEmbedderHost,
     functionName: String = "environ_get",
-) : BaseWasmNode(language, module, functionName) {
+) : BaseWasmNode(language, module, host, functionName) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
         val args = frame.arguments
         return environGet(

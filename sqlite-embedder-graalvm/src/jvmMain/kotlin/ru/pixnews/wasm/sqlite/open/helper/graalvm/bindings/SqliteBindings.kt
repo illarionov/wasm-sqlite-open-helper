@@ -8,6 +8,7 @@ package ru.pixnews.wasm.sqlite.open.helper.graalvm.bindings
 
 import org.graalvm.polyglot.Context
 import org.graalvm.polyglot.Value
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.member
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.GraalHostMemoryImpl
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrno
@@ -18,6 +19,7 @@ internal class SqliteBindings(
     val context: Context,
     envBindings: Value,
     mainBindings: Value,
+    logger: Logger,
 ) {
     val _initialize: Value? by mainBindings.member()
     val __errno_location: Value? by mainBindings.member()
@@ -70,7 +72,7 @@ internal class SqliteBindings(
     val register_localized_collators by mainBindings.member()
     val register_android_functions by mainBindings.member()
 
-    private val memory = GraalHostMemoryImpl(envBindings.getMember("memory"))
+    private val memory = GraalHostMemoryImpl(envBindings.getMember("memory"), logger)
 
     val memoryBindings = SqliteMemoryBindings(mainBindings, memory)
 

@@ -15,6 +15,7 @@ import org.gradle.api.provider.SetProperty
 import ru.pixnews.wasm.sqlite.open.helper.builder.attribute.ICU_DATA_PACKAGING_STATIC
 import ru.pixnews.wasm.sqlite.open.helper.builder.ext.WasmBuildDsl
 import ru.pixnews.wasm.sqlite.open.helper.builder.icu.internal.IcuBuildDefaults
+import ru.pixnews.wasm.sqlite.open.helper.builder.icu.internal.IcuBuildDefaults.ICU_DATA_DIR
 import ru.pixnews.wasm.sqlite.open.helper.builder.icu.internal.IcuBuildDefaults.ICU_DEFAULT_TARGET
 import java.io.Serializable
 import javax.inject.Inject
@@ -38,6 +39,8 @@ public abstract class IcuWasmBuildSpec @Inject internal constructor(
         .convention(IcuBuildDefaults.ICU_FORCE_LIBS)
     public val usePthreads: Provider<Boolean> = objects.property(Boolean::class.java)
         .convention(IcuBuildDefaults.ICU_USE_PTHREADS)
+    public val icuDataDir: Property<String> = objects.property(String::class.java)
+        .convention(ICU_DATA_DIR)
 
     override fun getName(): String = name
 

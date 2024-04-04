@@ -34,6 +34,7 @@ internal fun syscallLstat64(
     module = module,
     functionName = functionName,
     followSymlinks = false,
+    host = host,
     rootLogger = host.rootLogger,
     filesystem = host.fileSystem,
 )
@@ -48,6 +49,7 @@ internal fun syscallStat64(
     module = module,
     functionName = functionName,
     followSymlinks = true,
+    host = host,
     rootLogger = host.rootLogger,
     filesystem = host.fileSystem,
 )
@@ -57,12 +59,14 @@ private class SyscallStat64(
     module: WasmModule,
     rootLogger: Logger,
     functionName: String,
+    host: SqliteEmbedderHost,
     private val followSymlinks: Boolean = false,
     private val filesystem: FileSystem,
 ) : BaseWasmNode(
     language = language,
     module = module,
     functionName = functionName,
+    host = host,
 ) {
     private val logger: Logger = rootLogger.withTag(SyscallStat64::class.qualifiedName!!)
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Int {

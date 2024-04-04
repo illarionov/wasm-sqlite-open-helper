@@ -8,6 +8,7 @@ package ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory
 
 import com.oracle.truffle.api.nodes.Node
 import org.graalvm.wasm.memory.WasmMemory
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.FdChannel
@@ -21,9 +22,11 @@ import java.io.ByteArrayOutputStream
 internal class WasmHostMemoryImpl(
     val memory: WasmMemory,
     internal val node: Node?,
+    logger: Logger,
 ) : Memory {
-    private val memoryReader: WasiMemoryReader = GraalIInputStreamWasiMemoryReader(this)
-    private val memoryWriter: WasiMemoryWriter = GraalOutputStreamWasiMemoryWriter(this)
+    private val logger = logger.withTag(WasmHostMemoryImpl::class.qualifiedName!!)
+    private val memoryReader: WasiMemoryReader = GraalIInputStreamWasiMemoryReader(this, logger)
+    private val memoryWriter: WasiMemoryWriter = GraalOutputStreamWasiMemoryWriter(this, logger)
 
     override fun readI8(addr: WasmPtr<*>): Byte {
         return memory.load_i32_8u(node, addr.addr.toLong()).toByte()

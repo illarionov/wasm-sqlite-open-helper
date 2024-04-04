@@ -30,9 +30,9 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Whence
 internal class FdSeek(
     language: WasmLanguage,
     module: WasmModule,
-    private val host: SqliteEmbedderHost,
+    override val host: SqliteEmbedderHost,
     functionName: String = "fd_seek",
-) : BaseWasmNode(language, module, functionName) {
+) : BaseWasmNode(language, module, host, functionName) {
     private val logger: Logger = host.rootLogger.withTag(FdSeek::class.qualifiedName!!)
 
     @Suppress("MagicNumber")

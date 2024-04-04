@@ -23,9 +23,9 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 internal class SyscallFcntl64(
     language: WasmLanguage,
     module: WasmModule,
-    private val host: SqliteEmbedderHost,
+    override val host: SqliteEmbedderHost,
     functionName: String = "__syscall_fcntl64",
-) : BaseWasmNode(language, module, functionName) {
+) : BaseWasmNode(language, module, host, functionName) {
     private val logger: Logger = host.rootLogger.withTag(SyscallFcntl64::class.qualifiedName!!)
     private val fcntlHandler = FcntlHandler(host.fileSystem, host.rootLogger)
 

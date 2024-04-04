@@ -6,6 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory
 
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.FdChannel
@@ -22,9 +23,11 @@ import java.nio.channels.NonReadableChannelException
 
 internal class GraalOutputStreamWasiMemoryWriter(
     private val memory: WasmHostMemoryImpl,
+    logger: Logger,
 ) : WasiMemoryWriter {
+    private val logger = logger.withTag(GraalOutputStreamWasiMemoryWriter::class.qualifiedName!!)
     private val wasmMemory = memory.memory
-    private val defaultMemoryWriter = DefaultWasiMemoryWriter(memory)
+    private val defaultMemoryWriter = DefaultWasiMemoryWriter(memory, logger)
 
     override fun write(channel: FdChannel, strategy: ReadWriteStrategy, cioVecs: CiovecArray): ULong {
         return if (strategy == ReadWriteStrategy.CHANGE_POSITION) {
@@ -36,14 +39,16 @@ internal class GraalOutputStreamWasiMemoryWriter(
 
     @Suppress("ThrowsCount")
     private fun write(channel: FdChannel, cioVecs: CiovecArray): ULong {
+        logger.v { "write(${channel.fd}, ${cioVecs.ciovecList.map { it.bufLen.value }})" }
         var totalBytesWritten: ULong = 0U
         try {
+            val outputStream = Channels.newOutputStream(channel.channel).buffered()
             for (vec in cioVecs.ciovecList) {
-                val outputStream = Channels.newOutputStream(channel.channel)
                 val limit = vec.bufLen.value.toInt()
                 wasmMemory.copyToStream(memory.node, outputStream, vec.buf.addr, limit)
                 totalBytesWritten += limit.toUInt()
             }
+            outputStream.flush()
         } catch (cce: ClosedChannelException) {
             throw SysException(Errno.IO, "Channel closed", cce)
         } catch (ace: AsynchronousCloseException) {

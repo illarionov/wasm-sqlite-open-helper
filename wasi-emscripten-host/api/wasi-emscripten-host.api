@@ -363,6 +363,86 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/include/sys/StructSta
 	public static final fun pack (Lru/pixnews/wasm/sqlite/open/helper/host/include/sys/StructStat;)[B
 }
 
+public final class ru/pixnews/wasm/sqlite/open/helper/host/include/sys/SysMmanMapFlags : ru/pixnews/wasm/sqlite/open/helper/common/api/SqliteUintBitMask {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/include/sys/SysMmanMapFlags$Companion;
+	public static final field MAP_HUGE_MASK I
+	public static final field MAP_HUGE_SHIFT I
+	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/host/include/sys/SysMmanMapFlags;
+	public static fun constructor-impl (I)I
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (ILjava/lang/Object;)Z
+	public static final fun equals-impl0 (II)Z
+	public fun getMask-pVg5ArA ()I
+	public fun getNewInstance ()Lkotlin/jvm/functions/Function1;
+	public static fun getNewInstance-impl (I)Lkotlin/jvm/functions/Function1;
+	public fun hashCode ()I
+	public static fun hashCode-impl (I)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (I)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()I
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/include/sys/SysMmanMapFlags$Companion {
+	public final fun getMAP_ANON-daRiTYQ ()I
+	public final fun getMAP_ANONYMOUS-daRiTYQ ()I
+	public final fun getMAP_DENYWRITE-daRiTYQ ()I
+	public final fun getMAP_EXECUTABLE-daRiTYQ ()I
+	public final fun getMAP_FILE-daRiTYQ ()I
+	public final fun getMAP_FIXED-daRiTYQ ()I
+	public final fun getMAP_FIXED_NOREPLACE-daRiTYQ ()I
+	public final fun getMAP_GROWSDOWN-daRiTYQ ()I
+	public final fun getMAP_HUGETLB-daRiTYQ ()I
+	public final fun getMAP_HUGE_16GB-daRiTYQ ()I
+	public final fun getMAP_HUGE_16KB-daRiTYQ ()I
+	public final fun getMAP_HUGE_16MB-daRiTYQ ()I
+	public final fun getMAP_HUGE_1GB-daRiTYQ ()I
+	public final fun getMAP_HUGE_1MB-daRiTYQ ()I
+	public final fun getMAP_HUGE_256MB-daRiTYQ ()I
+	public final fun getMAP_HUGE_2GB-daRiTYQ ()I
+	public final fun getMAP_HUGE_2MB-daRiTYQ ()I
+	public final fun getMAP_HUGE_32MB-daRiTYQ ()I
+	public final fun getMAP_HUGE_512KB-daRiTYQ ()I
+	public final fun getMAP_HUGE_512MB-daRiTYQ ()I
+	public final fun getMAP_HUGE_64KB-daRiTYQ ()I
+	public final fun getMAP_HUGE_8MB-daRiTYQ ()I
+	public final fun getMAP_LOCKED-daRiTYQ ()I
+	public final fun getMAP_NONBLOCK-daRiTYQ ()I
+	public final fun getMAP_NORESERVE-daRiTYQ ()I
+	public final fun getMAP_POPULATE-daRiTYQ ()I
+	public final fun getMAP_PRIVATE-daRiTYQ ()I
+	public final fun getMAP_SHARED-daRiTYQ ()I
+	public final fun getMAP_SHARED_VALIDATE-daRiTYQ ()I
+	public final fun getMAP_STACK-daRiTYQ ()I
+	public final fun getMAP_SYNC-daRiTYQ ()I
+	public final fun getMAP_TYPE-daRiTYQ ()I
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/include/sys/SysMmanProt : ru/pixnews/wasm/sqlite/open/helper/common/api/SqliteUintBitMask {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/include/sys/SysMmanProt$Companion;
+	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/host/include/sys/SysMmanProt;
+	public static fun constructor-impl (I)I
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (ILjava/lang/Object;)Z
+	public static final fun equals-impl0 (II)Z
+	public fun getMask-pVg5ArA ()I
+	public fun getNewInstance ()Lkotlin/jvm/functions/Function1;
+	public static fun getNewInstance-impl (I)Lkotlin/jvm/functions/Function1;
+	public fun hashCode ()I
+	public static fun hashCode-impl (I)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (I)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()I
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/include/sys/SysMmanProt$Companion {
+	public final fun getPROT_EXEC-HQYvUXQ ()I
+	public final fun getPROT_GROWSDOWN-HQYvUXQ ()I
+	public final fun getPROT_GROWSUP-HQYvUXQ ()I
+	public final fun getPROT_NONE-HQYvUXQ ()I
+	public final fun getPROT_READ-HQYvUXQ ()I
+	public final fun getPROT_WRITE-HQYvUXQ ()I
+}
+
 public final class ru/pixnews/wasm/sqlite/open/helper/host/include/sys/SysStat {
 	public static final field INSTANCE Lru/pixnews/wasm/sqlite/open/helper/host/include/sys/SysStat;
 	public static final field UTIME_NOW I
@@ -370,12 +450,12 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/include/sys/SysStat {
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/memory/DefaultWasiMemoryReader : ru/pixnews/wasm/sqlite/open/helper/host/memory/WasiMemoryReader {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;)V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;)V
 	public fun read-dPCOrck (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/fd/FdChannel;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/ReadWriteStrategy;Ljava/util/List;)J
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/memory/DefaultWasiMemoryWriter : ru/pixnews/wasm/sqlite/open/helper/host/memory/WasiMemoryWriter {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;)V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;)V
 	public fun write-ullT8eY (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/fd/FdChannel;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/ReadWriteStrategy;Ljava/util/List;)J
 }
 
