@@ -16,6 +16,9 @@ public object IcuBuildDefaults {
     internal val ICU_CFLAGS: List<String> = listOf(
         "-O3",
         "-DU_HAVE_MMAP=0",
+        "-DUCONFIG_NO_FORMATTING",
+        "-DUCONFIG_NO_LEGACY_CONVERSION",
+        "-DUCONFIG_NO_TRANSLITERATION",
     )
     internal val ICU_PTHREADS_CFLAGS: List<String> = listOf(
         "-pthread",
