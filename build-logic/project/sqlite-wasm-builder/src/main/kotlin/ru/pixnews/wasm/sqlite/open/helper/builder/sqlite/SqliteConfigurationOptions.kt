@@ -16,6 +16,8 @@ public object SqliteConfigurationOptions {
     ) + listOf(
         // Do not create threads from Sqlite native code
         "-DSQLITE_MAX_WORKER_THREADS=0",
+        // Mmap is not implemented
+        "-DSQLITE_MAX_MMAP_SIZE=0",
 
         // default file system
         UNIX_EXCL.sqliteBuildOption,
