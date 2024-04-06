@@ -8,6 +8,8 @@ package ru.pixnews.wasm.sqlite.open.helper
 
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
+import ru.pixnews.wasm.sqlite.open.helper.dsl.DebugConfigBlock
+import ru.pixnews.wasm.sqlite.open.helper.dsl.OpenParamsBlock
 import ru.pixnews.wasm.sqlite.open.helper.dsl.WasmSqliteOpenHelperFactoryConfigBlock
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedder
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
@@ -35,11 +37,10 @@ public fun <E : SqliteEmbedderConfig> WasmSqliteOpenHelperFactory(
 
     return WasmSqliteOpenHelperFactory(
         pathResolver = config.pathResolver,
-        defaultLocale = config.locale,
         sqliteCapi = embedder.createCapi(commonConfig, config.embedderConfig),
-        debugConfig = config.debugConfigBlock.build(),
+        debugConfig = DebugConfigBlock().apply { config.debugConfigBlock(this) }.build(),
         rootLogger = commonConfig.logger,
-        configurationOptions = config.configurationOptions,
+        openParams = OpenParamsBlock().apply { config.openParams(this) },
     )
 }
 

@@ -181,7 +181,6 @@ internal class NativeCursorWindow(
         class BlobField(val value: ByteArray) : Field(BLOB)
     }
 
-    @Suppress("MagicNumber")
     enum class CursorFieldType(val id: Int) {
         NULL(0),
         INTEGER(1),

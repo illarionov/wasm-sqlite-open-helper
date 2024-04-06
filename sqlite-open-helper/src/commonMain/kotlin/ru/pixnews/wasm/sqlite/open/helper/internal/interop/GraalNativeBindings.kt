@@ -8,6 +8,7 @@ package ru.pixnews.wasm.sqlite.open.helper.internal.interop
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr.Companion.SQLITE3_NULL
 import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
 import ru.pixnews.wasm.sqlite.open.helper.common.api.isSqlite3Null
 import ru.pixnews.wasm.sqlite.open.helper.common.api.or
@@ -27,6 +28,7 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteColumnType.Com
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteColumnType.Companion.SQLITE_INTEGER
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteColumnType.Companion.SQLITE_NULL
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDbConfigParameter.Companion.SQLITE_DBCONFIG_LOOKASIDE
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDbStatusParameter.Companion.SQLITE_DBSTATUS_LOOKASIDE_USED
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrno
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrno.Companion.SQLITE_DONE
@@ -72,6 +74,8 @@ internal class GraalNativeBindings(
         label: String,
         enableTrace: Boolean,
         enableProfile: Boolean,
+        lookasideSlotSize: Int,
+        lookasideSlotCount: Int,
     ): GraalSqlite3ConnectionPtr {
         var db: WasmPtr<SqliteDb>? = null
         try {
@@ -81,7 +85,15 @@ internal class GraalNativeBindings(
                 vfsName = null,
             )
 
-            // TODO: lookaside
+            if (lookasideSlotSize > 0 && lookasideSlotCount > 0) {
+                sqlite3Api.sqlite3DbConfig(
+                    db,
+                    SQLITE_DBCONFIG_LOOKASIDE,
+                    SQLITE3_NULL,
+                    lookasideSlotSize,
+                    lookasideSlotCount,
+                )
+            }
 
             // Check that the database is really read/write when that is what we asked for.
             if (openFlags.contains(SQLITE_OPEN_READWRITE) &&
@@ -157,7 +169,6 @@ internal class GraalNativeBindings(
         connection.isCancelled = false
 
         try {
-            @Suppress("MagicNumber")
             if (cancelable) {
                 sqlite3Api.sqlite3ProgressHandler(connectionPtr.ptr, 4, ::sqliteProgressHandlerCallback)
             } else {
@@ -298,7 +309,6 @@ internal class GraalNativeBindings(
             logger.e { "startPos $startPos > actual rows $totalRows" }
         }
 
-        @Suppress("MagicNumber")
         return (startPos.toLong().shr(32)).or(totalRows.toLong())
     }
 
@@ -306,7 +316,7 @@ internal class GraalNativeBindings(
         connectionPtr: GraalSqlite3ConnectionPtr,
         statementPtr: GraalSqlite3StatementPtr,
     ): Long {
-        executeNonQuery(connectionPtr, statementPtr)
+        executeNonQuery(connectionPtr, statementPtr, false)
 
         if (sqlite3Api.sqlite3Changes(connectionPtr.ptr) <= 0) {
             return -1
@@ -319,7 +329,7 @@ internal class GraalNativeBindings(
         connectionPtr: GraalSqlite3ConnectionPtr,
         statementPtr: GraalSqlite3StatementPtr,
     ): Int {
-        executeNonQuery(connectionPtr, statementPtr)
+        executeNonQuery(connectionPtr, statementPtr, false)
         return sqlite3Api.sqlite3Changes(connectionPtr.ptr)
     }
 
@@ -351,8 +361,9 @@ internal class GraalNativeBindings(
     override fun nativeExecute(
         connectionPtr: GraalSqlite3ConnectionPtr,
         statementPtr: GraalSqlite3StatementPtr,
+        isPragmaStmt: Boolean,
     ) {
-        executeNonQuery(connectionPtr, statementPtr)
+        executeNonQuery(connectionPtr, statementPtr, isPragmaStmt)
     }
 
     override fun nativeResetStatementAndClearBindings(
@@ -487,8 +498,14 @@ internal class GraalNativeBindings(
     private fun executeNonQuery(
         db: GraalSqlite3ConnectionPtr,
         statement: GraalSqlite3StatementPtr,
+        isPragmaStmt: Boolean,
     ) {
-        val err = sqlite3Api.sqlite3Step(statement.ptr)
+        var err = sqlite3Api.sqlite3Step(statement.ptr)
+        if (isPragmaStmt) {
+            while (err == SQLITE_ROW) {
+                err = sqlite3Api.sqlite3Step(statement.ptr)
+            }
+        }
         when (err) {
             SQLITE_ROW -> throwAndroidSqliteException(
                 "Queries can be performed using SQLiteDatabase query or rawQuery methods only.",

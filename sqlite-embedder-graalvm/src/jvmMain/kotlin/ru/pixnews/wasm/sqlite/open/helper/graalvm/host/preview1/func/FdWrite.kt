@@ -52,7 +52,6 @@ private class FdWrite(
 ) : BaseWasmNode(language, module, host, functionName) {
     private val logger: Logger = host.rootLogger.withTag(FdWrite::class.qualifiedName!!)
 
-    @Suppress("MagicNumber")
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
         val args = frame.arguments
         return fdWrite(

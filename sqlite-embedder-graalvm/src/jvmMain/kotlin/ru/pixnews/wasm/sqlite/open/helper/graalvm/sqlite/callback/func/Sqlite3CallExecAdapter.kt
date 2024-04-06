@@ -36,13 +36,12 @@ internal class Sqlite3CallExecAdapter(
 ) : BaseWasmNode(language, module, host, functionName) {
     private val logger: Logger = host.rootLogger.withTag(Sqlite3CallExecAdapter::class.qualifiedName!!)
 
-    @Suppress("MagicNumber")
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
         val args = frame.arguments
         return callDelegate(
             memory(frame),
             args.getArgAsInt(0),
-            args.getArgAsInt(0),
+            args.getArgAsInt(1),
             args.getArgAsWasmPtr(2),
             args.getArgAsWasmPtr(3),
         )

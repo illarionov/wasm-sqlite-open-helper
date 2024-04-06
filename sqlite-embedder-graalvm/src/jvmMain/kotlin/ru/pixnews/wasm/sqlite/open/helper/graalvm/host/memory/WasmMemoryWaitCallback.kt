@@ -32,7 +32,6 @@ internal class WasmMemoryWaitCallback(
     @ExportMessage
     public fun isExecutable(): Boolean = true
 
-    @Suppress("MagicNumber")
     @ExportMessage
     public fun execute(arguments: Array<Any>): Any {
         val wasmMemory = arguments[0] as WasmMemory

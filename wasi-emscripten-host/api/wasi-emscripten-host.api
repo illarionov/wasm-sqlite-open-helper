@@ -42,8 +42,11 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/AssertionF
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/FileSystem {
 	public synthetic fun <init> (Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;Ljava/nio/file/FileSystem;JILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun <init> (Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;Ljava/nio/file/FileSystem;JLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun chmod-FsDOtLI (Ljava/lang/String;I)V
+	public final fun chmod-dI9vxUs (II)V
 	public final fun chown-z4h_Sj0 (III)V
 	public final fun close-l5Tu65g (I)V
+	public final fun faccessat-2ycdC8E (Lru/pixnews/wasm/sqlite/open/helper/host/include/DirFd;Ljava/lang/String;II)V
 	public final fun ftruncate-tVmRj-E (IJ)V
 	public final fun getCwd ()Ljava/lang/String;
 	public final fun getCwdPath ()Ljava/nio/file/Path;
@@ -205,6 +208,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/include/Fcntl {
 	public static final field F_GETOWNER_UIDS I
 	public static final field F_GETOWN_EX I
 	public static final field F_GETSIG I
+	public static final field F_OK I
 	public static final field F_RDLCK S
 	public static final field F_SETFD I
 	public static final field F_SETFL I
@@ -239,6 +243,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/include/Fcntl {
 	public static final field O_TMPFILE I
 	public static final field O_TRUNC I
 	public static final field O_WRONLY I
+	public static final field R_OK I
 	public static final field S_IRGRP I
 	public static final field S_IROTH I
 	public static final field S_IRUSR I
@@ -254,10 +259,37 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/include/Fcntl {
 	public static final field S_IXGRP I
 	public static final field S_IXOTH I
 	public static final field S_IXUSR I
+	public static final field W_OK I
+	public static final field X_OK I
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/include/FcntlExtKt {
 	public static final fun oMaskToString-Qn1smSk (Lru/pixnews/wasm/sqlite/open/helper/host/include/Fcntl;I)Ljava/lang/String;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/include/FileAccessibilityCheck : ru/pixnews/wasm/sqlite/open/helper/common/api/SqliteUintBitMask {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/include/FileAccessibilityCheck$Companion;
+	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/host/include/FileAccessibilityCheck;
+	public static fun constructor-impl (I)I
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (ILjava/lang/Object;)Z
+	public static final fun equals-impl0 (II)Z
+	public fun getMask-pVg5ArA ()I
+	public fun getNewInstance ()Lkotlin/jvm/functions/Function1;
+	public static fun getNewInstance-impl (I)Lkotlin/jvm/functions/Function1;
+	public fun hashCode ()I
+	public static fun hashCode-impl (I)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (I)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()I
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/include/FileAccessibilityCheck$Companion {
+	public final fun getF_OK-0lHTga4 ()I
+	public final fun getMASK-0lHTga4 ()I
+	public final fun getR_OK-0lHTga4 ()I
+	public final fun getW_OK-0lHTga4 ()I
+	public final fun getX_OK-0lHTga4 ()I
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/include/FileMode : ru/pixnews/wasm/sqlite/open/helper/common/api/SqliteUintBitMask {

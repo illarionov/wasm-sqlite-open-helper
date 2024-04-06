@@ -132,7 +132,7 @@ internal class CloseGuard private constructor() {
         }
     }
 
-    internal class SqliteDatabaseFinalizeAction(
+    internal class CloseGuardFinalizeAction(
         private val closeGuard: CloseGuard,
     ) : () -> Unit {
         override fun invoke() {

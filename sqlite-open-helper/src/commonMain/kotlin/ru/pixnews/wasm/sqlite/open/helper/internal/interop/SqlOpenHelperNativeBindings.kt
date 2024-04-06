@@ -19,6 +19,8 @@ internal interface SqlOpenHelperNativeBindings<
         label: String,
         enableTrace: Boolean,
         enableProfile: Boolean,
+        lookasideSlotSize: Int,
+        lookasideSlotCount: Int,
     ): CP
 
     fun nativeClose(
@@ -98,6 +100,7 @@ internal interface SqlOpenHelperNativeBindings<
     fun nativeExecute(
         connectionPtr: CP,
         statementPtr: SP,
+        isPragmaStmt: Boolean,
     )
 
     fun nativeExecuteForLong(

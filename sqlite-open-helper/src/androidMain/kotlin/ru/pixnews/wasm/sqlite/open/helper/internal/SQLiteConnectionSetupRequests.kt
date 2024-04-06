@@ -8,6 +8,8 @@ package ru.pixnews.wasm.sqlite.open.helper.internal
 
 import android.database.sqlite.SQLiteDatabaseLockedException
 import android.database.sqlite.SQLiteException
+import ru.pixnews.wasm.sqlite.open.helper.SQLiteDatabaseJournalMode
+import ru.pixnews.wasm.sqlite.open.helper.SQLiteDatabaseSyncMode
 import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteException
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3ConnectionPtr
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
@@ -41,7 +43,7 @@ internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> SQLiteConnect
 }
 
 internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> SQLiteConnection<CP, SP>.setAutoCheckpointInterval(
-    newInterval: Long = SQLiteGlobal.wALAutoCheckpoint.toLong(),
+    newInterval: Long = SQLiteGlobal.walAutoCheckpoint.toLong(),
 ) {
     val value = executeForLong("PRAGMA wal_autocheckpoint")
     if (value != newInterval) {
@@ -49,30 +51,25 @@ internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> SQLiteConnect
     }
 }
 
-internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> SQLiteConnection<CP, SP>.setWalMode(
-    isWalEnabled: Boolean,
-) {
-    if (isWalEnabled) {
-        setJournalMode("WAL")
-        setSyncMode(SQLiteGlobal.wALSyncMode)
-    } else {
-        setJournalMode(SQLiteGlobal.defaultJournalMode)
-        setSyncMode(SQLiteGlobal.defaultSyncMode)
-    }
-}
-
 internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> SQLiteConnection<CP, SP>.setSyncMode(
-    newValue: String,
+    newValue: SQLiteDatabaseSyncMode?,
 ) {
+    if (newValue == null) {
+        return
+    }
     val value = executeForString("PRAGMA synchronous")
-    if (!canonicalizeSyncMode(value).equals(canonicalizeSyncMode(newValue), ignoreCase = true)) {
+    if (!canonicalizeSyncMode(value).equals(canonicalizeSyncMode(newValue.id), ignoreCase = true)) {
         execute("PRAGMA synchronous=$newValue")
     }
 }
 
 internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> SQLiteConnection<CP, SP>.setJournalMode(
-    newValue: String,
+    newMode: SQLiteDatabaseJournalMode?,
 ) {
+    if (newMode == null) {
+        return
+    }
+    val newValue = newMode.id
     val value = executeForString("PRAGMA journal_mode")
     if (!value.equals(newValue, ignoreCase = true)) {
         try {
@@ -113,12 +110,10 @@ internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> SQLiteConnect
     }
 }
 
-internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> SQLiteConnection<CP, SP>.setLocale(
+@Suppress("MaxLineLength")
+internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> SQLiteConnection<CP, SP>.recreateAndroidMetadataTable(
     newLocale: String,
 ) {
-     // Register the localized collators.
-     nativeRegisterLocalizedCollators(newLocale)
-
     try {
         // Ensure the android metadata table exists.
         execute("CREATE TABLE IF NOT EXISTS android_metadata (locale TEXT)")
@@ -142,14 +137,17 @@ internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> SQLiteConnect
         } finally {
             execute(if (success) "COMMIT" else "ROLLBACK")
         }
+    } catch (sqliteEx: AndroidSqliteException) {
+        throw sqliteEx
     } catch (@Suppress("TooGenericExceptionCaught") ex: RuntimeException) {
         throw SQLiteException("Failed to change locale for db '$databaseLabel' to '$newLocale'.", ex)
     }
 }
 
 private fun canonicalizeSyncMode(value: String?): String = when (value) {
-    "0" -> "OFF"
-    "1" -> "NORMAL"
-    "2" -> "FULL"
+    "0" -> SQLiteDatabaseSyncMode.OFF.id
+    "1" -> SQLiteDatabaseSyncMode.NORMAL.id
+    "2" -> SQLiteDatabaseSyncMode.FULL.id
+    "3" -> SQLiteDatabaseSyncMode.EXTRA.id
     else -> value.toString()
 }

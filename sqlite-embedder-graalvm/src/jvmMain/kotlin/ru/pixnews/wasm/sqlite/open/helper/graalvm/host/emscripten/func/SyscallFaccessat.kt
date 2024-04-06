@@ -8,7 +8,6 @@ package ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func
 
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary
 import com.oracle.truffle.api.frame.VirtualFrame
-import org.graalvm.wasm.WasmArguments
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
@@ -22,81 +21,50 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsUint
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.resolveAbsolutePath
 import ru.pixnews.wasm.sqlite.open.helper.host.include.DirFd
-import ru.pixnews.wasm.sqlite.open.helper.host.include.Fcntl
-import ru.pixnews.wasm.sqlite.open.helper.host.include.FileMode
-import ru.pixnews.wasm.sqlite.open.helper.host.include.oMaskToString
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
-import java.nio.file.Path
+import ru.pixnews.wasm.sqlite.open.helper.host.include.FileAccessibilityCheck
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 
-internal class SyscallOpenat(
+internal class SyscallFaccessat(
     language: WasmLanguage,
     module: WasmModule,
     override val host: SqliteEmbedderHost,
-    functionName: String = "__syscall_openat",
+    functionName: String = "__syscall_faccessat",
 ) : BaseWasmNode(language, module, host, functionName) {
-    private val logger: Logger = host.rootLogger.withTag(SyscallOpenat::class.qualifiedName!!)
+    private val logger: Logger = host.rootLogger.withTag(SyscallFaccessat::class.qualifiedName!!)
 
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
         val args = frame.arguments
         val memory = memory(frame)
-        val mode = if (WasmArguments.getArgumentCount(args) >= 4) {
-            memory.load_i32(this, args.getArgAsInt(3).toLong()).toUInt()
-        } else {
-            0U
-        }
 
-        val fdOrErrno = openAt(
+        val fdOrErrno = faccessat(
             memory,
             rawDirFd = args.getArgAsInt(0),
             pathnamePtr = args.getArgAsWasmPtr(1),
-            flags = args.getArgAsUint(2),
-            rawMode = mode,
+            amode = args.getArgAsUint(2),
+            flags = args.getArgAsUint(3),
         )
         return fdOrErrno
     }
 
     @TruffleBoundary
-    private fun openAt(
+    private fun faccessat(
         memory: WasmMemory,
         rawDirFd: Int,
         pathnamePtr: WasmPtr<Byte>,
+        amode: UInt,
         flags: UInt,
-        rawMode: UInt,
     ): Int {
         val fs = host.fileSystem
         val dirFd = DirFd(rawDirFd)
-        val mode = FileMode(rawMode)
         val path = memory.readString(pathnamePtr.addr, null)
-        val absolutePath = fs.resolveAbsolutePath(dirFd, path)
-
+        val check = FileAccessibilityCheck(amode)
         return try {
-            val fd = fs.open(absolutePath, flags, mode).fd
-            logger.v { formatCallString(dirFd, path, absolutePath, flags, mode, fd) }
-            fd.fd
+            fs.faccessat(dirFd, path, check, flags)
+            Errno.SUCCESS.code
         } catch (e: SysException) {
-            logger.v {
-                formatCallString(dirFd, path, absolutePath, flags, mode, null) +
-                        "openAt() error ${e.errNo}"
-            }
+            logger.v { "__syscall_faccessat($rawDirFd, $path, $check, $flags) failed: ${e.errNo}" }
             -e.errNo.code
         }
     }
-
-    @Suppress("MagicNumber")
-    private fun formatCallString(
-        dirfd: DirFd,
-        path: String,
-        absolutePath: Path,
-        flags: UInt,
-        mode: FileMode,
-        fd: Fd?,
-    ): String = "openAt() dirfd: " +
-            "$dirfd, " +
-            "path: `$path`, " +
-            "full path: `$absolutePath`, " +
-            "flags: 0${flags.toString(8)} (${Fcntl.oMaskToString(flags)}), " +
-            "mode: $mode" +
-            if (fd != null) ": $fd" else ""
 }

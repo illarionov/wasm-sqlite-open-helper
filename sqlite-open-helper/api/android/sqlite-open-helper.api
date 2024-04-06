@@ -1,7 +1,3 @@
-public abstract interface class ru/pixnews/wasm/sqlite/open/helper/ConfigurationOptions {
-	public abstract fun apply (Lru/pixnews/wasm/sqlite/open/helper/SqliteDatabaseConfiguration;)Lru/pixnews/wasm/sqlite/open/helper/SqliteDatabaseConfiguration;
-}
-
 public final class ru/pixnews/wasm/sqlite/open/helper/OpenFlags : ru/pixnews/wasm/sqlite/open/helper/common/api/SqliteUintBitMask {
 	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/OpenFlags$Companion;
 	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/OpenFlags;
@@ -22,7 +18,9 @@ public final class ru/pixnews/wasm/sqlite/open/helper/OpenFlags : ru/pixnews/was
 public final class ru/pixnews/wasm/sqlite/open/helper/OpenFlags$Companion {
 	public final fun getCREATE_IF_NECESSARY-8W8yzzI ()I
 	public final fun getEMPTY-8W8yzzI ()I
+	public final fun getENABLE_LEGACY_COMPATIBILITY_WAL-8W8yzzI ()I
 	public final fun getENABLE_WRITE_AHEAD_LOGGING-8W8yzzI ()I
+	public final fun getNO_LOCALIZED_COLLATORS-8W8yzzI ()I
 	public final fun getOPEN_CREATE-8W8yzzI ()I
 	public final fun getOPEN_FULLMUTEX-8W8yzzI ()I
 	public final fun getOPEN_NOMUTEX-8W8yzzI ()I
@@ -33,26 +31,26 @@ public final class ru/pixnews/wasm/sqlite/open/helper/OpenFlags$Companion {
 	public final fun getOPEN_URI-8W8yzzI ()I
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/SqliteDatabaseConfiguration {
-	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/SqliteDatabaseConfiguration$Companion;
-	public static final field MEMORY_DB_PATH Ljava/lang/String;
-	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public synthetic fun <init> (Ljava/lang/String;ILjava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun getForeignKeyConstraintsEnabled ()Z
-	public final fun getLabel ()Ljava/lang/String;
-	public final fun getLocale-0RbLwig ()Ljava/lang/String;
-	public final fun getMaxSqlCacheSize ()I
-	public final fun getOpenFlags-8W8yzzI ()I
-	public final fun getPath ()Ljava/lang/String;
-	public final fun isInMemoryDb ()Z
-	public final fun setForeignKeyConstraintsEnabled (Z)V
-	public final fun setLocale-DRZB39Y (Ljava/lang/String;)V
-	public final fun setMaxSqlCacheSize (I)V
-	public final fun setOpenFlags-lz_6m0g (I)V
-	public final fun updateParametersFrom (Lru/pixnews/wasm/sqlite/open/helper/SqliteDatabaseConfiguration;)V
+public final class ru/pixnews/wasm/sqlite/open/helper/SQLiteDatabaseJournalMode : java/lang/Enum {
+	public static final field DELETE Lru/pixnews/wasm/sqlite/open/helper/SQLiteDatabaseJournalMode;
+	public static final field MEMORY Lru/pixnews/wasm/sqlite/open/helper/SQLiteDatabaseJournalMode;
+	public static final field OFF Lru/pixnews/wasm/sqlite/open/helper/SQLiteDatabaseJournalMode;
+	public static final field PERSIST Lru/pixnews/wasm/sqlite/open/helper/SQLiteDatabaseJournalMode;
+	public static final field TRUNCATE Lru/pixnews/wasm/sqlite/open/helper/SQLiteDatabaseJournalMode;
+	public static final field WAL Lru/pixnews/wasm/sqlite/open/helper/SQLiteDatabaseJournalMode;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/SQLiteDatabaseJournalMode;
+	public static fun values ()[Lru/pixnews/wasm/sqlite/open/helper/SQLiteDatabaseJournalMode;
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/SqliteDatabaseConfiguration$Companion {
+public final class ru/pixnews/wasm/sqlite/open/helper/SQLiteDatabaseSyncMode : java/lang/Enum {
+	public static final field EXTRA Lru/pixnews/wasm/sqlite/open/helper/SQLiteDatabaseSyncMode;
+	public static final field FULL Lru/pixnews/wasm/sqlite/open/helper/SQLiteDatabaseSyncMode;
+	public static final field NORMAL Lru/pixnews/wasm/sqlite/open/helper/SQLiteDatabaseSyncMode;
+	public static final field OFF Lru/pixnews/wasm/sqlite/open/helper/SQLiteDatabaseSyncMode;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/SQLiteDatabaseSyncMode;
+	public static fun values ()[Lru/pixnews/wasm/sqlite/open/helper/SQLiteDatabaseSyncMode;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/WasmSqliteOpenHelperFactoryBuilderKt {
@@ -75,16 +73,37 @@ public final class ru/pixnews/wasm/sqlite/open/helper/dsl/DebugConfigBlock {
 	public final fun setSqlTime (Z)V
 }
 
+public final class ru/pixnews/wasm/sqlite/open/helper/dsl/OpenParamsBlock {
+	public fun <init> ()V
+	public final fun addOpenFlags-lz_6m0g (I)Lru/pixnews/wasm/sqlite/open/helper/dsl/OpenParamsBlock;
+	public final fun getJournalMode ()Lru/pixnews/wasm/sqlite/open/helper/SQLiteDatabaseJournalMode;
+	public final fun getLocale-i7jP64M ()Ljava/lang/String;
+	public final fun getLookasideSlotCount ()I
+	public final fun getLookasideSlotSize ()I
+	public final fun getOpenFlags-8W8yzzI ()I
+	public final fun getSyncMode ()Lru/pixnews/wasm/sqlite/open/helper/SQLiteDatabaseSyncMode;
+	public final fun removeOpenFlags-lz_6m0g (I)Lru/pixnews/wasm/sqlite/open/helper/dsl/OpenParamsBlock;
+	public final fun setJournalMode (Lru/pixnews/wasm/sqlite/open/helper/SQLiteDatabaseJournalMode;)V
+	public final fun setLocale-CdkJ4j0 (Ljava/lang/String;)V
+	public final fun setLookasideConfig (II)Lru/pixnews/wasm/sqlite/open/helper/dsl/OpenParamsBlock;
+	public final fun setOpenFlags-lz_6m0g (I)V
+	public final fun setSyncMode (Lru/pixnews/wasm/sqlite/open/helper/SQLiteDatabaseSyncMode;)V
+}
+
 public final class ru/pixnews/wasm/sqlite/open/helper/dsl/WasmSqliteOpenHelperFactoryConfigBlock {
 	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/path/DatabasePathResolver;)V
-	public final fun configurationOptions (Lkotlin/jvm/functions/Function1;)V
 	public final fun debug (Lkotlin/jvm/functions/Function1;)V
 	public final fun embedder (Lkotlin/jvm/functions/Function1;)V
-	public final fun getLocale-i7jP64M ()Ljava/lang/String;
 	public final fun getLogger ()Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;
 	public final fun getPathResolver ()Lru/pixnews/wasm/sqlite/open/helper/path/DatabasePathResolver;
+	public final fun openParams (Lkotlin/jvm/functions/Function1;)V
 	public final fun setLogger (Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;)V
 	public final fun setPathResolver (Lru/pixnews/wasm/sqlite/open/helper/path/DatabasePathResolver;)V
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/internal/SQLiteCompatibilityWalFlags {
+	public static final field INSTANCE Lru/pixnews/wasm/sqlite/open/helper/internal/SQLiteCompatibilityWalFlags;
+	public final fun isLegacyCompatibilityWalEnabled ()Z
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/path/AndroidDatabasePathResolver : ru/pixnews/wasm/sqlite/open/helper/path/DatabasePathResolver {

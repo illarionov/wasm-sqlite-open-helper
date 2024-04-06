@@ -39,7 +39,7 @@ internal enum class SQLiteStatementType {
          * @param sql the SQL statement whose type is returned by this method
          * @return one of the values listed above
          */
-        @Suppress("CyclomaticComplexMethod", "MagicNumber")
+        @Suppress("CyclomaticComplexMethod")
         fun getSqlStatementType(sql: String): SQLiteStatementType {
             if (sql.length < 3) {
                 return STATEMENT_OTHER

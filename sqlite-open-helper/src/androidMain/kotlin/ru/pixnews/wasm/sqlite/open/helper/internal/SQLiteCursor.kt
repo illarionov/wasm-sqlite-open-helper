@@ -23,6 +23,7 @@ import android.database.StaleDataException
 import android.net.Uri
 import android.os.Bundle
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
+import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard.CloseGuardFinalizeAction
 import ru.pixnews.wasm.sqlite.open.helper.internal.WasmSqliteCleaner.WasmSqliteCleanable
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.CursorWindow
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow
@@ -58,6 +59,12 @@ internal class SQLiteCursor(
     }
     private var windowCleaner: WasmSqliteCleanable? = null
 
+    /** CloseGuard to detect leaked cursor **/
+    private val closeGuard: CloseGuard = CloseGuard.get().apply {
+        open("AbstractCursor.close")
+    }
+    private val closeGuardCleaner = WasmSqliteCleaner.register(this, CloseGuardFinalizeAction(closeGuard))
+
     /**
      * The cursor window owned by this cursor.
      */
@@ -89,6 +96,18 @@ internal class SQLiteCursor(
             }
             _count = NO_COUNT
         }
+
+    /**
+     * Controls fetching of rows relative to requested position.
+     *
+     * Calling this method defines how rows will be loaded, but it doesn't affect rows that
+     * are already in the window. This setting is preserved if a new window is
+     * #setWindow(CursorWindow) set
+     *
+     * @param fillWindowForwardOnly if true, rows will be fetched starting from requested position
+     * up to the window's capacity. Default value is false.
+     */
+    internal var fillWindowForwardOnly = false
 
     override fun getCount(): Int {
         if (_count == NO_COUNT) {
@@ -248,14 +267,18 @@ internal class SQLiteCursor(
         }
 
         try {
+            check(requiredPos >= 0) { "requiredPos cannot be negative" }
             if (_count == NO_COUNT) {
-                val startPos = cursorPickFillWindowStartPosition(requiredPos, 0)
-                _count = query.fillWindow(window, startPos, requiredPos, true)
+                _count = query.fillWindow(window, requiredPos, requiredPos, true)
                 cursorWindowCapacity = window.numRows
 
                 logger.d { "received count(*) from native_fill_window: $_count" }
             } else {
-                val startPos = cursorPickFillWindowStartPosition(requiredPos, cursorWindowCapacity)
+                val startPos = if (fillWindowForwardOnly) {
+                    requiredPos
+                } else {
+                    cursorPickFillWindowStartPosition(requiredPos, cursorWindowCapacity)
+                }
                 query.fillWindow(window, startPos, requiredPos, false)
             }
         } catch (@Suppress("TooGenericExceptionCaught") ex: RuntimeException) {
@@ -270,7 +293,13 @@ internal class SQLiteCursor(
 
     override fun getColumnIndexOrThrow(columnName: String): Int {
         val index = getColumnIndex(columnName)
-        require(index >= 0) { "column '$columnName' does not exist" }
+        val availableColumns = try {
+            columnNames.contentToString()
+        } catch (@Suppress("TooGenericExceptionCaught") ex: Exception) {
+            logger.d(ex) { "Cannot collect column names for debug purposes" }
+            ""
+        }
+        require(index >= 0) { "column '$columnName' does not exist. Available columns: $availableColumns" }
         return index
     }
 
@@ -302,7 +331,15 @@ internal class SQLiteCursor(
         throw UnsupportedOperationException("Not supported")
     }
 
+    override fun setNotificationUris(cr: ContentResolver, uris: MutableList<Uri>) {
+        throw UnsupportedOperationException("Not supported")
+    }
+
     override fun getNotificationUri(): Uri {
+        throw UnsupportedOperationException("Not supported")
+    }
+
+    override fun getNotificationUris(): MutableList<Uri>? {
         throw UnsupportedOperationException("Not supported")
     }
 
@@ -333,6 +370,8 @@ internal class SQLiteCursor(
         windowCleaner?.clean()
         windowCleaner = null
         window = null
+        closeGuard.close()
+        closeGuardCleaner.clean()
         synchronized(this) {
             query.close()
         }
@@ -353,7 +392,6 @@ internal class SQLiteCursor(
             cursorPosition: Int,
             cursorWindowCapacity: Int,
         ): Int {
-            @Suppress("MagicNumber")
             return max((cursorPosition - cursorWindowCapacity / 3).toDouble(), 0.0).toInt()
         }
     }

@@ -29,7 +29,6 @@ internal class WasmMemoryNotifyCallback(
         return true
     }
 
-    @Suppress("MagicNumber")
     @ExportMessage
     fun execute(arguments: Array<Any>): Any {
         val addr = arguments.getArgAsLong(0)

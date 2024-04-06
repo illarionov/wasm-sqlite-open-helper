@@ -13,44 +13,48 @@ import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.memory.WasmMemory
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsUint
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.AssertionFailedException
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
+import ru.pixnews.wasm.sqlite.open.helper.host.include.FileMode
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 
-internal class AssertFail(
+internal class SyscallChmod(
     language: WasmLanguage,
     module: WasmModule,
     override val host: SqliteEmbedderHost,
-    functionName: String = "__assert_fail",
+    functionName: String = "__syscall_chmod",
 ) : BaseWasmNode(language, module, host, functionName) {
-    override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Nothing {
+    private val logger: Logger = host.rootLogger.withTag(SyscallChmod::class.qualifiedName!!)
+
+    override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Int {
         val args = frame.arguments
-        assertFail(
+        return syscallChmod(
             memory(frame),
             args.getArgAsWasmPtr(0),
-            args.getArgAsWasmPtr(1),
-            args.getArgAsInt(2),
-            args.getArgAsWasmPtr(3),
+            args.getArgAsUint(1),
         )
     }
 
     @TruffleBoundary
     @Suppress("MemberNameEqualsClassName")
-    private fun assertFail(
+    private fun syscallChmod(
         memory: WasmMemory,
-        condition: WasmPtr<Byte>,
-        filename: WasmPtr<Byte>,
-        line: Int,
-        func: WasmPtr<Byte>,
-    ): Nothing {
-        throw AssertionFailedException(
-            condition = memory.readString(condition.addr, null),
-            filename = memory.readString(filename.addr, null),
-            line = line,
-            func = memory.readString(func.addr, null),
-        )
+        pathnamePtr: WasmPtr<Byte>,
+        mode: UInt,
+    ): Int {
+        val fileMode = FileMode(mode)
+        val path = memory.readString(pathnamePtr.addr, null)
+        return try {
+            host.fileSystem.chmod(path, fileMode)
+            Errno.SUCCESS.code
+        } catch (e: SysException) {
+            logger.v { "chmod($path, $fileMode): Error ${e.errNo}" }
+            -e.errNo.code
+        }
     }
 }

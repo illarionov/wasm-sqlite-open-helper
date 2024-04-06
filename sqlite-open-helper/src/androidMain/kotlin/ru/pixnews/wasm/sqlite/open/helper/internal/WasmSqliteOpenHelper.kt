@@ -17,20 +17,18 @@ package ru.pixnews.wasm.sqlite.open.helper.internal
 
 import android.database.sqlite.SQLiteException
 import androidx.sqlite.db.SupportSQLiteOpenHelper
-import ru.pixnews.wasm.sqlite.open.helper.ConfigurationOptions
-import ru.pixnews.wasm.sqlite.open.helper.OpenFlags
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.CREATE_IF_NECESSARY
-import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.ENABLE_WRITE_AHEAD_LOGGING
+import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.ENABLE_LEGACY_COMPATIBILITY_WAL
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.OPEN_READONLY
-import ru.pixnews.wasm.sqlite.open.helper.SqliteDatabaseConfiguration
-import ru.pixnews.wasm.sqlite.open.helper.base.DatabaseErrorHandler
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
-import ru.pixnews.wasm.sqlite.open.helper.common.api.or
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.SqlOpenHelperNativeBindings
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3ConnectionPtr
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
 import ru.pixnews.wasm.sqlite.open.helper.path.DatabasePathResolver
+import java.nio.file.FileSystems
+import java.nio.file.attribute.PosixFilePermissions
+import kotlin.io.path.setPosixFilePermissions
 
 /**
  * A helper class to manage database creation and version management.
@@ -41,15 +39,14 @@ internal class WasmSqliteOpenHelper<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
     private val defaultLocale: Locale,
     private val debugConfig: SQLiteDebug,
     private val callback: SupportSQLiteOpenHelper.Callback,
-    private val configurationOptions: Iterable<ConfigurationOptions>,
+    private val openParamsBuilder: SQLiteDatabaseOpenParams.Builder,
     rootLogger: Logger,
     override val databaseName: String?,
     private val bindings: SqlOpenHelperNativeBindings<CP, SP>,
 ) : SupportSQLiteOpenHelper {
     private val logger: Logger = rootLogger.withTag(WasmSqliteOpenHelper::class.qualifiedName!!)
     private val version: Int get() = callback.version
-    private val errorHandler: DatabaseErrorHandler = DatabaseErrorHandler { dbObj -> callback.onCorruption(dbObj) }
-    private var enableWriteAheadLogging = false
+
     private var isInitializing = false
     private var database: SQLiteDatabase<CP, SP>? = null
 
@@ -120,19 +117,73 @@ internal class WasmSqliteOpenHelper<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
      */
     @Synchronized
     override fun setWriteAheadLoggingEnabled(enabled: Boolean) {
-        if (enableWriteAheadLogging == enabled) {
-            return
-        }
-        database?.let {
-            if (it.isOpen && !it.isReadOnly) {
-                if (enabled) {
-                    it.enableWriteAheadLogging()
-                } else {
-                    it.disableWriteAheadLogging()
+        if (openParamsBuilder.isWriteAheadLoggingEnabled != enabled) {
+            database?.let {
+                if (it.isOpen && !it.isReadOnly) {
+                    if (enabled) {
+                        it.enableWriteAheadLogging()
+                    } else {
+                        it.disableWriteAheadLogging()
+                    }
                 }
             }
+            openParamsBuilder.isWriteAheadLoggingEnabled = enabled
         }
-        enableWriteAheadLogging = enabled
+
+        // Compatibility WAL is disabled if an app disables or enables WAL
+        openParamsBuilder.removeOpenFlags(ENABLE_LEGACY_COMPATIBILITY_WAL)
+    }
+
+    /**
+     * Configures [lookaside memory allocator](https://sqlite.org/malloc.html#lookaside)
+     *
+     * This method should be called from the constructor of the subclass,
+     * before opening the database, since lookaside memory configuration can only be changed
+     * when no connection is using it
+     *
+     * SQLite default settings will be used, if this method isn't called.
+     * Use `setLookasideConfig(0,0)` to disable lookaside
+     *
+     * **Note:** Provided slotSize/slotCount configuration is just a recommendation.
+     * The system may choose different values depending on a device, e.g. lookaside allocations
+     * can be disabled on low-RAM devices
+     *
+     * @param slotSize The size in bytes of each lookaside slot.
+     * @param slotCount The total number of lookaside memory slots per database connection.
+     */
+    fun setLookasideConfig(
+        slotSize: Int,
+        slotCount: Int,
+    ) {
+        synchronized(this) {
+            check(!(database?.isOpen ?: false)) {
+                "Lookaside memory config cannot be changed after opening the database"
+            }
+            openParamsBuilder.setLookasideConfig(slotSize, slotCount)
+        }
+    }
+
+    /**
+     * Sets configuration parameters that are used for opening [SQLiteDatabase].
+     *
+     * Please note that [SQLiteDatabase.CREATE_IF_NECESSARY] flag will always be set when
+     * opening the database
+     *
+     * @param openParams configuration parameters that are used for opening [SQLiteDatabase].
+     * @throws IllegalStateException if the database is already open
+     */
+    fun setOpenParams(openParams: SQLiteDatabaseOpenParams) {
+        synchronized(this) {
+            check(!(database?.isOpen ?: false)) {
+                "OpenParams cannot be set after opening the database"
+            }
+            setOpenParamsBuilder(SQLiteDatabaseOpenParams.Builder(openParams))
+        }
+    }
+
+    private fun setOpenParamsBuilder(openParamsBuilder: SQLiteDatabaseOpenParams.Builder) {
+        this.openParamsBuilder.set(openParamsBuilder.build())
+        openParamsBuilder.addOpenFlags(CREATE_IF_NECESSARY)
     }
 
     @Suppress("CyclomaticComplexMethod", "LongMethod", "NestedBlockDepth")
@@ -158,36 +209,39 @@ internal class WasmSqliteOpenHelper<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
                     db.reopenReadWrite()
                 }
             } else if (databaseName == null) {
-                db = SQLiteDatabase.create(
+                db = SQLiteDatabase.createInMemory(
                     bindings = bindings,
                     debugConfig = debugConfig,
-                    errorHandler = errorHandler,
-                    locale = defaultLocale,
+                    openParams = openParamsBuilder.build(),
                     logger = logger,
                 )
             } else {
                 try {
                     val path = pathResolver.getDatabasePath(databaseName.toString()).path
-                    var flags = if (enableWriteAheadLogging) ENABLE_WRITE_AHEAD_LOGGING else OpenFlags(0U)
-                    flags = flags or CREATE_IF_NECESSARY
-                    val configuration = createConfiguration(path, flags)
+                    val openParams = openParamsBuilder.build()
                     db = SQLiteDatabase.openDatabase(
-                        configuration = configuration,
-                        errorHandler = errorHandler,
+                        path = path,
+                        defaultLocale = defaultLocale,
+                        openParams = openParams,
                         bindings = bindings,
                         debugConfig = debugConfig,
                         logger = logger,
                     )
+                    // Keep pre-O-MR1 behavior by resetting file permissions to 660
+                    setFilePermissionsForDb(path)
                 } catch (ex: SQLiteException) {
                     if (writable) {
                         throw ex
                     }
                     logger.e(ex) { "Couldn't open $databaseName for writing (will try read-only):" }
                     val path = pathResolver.getDatabasePath(databaseName.toString()).path
-                    val configuration = createConfiguration(path, OPEN_READONLY)
+                    val openParams = openParamsBuilder.build().toBuilder().apply {
+                        addOpenFlags(OPEN_READONLY)
+                    }.build()
                     db = SQLiteDatabase.openDatabase(
-                        configuration = configuration,
-                        errorHandler = errorHandler,
+                        path = path,
+                        defaultLocale = defaultLocale,
+                        openParams = openParams,
                         bindings = bindings,
                         debugConfig = debugConfig,
                         logger = logger,
@@ -253,20 +307,15 @@ internal class WasmSqliteOpenHelper<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
         }
     }
 
-    /**
-     * Called before the database is opened. Provides the [SqliteDatabaseConfiguration]
-     * instance that is used to initialize the database.
-     *
-     * @param path to database file to open and/or create
-     * @param openFlags to control database access mode
-     * @return [SqliteDatabaseConfiguration] instance, cannot be null.
-     */
-    private fun createConfiguration(
-        path: String,
-        openFlags: OpenFlags,
-    ): SqliteDatabaseConfiguration = configurationOptions.fold(
-        SqliteDatabaseConfiguration(path, openFlags, defaultLocale),
-    ) { config, transformer ->
-        transformer.apply(config)
+    private companion object {
+        private fun setFilePermissionsForDb(dbPath: String) {
+            try {
+                FileSystems.getDefault().getPath(dbPath).setPosixFilePermissions(
+                    PosixFilePermissions.fromString("rw-rw----"),
+                )
+            } catch (ignore: Exception) {
+                // Ignore
+            }
+        }
     }
 }

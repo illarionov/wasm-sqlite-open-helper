@@ -18,16 +18,23 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteBindOrColumnIndexOutOfRangeException
 import android.database.sqlite.SQLiteException
 import androidx.core.os.CancellationSignal
-import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.ENABLE_WRITE_AHEAD_LOGGING
-import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.OPEN_READONLY
+import ru.pixnews.wasm.sqlite.open.helper.OpenFlags
+import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.CREATE_IF_NECESSARY
+import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.NO_LOCALIZED_COLLATORS
 import ru.pixnews.wasm.sqlite.open.helper.SqliteDatabaseConfiguration
+import ru.pixnews.wasm.sqlite.open.helper.SqliteDatabaseConfiguration.Companion.isInMemoryDb
+import ru.pixnews.wasm.sqlite.open.helper.SqliteDatabaseConfiguration.Companion.isReadOnlyDatabase
+import ru.pixnews.wasm.sqlite.open.helper.SqliteDatabaseConfiguration.Companion.resolveJournalMode
+import ru.pixnews.wasm.sqlite.open.helper.SqliteDatabaseConfiguration.Companion.resolveSyncMode
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale.Companion.EN_US
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
-import ru.pixnews.wasm.sqlite.open.helper.common.api.xor
-import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard.SqliteDatabaseFinalizeAction
+import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteCantOpenDatabaseException
+import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard.CloseGuardFinalizeAction
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.Companion.getSqlStatementType
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.Companion.isCacheable
+import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_PRAGMA
+import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_SELECT
 import ru.pixnews.wasm.sqlite.open.helper.internal.WasmSqliteCleaner.WasmSqliteCleanable
 import ru.pixnews.wasm.sqlite.open.helper.internal.connection.OperationLog
 import ru.pixnews.wasm.sqlite.open.helper.internal.connection.OperationLog.Companion.trimSqlForDisplay
@@ -38,8 +45,14 @@ import ru.pixnews.wasm.sqlite.open.helper.internal.interop.SqlOpenHelperNativeBi
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3ConnectionPtr
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
 import ru.pixnews.wasm.sqlite.open.helper.toSqliteOpenFlags
+import java.io.File
+import java.nio.file.FileSystems
+import java.nio.file.Path
 import java.text.SimpleDateFormat
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.io.path.exists
+import kotlin.io.path.isDirectory
+import kotlin.io.path.isReadable
 
 /**
  * Represents a SQLite database connection.
@@ -91,7 +104,7 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
     private val bindings: SqlOpenHelperNativeBindings<CP, SP>,
     private val connectionId: Int,
     internal val isPrimaryConnection: Boolean,
-    private val debugConfig: SQLiteDebug,
+    private val recentOperations: OperationLog,
     rootLogger: Logger,
 ) : CancellationSignal.OnCancelListener {
     internal val logger = rootLogger.withTag(TAG)
@@ -103,8 +116,6 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
     private val connectionPtr: CP get() = connectionPtrResource.nativePtr
     internal val databaseLabel: String get() = configuration.label
 
-    // The recent operations log.
-    private val recentOperations = OperationLog(debugConfig, logger, System::currentTimeMillis, TimestampFormatter)
     private var onlyAllowReadOnlyOperations = false
 
     // The number of times attachCancellationSignal has been called.
@@ -115,13 +126,15 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
 
     private object TimestampFormatter : (Long) -> String {
         @SuppressLint("SimpleDateFormat")
-        private val startTimeDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
-        override fun invoke(timestamp: Long): String = startTimeDateFormat.format(timestamp)
+        override fun invoke(timestamp: Long): String {
+            val startTimeDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
+            return startTimeDateFormat.format(timestamp)
+        }
     }
 
     init {
-        closeGuard.open("close")
-        closeGuardCleanable = WasmSqliteCleaner.register(this, SqliteDatabaseFinalizeAction(closeGuard))
+        closeGuard.open("SQLiteConnection.close")
+        closeGuardCleanable = WasmSqliteCleaner.register(this, CloseGuardFinalizeAction(closeGuard))
         connectionPtrResourceCleanable = WasmSqliteCleaner.register(
             this,
             ConnectionPtrClosableCleanAction(
@@ -135,17 +148,18 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
     }
 
     private fun configure() {
-        if (configuration.isReadOnlyConnection) {
-            return
-        }
-        if (!configuration.isInMemoryDb) {
+        if (!configuration.isInMemoryDb && !configuration.isReadOnlyDatabase) {
             setPageSize()
+        }
+        setForeignKeyModeFromConfiguration()
+        setJournalFromConfiguration()
+        setSyncModeFromConfiguration()
+        if (!configuration.isInMemoryDb && !configuration.isReadOnlyDatabase) {
             setJournalSizeLimit()
             setAutoCheckpointInterval()
-            setWalMode(configuration.isWalEnabled)
         }
-        setForeignKeyMode(configuration.foreignKeyConstraintsEnabled)
-        setLocale((configuration.locale ?: EN_US).icuId)
+        setLocaleFromConfiguration()
+        executePerConnectionSqlFromConfiguration(0)
     }
 
     // Called by SQLiteConnectionPool only.
@@ -153,35 +167,38 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
         onlyAllowReadOnlyOperations = false
 
         // Remember what changed.
+        val journalModeChanged = this.configuration.resolveJournalMode() != configuration.resolveJournalMode()
+        val syncModeChanged = this.configuration.resolveSyncMode() != configuration.resolveSyncMode()
         val foreignKeyModeChanged = newConfiguration.foreignKeyConstraintsEnabled !=
                 this.configuration.foreignKeyConstraintsEnabled
-        val walModeChanged = (newConfiguration.openFlags xor this.configuration.openFlags)
-            .contains(ENABLE_WRITE_AHEAD_LOGGING)
         val localeChanged = newConfiguration.locale != this.configuration.locale
+        val oldSize = this.configuration.perConnectionSql.size
+        val newSize = configuration.perConnectionSql.size
+        val perConnectionSqlChanged = newSize > oldSize
 
         // Update configuration parameters.
         this.configuration.updateParametersFrom(newConfiguration)
 
-        if (!configuration.isReadOnlyConnection) {
-            // Update foreign key mode.
+        if (!configuration.isReadOnlyDatabase) {
             if (foreignKeyModeChanged) {
                 setForeignKeyMode(configuration.foreignKeyConstraintsEnabled)
             }
 
-            // Update WAL.
-            if (walModeChanged && !configuration.isInMemoryDb) {
-                setWalMode(configuration.isWalEnabled)
+            if (journalModeChanged) {
+                setJournalFromConfiguration()
+            }
+            if (syncModeChanged) {
+                setSyncModeFromConfiguration()
             }
 
-            // Update locale.
             if (localeChanged) {
-                setLocale((configuration.locale ?: EN_US).icuId)
+                setLocaleFromConfiguration()
+            }
+
+            if (perConnectionSqlChanged) {
+                executePerConnectionSqlFromConfiguration(oldSize)
             }
         }
-    }
-
-    internal fun nativeRegisterLocalizedCollators(newLocale: String) {
-        bindings.nativeRegisterLocalizedCollators(connectionPtr, newLocale)
     }
 
     // Called by SQLiteConnectionPool only.
@@ -255,7 +272,8 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
         cancellationSignal: CancellationSignal? = null,
     ) {
         executeOpWithPreparedStatement("execute", sql, bindArgs, cancellationSignal) { statement, _ ->
-            bindings.nativeExecute(connectionPtr, statement.statementPtr)
+            val isPragmaStmt = getSqlStatementType(sql) == STATEMENT_PRAGMA
+            bindings.nativeExecute(connectionPtr, statement.statementPtr, isPragmaStmt)
         }
     }
 
@@ -278,7 +296,9 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
         cancellationSignal: CancellationSignal? = null,
     ): Long {
         executeOpWithPreparedStatement("executeForLong", sql, bindArgs, cancellationSignal) { statement, _ ->
-            return bindings.nativeExecuteForLong(connectionPtr, statement.statementPtr)
+            val ret = bindings.nativeExecuteForLong(connectionPtr, statement.statementPtr)
+            recentOperations.setResult(ret)
+            return ret
         }
     }
 
@@ -301,7 +321,9 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
         cancellationSignal: CancellationSignal? = null,
     ): String? {
         executeOpWithPreparedStatement("executeForString", sql, bindArgs, cancellationSignal) { statement, _ ->
-            return bindings.nativeExecuteForString(connectionPtr, statement.statementPtr)
+            val ret = bindings.nativeExecuteForString(connectionPtr, statement.statementPtr)
+            recentOperations.setResult(ret)
+            return ret
         }
     }
 
@@ -411,7 +433,6 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
                     requiredPos = requiredPos,
                     countAllRows = countAllRows,
                 )
-                @Suppress("MagicNumber")
                 actualPos = (result shr 32).toInt()
                 countedRows = result.toInt()
                 filledRows = window.numRows
@@ -458,6 +479,92 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
         closeGuard.close()
         connectionPtrResourceCleanable.clean()
         closeGuardCleanable.clean()
+    }
+
+    private fun setForeignKeyModeFromConfiguration() {
+        if (!configuration.isReadOnlyDatabase) {
+            setForeignKeyMode(configuration.foreignKeyConstraintsEnabled)
+        }
+    }
+
+    private fun executePerConnectionSqlFromConfiguration(startIndex: Int) {
+        for (i in startIndex..configuration.perConnectionSql.lastIndex) {
+            val statement: Pair<String, List<Any?>> = configuration.perConnectionSql[i]
+            val type = getSqlStatementType(statement.first)
+            when (type) {
+                STATEMENT_SELECT -> executeForString(statement.first, statement.second, null)
+                STATEMENT_PRAGMA -> execute(statement.first, statement.second, null)
+                else -> throw IllegalArgumentException(
+                    "Unsupported configuration statement: $statement",
+                )
+            }
+        }
+    }
+
+    private fun setJournalFromConfiguration() {
+        if (!configuration.isReadOnlyDatabase) {
+            setJournalMode(configuration.resolveJournalMode())
+            maybeTruncateWalFile()
+        } else {
+            configuration.shouldTruncateWalFile = false
+        }
+    }
+
+    /**
+     * If the WAL file exists and larger than a threshold, truncate it by executing
+     * PRAGMA wal_checkpoint.
+     */
+    @Suppress("ReturnCount")
+    private fun maybeTruncateWalFile() {
+        if (!configuration.shouldTruncateWalFile) {
+            return
+        }
+
+        val threshold: Long = SQLiteGlobal.walTruncateSize
+        if (threshold == 0L) {
+            return
+        }
+
+        val walFile = File(configuration.path + "-wal")
+        if (!walFile.isFile) {
+            return
+        }
+        val size = walFile.length()
+        if (size < threshold) {
+            return
+        }
+
+        logger.i { walFile.absolutePath + " " + size + " bytes: Bigger than " + threshold + "; truncating" }
+
+        try {
+            executeForString("PRAGMA wal_checkpoint(TRUNCATE)")
+            configuration.shouldTruncateWalFile = false
+        } catch (ex: SQLiteException) {
+            logger.w(ex) { "Failed to truncate the -wal file" }
+        }
+    }
+
+    private fun setSyncModeFromConfiguration() {
+        if (!configuration.isReadOnlyDatabase) {
+            setSyncMode(configuration.resolveSyncMode())
+        }
+    }
+
+    private fun setLocaleFromConfiguration() {
+        if (configuration.openFlags.contains(NO_LOCALIZED_COLLATORS)) {
+            return
+        }
+
+        // Register the localized collators.
+        val newLocale: String = (configuration.locale ?: EN_US).icuId
+        bindings.nativeRegisterLocalizedCollators(connectionPtr, newLocale)
+
+        // If the database is read-only, we cannot modify the android metadata table
+        // or existing indexes.
+        if (configuration.isReadOnlyDatabase) {
+            return
+        }
+        recreateAndroidMetadataTable(newLocale)
     }
 
     private inline fun <R : Any?> executeOpWithPreparedStatement(
@@ -718,12 +825,6 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
     companion object {
         private const val TAG = "SQLiteConnection"
 
-        internal val SqliteDatabaseConfiguration.isReadOnlyConnection: Boolean
-            get() = openFlags.contains(OPEN_READONLY)
-
-        internal val SqliteDatabaseConfiguration.isWalEnabled: Boolean
-            get() = openFlags.contains(ENABLE_WRITE_AHEAD_LOGGING)
-
         // Called by SQLiteConnectionPool only.
         fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> open(
             pool: SQLiteConnectionPool<CP, SP>,
@@ -733,31 +834,95 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
             primaryConnection: Boolean,
             debugConfig: SQLiteDebug,
             rootLogger: Logger,
+            onStatementExecuted: (Long) -> Unit,
         ): SQLiteConnection<CP, SP> {
-            val connectionPtr = bindings.nativeOpen(
-                path = configuration.path,
-                openFlags = configuration.openFlags.toSqliteOpenFlags(),
-                label = configuration.label,
-                enableTrace = debugConfig.sqlStatements,
-                enableProfile = debugConfig.sqlTime,
-            )
-
-            val connection = SQLiteConnection(
-                connectionPtrResource = ConnectionPtrClosable(connectionPtr),
-                onConnectionLeaked = pool::onConnectionLeaked,
-                configuration = configuration,
-                bindings = bindings,
-                connectionId = connectionId,
-                isPrimaryConnection = primaryConnection,
+            // The recent operations log.
+            val recentOperations = OperationLog(
                 debugConfig = debugConfig,
                 rootLogger = rootLogger,
+                currentTimeProvider = System::currentTimeMillis,
+                uptimeProvider = { System.nanoTime() / 1_000_000 },
+                pathProvider = configuration::path,
+                timestampFormatter = TimestampFormatter,
+                onStatementExecuted = onStatementExecuted,
             )
+
+            recentOperations.useOperation("open", sql = null) {
+                val file = configuration.path
+                val connectionPtr = try {
+                    bindings.nativeOpen(
+                        path = file,
+                        openFlags = configuration.openFlags.toSqliteOpenFlags(),
+                        label = configuration.label,
+                        enableTrace = debugConfig.sqlStatements,
+                        enableProfile = debugConfig.sqlTime,
+                        lookasideSlotSize = configuration.lookasideSlotSize,
+                        lookasideSlotCount = configuration.lookasideSlotCount,
+                    )
+                } catch (ex: AndroidSqliteCantOpenDatabaseException) {
+                    val message: String = formatCantOpenDatabaseMessage(file, configuration.openFlags)
+                    throw AndroidSqliteCantOpenDatabaseException(message).apply {
+                        initCause(ex)
+                    }
+                }
+
+                val connection = SQLiteConnection(
+                    connectionPtrResource = ConnectionPtrClosable(connectionPtr),
+                    onConnectionLeaked = pool::onConnectionLeaked,
+                    configuration = configuration,
+                    bindings = bindings,
+                    connectionId = connectionId,
+                    isPrimaryConnection = primaryConnection,
+                    recentOperations = recentOperations,
+                    rootLogger = rootLogger,
+                )
+                try {
+                    connection.configure()
+                    return connection
+                } catch (ex: SQLiteException) {
+                    connection.close()
+                    throw ex
+                }
+            }
+        }
+
+        private fun formatCantOpenDatabaseMessage(
+            file: String,
+            openFlags: OpenFlags,
+        ): String = buildString {
+            append("Cannot open database '")
+            append(file).append('\'')
+            append(" with flags 0x")
+            append(openFlags.mask.toString(16))
+
             try {
-                connection.configure()
-                return connection
-            } catch (ex: SQLiteException) {
-                connection.close()
-                throw ex
+                // Try to diagnose for common reasons. If something fails in here, that's fine;
+                // just swallow the exception.
+                val path: Path = FileSystems.getDefault().getPath(file)
+                val dir: Path? = path.parent
+                when {
+                    dir == null -> append(": Directory not specified in the file path")
+
+                    !dir.isDirectory() -> append(": Directory ").append(dir).append(" doesn't exist")
+
+                    !path.exists() -> {
+                        append(": File ").append(path).append(" doesn't exist")
+                        if (openFlags.contains(CREATE_IF_NECESSARY)) {
+                            append(" and CREATE_IF_NECESSARY is set, check directory permissions")
+                        }
+                    }
+
+                    !path.isReadable() -> append(": File ").append(path).append(" is not readable")
+
+                    path.isDirectory() -> append(": Path ").append(path).append(" is a directory")
+
+                    else -> append(": Unable to deduct failure reason")
+                }
+            } catch (@Suppress("TooGenericExceptionCaught") th: Throwable) {
+                append(
+                    """: Unable to deduct failure reason because filesystem couldn't be examined: """,
+                )
+                append(th.message)
             }
         }
 

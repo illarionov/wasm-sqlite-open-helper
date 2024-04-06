@@ -15,7 +15,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.CiovecArray
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Size
 
 public object FdWriteExt {
-    @Suppress("UNCHECKED_CAST", "MagicNumber", "VARIABLE_HAS_PREFIX")
+    @Suppress("UNCHECKED_CAST", "VARIABLE_HAS_PREFIX")
     public fun readCiovecs(
         memory: Memory,
         pCiov: WasmPtr<CioVec>,

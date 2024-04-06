@@ -4,12 +4,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+@file:Suppress("VARIABLE_HAS_PREFIX")
+
 package ru.pixnews.wasm.sqlite.open.helper.embedder
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteColumnType
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteComparatorCallback
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDbConfigParameter
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDbStatusParameter
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrno
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrorInfo
@@ -52,6 +55,30 @@ public interface SqliteCapi {
         op: SqliteDbStatusParameter,
         resetFlag: Boolean,
     ): SqliteDbStatusResult
+
+    @Throws(SqliteException::class)
+    public fun sqlite3DbConfig(
+        sqliteDb: WasmPtr<SqliteDb>,
+        op: SqliteDbConfigParameter,
+        arg1: Int,
+        pArg2: WasmPtr<*>,
+    )
+
+    @Throws(SqliteException::class)
+    public fun sqlite3DbConfig(
+        sqliteDb: WasmPtr<SqliteDb>,
+        op: SqliteDbConfigParameter,
+        pArg1: WasmPtr<*>,
+        arg2: Int,
+        arg3: Int,
+    )
+
+    @Throws(SqliteException::class)
+    public fun sqlite3DbConfig(
+        sqliteDb: WasmPtr<SqliteDb>,
+        op: SqliteDbConfigParameter,
+        pArg1: WasmPtr<Byte>,
+    )
 
     @Throws(SqliteException::class)
     public fun sqlite3BusyTimeout(

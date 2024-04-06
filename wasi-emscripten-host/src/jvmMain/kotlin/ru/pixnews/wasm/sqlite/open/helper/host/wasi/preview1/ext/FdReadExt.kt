@@ -21,7 +21,7 @@ public object FdReadExt {
         pIov: WasmPtr<Iovec>,
         iovCnt: Int,
     ): IovecArray {
-        @Suppress("UNCHECKED_CAST", "MagicNumber")
+        @Suppress("UNCHECKED_CAST")
         val iovecs = MutableList(iovCnt) { idx ->
             val pIovec: WasmPtr<*> = pIov + 8 * idx
             Iovec(

@@ -25,6 +25,9 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.Emscripte
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.EmscriptenThreadMailboxAwait
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.MmapJs
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.MunapJs
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.SyscallChmod
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.SyscallFaccessat
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.SyscallFchmod
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.SyscallFchown32
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.SyscallFcntl64
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.SyscallFstat64
@@ -102,19 +105,54 @@ internal class EmscriptenEnvModuleBuilder(
             retType = I32,
             nodeFactory = ::MunapJs,
         )
-        fn("__syscall_chmod", listOf(I32, I32))
-        fn("__syscall_faccessat", List(4) { I32 })
-        fn("__syscall_fchmod", listOf(I32, I32))
+        fn(
+            name = "__syscall_chmod",
+            paramTypes = listOf(I32, I32),
+            retType = I32,
+            nodeFactory = ::SyscallChmod,
+        )
+        fn(
+            name = "__syscall_faccessat",
+            paramTypes = List(4) { I32 },
+            retType = I32,
+            nodeFactory = ::SyscallFaccessat,
+        )
+        fn(
+            name = "__syscall_fchmod",
+            paramTypes = listOf(I32, I32),
+            retType = I32,
+            nodeFactory = ::SyscallFchmod,
+        )
         fn(
             name = "__syscall_fchown32",
             paramTypes = List(3) { I32 },
             retType = I32,
             nodeFactory = ::SyscallFchown32,
         )
-        fn("__syscall_fcntl64", List(3) { I32 }, I32, ::SyscallFcntl64)
-        fn("__syscall_fdatasync", listOf(I32), I32, ::SyscallFdatasync)
-        fn("__syscall_fstat64", listOf(I32, I32), I32, ::SyscallFstat64)
-        fn("__syscall_ftruncate64", listOf(I32, I64), I32, ::SyscallFtruncate64)
+        fn(
+            name = "__syscall_fcntl64",
+            paramTypes = List(3) { I32 },
+            retType = I32,
+            nodeFactory = ::SyscallFcntl64,
+        )
+        fn(
+            name = "__syscall_fdatasync",
+            paramTypes = listOf(I32),
+            retType = I32,
+            nodeFactory = ::SyscallFdatasync,
+        )
+        fn(
+            name = "__syscall_fstat64",
+            paramTypes = listOf(I32, I32),
+            retType = I32,
+            nodeFactory = ::SyscallFstat64,
+        )
+        fn(
+            name = "__syscall_ftruncate64",
+            paramTypes = listOf(I32, I64),
+            retType = I32,
+            nodeFactory = ::SyscallFtruncate64,
+        )
         fn(
             name = "__syscall_getcwd",
             paramTypes = listOf(I32, I32),
@@ -122,7 +160,12 @@ internal class EmscriptenEnvModuleBuilder(
             nodeFactory = ::SyscallGetcwd,
         )
         fn("__syscall_ioctl", List(3) { I32 })
-        fn("__syscall_mkdirat", List(3) { I32 }, I32, ::SyscallMkdirat)
+        fn(
+            name = "__syscall_mkdirat",
+            paramTypes = List(3) { I32 },
+            retType = I32,
+            nodeFactory = ::SyscallMkdirat,
+        )
         fn("__syscall_newfstatat", List(4) { I32 })
         fn(
             name = "__syscall_openat",
@@ -131,7 +174,12 @@ internal class EmscriptenEnvModuleBuilder(
             nodeFactory = ::SyscallOpenat,
         )
         fn("__syscall_readlinkat", List(4) { I32 })
-        fn("__syscall_rmdir", listOf(I32), I32, ::SyscallRmdir)
+        fn(
+            name = "__syscall_rmdir",
+            paramTypes = listOf(I32),
+            retType = I32,
+            nodeFactory = ::SyscallRmdir,
+        )
         fn(
             name = "__syscall_stat64",
             paramTypes = listOf(I32, I32),
@@ -150,7 +198,12 @@ internal class EmscriptenEnvModuleBuilder(
             retType = I32,
             nodeFactory = ::SyscallUnlinkat,
         )
-        fn("__syscall_utimensat", List(4) { I32 }, I32, ::SyscallUtimensat)
+        fn(
+            name = "__syscall_utimensat",
+            paramTypes = List(4) { I32 },
+            retType = I32,
+            nodeFactory = ::SyscallUtimensat,
+        )
         fnVoid("_tzset_js", List(4) { I32 })
 
         fnVoid("_emscripten_thread_set_strongref", listOf(I32))

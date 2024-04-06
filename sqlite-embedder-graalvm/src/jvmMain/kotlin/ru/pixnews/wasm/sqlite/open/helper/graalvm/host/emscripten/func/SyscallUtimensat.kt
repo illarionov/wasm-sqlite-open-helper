@@ -38,7 +38,6 @@ internal class SyscallUtimensat(
 ) : BaseWasmNode(language, module, host, functionName) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
         val args: Array<Any> = frame.arguments
-        @Suppress("MagicNumber")
         return syscallUtimensat(
             memory(frame),
             args.getArgAsInt(0),

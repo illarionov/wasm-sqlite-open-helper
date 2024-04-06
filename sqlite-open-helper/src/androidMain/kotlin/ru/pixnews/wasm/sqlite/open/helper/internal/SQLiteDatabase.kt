@@ -18,7 +18,6 @@ package ru.pixnews.wasm.sqlite.open.helper.internal
 import android.content.ContentValues
 import android.database.Cursor
 import android.database.SQLException
-import android.database.sqlite.SQLiteDatabaseCorruptException
 import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteTransactionListener
 import android.util.Pair
@@ -27,23 +26,34 @@ import androidx.core.os.CancellationSignal
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteStatement
+import ru.pixnews.wasm.sqlite.open.helper.OpenFlags
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.CREATE_IF_NECESSARY
+import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.ENABLE_LEGACY_COMPATIBILITY_WAL
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.ENABLE_WRITE_AHEAD_LOGGING
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.OPEN_CREATE
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.OPEN_READONLY
+import ru.pixnews.wasm.sqlite.open.helper.SQLiteDatabaseJournalMode
+import ru.pixnews.wasm.sqlite.open.helper.SQLiteDatabaseJournalMode.WAL
+import ru.pixnews.wasm.sqlite.open.helper.SQLiteDatabaseSyncMode
 import ru.pixnews.wasm.sqlite.open.helper.SqliteDatabaseConfiguration
+import ru.pixnews.wasm.sqlite.open.helper.SqliteDatabaseConfiguration.Companion.isInMemoryDb
+import ru.pixnews.wasm.sqlite.open.helper.SqliteDatabaseConfiguration.Companion.resolveJournalMode
 import ru.pixnews.wasm.sqlite.open.helper.base.DatabaseErrorHandler
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.clear
 import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
 import ru.pixnews.wasm.sqlite.open.helper.common.api.or
-import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard.SqliteDatabaseFinalizeAction
+import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteDatabaseCorruptException
+import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard.CloseGuardFinalizeAction
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.Companion.CONNECTION_FLAG_PRIMARY_CONNECTION_AFFINITY
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.Companion.CONNECTION_FLAG_READ_ONLY
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteProgram.Companion.bindAllArgsAsStrings
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteSession.Companion.TRANSACTION_MODE_EXCLUSIVE
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteSession.Companion.TRANSACTION_MODE_IMMEDIATE
+import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.Companion.getSqlStatementType
+import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_DDL
+import ru.pixnews.wasm.sqlite.open.helper.internal.ext.DatabaseUtils
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.SqlOpenHelperNativeBindings
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3ConnectionPtr
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
@@ -67,23 +77,27 @@ import kotlin.collections.Map.Entry
  * to the current locale.
  */
 internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> private constructor(
-    configuration: SqliteDatabaseConfiguration,
     private val debugConfig: SQLiteDebug,
     rootLogger: Logger,
     private val bindings: SqlOpenHelperNativeBindings<CP, SP>,
+    path: String,
+    openFlags: OpenFlags,
+    defaultLocale: Locale?,
     private val errorHandler: DatabaseErrorHandler,
+    lookasideSlotSize: Int,
+    lookasideSlotCount: Int,
+    journalMode: SQLiteDatabaseJournalMode?,
+    syncMode: SQLiteDatabaseSyncMode?,
 ) : SQLiteClosable(), SupportSQLiteDatabase {
     private val logger = rootLogger.withTag(TAG)
 
     // Thread-local for database sessions that belong to this database.
     // Each thread has its own database session.
     // INVARIANT: Immutable.
-    private val _threadSession: ThreadLocal<SQLiteSession<CP, SP>> = object : ThreadLocal<SQLiteSession<CP, SP>>() {
-            override fun initialValue(): SQLiteSession<CP, SP> {
-                val pool = synchronized(lock) { requireConnectionPoolLocked() }
-                return SQLiteSession(pool)
-            }
-        }
+    private val _threadSession: ThreadLocal<SQLiteSession<CP, SP>> = ThreadLocal.withInitial {
+        val pool = synchronized(lock) { requireConnectionPoolLocked() }
+        SQLiteSession(pool)
+    }
 
     // Shared database state lock.
     // This lock guards all of the shared state of the database, such as its
@@ -102,15 +116,25 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
     private val lock = Any()
 
     // Warns if the database is finalized without being closed properly.
-    // INVARIANT: Guarded by lock.
     @GuardedBy("lock")
-    private val closeGuardLocked: CloseGuard = CloseGuard.get().also { closeGuard ->
-        WasmSqliteCleaner.register(this, SqliteDatabaseFinalizeAction(closeGuard))
-    }
+    private val closeGuardLocked: CloseGuard = CloseGuard.get()
+    private val closeGuardCleaner = WasmSqliteCleaner.register(this, CloseGuardFinalizeAction(closeGuardLocked))
 
     // The database configuration.
     @GuardedBy("lock")
-    private val configurationLocked = configuration
+    private val configurationLocked = SqliteDatabaseConfiguration(
+        path = path,
+        openFlags = openFlags,
+        locale = defaultLocale,
+        lookasideSlotSize = lookasideSlotSize,
+        lookasideSlotCount = lookasideSlotCount,
+        journalMode = journalMode,
+        syncMode = syncMode,
+    ).apply {
+        if (SQLiteCompatibilityWalFlags.isLegacyCompatibilityWalEnabled) {
+            this.openFlags = openFlags or ENABLE_LEGACY_COMPATIBILITY_WAL
+        }
+    }
 
     // The connection pool for the database, null when closed.
     // The pool itself is thread-safe, but the reference to it can only be acquired
@@ -235,11 +259,12 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
      * @see .enableWriteAheadLogging
      * @see .ENABLE_WRITE_AHEAD_LOGGING
      */
+    @Suppress("NO_CORRESPONDING_PROPERTY")
     override val isWriteAheadLoggingEnabled: Boolean
         get() {
             synchronized(lock) {
                 requireConnectionPoolLocked()
-                return configurationLocked.openFlags.contains(ENABLE_WRITE_AHEAD_LOGGING)
+                return configurationLocked.resolveJournalMode() == WAL
             }
         }
 
@@ -322,6 +347,7 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
         val pool: SQLiteConnectionPool<CP, SP>?
         synchronized(lock) {
             closeGuardLocked.close()
+            closeGuardCleaner.clean()
             pool = connectionPoolLocked
             connectionPoolLocked = null
         }
@@ -542,9 +568,13 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
         }
         try {
             openInner()
-        } catch (@Suppress("TooGenericExceptionCaught", "SwallowedException") ex: SQLiteDatabaseCorruptException) {
-            onCorruption()
-            openInner()
+        } catch (ex: AndroidSqliteDatabaseCorruptException) {
+            if (isCorruptException(ex)) {
+                onCorruption()
+                openInner()
+            } else {
+                throw ex
+            }
         }
     } catch (ex: SQLiteException) {
         logger.e(ex) { "Failed to open database '$label'." }
@@ -556,6 +586,43 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
         check(connectionPoolLocked == null)
         connectionPoolLocked = SQLiteConnectionPool.open(configurationLocked, debugConfig, bindings, logger)
         closeGuardLocked.open("close")
+    }
+
+    /**
+     * Execute the given SQL statement on all connections to this database.
+     *
+     * This statement will be immediately executed on all existing connections,
+     * and will be automatically executed on all future connections.
+     *
+     * Some example usages are changes like `PRAGMA trusted_schema=OFF` or
+     * functions like `SELECT icu_load_collation()`. If you execute these
+     * statements using [.execSQL] then they will only apply to a single
+     * database connection; using this method will ensure that they are
+     * uniformly applied to all current and future connections.
+     *
+     * @param sql The SQL statement to be executed. Multiple statements
+     * separated by semicolons are not supported.
+     * @param bindArgs The arguments that should be bound to the SQL statement.
+     * @throws SQLException
+     * @throws RuntimeException
+     */
+    @Throws(SQLException::class)
+    fun execPerConnectionSQL(sql: String, bindArgs: List<Any?> = emptyList()) {
+        // Copy arguments to ensure that the caller doesn't accidentally change
+        // the values used by future connections
+        val bindArgsCopy = DatabaseUtils.deepCopyOf(bindArgs)
+
+        synchronized(lock) {
+            val pool = requireConnectionPoolLocked()
+            val index: Int = configurationLocked.perConnectionSql.size
+            configurationLocked.perConnectionSql.add(sql to bindArgsCopy)
+            try {
+                pool.reconfigure(configurationLocked)
+            } catch (@Suppress("TooGenericExceptionCaught") ex: RuntimeException) {
+                configurationLocked.perConnectionSql.removeAt(index)
+                throw ex
+            }
+        }
     }
 
     /**
@@ -818,7 +885,7 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
                 i++
             }
         } else {
-            sql.append("$nullColumnHack) VALUES (NULL")
+            sql.append(nullColumnHack).append(") VALUES (NULL")
             bindArgs = emptyArray()
         }
         sql.append(')')
@@ -895,24 +962,20 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
     }
 
     /**
-     * Execute a single SQL statement that is NOT a SELECT
-     * or any other SQL statement that returns data.
-     *
+     * Execute a single SQL statement that is NOT a SELECT or any other SQL statement that returns data.
      *
      * It has no means to return any data (such as the number of affected rows).
-     * Instead, you're encouraged to use [.insert],
-     * [.update], et al, when possible.
+     * Instead, you're encouraged to use [insert], [update], et al, when possible.
      *
+     * When using [enableWriteAheadLogging], journal_mode is automatically managed by this class.
+     * So, do not set journal_mode using "PRAGMA journal_mode <value>" statement if your app is using
+     * [enableWriteAheadLogging]
      *
+     * Note that `PRAGMA` values which apply on a per-connection basis should _not_ be configured using this method;
+     * you should instead use [execPerConnectionSQL] to ensure that they are uniformly applied to all current
+     * and future connections.
      *
-     * When using [.enableWriteAheadLogging], journal_mode is
-     * automatically managed by this class. So, do not set journal_mode
-     * using "PRAGMA journal_mode'<value>" statement if your app is using
-     * [.enableWriteAheadLogging]
-    </value> *
-     *
-     * @param sql the SQL statement to be executed. Multiple statements separated by semicolons are
-     * not supported.
+     * @param sql the SQL statement to be executed. Multiple statements separated by semicolons are not supported.
      * @throws SQLException if the SQL string is invalid
      */
     @Throws(SQLException::class)
@@ -923,27 +986,20 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
     /**
      * Execute a single SQL statement that is NOT a SELECT/INSERT/UPDATE/DELETE.
      *
-     *
      * For INSERT statements, use any of the following instead.
      *
-     *  * [.insert]
-     *  * [.insertOrThrow]
-     *  * [.insertWithOnConflict]
-     *
-     *
+     *  * [insert]
+     *  * [insertOrThrow]
+     *  * [insertWithOnConflict]
      *
      * For UPDATE statements, use any of the following instead.
      *
-     *  * [.update]
-     *  * [.updateWithOnConflict]
-     *
-     *
+     *  * [update]
+     *  * [updateWithOnConflict]
      *
      * For DELETE statements, use any of the following instead.
      *
-     *  * [.delete]
-     *
-     *
+     *  * [delete]
      *
      * For example, the following are good candidates for using this method:
      *
@@ -954,14 +1010,15 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
      *  * SAVEPOINT
      *  * PRAGMA that returns no data
      *
-     * When using [.enableWriteAheadLogging], journal_mode is
+     * When using [enableWriteAheadLogging], journal_mode is
      * automatically managed by this class. So, do not set journal_mode
-     * using "PRAGMA journal_mode'<value>" statement if your app is using
-     * [.enableWriteAheadLogging]
-    </value> *
+     * using "PRAGMA journal_mode <value>" statement if your app is using [enableWriteAheadLogging]
      *
-     * @param sql the SQL statement to be executed. Multiple statements separated by semicolons are
-     * not supported.
+     * Note that `PRAGMA` values which apply on a per-connection basis should _not_ be configured using this method;
+     * you should instead use [execPerConnectionSQL] to ensure that they are uniformly applied to all current
+     * and future connections.
+     *
+     * @param sql the SQL statement to be executed. Multiple statements separated by semicolons are not supported.
      * @param bindArgs only byte[], String, Long and Double are supported in bindArgs.
      * @throws SQLException if the SQL string is invalid
      */
@@ -972,7 +1029,18 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
 
     @Throws(SQLException::class)
     private fun executeSql(sql: String, bindArgs: List<Any?> = emptyList()): Int = useReference {
-        SQLiteStatement(this, sql, bindArgs).use(SQLiteStatement::executeUpdateDelete)
+        val statementType = getSqlStatementType(sql)
+        try {
+            SQLiteStatement(this, sql, bindArgs).use {
+                it.executeUpdateDelete()
+            }
+        } finally {
+            // If schema was updated, close non-primary connections, otherwise they might
+            // have outdated schema information
+            if (statementType == STATEMENT_DDL) {
+                requireConnectionPoolLocked().closeAvailableNonPrimaryConnectionsAndLogExceptions()
+            }
+        }
     }
 
     /**
@@ -1037,16 +1105,13 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
     /**
      * Sets whether foreign key constraints are enabled for the database.
      *
-     *
      * By default, foreign key constraints are not enforced by the database.
      * This method allows an application to enable foreign key constraints.
      * It must be called each time the database is opened to ensure that foreign
      * key constraints are enabled for the session.
      *
-     *
      * A good time to call this method is right after calling [.openOrCreateDatabase]
      * or in the [RequerySqliteOpenHelper.onConfigure] callback.
-     *
      *
      * When foreign key constraints are disabled, the database does not check whether
      * changes to the database will violate foreign key constraints.  Likewise, when
@@ -1055,13 +1120,10 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
      * state to become inconsistent.  To perform a database integrity check,
      * call [.isDatabaseIntegrityOk].
      *
-     *
      * This method must not be called while a transaction is in progress.
-     *
      *
      * See also [SQLite Foreign Key Constraints](http://sqlite.org/foreignkeys.html)
      * for more details about foreign key constraint support.
-     *
      *
      * @param enabled True to enable foreign key constraints, false to disable them.
      * @throws IllegalStateException if the are transactions is in progress
@@ -1088,19 +1150,16 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
      * and using a different database connection for each query.  The database
      * journal mode is also changed to enable writes to proceed concurrently with reads.
      *
-     *
      * When write-ahead logging is not enabled (the default), it is not possible for
      * reads and writes to occur on the database at the same time.  Before modifying the
      * database, the writer implicitly acquires an exclusive lock on the database which
      * prevents readers from accessing the database until the write is completed.
-     *
      *
      * In contrast, when write-ahead logging is enabled (by calling this method), write
      * operations occur in a separate log file which allows reads to proceed concurrently.
      * While a write is in progress, readers on other threads will perceive the state
      * of the database as it was before the write began.  When the write completes, readers
      * on other threads will then perceive the new state of the database.
-     *
      *
      * It is a good idea to enable write-ahead logging whenever a database will be
      * concurrently accessed and modified by multiple threads at the same time.
@@ -1109,30 +1168,24 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
      * So if a database will only be used by a single thread, or if optimizing
      * concurrency is not very important, then write-ahead logging should be disabled.
      *
-     *
      * After calling this method, execution of queries in parallel is enabled as long as
      * the database remains open.  To disable execution of queries in parallel, either
      * call [.disableWriteAheadLogging] or close the database and reopen it.
      *
-     *
      * The maximum number of connections used to execute queries in parallel is
      * dependent upon the device memory and possibly other properties.
      *
-     *
      * If a query is part of a transaction, then it is executed on the same database handle the
      * transaction was begun.
-     *
      *
      * Writers should use [.beginTransactionNonExclusive] or
      * [.beginTransactionWithListenerNonExclusive]
      * to start a transaction.  Non-exclusive mode allows database file to be in readable
      * by other threads executing queries.
      *
-     *
      * If the database has any attached databases, then execution of queries in parallel is NOT
      * possible.  Likewise, write-ahead logging is not supported for read-only databases
      * or memory databases.  In such cases, [.enableWriteAheadLogging] returns false.
-     *
      *
      * The best way to enable write-ahead logging is to pass the
      * [.ENABLE_WRITE_AHEAD_LOGGING] flag to [.openDatabase].  This is
@@ -1141,9 +1194,6 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
      * SQLiteDatabase db = SQLiteDatabase.openDatabase("db_filename", cursorFactory,
      * SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.ENABLE_WRITE_AHEAD_LOGGING,
      * myDatabaseErrorHandler);
-     * db.enableWriteAheadLogging();
-    </pre>` *
-     *
      *
      * Another way to enable write-ahead logging is to call [.enableWriteAheadLogging]
      * after opening the database.
@@ -1151,8 +1201,6 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
      * SQLiteDatabase db = SQLiteDatabase.openDatabase("db_filename", cursorFactory,
      * SQLiteDatabase.CREATE_IF_NECESSARY, myDatabaseErrorHandler);
      * db.enableWriteAheadLogging();
-    </pre>` *
-     *
      *
      * See also [SQLite Write-Ahead Logging](http://sqlite.org/wal.html) for
      * more details about how write-ahead logging works.
@@ -1167,7 +1215,7 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
      */
     override fun enableWriteAheadLogging(): Boolean = synchronized(lock) {
         val pool = requireConnectionPoolLocked()
-        if (configurationLocked.openFlags.contains(ENABLE_WRITE_AHEAD_LOGGING)) {
+        if (configurationLocked.resolveJournalMode() == SQLiteDatabaseJournalMode.WAL) {
             return true
         }
 
@@ -1202,16 +1250,22 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
      * @see .enableWriteAheadLogging
      */
     override fun disableWriteAheadLogging() = synchronized(lock) {
-        val pool = requireConnectionPoolLocked()
-        if (configurationLocked.openFlags.contains(ENABLE_WRITE_AHEAD_LOGGING)) {
+        if (configurationLocked.resolveJournalMode() != SQLiteDatabaseJournalMode.WAL) {
             return
         }
 
-        configurationLocked.openFlags = configurationLocked.openFlags clear ENABLE_WRITE_AHEAD_LOGGING
+        val pool = requireConnectionPoolLocked()
+
+        val oldFlags = configurationLocked.openFlags
+        // If an app explicitly disables WAL, it takes priority over any directive
+        // to use the legacy "compatibility WAL" mode.
+        configurationLocked.openFlags = configurationLocked.openFlags clear (
+                ENABLE_WRITE_AHEAD_LOGGING or ENABLE_LEGACY_COMPATIBILITY_WAL
+        )
         try {
             pool.reconfigure(configurationLocked)
         } catch (@Suppress("TooGenericExceptionCaught") ex: RuntimeException) {
-            configurationLocked.openFlags = configurationLocked.openFlags or ENABLE_WRITE_AHEAD_LOGGING
+            configurationLocked.openFlags = oldFlags
             throw ex
         }
     }
@@ -1248,15 +1302,9 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
         /**
          * Open the database according to the given configuration.
          *
-         *
-         * Sets the locale of the database to the  the system's current locale.
-         * Call [.setLocale] if you would like something else.
-         *
-         *
          * Accepts input param: a concrete instance of [DatabaseErrorHandler] to be
          * used to handle corruption when sqlite reports database corruption.
          *
-         * @param configuration to database configuration to use
          * @param factory an optional factory class that is called to instantiate a
          * cursor when query is called, or null for default
          * @param errorHandler the [DatabaseErrorHandler] obj to be used to handle corruption
@@ -1265,13 +1313,26 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
          * @throws SQLiteException if the database cannot be opened
          */
         internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> openDatabase(
-            configuration: SqliteDatabaseConfiguration,
-            errorHandler: DatabaseErrorHandler,
+            path: String,
+            defaultLocale: Locale,
+            openParams: SQLiteDatabaseOpenParams,
             bindings: SqlOpenHelperNativeBindings<CP, SP>,
             debugConfig: SQLiteDebug,
             logger: Logger,
         ): SQLiteDatabase<CP, SP> {
-            val db = SQLiteDatabase(configuration, debugConfig, logger, bindings, errorHandler)
+            val db = SQLiteDatabase(
+                debugConfig = debugConfig,
+                rootLogger = logger,
+                bindings = bindings,
+                path = path,
+                openFlags = CREATE_IF_NECESSARY,
+                defaultLocale = defaultLocale,
+                errorHandler = openParams.errorHandler ?: error("Error handler not set"),
+                journalMode = openParams.journalMode,
+                lookasideSlotSize = openParams.lookasideSlotSize,
+                lookasideSlotCount = openParams.lookasideSlotCount,
+                syncMode = openParams.synchronousMode,
+            )
             db.open()
             return db
         }
@@ -1306,31 +1367,27 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
          * Create a memory backed SQLite database.  Its contents will be destroyed
          * when the database is closed.
          *
-         * Sets the locale of the database to the the system's current locale.
-         * Call [.setLocale] if you would like something else.
-         *
-         * @param factory an optional factory class that is called to instantiate a
-         * cursor when query is called
-         * @return a SQLiteDatabase object, or null if the database can't be created
+         * @return a SQLiteDatabase instance
+         * @throws AndroidSqliteException if the database cannot be created
          */
-        internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> create(
+        internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> createInMemory(
             bindings: SqlOpenHelperNativeBindings<CP, SP>,
-            errorHandler: DatabaseErrorHandler,
-            locale: Locale,
+            openParams: SQLiteDatabaseOpenParams,
             debugConfig: SQLiteDebug,
             logger: Logger,
         ): SQLiteDatabase<CP, SP> {
-            val configuration = SqliteDatabaseConfiguration(
-                path = SqliteDatabaseConfiguration.MEMORY_DB_PATH,
-                openFlags = CREATE_IF_NECESSARY,
-                defaultLocale = locale,
-            )
             val db = SQLiteDatabase(
-                configuration = configuration,
                 debugConfig = debugConfig,
                 rootLogger = logger,
                 bindings = bindings,
-                errorHandler = errorHandler,
+                path = SqliteDatabaseConfiguration.MEMORY_DB_PATH,
+                openFlags = openParams.openFlags or CREATE_IF_NECESSARY,
+                defaultLocale = openParams.locale,
+                errorHandler = openParams.errorHandler ?: error("Error handler not set"),
+                journalMode = openParams.journalMode,
+                lookasideSlotSize = openParams.lookasideSlotSize,
+                lookasideSlotCount = openParams.lookasideSlotCount,
+                syncMode = openParams.synchronousMode,
             )
             db.open()
             return db
@@ -1396,6 +1453,17 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
          */
         fun getThreadDefaultConnectionFlags(readOnly: Boolean): Int {
             return if (readOnly) CONNECTION_FLAG_READ_ONLY else CONNECTION_FLAG_PRIMARY_CONNECTION_AFFINITY
+        }
+
+        private fun isCorruptException(throwable: Throwable?): Boolean {
+            var th = throwable
+            while (th != null) {
+                if (th is AndroidSqliteDatabaseCorruptException) {
+                    return true
+                }
+                th = th.cause
+            }
+            return false
         }
     }
 }

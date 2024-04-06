@@ -10,7 +10,7 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.SqliteUintBitMask
 import kotlin.jvm.JvmInline
 
 /**
- * File mode bits (st_mode)
+ * File mode bits (mode_t)
  */
 @JvmInline
 public value class FileMode(
@@ -20,7 +20,6 @@ public value class FileMode(
     override fun toString(): String = fileModeToString()
 }
 
-@Suppress("MagicNumber")
 public fun FileMode.fileModeToString(): String = "0${mask.toString(8)}"
 
 public fun FileMode.fileModeToStringLong(): String = maskToString(

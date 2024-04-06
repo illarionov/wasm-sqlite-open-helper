@@ -30,6 +30,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteColumnType
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteComparatorCallback
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDbConfigParameter
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDbStatusParameter
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDestructorType.Companion.SQLITE_TRANSIENT
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrno
@@ -68,7 +69,7 @@ internal class GraalvmSqliteCapiImpl internal constructor(
 
     val sqlite3WasmEnumJson: String?
         get() {
-            val resultPtr = sqliteBindings.sqlite3_wasm_enum_json.execute()
+            val resultPtr = sqliteBindings.sqlite3__wasm_enum_json.execute()
             return memory.memory.readNullTerminatedString(resultPtr)
         }
 
@@ -342,6 +343,47 @@ internal class GraalvmSqliteCapiImpl internal constructor(
             memory.freeSilent(pCur)
             memory.freeSilent(pHiwtr)
         }
+    }
+
+    override fun sqlite3DbConfig(
+        sqliteDb: WasmPtr<SqliteDb>,
+        op: SqliteDbConfigParameter,
+        arg1: Int,
+        pArg2: WasmPtr<*>,
+    ) {
+        val errCode = sqliteBindings.sqlite3__wasm_db_config_ip.execute(
+            sqliteDb.addr,
+            op.id,
+            arg1,
+            pArg2.addr,
+        )
+        errCode.throwOnSqliteError("sqlite3DbConfig() failed", sqliteDb)
+    }
+
+    override fun sqlite3DbConfig(
+        sqliteDb: WasmPtr<SqliteDb>,
+        op: SqliteDbConfigParameter,
+        pArg1: WasmPtr<*>,
+        arg2: Int,
+        arg3: Int,
+    ) {
+        val errCode = sqliteBindings.sqlite3__wasm_db_config_pii.execute(
+            sqliteDb.addr,
+            op.id,
+            pArg1.addr,
+            arg2,
+            arg3,
+        )
+        errCode.throwOnSqliteError("sqlite3DbConfig() failed", sqliteDb)
+    }
+
+    override fun sqlite3DbConfig(sqliteDb: WasmPtr<SqliteDb>, op: SqliteDbConfigParameter, pArg1: WasmPtr<Byte>) {
+        val errCode = sqliteBindings.sqlite3__wasm_db_config_s.execute(
+            sqliteDb.addr,
+            op.id,
+            pArg1.addr,
+        )
+        errCode.throwOnSqliteError("sqlite3DbConfig() failed", sqliteDb)
     }
 
     override fun sqlite3ColumnCount(
