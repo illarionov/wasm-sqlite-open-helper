@@ -23,7 +23,7 @@ import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteClosable
 internal class CursorWindow(
     name: String?,
     rootLogger: Logger,
-    val windowSizeBytes: Int = WINDOW_SIZE_KB * @Suppress("MagicNumber") 1024,
+    val windowSizeBytes: Int = WINDOW_SIZE_KB * 1024,
 ) : SQLiteClosable() {
     /**
      *

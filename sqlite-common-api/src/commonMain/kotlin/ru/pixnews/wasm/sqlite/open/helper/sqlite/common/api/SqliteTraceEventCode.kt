@@ -20,7 +20,6 @@ public value class SqliteTraceEventCode(
 ) : SqliteUintBitMask<SqliteTraceEventCode> {
     override val newInstance: (UInt) -> SqliteTraceEventCode get() = ::SqliteTraceEventCode
 
-    @Suppress("MagicNumber")
     override fun toString(): String = "0x${mask.toString(16)}"
 
     public companion object {

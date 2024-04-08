@@ -6,9 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.dsl
 
-import ru.pixnews.wasm.sqlite.open.helper.ConfigurationOptions
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import ru.pixnews.wasm.sqlite.open.helper.path.DatabasePathResolver
@@ -18,11 +16,10 @@ public class WasmSqliteOpenHelperFactoryConfigBlock<E : SqliteEmbedderConfig>(
     defaultDatabasePathResolver: DatabasePathResolver,
 ) {
     public var logger: Logger = Logger
-    internal var debugConfigBlock: DebugConfigBlock = DebugConfigBlock()
+    internal var debugConfigBlock: DebugConfigBlock.() -> Unit = { }
         private set
     public var pathResolver: DatabasePathResolver = defaultDatabasePathResolver
-    public val locale: Locale = Locale.EN_US
-    internal var configurationOptions: List<ConfigurationOptions> = emptyList()
+    internal var openParams: OpenParamsBlock.() -> Unit = {}
         private set
     internal var embedderConfig: E.() -> Unit = {}
         private set
@@ -36,10 +33,18 @@ public class WasmSqliteOpenHelperFactoryConfigBlock<E : SqliteEmbedderConfig>(
     }
 
     public fun debug(block: DebugConfigBlock.() -> Unit) {
-        debugConfigBlock = DebugConfigBlock().apply(block)
+        val old = this.debugConfigBlock
+        debugConfigBlock = {
+            old()
+            block()
+        }
     }
 
-    public fun configurationOptions(block: MutableList<ConfigurationOptions>.() -> Unit) {
-        configurationOptions = buildList(block)
+    public fun openParams(block: OpenParamsBlock.() -> Unit) {
+        val old = this.openParams
+        this.openParams = {
+            old()
+            block()
+        }
     }
 }

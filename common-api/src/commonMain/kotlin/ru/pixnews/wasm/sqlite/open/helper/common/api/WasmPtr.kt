@@ -14,7 +14,6 @@ import kotlin.jvm.JvmInline
 public value class WasmPtr<out P : Any?>(
     public val addr: Int,
 ) {
-    @Suppress("MagicNumber")
     override fun toString(): String = "0x${addr.toString(16)}"
 
     @Suppress("UNCHECKED_CAST")

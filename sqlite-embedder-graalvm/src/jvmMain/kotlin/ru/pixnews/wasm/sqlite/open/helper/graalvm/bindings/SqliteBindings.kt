@@ -66,8 +66,10 @@ internal class SqliteBindings(
 
     val sqlite3_sourceid by mainBindings.member()
 
-    val sqlite3_wasm_enum_json = mainBindings.getMember("sqlite3__wasm_enum_json") // 661
-        ?: mainBindings.getMember("sqlite3_wasm_enum_json") // 661
+    val sqlite3__wasm_enum_json by mainBindings.member()
+    val sqlite3__wasm_db_config_ip by mainBindings.member()
+    val sqlite3__wasm_db_config_pii by mainBindings.member()
+    val sqlite3__wasm_db_config_s by mainBindings.member()
 
     val register_localized_collators by mainBindings.member()
     val register_android_functions by mainBindings.member()

@@ -48,6 +48,9 @@ public object SqliteExportedFunctions {
         "_sqlite3_step",
         "_sqlite3_stmt_readonly",
         "_sqlite3_trace_v2",
+        "_sqlite3__wasm_db_config_ip",
+        "_sqlite3__wasm_db_config_pii",
+        "_sqlite3__wasm_db_config_s",
         "_sqlite3__wasm_enum_json", // optional
     )
     public val defaultWasmExportedFunctions: List<String> = listOf(

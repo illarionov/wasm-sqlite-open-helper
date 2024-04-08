@@ -23,6 +23,9 @@ public abstract interface class ru/pixnews/wasm/sqlite/open/helper/embedder/Sqli
 	public abstract fun sqlite3ColumnText-OCuHDVA (II)Ljava/lang/String;
 	public abstract fun sqlite3ColumnType-O3iCJ6k (II)I
 	public abstract fun sqlite3CreateCollation-Q32f7bY (ILjava/lang/String;Lkotlin/jvm/functions/Function2;)V
+	public abstract fun sqlite3DbConfig-1MScVS4 (IIII)V
+	public abstract fun sqlite3DbConfig-GEwxJg8 (IIIII)V
+	public abstract fun sqlite3DbConfig-GL0cO3A (III)V
 	public abstract fun sqlite3DbReadonly-OCuHDVA (ILjava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/embedder/SqliteCapi$SqliteDbReadonlyResult;
 	public abstract fun sqlite3DbStatus-1Nu_FJo (IIZ)Lru/pixnews/wasm/sqlite/open/helper/embedder/SqliteCapi$SqliteDbStatusResult;
 	public abstract fun sqlite3ExpandedSql-MYs6Txo (I)Ljava/lang/String;
@@ -71,6 +74,45 @@ public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteCo
 	public final fun getSQLITE_FLOAT-6bi_7KY ()I
 	public final fun getSQLITE_INTEGER-6bi_7KY ()I
 	public final fun getSQLITE_NULL-6bi_7KY ()I
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteDbConfigParameter {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteDbConfigParameter$Companion;
+	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteDbConfigParameter;
+	public static fun constructor-impl (I)I
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (ILjava/lang/Object;)Z
+	public static final fun equals-impl0 (II)Z
+	public final fun getId ()I
+	public fun hashCode ()I
+	public static fun hashCode-impl (I)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (I)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()I
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteDbConfigParameter$Companion {
+	public final fun getSQLITE_DBCONFIG_DEFENSIVE-xuM7MEQ ()I
+	public final fun getSQLITE_DBCONFIG_DQS_DDL-xuM7MEQ ()I
+	public final fun getSQLITE_DBCONFIG_DQS_DML-xuM7MEQ ()I
+	public final fun getSQLITE_DBCONFIG_ENABLE_FKEY-xuM7MEQ ()I
+	public final fun getSQLITE_DBCONFIG_ENABLE_FTS3_TOKENIZER-xuM7MEQ ()I
+	public final fun getSQLITE_DBCONFIG_ENABLE_LOAD_EXTENSION-xuM7MEQ ()I
+	public final fun getSQLITE_DBCONFIG_ENABLE_QPSG-xuM7MEQ ()I
+	public final fun getSQLITE_DBCONFIG_ENABLE_TRIGGER-xuM7MEQ ()I
+	public final fun getSQLITE_DBCONFIG_ENABLE_VIEW-xuM7MEQ ()I
+	public final fun getSQLITE_DBCONFIG_LEGACY_ALTER_TABLE-xuM7MEQ ()I
+	public final fun getSQLITE_DBCONFIG_LEGACY_FILE_FORMAT-xuM7MEQ ()I
+	public final fun getSQLITE_DBCONFIG_LOOKASIDE-xuM7MEQ ()I
+	public final fun getSQLITE_DBCONFIG_MAINDBNAME-xuM7MEQ ()I
+	public final fun getSQLITE_DBCONFIG_MAX-xuM7MEQ ()I
+	public final fun getSQLITE_DBCONFIG_NO_CKPT_ON_CLOSE-xuM7MEQ ()I
+	public final fun getSQLITE_DBCONFIG_RESET_DATABASE-xuM7MEQ ()I
+	public final fun getSQLITE_DBCONFIG_REVERSE_SCANORDER-xuM7MEQ ()I
+	public final fun getSQLITE_DBCONFIG_STMT_SCANSTATUS-xuM7MEQ ()I
+	public final fun getSQLITE_DBCONFIG_TRIGGER_EQP-xuM7MEQ ()I
+	public final fun getSQLITE_DBCONFIG_TRUSTED_SCHEMA-xuM7MEQ ()I
+	public final fun getSQLITE_DBCONFIG_WRITABLE_SCHEMA-xuM7MEQ ()I
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteDbStatusParameter {

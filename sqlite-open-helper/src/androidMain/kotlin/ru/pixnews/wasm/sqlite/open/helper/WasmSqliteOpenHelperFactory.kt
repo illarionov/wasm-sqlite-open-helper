@@ -14,9 +14,11 @@ package ru.pixnews.wasm.sqlite.open.helper
  */
 
 import androidx.sqlite.db.SupportSQLiteOpenHelper
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale
+import ru.pixnews.wasm.sqlite.open.helper.base.DatabaseErrorHandler
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
+import ru.pixnews.wasm.sqlite.open.helper.dsl.OpenParamsBlock
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteCapi
+import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDatabaseOpenParams
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDebug
 import ru.pixnews.wasm.sqlite.open.helper.internal.WasmSqliteOpenHelper
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.GraalNativeBindings
@@ -28,24 +30,29 @@ import ru.pixnews.wasm.sqlite.open.helper.path.DatabasePathResolver
  */
 internal class WasmSqliteOpenHelperFactory(
     private val pathResolver: DatabasePathResolver,
-    private val defaultLocale: Locale,
     private val sqliteCapi: SqliteCapi,
     private val debugConfig: SQLiteDebug,
-    private val configurationOptions: List<ConfigurationOptions> = emptyList(),
+    private val openParams: OpenParamsBlock,
     rootLogger: Logger,
 ) : SupportSQLiteOpenHelper.Factory {
     private val logger: Logger = rootLogger.withTag(WasmSqliteOpenHelperFactory::class.qualifiedName!!)
 
     override fun create(configuration: SupportSQLiteOpenHelper.Configuration): SupportSQLiteOpenHelper {
         val bindings = GraalNativeBindings(sqliteCapi, logger)
+
+        val openParamsBuilder: SQLiteDatabaseOpenParams.Builder = SQLiteDatabaseOpenParams.Builder().apply {
+            errorHandler = DatabaseErrorHandler { dbObj -> configuration.callback.onCorruption(dbObj) }
+            set(openParams)
+        }
+
         return WasmSqliteOpenHelper(
             pathResolver = pathResolver,
-            defaultLocale = defaultLocale,
+            defaultLocale = openParams.locale,
             debugConfig = debugConfig,
             callback = configuration.callback,
-            configurationOptions = configurationOptions,
             rootLogger = logger,
             databaseName = configuration.name,
+            openParamsBuilder = openParamsBuilder,
             bindings = bindings,
         )
     }

@@ -52,7 +52,6 @@ private class FdRead(
 ) : BaseWasmNode(language, module, host, functionName) {
     private val logger: Logger = host.rootLogger.withTag(FdRead::class.qualifiedName!!)
 
-    @Suppress("MagicNumber")
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {
         val args = frame.arguments
         return fdRead(

@@ -12,8 +12,11 @@ import java.nio.file.attribute.FileAttribute
 import java.nio.file.attribute.PosixFilePermission
 import java.nio.file.attribute.PosixFilePermissions
 
+internal fun Set<PosixFilePermission>.asFileAttribute(): FileAttribute<Set<PosixFilePermission>> =
+    PosixFilePermissions.asFileAttribute(this)
+
 @Suppress("NO_BRACES_IN_CONDITIONALS_AND_LOOPS")
-internal fun FileMode.toPosixFilePermissions(): FileAttribute<Set<PosixFilePermission>> {
+internal fun FileMode.toPosixFilePermissions(): Set<PosixFilePermission> {
     val permissions: MutableSet<PosixFilePermission> = mutableSetOf()
 
     if (mask and Fcntl.S_IRUSR != 0U) permissions += PosixFilePermission.OWNER_READ
@@ -28,5 +31,5 @@ internal fun FileMode.toPosixFilePermissions(): FileAttribute<Set<PosixFilePermi
     if (mask and Fcntl.S_IWOTH != 0U) permissions += PosixFilePermission.OTHERS_WRITE
     if (mask and Fcntl.S_IXOTH != 0U) permissions += PosixFilePermission.OTHERS_EXECUTE
 
-    return PosixFilePermissions.asFileAttribute(permissions)
+    return permissions
 }

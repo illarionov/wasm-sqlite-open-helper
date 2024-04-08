@@ -13,6 +13,7 @@ import org.graalvm.polyglot.Engine
 import ru.pixnews.wasm.sqlite.open.helper.Sqlite3Wasm.Emscripten
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperFactory
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmSqliteEmbedder
 import ru.pixnews.wasm.sqlite.open.helper.path.DatabasePathResolver
@@ -50,6 +51,13 @@ fun createWasmSqliteOpenHelperFactory(
             sqlTime = true
             sqlStatements = true
             logSlowQueries = true
+        }
+        openParams {
+            locale = Locale("ru_RU")
+            setLookasideConfig(
+                slotSize = 5,
+                slotCount = 4 * 1024 * 1024,
+            )
         }
     }
 }

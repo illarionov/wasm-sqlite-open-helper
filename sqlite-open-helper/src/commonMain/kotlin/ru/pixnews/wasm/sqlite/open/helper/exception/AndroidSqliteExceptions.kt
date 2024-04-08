@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-@file:Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING", "UnusedPrivateProperty")
+@file:Suppress("UnusedPrivateProperty")
 
 package ru.pixnews.wasm.sqlite.open.helper.exception
 

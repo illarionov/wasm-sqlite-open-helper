@@ -31,6 +31,12 @@ public value class OpenFlags(
         /** Open flag to create the database if it does not exist  */
         public val OPEN_CREATE: OpenFlags = OpenFlags(0x0000_0004_U)
 
+        /**
+         * Open flag: Flag for [openDatabase] to open the database without support for
+         * localized collators.
+         */
+        public val NO_LOCALIZED_COLLATORS: OpenFlags = OpenFlags(0x0000_0010_U)
+
         /** Open flag to support URI filenames  */
         public val OPEN_URI: OpenFlags = OpenFlags(0x0000_0040_U)
 
@@ -52,6 +58,9 @@ public value class OpenFlags(
         /** Open flag to enable write-ahead logging  */
         // custom flag remove for sqlite3_open_v2
         public val ENABLE_WRITE_AHEAD_LOGGING: OpenFlags = OpenFlags(0x2000_0000_U)
+
+        /** Flag for {@link #openDatabase} to enable the legacy Compatibility WAL when opening */
+        public val ENABLE_LEGACY_COMPATIBILITY_WAL: OpenFlags = OpenFlags(0x8000_0000_U)
     }
 }
 

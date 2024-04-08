@@ -15,12 +15,13 @@ package ru.pixnews.wasm.sqlite.open.helper.internal
 
 import androidx.core.os.CancellationSignal
 import androidx.core.os.OperationCanceledException
-import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.ENABLE_WRITE_AHEAD_LOGGING
+import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.ENABLE_LEGACY_COMPATIBILITY_WAL
+import ru.pixnews.wasm.sqlite.open.helper.SQLiteDatabaseJournalMode.WAL
 import ru.pixnews.wasm.sqlite.open.helper.SqliteDatabaseConfiguration
+import ru.pixnews.wasm.sqlite.open.helper.SqliteDatabaseConfiguration.Companion.resolveJournalMode
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
-import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
 import ru.pixnews.wasm.sqlite.open.helper.common.api.xor
-import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard.SqliteDatabaseFinalizeAction
+import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard.CloseGuardFinalizeAction
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.AcquiredConnectionStatus.DISCARD
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.AcquiredConnectionStatus.NORMAL
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.AcquiredConnectionStatus.RECONFIGURE
@@ -30,6 +31,7 @@ import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
 import java.io.Closeable
 import java.util.WeakHashMap
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicLong
 import java.util.concurrent.locks.LockSupport
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.nanoseconds
@@ -77,7 +79,7 @@ internal class SQLiteConnectionPool<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
 ) : Closeable {
     private val logger: Logger = rootLogger.withTag(TAG)
     private val closeGuard: CloseGuard = CloseGuard.get()
-    private val closeGuardCleaner = WasmSqliteCleaner.register(this, SqliteDatabaseFinalizeAction(closeGuard))
+    private val closeGuardCleaner = WasmSqliteCleaner.register(this, CloseGuardFinalizeAction(closeGuard))
     private val lock = Any()
     private val connectionLeaked = AtomicBoolean()
     private val configuration = SqliteDatabaseConfiguration(configuration)
@@ -97,6 +99,11 @@ internal class SQLiteConnectionPool<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
     // For example, the prepared statement cache size may have changed and
     // need to be updated in preparation for the next client.
     private val acquiredConnections: WeakHashMap<SQLiteConnection<CP, SP>, AcquiredConnectionStatus> = WeakHashMap()
+    private val _totalStatementsTime = AtomicLong(0)
+    private val _totalStatementsCount = AtomicLong(0)
+    val totalStatementsTime: Long get() = _totalStatementsTime.get()
+    val totalStatementsCount: Long get() = _totalStatementsCount.get()
+    val path: String get() = configuration.path
 
     init {
         setMaxConnectionPoolSizeLocked()
@@ -114,7 +121,7 @@ internal class SQLiteConnectionPool<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
 
         // Mark the pool as being open for business.
         isOpen = true
-        closeGuard.open("close")
+        closeGuard.open("SQLiteConnectionPool.close")
     }
 
     /**
@@ -167,8 +174,9 @@ internal class SQLiteConnectionPool<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
      */
     fun reconfigure(configuration: SqliteDatabaseConfiguration): Unit = synchronized(lock) {
         throwIfClosedLocked()
-        val walModeChanged = (configuration.openFlags xor this.configuration.openFlags)
-            .contains(ENABLE_WRITE_AHEAD_LOGGING)
+        val isWalCurrentMode = this.configuration.resolveJournalMode() == WAL
+        val isWalNewMode = configuration.resolveJournalMode() == WAL
+        val walModeChanged = isWalCurrentMode != isWalNewMode
         if (walModeChanged) {
             // WAL mode can only be changed if there are no acquired connections
             // because we need to close all but the primary connection first.
@@ -203,7 +211,12 @@ internal class SQLiteConnectionPool<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
             )
         }
 
-        if (this.configuration.openFlags != configuration.openFlags) {
+        // We should do in-place switching when transitioning from compatibility WAL
+        // to rollback journal. Otherwise transient connection state will be lost
+        val onlyCompatWalChanged = (this.configuration.openFlags xor configuration.openFlags) ==
+                ENABLE_LEGACY_COMPATIBILITY_WAL
+
+        if (!onlyCompatWalChanged && this.configuration.openFlags != configuration.openFlags) {
             // If we are changing open flags and WAL mode at the same time, then
             // we have no choice but to close the primary connection beforehand
             // because there can only be one connection open when we change WAL mode.
@@ -351,12 +364,13 @@ internal class SQLiteConnectionPool<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
     ): SQLiteConnection<CP, SP> {
         val connectionId = nextConnectionId++
         return SQLiteConnection.open(
-            this,
-            configuration,
-            bindings,
-            connectionId,
-            primaryConnection,
-            debugConfig,
+            pool = this,
+            configuration = configuration,
+            bindings = bindings,
+            connectionId = connectionId,
+            primaryConnection = primaryConnection,
+            debugConfig = debugConfig,
+            onStatementExecuted = ::onStatementExecuted,
             rootLogger = rootLogger,
         ) // might throw
     }
@@ -390,6 +404,19 @@ internal class SQLiteConnectionPool<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
         }
 
         connectionLeaked.set(true)
+    }
+
+    fun onStatementExecuted(executionTimeMs: Long) {
+        _totalStatementsTime.addAndGet(executionTimeMs)
+        _totalStatementsCount.incrementAndGet()
+    }
+
+    /**
+     * Close non-primary connections that are not currently in use. This method is safe to use
+     * in finalize block as it doesn't throw RuntimeExceptions.
+     */
+    fun closeAvailableNonPrimaryConnectionsAndLogExceptions() = synchronized(lock) {
+        closeAvailableNonPrimaryConnectionsAndLogExceptionsLocked()
     }
 
     // Can't throw.
@@ -833,13 +860,14 @@ internal class SQLiteConnectionPool<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
     }
 
     private fun setMaxConnectionPoolSizeLocked() {
-        maxConnectionPoolSize = if (configuration.openFlags.contains(ENABLE_WRITE_AHEAD_LOGGING)) {
-            SQLiteGlobal.wALConnectionPoolSize
+        maxConnectionPoolSize = if (configuration.resolveJournalMode() == WAL) {
+            SQLiteGlobal.walConnectionPoolSize
         } else {
-            // TODO: We don't actually need to restrict the connection pool size to 1
+            // We don't actually need to restrict the connection pool size to 1
             // for non-WAL databases.  There might be reasons to use connection pooling
-            // with other journal modes.  For now, enabling connection pooling and
-            // using WAL are the same thing in the API.
+            // with other journal modes. However, we should always keep pool size of 1 for in-memory
+            // databases since every :memory: db is separate from another.
+            // For now, enabling connection pooling and using WAL are the same thing in the API.
             1
         }
     }

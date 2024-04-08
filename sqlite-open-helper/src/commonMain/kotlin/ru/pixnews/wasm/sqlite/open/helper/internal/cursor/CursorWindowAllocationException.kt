@@ -12,4 +12,4 @@ package ru.pixnews.wasm.sqlite.open.helper.internal.cursor
  *
  * @hide
  */
-internal class CursorWindowAllocationException(description: String?) : RuntimeException(description)
+internal class CursorWindowAllocationException(description: String) : RuntimeException(description)

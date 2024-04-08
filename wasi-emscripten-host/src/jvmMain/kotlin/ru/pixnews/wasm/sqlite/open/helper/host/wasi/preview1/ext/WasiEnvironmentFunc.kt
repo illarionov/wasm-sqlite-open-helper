@@ -43,7 +43,7 @@ public object WasiEnvironmentFunc {
             .map { it.encodeEnvToWasi() }
             .forEach { envString ->
                 memory.writeI32(pp, bufP.addr)
-                pp += @Suppress("MagicNumber") 4
+                pp += 4
                 bufP += memory.writeZeroTerminatedString(bufP, envString)
             }
 

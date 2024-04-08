@@ -10,6 +10,8 @@ package ru.pixnews.wasm.sqlite.open.helper.host.filesystem
 
 import com.sun.nio.file.ExtendedOpenOption
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
+import ru.pixnews.wasm.sqlite.open.helper.common.api.clear
+import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy.CHANGE_POSITION
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy.DO_NOT_CHANGE_POSITION
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.FdChannel
@@ -19,6 +21,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.resolveAbsolutePath
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.resolvePosition
 import ru.pixnews.wasm.sqlite.open.helper.host.include.DirFd
 import ru.pixnews.wasm.sqlite.open.helper.host.include.Fcntl
+import ru.pixnews.wasm.sqlite.open.helper.host.include.FileAccessibilityCheck
 import ru.pixnews.wasm.sqlite.open.helper.host.include.FileMode
 import ru.pixnews.wasm.sqlite.open.helper.host.include.StructTimespec
 import ru.pixnews.wasm.sqlite.open.helper.host.include.blkcnt_t
@@ -69,8 +72,12 @@ import java.util.concurrent.TimeUnit.NANOSECONDS
 import kotlin.io.path.exists
 import kotlin.io.path.fileAttributesView
 import kotlin.io.path.isDirectory
+import kotlin.io.path.isExecutable
+import kotlin.io.path.isReadable
+import kotlin.io.path.isWritable
 import kotlin.io.path.pathString
 import kotlin.io.path.readAttributes
+import kotlin.io.path.setPosixFilePermissions
 import kotlin.time.Duration
 
 public class FileSystem(
@@ -174,7 +181,7 @@ public class FileSystem(
 
         val channel = try {
             val openOptions = getOpenOptions(flags)
-            val fileAttributes = mode.toPosixFilePermissions()
+            val fileAttributes = mode.toPosixFilePermissions().asFileAttribute()
             FileChannel.open(
                 path,
                 openOptions,
@@ -202,7 +209,6 @@ public class FileSystem(
         flags: UInt,
     ) {
         val absolutePath = resolveAbsolutePath(dirfd, path)
-        @Suppress("MagicNumber")
         logger.v { "unlinkAt($absolutePath, flags: 0${flags.toString(8)} (${Fcntl.oMaskToString(flags)}))" }
 
         when (flags) {
@@ -396,6 +402,34 @@ public class FileSystem(
         }
     }
 
+    public fun chmod(fd: Fd, mode: FileMode) {
+        logger.v { "chmod($fd, $mode)" }
+        val channel = getStreamByFd(fd)
+        chmod(channel.path, mode)
+    }
+
+    public fun chmod(path: String, mode: FileMode) {
+        val javaPath = javaFs.getPath(path)
+        chmod(javaPath, mode)
+    }
+
+    private fun chmod(
+        javaPath: Path,
+        mode: FileMode,
+    ) {
+        try {
+            javaPath.setPosixFilePermissions(mode.toPosixFilePermissions())
+        } catch (uoe: UnsupportedOperationException) {
+            throw SysException(PERM, "Read-only channel", uoe)
+        } catch (cce: ClassCastException) {
+            throw SysException(INVAL, "Invalid flags", cce)
+        } catch (ioe: IOException) {
+            throw SysException(IO, ioe.message, ioe)
+        } catch (sse: SecurityException) {
+            throw SysException(ACCES, "Security Exception", sse)
+        }
+    }
+
     public fun ftruncate(fd: Fd, length: ULong) {
         logger.v { "ftruncate($fd, $length)" }
         val channel = getStreamByFd(fd)
@@ -417,7 +451,7 @@ public class FileSystem(
         val absolutePath = resolveAbsolutePath(dirFd, path)
         logger.v { "mkdirAt($absolutePath, $mode}" }
         try {
-            Files.createDirectory(absolutePath, mode.toPosixFilePermissions())
+            Files.createDirectory(absolutePath, mode.toPosixFilePermissions().asFileAttribute())
         } catch (uoe: UnsupportedOperationException) {
             throw SysException(PERM, "Unsupported file mode", uoe)
         } catch (fae: FileAlreadyExistsException) {
@@ -542,6 +576,36 @@ public class FileSystem(
         }
 
         return options
+    }
+
+    public fun faccessat(
+        dirFd: DirFd,
+        path: String,
+        mode: FileAccessibilityCheck,
+        flags: UInt,
+    ) {
+        val absolutePath = resolveAbsolutePath(dirFd, path)
+
+        if (mode.clear(FileAccessibilityCheck.MASK).mask != 0U) {
+            throw SysException(INVAL, "Unrecognized check mode $mode")
+        }
+        val options = if ((flags and Fcntl.AT_SYMLINK_NOFOLLOW) != 0U) {
+            arrayOf(NOFOLLOW_LINKS)
+        } else {
+            arrayOf()
+        }
+        if (!absolutePath.exists(options = options)) {
+            throw SysException(NOENT, "File `$absolutePath` not exists")
+        }
+        if (mode.contains(FileAccessibilityCheck.R_OK) && !absolutePath.isReadable()) {
+            throw SysException(ACCES, "File `$absolutePath` not readable")
+        }
+        if (mode.contains(FileAccessibilityCheck.W_OK) && !absolutePath.isWritable()) {
+            throw SysException(ACCES, "File `$absolutePath` not writable")
+        }
+        if (mode.contains(FileAccessibilityCheck.X_OK) && !absolutePath.isExecutable()) {
+            throw SysException(ACCES, "File `$absolutePath` not executable")
+        }
     }
 
     private companion object {

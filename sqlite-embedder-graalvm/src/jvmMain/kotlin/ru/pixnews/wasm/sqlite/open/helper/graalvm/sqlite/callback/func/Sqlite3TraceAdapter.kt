@@ -40,7 +40,6 @@ internal class Sqlite3TraceAdapter(
     override val host: SqliteEmbedderHost,
     functionName: String,
 ) : BaseWasmNode(language, module, host, functionName) {
-    @Suppress("MagicNumber")
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {
         val args = frame.arguments
         return invokeTraceCallback(
