@@ -102,3 +102,7 @@ public actual open class AndroidOperationCanceledException : RuntimeException {
     public actual constructor() : super()
     public actual constructor(message: String?) : super(message)
 }
+
+public actual open class AndroidCursorWindowAllocationException public actual constructor(
+    message: String,
+) : RuntimeException(message)

@@ -104,3 +104,5 @@ public expect open class AndroidOperationCanceledException : RuntimeException {
     public constructor()
     public constructor(message: String?)
 }
+
+public expect open class AndroidCursorWindowAllocationException public constructor(message: String) : RuntimeException
