@@ -6,7 +6,8 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.internal.connection
 
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType
+import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.Companion.ExtendedStatementType
+import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_SELECT
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
 
 /**
@@ -29,13 +30,16 @@ import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
  * @property inUse in use statements from being finalized until they are no longer in use.
  *   possible for SQLite calls to be re-entrant. Consequently we need to prevent
  *   We need this flag because due to the use of custom functions in triggers, it's
+ * @property seqNum The database schema ID at the time this statement was created.  The ID is left zero for
+ *   statements that are not cached.  This value is meaningful only if inCache is true.
  */
 internal data class PreparedStatement<SP : Sqlite3StatementPtr>(
     val sql: String,
     val statementPtr: SP,
     val numParameters: Int = 0,
-    val type: SQLiteStatementType = SQLiteStatementType.STATEMENT_SELECT,
+    val type: ExtendedStatementType = ExtendedStatementType.PublicType(STATEMENT_SELECT),
     val readOnly: Boolean = false,
     var inCache: Boolean = false,
     var inUse: Boolean = false,
+    var seqNum: Long = 0,
 )

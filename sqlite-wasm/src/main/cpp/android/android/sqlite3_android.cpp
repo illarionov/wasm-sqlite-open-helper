@@ -505,6 +505,7 @@ extern "C" int register_localized_collators(sqlite3* handle __attribute((unused)
     return SQLITE_OK;
 }
 
+
 extern "C" int register_android_functions(sqlite3 * handle, int utf16Storage __attribute((unused)))
 {
     int err;

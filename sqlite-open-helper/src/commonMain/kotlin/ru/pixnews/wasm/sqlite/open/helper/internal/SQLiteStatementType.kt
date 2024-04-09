@@ -6,6 +6,8 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.internal
 
+import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.Companion.ExtendedStatementType.PublicType
+
 internal enum class SQLiteStatementType {
     STATEMENT_SELECT,
     STATEMENT_UPDATE,
@@ -20,92 +22,116 @@ internal enum class SQLiteStatementType {
     ;
 
     companion object {
-        internal val SQLiteStatementType.isCacheable: Boolean get() = when (this) {
-            STATEMENT_SELECT, STATEMENT_UPDATE -> true
-            else -> false
-        }
+        private const val PREFIX_GROUP_NUM: Int = 2
+
+        /**
+         * A regular expression that matches the first three characters in a SQL statement, after
+         * skipping past comments and whitespace.  PREFIX_GROUP_NUM is the regex group that contains
+         * the matching prefix string.  If PREFIX_REGEX is changed, PREFIX_GROUP_NUM may require an
+         * update too.
+         */
+        private val PREFIX_REGEX = Regex(
+            "(" + // Zero-or more...
+                    """\s+""" + //   Leading space
+                    """|""" +
+                    "--.*?\n" + //   Line comment
+                    """|""" +
+                    """/\*[\w\W]*?\*/""" + //   Block comment
+                    """)*""" +
+                    """(\w\w\w)""", // Three word-characters
+        )
+
+        internal val ExtendedStatementType.isCacheable: Boolean
+            get() = when (this) {
+                is PublicType -> this.publicType == STATEMENT_SELECT || this.publicType == STATEMENT_UPDATE
+                ExtendedStatementType.StatementWith -> true
+                else -> false
+            }
 
         /**
          * Returns one of the following which represent the type of the given SQL statement.
          *
-         *  1. [.STATEMENT_SELECT]
-         *  1. [.STATEMENT_UPDATE]
-         *  1. [.STATEMENT_ATTACH]
-         *  1. [.STATEMENT_BEGIN]
-         *  1. [.STATEMENT_COMMIT]
-         *  1. [.STATEMENT_ABORT]
-         *  1. [.STATEMENT_OTHER]
-         *
          * @param sql the SQL statement whose type is returned by this method
-         * @return one of the values listed above
          */
-        @Suppress("CyclomaticComplexMethod")
-        fun getSqlStatementType(sql: String): SQLiteStatementType {
-            if (sql.length < 3) {
-                return STATEMENT_OTHER
-            }
-            // Skip leading comments to properly recognize the statement type
-            val statementStart = statementStartIndex(sql)
-            val prefixSql = sql.substring(statementStart, (statementStart + 3).coerceAtMost(sql.length))
+        fun getSqlStatementType(sql: String): SQLiteStatementType = getSqlStatementTypeExtended(sql).publicType
 
-            return when {
-                prefixSql.equals("SEL", ignoreCase = true) -> STATEMENT_SELECT
-                prefixSql.equals("WIT", ignoreCase = true) -> STATEMENT_SELECT
-                prefixSql.equals("INS", ignoreCase = true) -> STATEMENT_UPDATE
-                prefixSql.equals("UPD", ignoreCase = true) -> STATEMENT_UPDATE
-                prefixSql.equals("REP", ignoreCase = true) -> STATEMENT_UPDATE
-                prefixSql.equals("DEL", ignoreCase = true) -> STATEMENT_UPDATE
-                prefixSql.equals("ATT", ignoreCase = true) -> STATEMENT_ATTACH
-                prefixSql.equals("COM", ignoreCase = true) -> STATEMENT_COMMIT
-                prefixSql.equals("END", ignoreCase = true) -> STATEMENT_COMMIT
-                prefixSql.equals("ROL", ignoreCase = true) -> STATEMENT_ABORT
-                prefixSql.equals("BEG", ignoreCase = true) -> STATEMENT_BEGIN
-                prefixSql.equals("PRA", ignoreCase = true) -> STATEMENT_PRAGMA
-                prefixSql.equals("CRE", ignoreCase = true) -> STATEMENT_DDL
-                prefixSql.equals("DRO", ignoreCase = true) -> STATEMENT_DDL
-                prefixSql.equals("ALT", ignoreCase = true) -> STATEMENT_DDL
-                prefixSql.equals("ANA", ignoreCase = true) -> STATEMENT_UNPREPARED
-                prefixSql.equals("DET", ignoreCase = true) -> STATEMENT_UNPREPARED
-                else -> return STATEMENT_OTHER
+        /**
+         * Return the extended statement type for the SQL statement.  This is not a public API and it
+         * can return values that are not publicly visible.
+         */
+        internal fun getSqlStatementTypeExtended(sql: String): ExtendedStatementType {
+            var type = categorizeStatement(getSqlStatementPrefixSimple(sql), sql)
+            if (type == ExtendedStatementType.StatementComment) {
+                type = categorizeStatement(getSqlStatementPrefixExtended(sql), sql)
+            }
+            return type
+        }
+
+        /**
+         * The legacy prefix matcher.
+         */
+        private fun getSqlStatementPrefixSimple(sql: String): String? {
+            return sql.trim { it <= ' ' }.let {
+                if (it.length >= 3) {
+                    it.substring(0, 3).uppercase()
+                } else {
+                    null
+                }
             }
         }
 
         /**
-         * @param sql sql statement to check
-         * @return index of the SQL statement start, skipping leading comments
+         * Return the three-letter prefix of a SQL statement, skipping past whitespace and comments.
+         * Comments either start with "--" and run to the end of the line or are C-style block
+         * comments.  The function returns null if a prefix could not be found.
          */
-        @Suppress("CyclomaticComplexMethod", "IDENTIFIER_LENGTH")
-        internal fun statementStartIndex(sql: String): Int {
-            var inSingleLineComment = false
-            var inMultiLineComment = false
-            var statementStartIndex = 0
-
-            for (i in sql.indices) {
-                val c = sql[i]
-                when {
-                    inSingleLineComment -> if (c == '\n') {
-                        inSingleLineComment = false
-                    }
-
-                    inMultiLineComment -> if (c == '*' && i + 1 < sql.length && sql[i + 1] == '/') {
-                        inMultiLineComment = false
-                    }
-
-                    c == '-' -> if (i + 1 < sql.length && sql[i + 1] == '-') {
-                        inSingleLineComment = true
-                    }
-
-                    c == '/' -> if (i + 1 < sql.length && sql[i + 1] == '*') {
-                        inMultiLineComment = true
-                    }
-
-                    c != '\n' && c != '\r' && c != ' ' && c != '\t' -> {
-                        statementStartIndex = i
-                        break
-                    }
-                }
+        private fun getSqlStatementPrefixExtended(sql: String): String? {
+            return PREFIX_REGEX.matchAt(sql, 0)?.let { match ->
+                checkNotNull(match.groups[PREFIX_GROUP_NUM]).value.uppercase()
             }
-            return statementStartIndex
+        }
+
+        /**
+         * Return the extended statement type for the SQL statement.  This is not a public API and it
+         * can return values that are not publicly visible.
+         */
+        @Suppress("CyclomaticComplexMethod")
+        private fun categorizeStatement(prefix: String?, sql: String): ExtendedStatementType = when (prefix) {
+            null -> PublicType(STATEMENT_OTHER)
+            "SEL" -> PublicType(STATEMENT_SELECT)
+            "INS", "UPD", "REP", "DEL" -> PublicType(STATEMENT_UPDATE)
+            "ATT" -> PublicType(STATEMENT_ATTACH)
+            "COM", "END" -> PublicType(STATEMENT_COMMIT)
+            "ROL" -> if (sql.uppercase().contains(" TO ")) {
+                // Rollback to savepoint.
+                PublicType(STATEMENT_OTHER)
+            } else {
+                PublicType(STATEMENT_ABORT)
+            }
+
+            "BEG" -> PublicType(STATEMENT_BEGIN)
+            "PRA" -> PublicType(STATEMENT_PRAGMA)
+            "CRE" -> ExtendedStatementType.StatementCreate
+            "DRO", "ALT" -> PublicType(STATEMENT_DDL)
+            "ANA", "DET" -> PublicType(STATEMENT_UNPREPARED)
+            "WIT" -> ExtendedStatementType.StatementWith
+            else -> if (prefix.startsWith("--") || prefix.startsWith("/*")) {
+                ExtendedStatementType.StatementComment
+            } else {
+                PublicType(STATEMENT_OTHER)
+            }
+        }
+
+        @Suppress("ConvertObjectToDataObject")
+        internal sealed class ExtendedStatementType(val publicType: SQLiteStatementType) {
+            object StatementWith : ExtendedStatementType(STATEMENT_OTHER)
+            object StatementCreate : ExtendedStatementType(STATEMENT_DDL)
+
+            /**
+             * An internal statement type denoting a comment.
+             */
+            object StatementComment : ExtendedStatementType(STATEMENT_OTHER)
+            class PublicType(type: SQLiteStatementType) : ExtendedStatementType(type)
         }
     }
 }

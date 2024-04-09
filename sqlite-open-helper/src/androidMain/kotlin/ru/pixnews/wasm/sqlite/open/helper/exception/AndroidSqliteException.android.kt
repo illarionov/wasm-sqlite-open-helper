@@ -6,6 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.exception
 
+import android.database.CursorWindowAllocationException
 import android.database.SQLException
 import android.database.sqlite.SQLiteAbortException
 import android.database.sqlite.SQLiteAccessPermException
@@ -45,3 +46,4 @@ public actual typealias AndroidSqliteBindOrColumnIndexOutOfRangeException = SQLi
 public actual typealias AndroidSqliteOutOfMemoryException = SQLiteOutOfMemoryException
 public actual typealias AndroidSqliteDatatypeMismatchException = SQLiteDatatypeMismatchException
 public actual typealias AndroidOperationCanceledException = OperationCanceledException
+public actual typealias AndroidCursorWindowAllocationException = CursorWindowAllocationException

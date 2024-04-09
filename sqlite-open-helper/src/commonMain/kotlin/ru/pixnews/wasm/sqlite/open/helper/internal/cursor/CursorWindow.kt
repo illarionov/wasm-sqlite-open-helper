@@ -19,6 +19,8 @@ import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteClosable
  *
  * @param name The name of the cursor window, or null if none.
  * @param windowSizeBytes Maximym size of cursor window in bytes.
+ * @throws IllegalArgumentException if {@code windowSizeBytes} is less than 0
+ * @throws AssertionError if created window pointer is 0
  */
 internal class CursorWindow(
     name: String?,
@@ -51,6 +53,10 @@ internal class CursorWindow(
      */
     val numRows: Int
         get() = window.numRows
+
+    init {
+        require(windowSizeBytes >= 0) { "Window size cannot be less than 0" }
+    }
 
     /**
      * Clears out the existing contents of the window, making it safe to reuse
