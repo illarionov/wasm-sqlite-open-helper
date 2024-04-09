@@ -15,7 +15,7 @@ import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3ConnectionPtr
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
 
 internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> SQLiteConnection<CP, SP>.setPageSize(
-    newSize: Long = SQLiteGlobal.defaultPageSize.toLong(),
+    newSize: Long = SQLiteGlobal.DEFAULT_PAGE_SIZE.toLong(),
 ) {
     val value = executeForLong("PRAGMA page_size")
     if (value != newSize) {
@@ -34,7 +34,7 @@ internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> SQLiteConnect
 }
 
 internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> SQLiteConnection<CP, SP>.setJournalSizeLimit(
-    newLimit: Long = SQLiteGlobal.journalSizeLimit.toLong(),
+    newLimit: Long = SQLiteGlobal.JOURNAL_SIZE_LIMIT.toLong(),
 ) {
     val value = executeForLong("PRAGMA journal_size_limit")
     if (value != newLimit) {
@@ -43,7 +43,7 @@ internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> SQLiteConnect
 }
 
 internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> SQLiteConnection<CP, SP>.setAutoCheckpointInterval(
-    newInterval: Long = SQLiteGlobal.walAutoCheckpoint.toLong(),
+    newInterval: Long = SQLiteGlobal.WAL_AUTO_CHECKPOINT.toLong(),
 ) {
     val value = executeForLong("PRAGMA wal_autocheckpoint")
     if (value != newInterval) {

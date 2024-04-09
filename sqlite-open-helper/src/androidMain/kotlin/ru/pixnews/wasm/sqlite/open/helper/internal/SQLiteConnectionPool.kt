@@ -16,13 +16,12 @@ package ru.pixnews.wasm.sqlite.open.helper.internal
 import androidx.core.os.CancellationSignal
 import androidx.core.os.OperationCanceledException
 import ru.pixnews.wasm.sqlite.open.helper.SQLiteDatabaseJournalMode.WAL
-import ru.pixnews.wasm.sqlite.open.helper.SqliteDatabaseConfiguration
-import ru.pixnews.wasm.sqlite.open.helper.SqliteDatabaseConfiguration.Companion.resolveJournalMode
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard.CloseGuardFinalizeAction
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.AcquiredConnectionStatus.DISCARD
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.AcquiredConnectionStatus.NORMAL
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.AcquiredConnectionStatus.RECONFIGURE
+import ru.pixnews.wasm.sqlite.open.helper.internal.SqliteDatabaseConfiguration.Companion.resolveJournalMode
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.SqlOpenHelperNativeBindings
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3ConnectionPtr
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
@@ -878,7 +877,7 @@ internal class SQLiteConnectionPool<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
 
     private fun setMaxConnectionPoolSizeLocked() {
         maxConnectionPoolSize = if (configuration.resolveJournalMode() == WAL) {
-            SQLiteGlobal.walConnectionPoolSize
+            SQLiteGlobal.WAL_CONNECTION_POOL_SIZE
         } else {
             // We don't actually need to restrict the connection pool size to 1
             // for non-WAL databases.  There might be reasons to use connection pooling

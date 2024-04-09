@@ -4,12 +4,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper
+package ru.pixnews.wasm.sqlite.open.helper.internal
 
-import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.ENABLE_WRITE_AHEAD_LOGGING
+import ru.pixnews.wasm.sqlite.open.helper.OpenFlags
+import ru.pixnews.wasm.sqlite.open.helper.SQLiteDatabaseJournalMode
+import ru.pixnews.wasm.sqlite.open.helper.SQLiteDatabaseSyncMode
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale
 import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteGlobal
 
 /**
  * Describes how to configure a database.
@@ -160,7 +161,7 @@ internal class SqliteDatabaseConfiguration internal constructor(
                 SQLiteDatabaseJournalMode.WAL
             } else {
                 // WAL is not explicitly set so use requested journal mode or platform default
-                this.journalMode ?: SQLiteGlobal.defaultJournalMode
+                this.journalMode ?: SQLiteGlobal.DEFAULT_JOURNAL_MODE
             }
         }
 
@@ -189,14 +190,14 @@ internal class SqliteDatabaseConfiguration internal constructor(
             }
 
             return if (isWalEnabledInternal()) {
-                SQLiteGlobal.walSyncMode
+                SQLiteGlobal.WAL_SYNC_MODE
             } else {
-                SQLiteGlobal.defaultSyncMode
+                SQLiteGlobal.DEFAULT_SYNC_MODE
             }
         }
 
         private fun SqliteDatabaseConfiguration.isWalEnabledInternal(): Boolean {
-            val walEnabled = openFlags.contains(ENABLE_WRITE_AHEAD_LOGGING)
+            val walEnabled = openFlags.contains(OpenFlags.ENABLE_WRITE_AHEAD_LOGGING)
             return walEnabled || (journalMode == SQLiteDatabaseJournalMode.WAL)
         }
     }

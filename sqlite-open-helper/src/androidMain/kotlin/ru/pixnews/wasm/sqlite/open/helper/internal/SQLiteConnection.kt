@@ -21,11 +21,6 @@ import androidx.core.os.CancellationSignal
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.CREATE_IF_NECESSARY
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.NO_LOCALIZED_COLLATORS
-import ru.pixnews.wasm.sqlite.open.helper.SqliteDatabaseConfiguration
-import ru.pixnews.wasm.sqlite.open.helper.SqliteDatabaseConfiguration.Companion.isInMemoryDb
-import ru.pixnews.wasm.sqlite.open.helper.SqliteDatabaseConfiguration.Companion.isReadOnlyDatabase
-import ru.pixnews.wasm.sqlite.open.helper.SqliteDatabaseConfiguration.Companion.resolveJournalMode
-import ru.pixnews.wasm.sqlite.open.helper.SqliteDatabaseConfiguration.Companion.resolveSyncMode
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale.Companion.EN_US
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
@@ -36,6 +31,10 @@ import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.Companion
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.Companion.isCacheable
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_PRAGMA
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_SELECT
+import ru.pixnews.wasm.sqlite.open.helper.internal.SqliteDatabaseConfiguration.Companion.isInMemoryDb
+import ru.pixnews.wasm.sqlite.open.helper.internal.SqliteDatabaseConfiguration.Companion.isReadOnlyDatabase
+import ru.pixnews.wasm.sqlite.open.helper.internal.SqliteDatabaseConfiguration.Companion.resolveJournalMode
+import ru.pixnews.wasm.sqlite.open.helper.internal.SqliteDatabaseConfiguration.Companion.resolveSyncMode
 import ru.pixnews.wasm.sqlite.open.helper.internal.WasmSqliteCleaner.WasmSqliteCleanable
 import ru.pixnews.wasm.sqlite.open.helper.internal.connection.OperationLog
 import ru.pixnews.wasm.sqlite.open.helper.internal.connection.OperationLog.Companion.trimSqlForDisplay
@@ -180,6 +179,9 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
 
         // Update configuration parameters.
         this.configuration.updateParametersFrom(newConfiguration)
+
+        // Update prepared statement cache size.
+        preparedStatementCache.resize(configuration.maxSqlCacheSize)
 
         if (!configuration.isReadOnlyDatabase) {
             if (foreignKeyModeChanged) {
@@ -527,7 +529,7 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
             return
         }
 
-        val threshold: Long = SQLiteGlobal.walTruncateSize
+        val threshold: Long = SQLiteGlobal.WAL_TRUNCATE_SIZE
         if (threshold == 0L) {
             return
         }
