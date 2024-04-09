@@ -474,11 +474,18 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
         )
     }
 
+    /**
+     * Begin a transaction with the specified mode.  Valid modes are
+     * [SQLiteSession.TRANSACTION_MODE_DEFERRED], [TRANSACTION_MODE_IMMEDIATE], and [TRANSACTION_MODE_EXCLUSIVE].
+     */
     private fun beginTransaction(transactionListener: SQLiteTransactionListener?, mode: Int) = useReference {
+        // DEFERRED transactions are read-only to allows concurrent read-only transactions.
+        // Others are read/write.
+        val readOnly = (mode == SQLiteSession.TRANSACTION_MODE_DEFERRED)
         threadSession.beginTransaction(
             transactionMode = mode,
             transactionListener = transactionListener,
-            connectionFlags = getThreadDefaultConnectionFlags(readOnly = false),
+            connectionFlags = getThreadDefaultConnectionFlags(readOnly),
             cancellationSignal = null,
         )
     }
@@ -676,8 +683,10 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
      * SQL WHERE clause (excluding the WHERE itself). Passing null
      * will return all rows for the given table.
      * @param selectionArgs You may include ?s in selection, which will be
-     * replaced by the values from selectionArgs, in order that they
-     * appear in the selection.
+     * replaced by the values from selectionArgs, in the order that they
+     * appear in the selection. The values will be bound as Strings.
+     * If selection is null or does not contain ?s then selectionArgs
+     * may be null.
      * @param groupBy A filter declaring how to group rows, formatted as an SQL
      * GROUP BY clause (excluding the GROUP BY itself). Passing null
      * will cause the rows to not be grouped.
@@ -1035,10 +1044,14 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
                 it.executeUpdateDelete()
             }
         } finally {
-            // If schema was updated, close non-primary connections, otherwise they might
-            // have outdated schema information
+            // If schema was updated, close non-primary connections and clear prepared
+            // statement caches of active connections, otherwise they might have outdated
+            // schema information.
             if (statementType == STATEMENT_DDL) {
-                requireConnectionPoolLocked().closeAvailableNonPrimaryConnectionsAndLogExceptions()
+                requireConnectionPoolLocked().run {
+                    closeAvailableNonPrimaryConnectionsAndLogExceptions()
+                    clearAcquiredConnectionsPreparedStatementCache()
+                }
             }
         }
     }
@@ -1261,7 +1274,7 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
         // to use the legacy "compatibility WAL" mode.
         configurationLocked.openFlags = configurationLocked.openFlags clear (
                 ENABLE_WRITE_AHEAD_LOGGING or ENABLE_LEGACY_COMPATIBILITY_WAL
-        )
+                )
         try {
             pool.reconfigure(configurationLocked)
         } catch (@Suppress("TooGenericExceptionCaught") ex: RuntimeException) {
@@ -1287,6 +1300,12 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
         statement.bindAllArgsAsStrings(selectionArgs)
         statement.simpleQueryForLong()
     }
+
+    internal fun getStatementCacheMissRate(): Double = requireConnectionPoolLocked().getStatementCacheMissRate()
+
+    internal fun getTotalPreparedStatements(): Int = requireConnectionPoolLocked().totalPrepareStatements
+
+    internal fun getTotalStatementCacheMisses(): Int = requireConnectionPoolLocked().totalPrepareStatementCacheMiss
 
     internal companion object {
         private const val TAG = "SQLiteDatabase"
