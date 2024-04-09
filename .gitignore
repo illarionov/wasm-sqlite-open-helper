@@ -1,6 +1,7 @@
 *.iml
 .gradle
 /.android
+/.kotlin
 /local.properties
 .DS_Store
 /build
