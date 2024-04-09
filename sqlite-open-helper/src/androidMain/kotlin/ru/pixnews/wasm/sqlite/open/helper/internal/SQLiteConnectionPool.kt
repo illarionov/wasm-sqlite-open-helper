@@ -105,6 +105,17 @@ internal class SQLiteConnectionPool<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
     val totalStatementsCount: Long get() = _totalStatementsCount.get()
     val path: String get() = configuration.path
 
+    // Prepare statement cache statistics
+    internal var totalPrepareStatementCacheMiss: Int = 0
+    internal var totalPrepareStatements: Int = 0
+
+    // The database schema sequence number.  This counter is incremented every time a schema
+    // change is detected.  Every prepared statement records its schema sequence when the
+    // statement is created.  The prepared statement is not put back in the cache if the sequence
+    // number has changed.  The counter starts at 1, which allows clients to use 0 as a
+    // distinguished value.
+    private var databaseSeqNum: Long = 1
+
     init {
         setMaxConnectionPoolSizeLocked()
     }
@@ -298,7 +309,7 @@ internal class SQLiteConnectionPool<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
                 availablePrimaryConnection = connection
             }
             wakeConnectionWaitersLocked()
-        } else if (availableNonPrimaryConnections.size >= maxConnectionPoolSize - 1) {
+        } else if (availableNonPrimaryConnections.size >= maxConnectionPoolSize) {
             closeConnectionAndLogExceptionsLocked(connection)
         } else {
             if (recycleConnectionLocked(connection, status)) {
@@ -307,6 +318,8 @@ internal class SQLiteConnectionPool<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
             wakeConnectionWaitersLocked()
         }
     }
+
+    internal fun hasAnyAvailableNonPrimaryConnection(): Boolean = availableNonPrimaryConnections.isNotEmpty()
 
     // Can't throw.
     private fun recycleConnectionLocked(
@@ -327,6 +340,18 @@ internal class SQLiteConnectionPool<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
             return false
         }
         return true
+    }
+
+    fun clearAcquiredConnectionsPreparedStatementCache() {
+        // Invalidate prepared statements that have an earlier schema sequence number.
+        synchronized(lock) {
+            databaseSeqNum++
+            if (acquiredConnections.isNotEmpty()) {
+                for (connection in acquiredConnections.keys) {
+                    connection.setDatabaseSeqNum(databaseSeqNum)
+                }
+            }
+        }
     }
 
     /**
@@ -906,6 +931,14 @@ internal class SQLiteConnectionPool<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
         waiter.exception = null
         waiter.nonce += 1
         connectionWaiterPool = waiter
+    }
+
+    internal fun getStatementCacheMissRate(): Double {
+        if (totalPrepareStatements == 0) {
+            // no statements executed thus no miss rate.
+            return 0.0
+        }
+        return totalPrepareStatementCacheMiss.toDouble() / totalPrepareStatements.toDouble()
     }
 
     override fun toString(): String = "SQLiteConnectionPool: ${configuration.path}"

@@ -32,6 +32,7 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
 import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteCantOpenDatabaseException
 import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard.CloseGuardFinalizeAction
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.Companion.getSqlStatementType
+import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.Companion.getSqlStatementTypeExtended
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.Companion.isCacheable
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_PRAGMA
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_SELECT
@@ -100,6 +101,8 @@ import kotlin.io.path.isReadable
 internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> private constructor(
     private val connectionPtrResource: ConnectionPtrClosable<CP>,
     onConnectionLeaked: () -> Unit,
+    private val onPreparedStatementAcquired: () -> Unit,
+    private val onPrepareStatementCacheMiss: () -> Unit,
     configuration: SqliteDatabaseConfiguration,
     private val bindings: SqlOpenHelperNativeBindings<CP, SP>,
     private val connectionId: Int,
@@ -115,7 +118,6 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
     private val preparedStatementCache = PreparedStatementCache(connectionPtr, bindings, configuration.maxSqlCacheSize)
     private val connectionPtr: CP get() = connectionPtrResource.nativePtr
     internal val databaseLabel: String get() = configuration.label
-
     private var onlyAllowReadOnlyOperations = false
 
     // The number of times attachCancellationSignal has been called.
@@ -208,8 +210,9 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
         onlyAllowReadOnlyOperations = readOnly
     }
 
-    // Called by SQLiteConnectionPool only.
-    // Returns true if the prepared statement cache contains the specified SQL.
+    // Called by SQLiteConnectionPool only to decide if this connection has the desired statement
+    // The statement may be stale, but that will be a rare occurrence and affects performance only
+    // a tiny bit, and only when database schema changes.
     internal fun isPreparedStatementInCache(sql: String): Boolean = preparedStatementCache[sql] != null
 
     /**
@@ -463,6 +466,10 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
     // that the SQLite connection is still alive.
     override fun onCancel() = bindings.nativeCancel(connectionPtr)
 
+    internal fun setDatabaseSeqNum(seqNum: Long) {
+        preparedStatementCache.databaseSeqNum = seqNum
+    }
+
     // Called by SQLiteConnectionPool.
     // Closes the database closes and releases all of its associated resources.
     // Do not call methods on the connection after it is closed.  It will probably crash.
@@ -534,8 +541,6 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
             return
         }
 
-        logger.i { walFile.absolutePath + " " + size + " bytes: Bigger than " + threshold + "; truncating" }
-
         try {
             executeForString("PRAGMA wal_checkpoint(TRUNCATE)")
             configuration.shouldTruncateWalFile = false
@@ -602,22 +607,39 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
         }
     }
 
-    private fun acquirePreparedStatement(sql: String): PreparedStatement<SP> {
+    private fun acquirePreparedStatement(sql: String): PreparedStatement<SP> = acquirePreparedStatementLi(sql)
+
+    private fun acquirePreparedStatementLi(sql: String): PreparedStatement<SP> {
+        onPreparedStatementAcquired()
         var statement = preparedStatementCache[sql]
+        var seqNum = preparedStatementCache.lastSeqNum
+
         var skipCache = false
         if (statement != null) {
             if (!statement.inUse) {
-                return statement
+                if (statement.seqNum == seqNum) {
+                    // This is a valid statement.  Claim it and return it.
+                    statement.inUse = true
+                    return statement
+                } else {
+                    // This is a stale statement.  Remove it from the cache.  Treat this as if the
+                    // statement was never found, which means we should not skip the cache.
+                    preparedStatementCache.remove(sql)
+                    statement = null
+                    // Leave skipCache == false.
+                }
+            } else {
+                // The statement is already in the cache but is in use (this statement appears to
+                // be not only re-entrant but recursive!).  So prepare a new copy of the statement
+                // but do not cache it.
+                skipCache = true
             }
-            // The statement is already in the cache but is in use (this statement appears
-            // to be not only re-entrant but recursive!).  So prepare a new copy of the
-            // statement but do not cache it.
-            skipCache = true
         }
-
-        val statementPtr = bindings.nativePrepareStatement(connectionPtr, sql)
+        onPrepareStatementCacheMiss()
+        val statementPtr = preparedStatementCache.createStatement(sql)
+        seqNum = preparedStatementCache.lastSeqNum
         try {
-            val statementType = getSqlStatementType(sql)
+            val statementType = getSqlStatementTypeExtended(sql)
             val putInCache = !skipCache && statementType.isCacheable
             statement = PreparedStatement(
                 sql = sql,
@@ -625,6 +647,7 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
                 numParameters = bindings.nativeGetParameterCount(connectionPtr, statementPtr),
                 type = statementType,
                 readOnly = bindings.nativeIsReadOnly(connectionPtr, statementPtr),
+                seqNum = seqNum,
             )
             if (putInCache) {
                 preparedStatementCache.put(sql, statement)
@@ -642,7 +665,9 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
         return statement
     }
 
-    private fun releasePreparedStatement(statement: PreparedStatement<SP>) {
+    private fun releasePreparedStatement(statement: PreparedStatement<SP>) = releasePreparedStatementLi(statement)
+
+    private fun releasePreparedStatementLi(statement: PreparedStatement<SP>) {
         statement.inUse = false
         if (statement.inCache) {
             try {
@@ -774,6 +799,14 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
         }
     }
 
+    /**
+     * Verify that the statement is read-only, if the connection only allows read-only
+     * operations.
+     *
+     * @param statement The statement to check.
+     * @throws SQLiteException if the statement could update the database inside a read-only
+     * transaction.
+     */
     private fun throwIfStatementForbidden(statement: PreparedStatement<*>) {
         if (onlyAllowReadOnlyOperations && !statement.readOnly) {
             throw SQLiteException(
@@ -869,6 +902,8 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
                 val connection = SQLiteConnection(
                     connectionPtrResource = ConnectionPtrClosable(connectionPtr),
                     onConnectionLeaked = pool::onConnectionLeaked,
+                    onPreparedStatementAcquired = { pool.totalPrepareStatements += 1 },
+                    onPrepareStatementCacheMiss = { pool.totalPrepareStatementCacheMiss += 1 },
                     configuration = configuration,
                     bindings = bindings,
                     connectionId = connectionId,

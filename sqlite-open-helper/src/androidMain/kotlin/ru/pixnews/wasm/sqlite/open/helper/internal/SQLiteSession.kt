@@ -241,7 +241,16 @@ internal class SQLiteSession<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr
                         emptyList<Any>(),
                         cancellationSignal,
                     ) // might throw
-                    else -> connection!!.execute("BEGIN;", emptyList<Any>(), cancellationSignal) // might throw
+                    TRANSACTION_MODE_DEFERRED -> connection!!.execute(
+                        "BEGIN DEFERRED;",
+                        emptyList(),
+                        cancellationSignal,
+                    )
+
+                    else -> {
+                        // Per SQLite documentation, this executes in DEFERRED mode.
+                        connection!!.execute("BEGIN;", emptyList<Any>(), cancellationSignal)
+                    } // might throw
                 }
             }
 

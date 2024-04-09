@@ -41,9 +41,10 @@ internal enum class SQLiteStatementType {
                     """(\w\w\w)""", // Three word-characters
         )
 
-        internal val SQLiteStatementType.isCacheable: Boolean
+        internal val ExtendedStatementType.isCacheable: Boolean
             get() = when (this) {
-                STATEMENT_SELECT, STATEMENT_UPDATE -> true
+                is PublicType -> this.publicType == STATEMENT_SELECT || this.publicType == STATEMENT_UPDATE
+                ExtendedStatementType.StatementWith -> true
                 else -> false
             }
 
@@ -58,7 +59,7 @@ internal enum class SQLiteStatementType {
          * Return the extended statement type for the SQL statement.  This is not a public API and it
          * can return values that are not publicly visible.
          */
-        private fun getSqlStatementTypeExtended(sql: String): ExtendedStatementType {
+        internal fun getSqlStatementTypeExtended(sql: String): ExtendedStatementType {
             var type = categorizeStatement(getSqlStatementPrefixSimple(sql), sql)
             if (type == ExtendedStatementType.StatementComment) {
                 type = categorizeStatement(getSqlStatementPrefixExtended(sql), sql)
@@ -122,7 +123,7 @@ internal enum class SQLiteStatementType {
         }
 
         @Suppress("ConvertObjectToDataObject")
-        private sealed class ExtendedStatementType(val publicType: SQLiteStatementType) {
+        internal sealed class ExtendedStatementType(val publicType: SQLiteStatementType) {
             object StatementWith : ExtendedStatementType(STATEMENT_OTHER)
             object StatementCreate : ExtendedStatementType(STATEMENT_DDL)
 
