@@ -6,11 +6,9 @@
 
 package ru.pixnews.wasm.sqlite.open.helper
 
-import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.ENABLE_LEGACY_COMPATIBILITY_WAL
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.ENABLE_WRITE_AHEAD_LOGGING
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale
 import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteCompatibilityWalFlags
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteGlobal
 
 /**
@@ -69,31 +67,6 @@ internal class SqliteDatabaseConfiguration internal constructor(
     var shouldTruncateWalFile: Boolean = false,
 ) {
     /**
-     * The number of milliseconds that SQLite connection is allowed to be idle before it
-     * is closed and removed from the pool.
-     *
-     * By default, idle connections are not closed
-     */
-    val idleConnectionTimeoutMs: Long = Long.MAX_VALUE
-
-    /**
-     * Creates a database configuration with the required parameters for opening a
-     * database and default values for all other parameters.
-     *
-     * @param path The database path.
-     * @param openFlags Open flags for the database, such as [SQLiteDatabase.OPEN_READWRITE].
-     * @param defaultLocale Initial locale
-     */
-    constructor(
-        openFlags: OpenFlags,
-        defaultLocale: Locale,
-    ) : this(
-        path = MEMORY_DB_PATH,
-        openFlags = openFlags,
-        locale = defaultLocale,
-    )
-
-    /**
      * Creates a database configuration as a copy of another configuration.
      *
      * @param other The other configuration.
@@ -129,25 +102,22 @@ internal class SqliteDatabaseConfiguration internal constructor(
         syncMode = other.syncMode
     }
 
-    public companion object {
+    internal companion object {
         /**
          * Special path used by in-memory databases.
          */
-        public const val MEMORY_DB_PATH: String = ":memory:"
+        const val MEMORY_DB_PATH: String = ":memory:"
 
         /**
          * Returns true if the database is in-memory.
          */
-        public val SqliteDatabaseConfiguration.isInMemoryDb: Boolean
+        val SqliteDatabaseConfiguration.isInMemoryDb: Boolean
             get() = path.equals(MEMORY_DB_PATH, ignoreCase = true)
 
-        public val SqliteDatabaseConfiguration.isReadOnlyDatabase: Boolean
+        val SqliteDatabaseConfiguration.isReadOnlyDatabase: Boolean
             get() = openFlags.contains(OpenFlags.OPEN_READONLY)
 
-        public val SqliteDatabaseConfiguration.isLegacyCompatibilityWalEnabled: Boolean
-            get() = journalMode == null && syncMode == null && openFlags.contains(ENABLE_LEGACY_COMPATIBILITY_WAL)
-
-        public val SqliteDatabaseConfiguration.isLookasideConfigSet: Boolean
+        val SqliteDatabaseConfiguration.isLookasideConfigSet: Boolean
             get() = lookasideSlotCount >= 0 && lookasideSlotSize >= 0
 
         // The pattern we use to strip email addresses from database paths
@@ -169,7 +139,7 @@ internal class SqliteDatabaseConfiguration internal constructor(
          * @return Resolved journal mode that should be used for this database connection or null
          * if no journal mode should be set.
          */
-        public fun SqliteDatabaseConfiguration.resolveJournalMode(): SQLiteDatabaseJournalMode? {
+        fun SqliteDatabaseConfiguration.resolveJournalMode(): SQLiteDatabaseJournalMode? {
             if (isReadOnlyDatabase) {
                 // No need to specify a journal mode when only reading.
                 return null
@@ -203,7 +173,7 @@ internal class SqliteDatabaseConfiguration internal constructor(
          * if no journal mode should be set.
          */
         @Suppress("ReturnCount")
-        public fun SqliteDatabaseConfiguration.resolveSyncMode(): SQLiteDatabaseSyncMode? {
+        fun SqliteDatabaseConfiguration.resolveSyncMode(): SQLiteDatabaseSyncMode? {
             if (isReadOnlyDatabase) {
                 // No sync mode will be used since database will be only used for reading.
                 return null
@@ -219,11 +189,7 @@ internal class SqliteDatabaseConfiguration internal constructor(
             }
 
             return if (isWalEnabledInternal()) {
-                if (isLegacyCompatibilityWalEnabled) {
-                    SQLiteCompatibilityWalFlags.walSyncMode
-                } else {
-                    SQLiteGlobal.walSyncMode
-                }
+                SQLiteGlobal.walSyncMode
             } else {
                 SQLiteGlobal.defaultSyncMode
             }
@@ -231,9 +197,7 @@ internal class SqliteDatabaseConfiguration internal constructor(
 
         private fun SqliteDatabaseConfiguration.isWalEnabledInternal(): Boolean {
             val walEnabled = openFlags.contains(ENABLE_WRITE_AHEAD_LOGGING)
-            // Use compatibility WAL unless an app explicitly set journal/synchronous mode
-            // or DISABLE_COMPATIBILITY_WAL flag is set
-            return walEnabled || isLegacyCompatibilityWalEnabled || (journalMode == SQLiteDatabaseJournalMode.WAL)
+            return walEnabled || (journalMode == SQLiteDatabaseJournalMode.WAL)
         }
     }
 }
