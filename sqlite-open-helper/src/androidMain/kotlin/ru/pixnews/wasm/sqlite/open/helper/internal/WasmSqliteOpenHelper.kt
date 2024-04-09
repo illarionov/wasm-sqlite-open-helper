@@ -17,8 +17,6 @@ package ru.pixnews.wasm.sqlite.open.helper.internal
 
 import android.database.sqlite.SQLiteException
 import androidx.sqlite.db.SupportSQLiteOpenHelper
-import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.CREATE_IF_NECESSARY
-import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.ENABLE_LEGACY_COMPATIBILITY_WAL
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.OPEN_READONLY
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
@@ -129,61 +127,6 @@ internal class WasmSqliteOpenHelper<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
             }
             openParamsBuilder.isWriteAheadLoggingEnabled = enabled
         }
-
-        // Compatibility WAL is disabled if an app disables or enables WAL
-        openParamsBuilder.removeOpenFlags(ENABLE_LEGACY_COMPATIBILITY_WAL)
-    }
-
-    /**
-     * Configures [lookaside memory allocator](https://sqlite.org/malloc.html#lookaside)
-     *
-     * This method should be called from the constructor of the subclass,
-     * before opening the database, since lookaside memory configuration can only be changed
-     * when no connection is using it
-     *
-     * SQLite default settings will be used, if this method isn't called.
-     * Use `setLookasideConfig(0,0)` to disable lookaside
-     *
-     * **Note:** Provided slotSize/slotCount configuration is just a recommendation.
-     * The system may choose different values depending on a device, e.g. lookaside allocations
-     * can be disabled on low-RAM devices
-     *
-     * @param slotSize The size in bytes of each lookaside slot.
-     * @param slotCount The total number of lookaside memory slots per database connection.
-     */
-    fun setLookasideConfig(
-        slotSize: Int,
-        slotCount: Int,
-    ) {
-        synchronized(this) {
-            check(!(database?.isOpen ?: false)) {
-                "Lookaside memory config cannot be changed after opening the database"
-            }
-            openParamsBuilder.setLookasideConfig(slotSize, slotCount)
-        }
-    }
-
-    /**
-     * Sets configuration parameters that are used for opening [SQLiteDatabase].
-     *
-     * Please note that [SQLiteDatabase.CREATE_IF_NECESSARY] flag will always be set when
-     * opening the database
-     *
-     * @param openParams configuration parameters that are used for opening [SQLiteDatabase].
-     * @throws IllegalStateException if the database is already open
-     */
-    fun setOpenParams(openParams: SQLiteDatabaseOpenParams) {
-        synchronized(this) {
-            check(!(database?.isOpen ?: false)) {
-                "OpenParams cannot be set after opening the database"
-            }
-            setOpenParamsBuilder(SQLiteDatabaseOpenParams.Builder(openParams))
-        }
-    }
-
-    private fun setOpenParamsBuilder(openParamsBuilder: SQLiteDatabaseOpenParams.Builder) {
-        this.openParamsBuilder.set(openParamsBuilder.build())
-        openParamsBuilder.addOpenFlags(CREATE_IF_NECESSARY)
     }
 
     @Suppress("CyclomaticComplexMethod", "LongMethod", "NestedBlockDepth")

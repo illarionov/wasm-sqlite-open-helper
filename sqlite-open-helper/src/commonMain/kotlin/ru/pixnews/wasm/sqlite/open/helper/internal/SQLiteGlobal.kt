@@ -8,8 +8,6 @@ package ru.pixnews.wasm.sqlite.open.helper.internal
 
 import ru.pixnews.wasm.sqlite.open.helper.SQLiteDatabaseJournalMode
 import ru.pixnews.wasm.sqlite.open.helper.SQLiteDatabaseSyncMode
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
 
 /**
  * Provides access to SQLite functions that affect all database connection,
@@ -32,12 +30,10 @@ internal object SQLiteGlobal {
      * (If it's 0, we do not truncate.)
      */
     const val walTruncateSize: Long = 1048576
-    const val checkDbWipe: Boolean = false
 
     // values derived from:
     // https://android.googlesource.com/platform/frameworks/base.git/+/master/core/res/res/values/config.xml
     const val defaultPageSize: Int = 1024
-    internal const val WIPE_CHECK_FILE_SUFFIX = "-wipecheck"
 
     /**
      * Gets the journal size limit in bytes.
@@ -68,10 +64,4 @@ internal object SQLiteGlobal {
      * Gets the database synchronization mode when in WAL mode.
      */
     val walSyncMode: SQLiteDatabaseSyncMode = SQLiteDatabaseSyncMode.NORMAL
-
-    /**
-     * The default number of milliseconds that SQLite connection is allowed to be idle before it
-     * is closed and removed from the pool.
-     */
-    val idleConnectionTimeout: Duration = 30.seconds
 }

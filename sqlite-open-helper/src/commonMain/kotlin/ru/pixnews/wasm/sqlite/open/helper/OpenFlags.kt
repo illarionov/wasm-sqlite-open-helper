@@ -58,9 +58,6 @@ public value class OpenFlags(
         /** Open flag to enable write-ahead logging  */
         // custom flag remove for sqlite3_open_v2
         public val ENABLE_WRITE_AHEAD_LOGGING: OpenFlags = OpenFlags(0x2000_0000_U)
-
-        /** Flag for {@link #openDatabase} to enable the legacy Compatibility WAL when opening */
-        public val ENABLE_LEGACY_COMPATIBILITY_WAL: OpenFlags = OpenFlags(0x8000_0000_U)
     }
 }
 

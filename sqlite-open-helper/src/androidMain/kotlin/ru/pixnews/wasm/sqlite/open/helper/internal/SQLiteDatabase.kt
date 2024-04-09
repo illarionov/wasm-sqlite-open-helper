@@ -28,7 +28,6 @@ import androidx.sqlite.db.SupportSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteStatement
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.CREATE_IF_NECESSARY
-import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.ENABLE_LEGACY_COMPATIBILITY_WAL
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.ENABLE_WRITE_AHEAD_LOGGING
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.OPEN_CREATE
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.OPEN_READONLY
@@ -130,11 +129,7 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
         lookasideSlotCount = lookasideSlotCount,
         journalMode = journalMode,
         syncMode = syncMode,
-    ).apply {
-        if (SQLiteCompatibilityWalFlags.isLegacyCompatibilityWalEnabled) {
-            this.openFlags = openFlags or ENABLE_LEGACY_COMPATIBILITY_WAL
-        }
-    }
+    )
 
     // The connection pool for the database, null when closed.
     // The pool itself is thread-safe, but the reference to it can only be acquired
@@ -1272,9 +1267,7 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
         val oldFlags = configurationLocked.openFlags
         // If an app explicitly disables WAL, it takes priority over any directive
         // to use the legacy "compatibility WAL" mode.
-        configurationLocked.openFlags = configurationLocked.openFlags clear (
-                ENABLE_WRITE_AHEAD_LOGGING or ENABLE_LEGACY_COMPATIBILITY_WAL
-                )
+        configurationLocked.openFlags = configurationLocked.openFlags clear (ENABLE_WRITE_AHEAD_LOGGING)
         try {
             pool.reconfigure(configurationLocked)
         } catch (@Suppress("TooGenericExceptionCaught") ex: RuntimeException) {
@@ -1433,34 +1426,6 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
         } catch (e: SQLException) {
             logger.e(e) { "Error inserting $values" }
             -1
-        }
-
-        /**
-         * Convenience method for replacing a row in the database.
-         *
-         * @param table the table in which to replace the row
-         * @param nullColumnHack optional; may be `null`.
-         * SQL doesn't allow inserting a completely empty row without
-         * naming at least one column name.  If your provided `initialValues` is
-         * empty, no column names are known and an empty row can't be inserted.
-         * If not set to null, the `nullColumnHack` parameter
-         * provides the name of nullable column name to explicitly insert a NULL into
-         * in the case where your `initialValues` is empty.
-         * @param initialValues this map contains the initial column values for
-         * the row.
-         * @return the row ID of the newly inserted row, or -1 if an error occurred
-         */
-        fun SQLiteDatabase<*, *>.replace(
-            table: String?,
-            nullColumnHack: String?,
-            initialValues: ContentValues,
-        ): Long {
-            try {
-                return insertWithOnConflict(table, nullColumnHack, initialValues, ConflictAlgorithm.CONFLICT_REPLACE)
-            } catch (e: SQLException) {
-                logger.e(e) { "Error inserting $initialValues" }
-                return -1
-            }
         }
 
         /**

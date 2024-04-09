@@ -15,12 +15,10 @@ package ru.pixnews.wasm.sqlite.open.helper.internal
 
 import androidx.core.os.CancellationSignal
 import androidx.core.os.OperationCanceledException
-import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.ENABLE_LEGACY_COMPATIBILITY_WAL
 import ru.pixnews.wasm.sqlite.open.helper.SQLiteDatabaseJournalMode.WAL
 import ru.pixnews.wasm.sqlite.open.helper.SqliteDatabaseConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.SqliteDatabaseConfiguration.Companion.resolveJournalMode
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
-import ru.pixnews.wasm.sqlite.open.helper.common.api.xor
 import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard.CloseGuardFinalizeAction
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.AcquiredConnectionStatus.DISCARD
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.AcquiredConnectionStatus.NORMAL
@@ -221,13 +219,7 @@ internal class SQLiteConnectionPool<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
                         "database connections first.",
             )
         }
-
-        // We should do in-place switching when transitioning from compatibility WAL
-        // to rollback journal. Otherwise transient connection state will be lost
-        val onlyCompatWalChanged = (this.configuration.openFlags xor configuration.openFlags) ==
-                ENABLE_LEGACY_COMPATIBILITY_WAL
-
-        if (!onlyCompatWalChanged && this.configuration.openFlags != configuration.openFlags) {
+        if (this.configuration.openFlags != configuration.openFlags) {
             // If we are changing open flags and WAL mode at the same time, then
             // we have no choice but to close the primary connection beforehand
             // because there can only be one connection open when we change WAL mode.

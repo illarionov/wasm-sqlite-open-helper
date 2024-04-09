@@ -18,7 +18,6 @@ public final class ru/pixnews/wasm/sqlite/open/helper/OpenFlags : ru/pixnews/was
 public final class ru/pixnews/wasm/sqlite/open/helper/OpenFlags$Companion {
 	public final fun getCREATE_IF_NECESSARY-8W8yzzI ()I
 	public final fun getEMPTY-8W8yzzI ()I
-	public final fun getENABLE_LEGACY_COMPATIBILITY_WAL-8W8yzzI ()I
 	public final fun getENABLE_WRITE_AHEAD_LOGGING-8W8yzzI ()I
 	public final fun getNO_LOCALIZED_COLLATORS-8W8yzzI ()I
 	public final fun getOPEN_CREATE-8W8yzzI ()I
@@ -99,11 +98,6 @@ public final class ru/pixnews/wasm/sqlite/open/helper/dsl/WasmSqliteOpenHelperFa
 	public final fun openParams (Lkotlin/jvm/functions/Function1;)V
 	public final fun setLogger (Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;)V
 	public final fun setPathResolver (Lru/pixnews/wasm/sqlite/open/helper/path/DatabasePathResolver;)V
-}
-
-public final class ru/pixnews/wasm/sqlite/open/helper/internal/SQLiteCompatibilityWalFlags {
-	public static final field INSTANCE Lru/pixnews/wasm/sqlite/open/helper/internal/SQLiteCompatibilityWalFlags;
-	public final fun isLegacyCompatibilityWalEnabled ()Z
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/path/AndroidDatabasePathResolver : ru/pixnews/wasm/sqlite/open/helper/path/DatabasePathResolver {
