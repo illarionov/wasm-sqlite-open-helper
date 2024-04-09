@@ -29,39 +29,39 @@ internal object SQLiteGlobal {
      *
      * (If it's 0, we do not truncate.)
      */
-    const val walTruncateSize: Long = 1048576
+    const val WAL_TRUNCATE_SIZE: Long = 1048576
 
     // values derived from:
     // https://android.googlesource.com/platform/frameworks/base.git/+/master/core/res/res/values/config.xml
-    const val defaultPageSize: Int = 1024
+    const val DEFAULT_PAGE_SIZE: Int = 1024
 
     /**
      * Gets the journal size limit in bytes.
      */
-    const val journalSizeLimit: Int = 524288
+    const val JOURNAL_SIZE_LIMIT: Int = 524288
 
     /**
      * Gets the WAL auto-checkpoint integer in database pages.
      */
-    const val walAutoCheckpoint: Int = 1000
+    const val WAL_AUTO_CHECKPOINT: Int = 1000
 
     /**
      * Gets the connection pool size when in WAL mode.
      */
-    const val walConnectionPoolSize: Int = 10
+    const val WAL_CONNECTION_POOL_SIZE: Int = 10
 
     /**
      * Gets the default journal mode when WAL is not in use.
      */
-    val defaultJournalMode: SQLiteDatabaseJournalMode = SQLiteDatabaseJournalMode.TRUNCATE
+    val DEFAULT_JOURNAL_MODE: SQLiteDatabaseJournalMode = SQLiteDatabaseJournalMode.TRUNCATE
 
     /**
      * Gets the default database synchronization mode when WAL is not in use.
      */
-    val defaultSyncMode: SQLiteDatabaseSyncMode = SQLiteDatabaseSyncMode.FULL
+    val DEFAULT_SYNC_MODE: SQLiteDatabaseSyncMode = SQLiteDatabaseSyncMode.FULL
 
     /**
      * Gets the database synchronization mode when in WAL mode.
      */
-    val walSyncMode: SQLiteDatabaseSyncMode = SQLiteDatabaseSyncMode.NORMAL
+    val WAL_SYNC_MODE: SQLiteDatabaseSyncMode = SQLiteDatabaseSyncMode.NORMAL
 }

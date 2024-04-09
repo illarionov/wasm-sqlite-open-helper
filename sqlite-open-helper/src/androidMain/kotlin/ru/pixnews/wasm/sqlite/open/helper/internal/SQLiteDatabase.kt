@@ -34,9 +34,6 @@ import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.OPEN_READONLY
 import ru.pixnews.wasm.sqlite.open.helper.SQLiteDatabaseJournalMode
 import ru.pixnews.wasm.sqlite.open.helper.SQLiteDatabaseJournalMode.WAL
 import ru.pixnews.wasm.sqlite.open.helper.SQLiteDatabaseSyncMode
-import ru.pixnews.wasm.sqlite.open.helper.SqliteDatabaseConfiguration
-import ru.pixnews.wasm.sqlite.open.helper.SqliteDatabaseConfiguration.Companion.isInMemoryDb
-import ru.pixnews.wasm.sqlite.open.helper.SqliteDatabaseConfiguration.Companion.resolveJournalMode
 import ru.pixnews.wasm.sqlite.open.helper.base.DatabaseErrorHandler
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
@@ -52,6 +49,8 @@ import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteSession.Companion.TRANS
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteSession.Companion.TRANSACTION_MODE_IMMEDIATE
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.Companion.getSqlStatementType
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_DDL
+import ru.pixnews.wasm.sqlite.open.helper.internal.SqliteDatabaseConfiguration.Companion.isInMemoryDb
+import ru.pixnews.wasm.sqlite.open.helper.internal.SqliteDatabaseConfiguration.Companion.resolveJournalMode
 import ru.pixnews.wasm.sqlite.open.helper.internal.ext.DatabaseUtils
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.SqlOpenHelperNativeBindings
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3ConnectionPtr
