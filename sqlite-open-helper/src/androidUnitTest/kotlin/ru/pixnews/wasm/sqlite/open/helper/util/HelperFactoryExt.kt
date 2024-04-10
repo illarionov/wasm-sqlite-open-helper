@@ -22,7 +22,7 @@ import java.io.File
 fun createWasmSQLiteOpenHelper(
     dstDir: File,
     dbLogger: Logger,
-    dbName: String = "test.db",
+    dbName: String? = "test.db",
     wasmGraalvmEngine: Engine = Engine.create("wasm"),
     sqlite3Binary: WasmSqliteConfiguration = Emscripten.sqlite3_345_android_icu_mt_pthread,
     openHelperCallback: SupportSQLiteOpenHelper.Callback = LoggingOpenHelperCallback(dbLogger),
@@ -67,10 +67,10 @@ private class LoggingOpenHelperCallback(
     version: Int = 1,
 ) : SupportSQLiteOpenHelper.Callback(version) {
     override fun onCreate(db: SupportSQLiteDatabase) {
-        logger.i { "onCreate() $db" }
+        logger.i { "onCreate(); Database: `$db`" }
     }
 
     override fun onUpgrade(db: SupportSQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        logger.i { "onUpgrade() $db, $oldVersion, $newVersion" }
+        logger.i { "onUpgrade() Database: `$db`, oldVersion: $oldVersion, newVersion: $newVersion" }
     }
 }
