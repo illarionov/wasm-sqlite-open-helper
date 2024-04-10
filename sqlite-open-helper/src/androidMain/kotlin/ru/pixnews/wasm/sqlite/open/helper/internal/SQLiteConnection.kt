@@ -21,20 +21,19 @@ import androidx.core.os.CancellationSignal
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.CREATE_IF_NECESSARY
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.NO_LOCALIZED_COLLATORS
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale.Companion.EN_US
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
 import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteCantOpenDatabaseException
 import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard.CloseGuardFinalizeAction
+import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDatabaseConfiguration.Companion.isInMemoryDb
+import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDatabaseConfiguration.Companion.isReadOnlyDatabase
+import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDatabaseConfiguration.Companion.resolveJournalMode
+import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDatabaseConfiguration.Companion.resolveSyncMode
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.Companion.getSqlStatementType
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.Companion.getSqlStatementTypeExtended
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.Companion.isCacheable
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_PRAGMA
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_SELECT
-import ru.pixnews.wasm.sqlite.open.helper.internal.SqliteDatabaseConfiguration.Companion.isInMemoryDb
-import ru.pixnews.wasm.sqlite.open.helper.internal.SqliteDatabaseConfiguration.Companion.isReadOnlyDatabase
-import ru.pixnews.wasm.sqlite.open.helper.internal.SqliteDatabaseConfiguration.Companion.resolveJournalMode
-import ru.pixnews.wasm.sqlite.open.helper.internal.SqliteDatabaseConfiguration.Companion.resolveSyncMode
 import ru.pixnews.wasm.sqlite.open.helper.internal.WasmSqliteCleaner.WasmSqliteCleanable
 import ru.pixnews.wasm.sqlite.open.helper.internal.connection.OperationLog
 import ru.pixnews.wasm.sqlite.open.helper.internal.connection.OperationLog.Companion.trimSqlForDisplay
@@ -102,7 +101,7 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
     onConnectionLeaked: () -> Unit,
     private val onPreparedStatementAcquired: () -> Unit,
     private val onPrepareStatementCacheMiss: () -> Unit,
-    configuration: SqliteDatabaseConfiguration,
+    configuration: SQLiteDatabaseConfiguration,
     private val bindings: SqlOpenHelperNativeBindings<CP, SP>,
     private val connectionId: Int,
     internal val isPrimaryConnection: Boolean,
@@ -113,7 +112,7 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
     private val closeGuard: CloseGuard = CloseGuard.get()
     private val closeGuardCleanable: WasmSqliteCleanable
     private val connectionPtrResourceCleanable: WasmSqliteCleanable
-    private val configuration = SqliteDatabaseConfiguration(configuration)
+    private val configuration = SQLiteDatabaseConfiguration(configuration)
     private val preparedStatementCache = PreparedStatementCache(connectionPtr, bindings, configuration.maxSqlCacheSize)
     private val connectionPtr: CP get() = connectionPtrResource.nativePtr
     internal val databaseLabel: String get() = configuration.label
@@ -164,7 +163,7 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
     }
 
     // Called by SQLiteConnectionPool only.
-    fun reconfigure(newConfiguration: SqliteDatabaseConfiguration) {
+    fun reconfigure(newConfiguration: SQLiteDatabaseConfiguration) {
         onlyAllowReadOnlyOperations = false
 
         // Remember what changed.
@@ -563,7 +562,7 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
         }
 
         // Register the localized collators.
-        val newLocale: String = (configuration.locale ?: EN_US).icuId
+        val newLocale: String = configuration.locale.icuId
         bindings.nativeRegisterLocalizedCollators(connectionPtr, newLocale)
 
         // If the database is read-only, we cannot modify the android metadata table
@@ -863,7 +862,7 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
         // Called by SQLiteConnectionPool only.
         fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> open(
             pool: SQLiteConnectionPool<CP, SP>,
-            configuration: SqliteDatabaseConfiguration,
+            configuration: SQLiteDatabaseConfiguration,
             bindings: SqlOpenHelperNativeBindings<CP, SP>,
             connectionId: Int,
             primaryConnection: Boolean,
