@@ -12,10 +12,11 @@ public object IcuBuildDefaults {
     internal const val ICU_BUILD_DIR: String = "wasmIcu/buildB"
     internal const val ICU_DEFAULT_TARGET: String = "wasm32-unknown-emscripten"
     internal const val ICU_USE_PTHREADS: Boolean = true
-    internal const val ICU_DATA_DIR: String = "/usr/share/icu/74.2"
+    internal const val ICU_DATA_DIR: String = ""
     internal val ICU_CFLAGS: List<String> = listOf(
         "-O3",
         "-DU_HAVE_MMAP=0",
+        "-DUCONFIG_NO_FILE_IO",
         "-DUCONFIG_NO_FORMATTING",
         "-DUCONFIG_NO_LEGACY_CONVERSION",
         "-DUCONFIG_NO_TRANSLITERATION",
