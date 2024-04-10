@@ -10,7 +10,8 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import assertk.assertThat
 import assertk.assertions.isBetween
 import assertk.assertions.isEqualTo
-import co.touchlab.kermit.Severity.Info
+import assertk.assertions.startsWith
+import co.touchlab.kermit.Severity
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -24,7 +25,7 @@ import java.util.Date
 import kotlin.time.Duration.Companion.minutes
 
 class WasmSQLiteOpenHelperTimeFunctionsTest {
-    val dbLogger = KermitLogger(tag = "WSOH", minSeverity = Info)
+    val dbLogger = KermitLogger(tag = "WSOH", minSeverity = Severity.Info)
     lateinit var database: SupportSQLiteDatabase
 
     @BeforeEach
@@ -60,5 +61,15 @@ class WasmSQLiteOpenHelperTimeFunctionsTest {
             it.simpleQueryForLong()
         }
         assertThat(unixEpoch).isBetween(timestampNow, timestampNow + 10.minutes.inWholeSeconds)
+    }
+
+    @Test
+    fun `localtime modifier should work`() {
+        val localtimeString: String = database.compileStatement(
+            """SELECT datetime(1092941466, 'unixepoch', 'localtime')""",
+        ).use {
+            it.simpleQueryForString() ?: ""
+        }
+        assertThat(localtimeString).startsWith("2004")
     }
 }

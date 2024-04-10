@@ -23,6 +23,7 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.Emscripte
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.EmscriptenInitMainThreadJs
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.EmscriptenResizeHeap
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.EmscriptenThreadMailboxAwait
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.LocaltimeJs
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.MmapJs
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.MunapJs
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.SyscallChmod
@@ -38,6 +39,7 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.SyscallOp
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.SyscallRmdir
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.SyscallUnlinkat
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.SyscallUtimensat
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.TzsetJs
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.syscallLstat64
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.syscallStat64
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.fn
@@ -92,7 +94,11 @@ internal class EmscriptenEnvModuleBuilder(
             retType = I32,
             nodeFactory = ::EmscriptenResizeHeap,
         )
-        fnVoid("_localtime_js", listOf(I64, I32))
+        fnVoid(
+            name = "_localtime_js",
+            paramTypes = listOf(I64, I32),
+            nodeFactory = ::LocaltimeJs,
+        )
         fn(
             name = "_mmap_js",
             paramTypes = listOf(I32, I32, I32, I32, I64, I32, I32),
@@ -204,7 +210,11 @@ internal class EmscriptenEnvModuleBuilder(
             retType = I32,
             nodeFactory = ::SyscallUtimensat,
         )
-        fnVoid("_tzset_js", List(4) { I32 })
+        fnVoid(
+            name = "_tzset_js",
+            paramTypes = List(4) { I32 },
+            nodeFactory = ::TzsetJs,
+        )
 
         fnVoid("_emscripten_thread_set_strongref", listOf(I32))
         fnVoid("emscripten_exit_with_live_runtime", listOf())
