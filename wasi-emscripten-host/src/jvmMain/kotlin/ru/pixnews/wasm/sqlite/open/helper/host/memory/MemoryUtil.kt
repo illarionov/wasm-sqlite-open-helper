@@ -46,7 +46,9 @@ public fun Memory.writeZeroTerminatedString(
 
 public fun String.encodeToNullTerminatedByteArray(): ByteArray {
     val os = ByteArrayOutputStream(this.length)
-    os.writeBytes(this.encodeToByteArray())
+    this.encodeToByteArray().let {
+        os.write(it, 0, it.size)
+    }
     os.write(0)
     return os.toByteArray()
 }
