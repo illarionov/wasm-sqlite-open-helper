@@ -11,12 +11,12 @@ import assertk.assertThat
 import assertk.assertions.containsExactly
 import assertk.assertions.isEqualTo
 import co.touchlab.kermit.Severity.Info
-import org.graalvm.polyglot.Engine
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import ru.pixnews.wasm.sqlite.open.helper.Sqlite3Wasm.Emscripten
+import ru.pixnews.wasm.sqlite.open.helper.util.GraalvmEngine.WASM_GRAALVM_ENGINE
 import ru.pixnews.wasm.sqlite.open.helper.util.KermitLogger
 import ru.pixnews.wasm.sqlite.open.helper.util.createWasmSQLiteOpenHelper
 import ru.pixnews.wasm.sqlite.open.helper.util.readValues
@@ -86,9 +86,5 @@ class WasmSQLiteOpenHelperIcuCollationTest {
             .map { row: Map<String, String?> -> row.values.single() }
 
         assertThat(names).containsExactly("Nazlı")
-    }
-
-    companion object {
-        private val WASM_GRAALVM_ENGINE: Engine = Engine.create("wasm")
     }
 }
