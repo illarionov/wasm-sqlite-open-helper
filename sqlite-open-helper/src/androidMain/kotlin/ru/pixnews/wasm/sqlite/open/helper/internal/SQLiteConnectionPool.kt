@@ -21,7 +21,7 @@ import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard.CloseGuardFinalize
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.AcquiredConnectionStatus.DISCARD
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.AcquiredConnectionStatus.NORMAL
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.AcquiredConnectionStatus.RECONFIGURE
-import ru.pixnews.wasm.sqlite.open.helper.internal.SqliteDatabaseConfiguration.Companion.resolveJournalMode
+import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDatabaseConfiguration.Companion.resolveJournalMode
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.SqlOpenHelperNativeBindings
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3ConnectionPtr
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
@@ -69,7 +69,7 @@ import kotlin.time.Duration.Companion.seconds
  */
 @Suppress("LargeClass")
 internal class SQLiteConnectionPool<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> private constructor(
-    configuration: SqliteDatabaseConfiguration,
+    configuration: SQLiteDatabaseConfiguration,
     private val debugConfig: SQLiteDebug,
     private val bindings: SqlOpenHelperNativeBindings<CP, SP>,
     rootLogger: Logger,
@@ -79,7 +79,7 @@ internal class SQLiteConnectionPool<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
     private val closeGuardCleaner = WasmSqliteCleaner.register(this, CloseGuardFinalizeAction(closeGuard))
     private val lock = Any()
     private val connectionLeaked = AtomicBoolean()
-    private val configuration = SqliteDatabaseConfiguration(configuration)
+    private val configuration = SQLiteDatabaseConfiguration(configuration)
     private var maxConnectionPoolSize = 0
     private var isOpen = false
     private var nextConnectionId = 0
@@ -180,7 +180,7 @@ internal class SQLiteConnectionPool<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
      * @param configuration The new configuration.
      * @throws IllegalStateException if the pool has been closed.
      */
-    fun reconfigure(configuration: SqliteDatabaseConfiguration): Unit = synchronized(lock) {
+    fun reconfigure(configuration: SQLiteDatabaseConfiguration): Unit = synchronized(lock) {
         throwIfClosedLocked()
         val isWalCurrentMode = this.configuration.resolveJournalMode() == WAL
         val isWalNewMode = configuration.resolveJournalMode() == WAL
@@ -374,7 +374,7 @@ internal class SQLiteConnectionPool<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
 
     // Might throw.
     private fun openConnectionLocked(
-        configuration: SqliteDatabaseConfiguration,
+        configuration: SQLiteDatabaseConfiguration,
         primaryConnection: Boolean,
         rootLogger: Logger,
     ): SQLiteConnection<CP, SP> {
@@ -998,7 +998,7 @@ internal class SQLiteConnectionPool<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
          * @throws SQLiteException if a database error occurs.
          */
         fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> open(
-            configuration: SqliteDatabaseConfiguration,
+            configuration: SQLiteDatabaseConfiguration,
             debugConfig: SQLiteDebug,
             bindings: SqlOpenHelperNativeBindings<CP, SP>,
             logger: Logger,

@@ -44,13 +44,13 @@ import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteDatabaseCorrupt
 import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard.CloseGuardFinalizeAction
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.Companion.CONNECTION_FLAG_PRIMARY_CONNECTION_AFFINITY
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.Companion.CONNECTION_FLAG_READ_ONLY
+import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDatabaseConfiguration.Companion.isInMemoryDb
+import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDatabaseConfiguration.Companion.resolveJournalMode
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteProgram.Companion.bindAllArgsAsStrings
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteSession.Companion.TRANSACTION_MODE_EXCLUSIVE
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteSession.Companion.TRANSACTION_MODE_IMMEDIATE
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.Companion.getSqlStatementType
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_DDL
-import ru.pixnews.wasm.sqlite.open.helper.internal.SqliteDatabaseConfiguration.Companion.isInMemoryDb
-import ru.pixnews.wasm.sqlite.open.helper.internal.SqliteDatabaseConfiguration.Companion.resolveJournalMode
 import ru.pixnews.wasm.sqlite.open.helper.internal.ext.DatabaseUtils
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.SqlOpenHelperNativeBindings
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3ConnectionPtr
@@ -80,7 +80,7 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
     private val bindings: SqlOpenHelperNativeBindings<CP, SP>,
     path: String,
     openFlags: OpenFlags,
-    defaultLocale: Locale?,
+    defaultLocale: Locale = Locale.EN_US,
     private val errorHandler: DatabaseErrorHandler,
     lookasideSlotSize: Int,
     lookasideSlotCount: Int,
@@ -120,7 +120,7 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
 
     // The database configuration.
     @GuardedBy("lock")
-    private val configurationLocked = SqliteDatabaseConfiguration(
+    private val configurationLocked = SQLiteDatabaseConfiguration(
         path = path,
         openFlags = openFlags,
         locale = defaultLocale,
@@ -244,7 +244,7 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
      */
     override val path: String?
         get() = synchronized(lock) {
-            configurationLocked.path.takeIf { it != SqliteDatabaseConfiguration.MEMORY_DB_PATH }
+            configurationLocked.path.takeIf { it != SQLiteDatabaseConfiguration.MEMORY_DB_PATH }
         }
 
     /**
@@ -1391,7 +1391,7 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
                 debugConfig = debugConfig,
                 rootLogger = logger,
                 bindings = bindings,
-                path = SqliteDatabaseConfiguration.MEMORY_DB_PATH,
+                path = SQLiteDatabaseConfiguration.MEMORY_DB_PATH,
                 openFlags = openParams.openFlags or CREATE_IF_NECESSARY,
                 defaultLocale = openParams.locale,
                 errorHandler = openParams.errorHandler ?: error("Error handler not set"),

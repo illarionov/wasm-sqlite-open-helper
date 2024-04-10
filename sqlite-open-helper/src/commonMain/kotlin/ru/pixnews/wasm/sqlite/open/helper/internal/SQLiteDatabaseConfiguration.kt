@@ -11,6 +11,7 @@ import ru.pixnews.wasm.sqlite.open.helper.SQLiteDatabaseJournalMode
 import ru.pixnews.wasm.sqlite.open.helper.SQLiteDatabaseSyncMode
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale
 import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
+import kotlin.LazyThreadSafetyMode.NONE
 
 /**
  * Describes how to configure a database.
@@ -24,9 +25,6 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
  * keep track of which settings have already been applied.
  *
  * @property path The database path.
- * @property label
- *   The label to use to describe the database when it appears in logs.
- *   This is derived from the path but is stripped to remove PII.
  * @property openFlags The flags used to open the database.
  * @property locale The database locale.
  * @property maxSqlCacheSize
@@ -52,11 +50,10 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
  *   Default is returned by [SQLiteGlobal.getDefaultSyncMode]
  *   or [SQLiteGlobal.getWALSyncMode] depending on journal mode
  */
-internal class SqliteDatabaseConfiguration internal constructor(
+internal class SQLiteDatabaseConfiguration internal constructor(
     val path: String,
-    val label: String = stripPathForLogs(path),
     var openFlags: OpenFlags,
-    var locale: Locale?,
+    var locale: Locale = Locale.EN_US,
     var maxSqlCacheSize: Int = 25,
     var foreignKeyConstraintsEnabled: Boolean = false,
     val perConnectionSql: MutableList<Pair<String, List<Any?>>> = mutableListOf(),
@@ -64,17 +61,23 @@ internal class SqliteDatabaseConfiguration internal constructor(
     var lookasideSlotCount: Int = -1,
     var journalMode: SQLiteDatabaseJournalMode? = null,
     var syncMode: SQLiteDatabaseSyncMode? = null,
-
     var shouldTruncateWalFile: Boolean = false,
 ) {
+    /**
+     * The label to use to describe the database when it appears in logs.
+     * This is derived from the path but is stripped to remove PII.
+     */
+    val label: String by lazy(NONE) {
+        stripPathForLogs(path)
+    }
+
     /**
      * Creates a database configuration as a copy of another configuration.
      *
      * @param other The other configuration.
      */
-    constructor(other: SqliteDatabaseConfiguration) : this(
+    constructor(other: SQLiteDatabaseConfiguration) : this(
         path = other.path,
-        label = other.label,
         openFlags = other.openFlags,
         locale = other.locale,
     ) {
@@ -87,8 +90,7 @@ internal class SqliteDatabaseConfiguration internal constructor(
      *
      * @param other The object from which to copy the parameters.
      */
-    fun updateParametersFrom(other: SqliteDatabaseConfiguration?) {
-        requireNotNull(other) { "other must not be null." }
+    fun updateParametersFrom(other: SQLiteDatabaseConfiguration) {
         require(path == other.path) { "other configuration must refer to the same database." }
 
         openFlags = other.openFlags
@@ -112,13 +114,13 @@ internal class SqliteDatabaseConfiguration internal constructor(
         /**
          * Returns true if the database is in-memory.
          */
-        val SqliteDatabaseConfiguration.isInMemoryDb: Boolean
+        val SQLiteDatabaseConfiguration.isInMemoryDb: Boolean
             get() = path.equals(MEMORY_DB_PATH, ignoreCase = true)
 
-        val SqliteDatabaseConfiguration.isReadOnlyDatabase: Boolean
+        val SQLiteDatabaseConfiguration.isReadOnlyDatabase: Boolean
             get() = openFlags.contains(OpenFlags.OPEN_READONLY)
 
-        val SqliteDatabaseConfiguration.isLookasideConfigSet: Boolean
+        val SQLiteDatabaseConfiguration.isLookasideConfigSet: Boolean
             get() = lookasideSlotCount >= 0 && lookasideSlotSize >= 0
 
         // The pattern we use to strip email addresses from database paths
@@ -140,7 +142,7 @@ internal class SqliteDatabaseConfiguration internal constructor(
          * @return Resolved journal mode that should be used for this database connection or null
          * if no journal mode should be set.
          */
-        fun SqliteDatabaseConfiguration.resolveJournalMode(): SQLiteDatabaseJournalMode? {
+        fun SQLiteDatabaseConfiguration.resolveJournalMode(): SQLiteDatabaseJournalMode? {
             if (isReadOnlyDatabase) {
                 // No need to specify a journal mode when only reading.
                 return null
@@ -174,7 +176,7 @@ internal class SqliteDatabaseConfiguration internal constructor(
          * if no journal mode should be set.
          */
         @Suppress("ReturnCount")
-        fun SqliteDatabaseConfiguration.resolveSyncMode(): SQLiteDatabaseSyncMode? {
+        fun SQLiteDatabaseConfiguration.resolveSyncMode(): SQLiteDatabaseSyncMode? {
             if (isReadOnlyDatabase) {
                 // No sync mode will be used since database will be only used for reading.
                 return null
@@ -196,7 +198,7 @@ internal class SqliteDatabaseConfiguration internal constructor(
             }
         }
 
-        private fun SqliteDatabaseConfiguration.isWalEnabledInternal(): Boolean {
+        private fun SQLiteDatabaseConfiguration.isWalEnabledInternal(): Boolean {
             val walEnabled = openFlags.contains(OpenFlags.ENABLE_WRITE_AHEAD_LOGGING)
             return walEnabled || (journalMode == SQLiteDatabaseJournalMode.WAL)
         }
