@@ -108,7 +108,7 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
     private val recentOperations: OperationLog,
     rootLogger: Logger,
 ) : CancellationSignal.OnCancelListener {
-    internal val logger = rootLogger.withTag(TAG)
+    internal val logger = rootLogger.withTag("SQLiteConnection")
     private val closeGuard: CloseGuard = CloseGuard.get()
     private val closeGuardCleanable: WasmSqliteCleanable
     private val connectionPtrResourceCleanable: WasmSqliteCleanable
@@ -857,8 +857,6 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
     }
 
     companion object {
-        private const val TAG = "SQLiteConnection"
-
         // Called by SQLiteConnectionPool only.
         fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> open(
             pool: SQLiteConnectionPool<CP, SP>,

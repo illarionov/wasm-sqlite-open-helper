@@ -24,7 +24,7 @@ public class DefaultWasiMemoryReader(
     private val memory: Memory,
     logger: Logger,
 ) : WasiMemoryReader {
-    private val logger: Logger = logger.withTag(DefaultWasiMemoryReader::class.qualifiedName!!)
+    private val logger: Logger = logger.withTag("DefaultWasiMemoryReader")
 
     override fun read(channel: FdChannel, strategy: ReadWriteStrategy, iovecs: IovecArray): ULong {
         logger.v { "read(${channel.fd}, ${iovecs.iovecList.map { it.bufLen.value }})" }

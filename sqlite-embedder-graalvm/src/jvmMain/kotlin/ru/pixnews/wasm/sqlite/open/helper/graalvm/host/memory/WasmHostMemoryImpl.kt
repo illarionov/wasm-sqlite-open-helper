@@ -24,8 +24,7 @@ internal class WasmHostMemoryImpl(
     internal val node: Node?,
     logger: Logger,
 ) : Memory {
-    private val logger = logger.withTag(WasmHostMemoryImpl::class.qualifiedName!!)
-    private val memoryReader: WasiMemoryReader = GraalIInputStreamWasiMemoryReader(this, logger)
+    private val memoryReader: WasiMemoryReader = GraalInputStreamWasiMemoryReader(this, logger)
     private val memoryWriter: WasiMemoryWriter = GraalOutputStreamWasiMemoryWriter(this, logger)
 
     override fun readI8(addr: WasmPtr<*>): Byte {

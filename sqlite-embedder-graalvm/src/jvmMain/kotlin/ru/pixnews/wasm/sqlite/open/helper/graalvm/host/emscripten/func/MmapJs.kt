@@ -12,7 +12,6 @@ import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
@@ -30,11 +29,9 @@ import kotlin.io.path.isRegularFile
 internal class MmapJs(
     language: WasmLanguage,
     module: WasmModule,
-    override val host: SqliteEmbedderHost,
+    host: SqliteEmbedderHost,
     functionName: String = "__mmap_js",
 ) : BaseWasmNode(language, module, host, functionName) {
-    private val logger: Logger = host.rootLogger.withTag(MmapJs::class.qualifiedName!!)
-
     @Suppress("MagicNumber")
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Int {
         val args = frame.arguments

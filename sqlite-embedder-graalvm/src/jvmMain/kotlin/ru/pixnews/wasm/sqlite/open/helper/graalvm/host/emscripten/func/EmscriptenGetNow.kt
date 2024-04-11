@@ -18,7 +18,7 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
 internal class EmscriptenGetNow(
     language: WasmLanguage,
     module: WasmModule,
-    override val host: SqliteEmbedderHost,
+    host: SqliteEmbedderHost,
     functionName: String = "emscripten_get_now",
 ) : BaseWasmNode(language, module, host, functionName) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {

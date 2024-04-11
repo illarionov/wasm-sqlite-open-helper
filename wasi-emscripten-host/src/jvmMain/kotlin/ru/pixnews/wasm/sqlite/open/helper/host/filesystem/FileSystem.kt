@@ -85,7 +85,7 @@ public class FileSystem(
     internal val javaFs: java.nio.file.FileSystem = FileSystems.getDefault(),
     private val blockSize: ULong = 512UL,
 ) {
-    private val logger: Logger = rootLogger.withTag(FileSystem::class.qualifiedName!!)
+    private val logger: Logger = rootLogger.withTag("FileSystem")
     private val fileDescriptors: FileDescriptorMap = FileDescriptorMap(this)
 
     public fun getCwd(): String = getCwdPath().pathString

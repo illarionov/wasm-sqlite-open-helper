@@ -10,7 +10,11 @@ package ru.pixnews.wasm.sqlite.open.helper.host.include
 public data class StructTimespec(
     val tv_sec: time_t,
     val tv_nsec: ULong,
-)
+) {
+    override fun toString(): String {
+        return "TS($tv_sec sec $tv_nsec nsec)"
+    }
+}
 
 @Suppress("TYPEALIAS_NAME_INCORRECT_CASE")
 public typealias time_t = ULong

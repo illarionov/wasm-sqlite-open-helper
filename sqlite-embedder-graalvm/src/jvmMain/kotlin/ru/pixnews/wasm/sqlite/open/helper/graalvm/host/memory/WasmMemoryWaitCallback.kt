@@ -30,10 +30,10 @@ internal class WasmMemoryWaitCallback(
 
     @Suppress("FunctionOnlyReturningConstant")
     @ExportMessage
-    public fun isExecutable(): Boolean = true
+    fun isExecutable(): Boolean = true
 
     @ExportMessage
-    public fun execute(arguments: Array<Any>): Any {
+    fun execute(arguments: Array<Any>): Any {
         val wasmMemory = arguments[0] as WasmMemory
         val addr = arguments.getArgAsLong(0).toInt()
         val expectedValue = arguments.getArgAsLong(1)

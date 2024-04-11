@@ -22,7 +22,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.ext.WasiEnvironment
 internal class EnvironSizesGet(
     language: WasmLanguage,
     module: WasmModule,
-    override val host: SqliteEmbedderHost,
+    host: SqliteEmbedderHost,
     functionName: String = "environ_sizes_get",
 ) : BaseWasmNode(language, module, host, functionName) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {

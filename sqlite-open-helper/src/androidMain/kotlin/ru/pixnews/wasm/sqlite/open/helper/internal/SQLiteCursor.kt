@@ -41,7 +41,7 @@ internal class SQLiteCursor(
     private val query: SQLiteQuery,
     rootLogger: Logger,
 ) : Cursor {
-    private val logger = rootLogger.withTag(TAG)
+    private val logger = rootLogger.withTag("SQLiteCursor")
     private var pos: Int = NO_COUNT
     private var closed: Boolean = false
 
@@ -386,7 +386,6 @@ internal class SQLiteCursor(
     }
 
     private companion object {
-        const val TAG: String = "SQLiteCursor"
         const val NO_COUNT: Int = -1
         fun cursorPickFillWindowStartPosition(
             cursorPosition: Int,

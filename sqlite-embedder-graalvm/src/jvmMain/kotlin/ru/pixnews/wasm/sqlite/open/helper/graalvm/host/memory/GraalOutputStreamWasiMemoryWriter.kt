@@ -25,7 +25,7 @@ internal class GraalOutputStreamWasiMemoryWriter(
     private val memory: WasmHostMemoryImpl,
     logger: Logger,
 ) : WasiMemoryWriter {
-    private val logger = logger.withTag(GraalOutputStreamWasiMemoryWriter::class.qualifiedName!!)
+    private val logger = logger.withTag("GraalOutputStreamWasiMemoryWriter")
     private val wasmMemory = memory.memory
     private val defaultMemoryWriter = DefaultWasiMemoryWriter(memory, logger)
 

@@ -53,7 +53,16 @@ public data class StructStat(
     val st_atim: StructTimespec,
     val st_mtim: StructTimespec,
     val st_ctim: StructTimespec,
-)
+) {
+    override fun toString(): String {
+        return "StructStat($st_dev/$st_rdev $st_ino $st_nlink; $st_mode $st_uid $st_gid; " +
+                "$st_size $st_blksize $st_blocks; " +
+                "${st_atim.tv_sec}:${st_atim.tv_nsec} " +
+                "${st_mtim.tv_sec}:${st_mtim.tv_nsec} " +
+                "${st_ctim.tv_sec}:${st_ctim.tv_nsec}" +
+                ")"
+    }
+}
 
 public fun StructStat.pack(): ByteArray {
     val bytes: ByteArray = Buffer().run {

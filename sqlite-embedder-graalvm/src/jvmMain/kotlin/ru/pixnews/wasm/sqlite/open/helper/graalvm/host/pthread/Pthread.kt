@@ -16,7 +16,7 @@ internal class Pthread(
     private val mainThreadId: Long = Thread.currentThread().id,
     private val emscriptenPthreadBindings: EmscriptenPthreadBindings,
 ) {
-    private val logger: Logger = rootLogger.withTag(Pthread::class.qualifiedName!!)
+    private val logger: Logger = rootLogger.withTag("Pthread")
 
     init {
         // TODO: worker

@@ -13,7 +13,6 @@ import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.memory.WasmMemory
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
@@ -46,12 +45,10 @@ internal fun fdPread(
 private class FdRead(
     language: WasmLanguage,
     module: WasmModule,
-    override val host: SqliteEmbedderHost,
+    host: SqliteEmbedderHost,
     private val strategy: ReadWriteStrategy,
     functionName: String = "fd_read",
 ) : BaseWasmNode(language, module, host, functionName) {
-    private val logger: Logger = host.rootLogger.withTag(FdRead::class.qualifiedName!!)
-
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {
         val args = frame.arguments
         return fdRead(

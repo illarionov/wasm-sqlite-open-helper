@@ -74,7 +74,7 @@ internal class SQLiteConnectionPool<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
     private val bindings: SqlOpenHelperNativeBindings<CP, SP>,
     rootLogger: Logger,
 ) : Closeable {
-    private val logger: Logger = rootLogger.withTag(TAG)
+    private val logger: Logger = rootLogger.withTag("SQLiteConnectionPool")
     private val closeGuard: CloseGuard = CloseGuard.get()
     private val closeGuardCleaner = WasmSqliteCleaner.register(this, CloseGuardFinalizeAction(closeGuard))
     private val lock = Any()
@@ -960,8 +960,6 @@ internal class SQLiteConnectionPool<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
     }
 
     companion object {
-        private const val TAG = "SQLiteConnectionPool"
-
         /**
          * Connection flag: Read-only.
          *

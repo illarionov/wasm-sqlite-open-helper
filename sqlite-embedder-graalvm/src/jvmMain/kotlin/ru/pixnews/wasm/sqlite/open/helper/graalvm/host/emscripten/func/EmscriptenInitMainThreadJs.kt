@@ -21,7 +21,7 @@ private const val DEFAULT_STACK_SIZE = 524288
 internal class EmscriptenInitMainThreadJs(
     language: WasmLanguage,
     module: WasmModule,
-    override val host: SqliteEmbedderHost,
+    host: SqliteEmbedderHost,
     functionName: String = "__emscripten_init_main_thread_js",
     private val posixThreadRef: () -> Pthread,
 ) : BaseWasmNode(language, module, host, functionName) {

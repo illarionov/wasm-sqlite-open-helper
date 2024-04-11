@@ -13,7 +13,6 @@ import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.memory.WasmMemory
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsLong
@@ -27,11 +26,9 @@ import kotlin.time.Duration.Companion.seconds
 internal class LocaltimeJs(
     language: WasmLanguage,
     module: WasmModule,
-    override val host: SqliteEmbedderHost,
+    host: SqliteEmbedderHost,
     functionName: String = "_localtime_js",
 ) : BaseWasmNode(language, module, host, functionName) {
-    private val logger: Logger = host.rootLogger.withTag(LocaltimeJs::class.qualifiedName!!)
-
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance) {
         val args = frame.arguments
         localtimeJs(
@@ -42,7 +39,7 @@ internal class LocaltimeJs(
     }
 
     @CompilerDirectives.TruffleBoundary
-    @Suppress("MemberNameEqualsClassName", "MagicNumber")
+    @Suppress("MemberNameEqualsClassName")
     private fun localtimeJs(
         memory: WasmMemory,
         time: Long,

@@ -42,7 +42,7 @@ internal class WasmSqliteOpenHelper<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
     override val databaseName: String?,
     private val bindings: SqlOpenHelperNativeBindings<CP, SP>,
 ) : SupportSQLiteOpenHelper {
-    private val logger: Logger = rootLogger.withTag(WasmSqliteOpenHelper::class.qualifiedName!!)
+    private val logger: Logger = rootLogger.withTag("WasmSqliteOpenHelper")
     private val version: Int get() = callback.version
 
     private var isInitializing = false

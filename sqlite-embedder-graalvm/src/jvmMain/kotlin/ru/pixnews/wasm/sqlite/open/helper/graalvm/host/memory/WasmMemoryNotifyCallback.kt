@@ -21,7 +21,7 @@ internal class WasmMemoryNotifyCallback(
     private val waitersStore: SharedMemoryWaiterListStore,
     logger: Logger,
 ) : TruffleObject {
-    private val logger = logger.withTag(WasmMemoryNotifyCallback::class.qualifiedName!!)
+    private val logger = logger.withTag("WasmMemoryNotifyCallback")
 
     @Suppress("FunctionOnlyReturningConstant")
     @ExportMessage
@@ -33,7 +33,7 @@ internal class WasmMemoryNotifyCallback(
     fun execute(arguments: Array<Any>): Any {
         val addr = arguments.getArgAsLong(0)
         val count = arguments.getArgAsInt(1)
-        logger.v { "WasmMemoryNotifyCallback.execute(): $addr $count" }
+        logger.v { "execute(): $addr $count" }
 
         val waiterListRecord = waitersStore.getListForIndex((addr * 4).toInt())
         return waiterListRecord.notifyWaiters(count)

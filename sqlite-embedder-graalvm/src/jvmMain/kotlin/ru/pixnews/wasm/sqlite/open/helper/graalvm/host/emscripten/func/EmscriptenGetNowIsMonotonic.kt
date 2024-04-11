@@ -17,7 +17,7 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
 internal class EmscriptenGetNowIsMonotonic(
     language: WasmLanguage,
     module: WasmModule,
-    override val host: SqliteEmbedderHost,
+    host: SqliteEmbedderHost,
     functionName: String = "_emscripten_get_now_is_monotonic",
     private val isMonotonic: Boolean = true,
 ) : BaseWasmNode(language, module, host, functionName) {
