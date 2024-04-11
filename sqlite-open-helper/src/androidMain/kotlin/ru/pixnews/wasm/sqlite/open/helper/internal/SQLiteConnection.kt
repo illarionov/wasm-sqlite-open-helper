@@ -422,7 +422,7 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
         requiredPos: Int = 0,
         countAllRows: Boolean = false,
         cancellationSignal: CancellationSignal? = null,
-    ): Int = window.useReference {
+    ): Int {
         var actualPos = -1
         var countedRows = -1
         var filledRows = -1

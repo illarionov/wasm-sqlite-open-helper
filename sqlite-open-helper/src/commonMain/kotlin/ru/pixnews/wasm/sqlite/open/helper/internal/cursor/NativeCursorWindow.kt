@@ -12,173 +12,130 @@ import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.Cur
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.CursorFieldType.INTEGER
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.CursorFieldType.NULL
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.CursorFieldType.STRING
-import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.Field.BlobField
-import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.Field.FloatField
-import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.Field.IntegerField
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.Field.Null
-import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.Field.StringField
+import ru.pixnews.wasm.sqlite.open.helper.internal.ext.encodedNullTerminatedStringLength
+import kotlin.LazyThreadSafetyMode.NONE
 
 internal class NativeCursorWindow(
     val name: String,
     val size: Int,
-    val isReadOnly: Boolean = false,
     rootLogger: Logger,
 ) {
     private val logger = rootLogger.withTag("NativeCursorWindow")
-    private val data: Header = Header(0, RowSlotChunk(), 0, 0)
-    private var _freeSpace: Int = size
-
-    val freeSpace: Int
-        get() = _freeSpace
+    private val rows: ArrayDeque<RowSlot> = ArrayDeque()
+    private var numColumns: Int = 0
+    var freeSpace: Int = size
+        private set
 
     val numRows: Int
-        get() = data.numRows
-
-    fun clear(): Int {
-        if (isReadOnly) {
-            return -1
-        }
-        data.freeOffset = 0
-        data.firstChunk = RowSlotChunk()
-        data.numColumns = 0
-        data.numRows = 0
-        return 0
-    }
+        get() = rows.size
 
     fun setNumColumns(numColumns: Int): Int {
-        if (isReadOnly) {
+        if ((this.numColumns > 0 || this.numRows > 0) && numColumns != this.numColumns) {
+            logger.i { "Trying to go from ${this.numRows} columns to $numColumns" }
             return -1
         }
-
-        data.numColumns.let { columnNo ->
-            if ((columnNo > 0 || data.numRows > 0) && numColumns != columnNo) {
-                logger.i { "Trying to go from $columnNo columns to $numColumns" }
-                return -1
-            }
-        }
-
-        data.numColumns = numColumns
+        this.numColumns = numColumns
         return 0
     }
 
     fun allocRow(): Int {
-        check(!isReadOnly)
-        allocRowSlot().apply {
-            fields = Array(data.numColumns) { FieldSlot() }
+        val rowSlotSize = numColumns * SLOT_SIZE_BYTES
+        if (freeSpace - rowSlotSize < 0) {
+            return -1 // NO_MEMORY
         }
-        // TODO fail on full window
+        freeSpace -= rowSlotSize
+        RowSlot(numColumns).also {
+            rows.addLast(it)
+        }
         return 0
     }
 
     fun freeLastRow() {
-        check(!isReadOnly)
-        if (data.numRows > 0) {
-            data.numRows -= 1
+        if (rows.isNotEmpty()) {
+            val lastSlot = rows.removeLast()
+            freeSpace += lastSlot.fields.size * SLOT_SIZE_BYTES + lastSlot.payloadSize
         }
     }
 
-    private fun allocRowSlot(): RowSlot {
-        check(!isReadOnly)
-
-        var chunkPos = data.numRows
-        var rowSlotChunk: RowSlotChunk = data.firstChunk
-        while (chunkPos > ROW_SLOT_CHUNK_NUM_ROWS) {
-            rowSlotChunk = rowSlotChunk.nextChunk!!
-            chunkPos -= ROW_SLOT_CHUNK_NUM_ROWS
-        }
-        if (chunkPos == ROW_SLOT_CHUNK_NUM_ROWS) {
-            RowSlotChunk().let {
-                rowSlotChunk.nextChunk = it
-                rowSlotChunk = it
-            }
-            chunkPos = 0
-        }
-        data.numRows += 1
-        return rowSlotChunk.slots[chunkPos]
-    }
-
-    private fun getRowSlot(row: Int): RowSlot? {
-        var chunkPos = row
-        var rowSlotChunk: RowSlotChunk? = data.firstChunk
-        while (chunkPos >= ROW_SLOT_CHUNK_NUM_ROWS) {
-            rowSlotChunk = rowSlotChunk?.nextChunk
-            chunkPos -= ROW_SLOT_CHUNK_NUM_ROWS
-        }
-        return rowSlotChunk?.let { it.slots[chunkPos] }
-    }
-
-    fun getFieldSlot(row: Int, column: Int): FieldSlot? {
-        if (row >= data.numRows || column >= data.numColumns) {
-            logger.e {
-                "Failed to read row $row, column $column from a CursorWindow which " +
-                        "has ${data.numRows} rows, ${data.numColumns} columns"
-            }
+    fun getField(row: Int, column: Int): Field? {
+        if (!isValidRowColumn(row, column)) {
             return null
         }
-        val slot = getRowSlot(row) ?: run {
+        val slot = rows.getOrNull(row) ?: run {
             logger.e { "Failed to find rowSlot for row $row" }
             return null
         }
         return slot.fields[column]
     }
 
-    fun putBlob(row: Int, column: Int, value: ByteArray): Int {
-        check(!isReadOnly)
-        return putField(row, column, BlobField(value))
-    }
+    @Suppress("ReturnCount")
+    fun putField(row: Int, column: Int, value: Field): Int {
+        if (!isValidRowColumn(row, column)) {
+            return -1
+        } // BAD_VALUE
 
-    fun putString(row: Int, column: Int, value: String): Int = putField(row, column, StringField(value))
+        val rowSlot = rows.getOrNull(row) ?: run {
+            logger.e { "Failed to find rowSlot for row $row" }
+            return -1
+        }
 
-    fun putLong(row: Int, column: Int, value: Long): Int = putField(row, column, IntegerField(value))
+        val additionalSpace = value.payloadSize
+        if (freeSpace < additionalSpace) {
+            return -1 // NO_MEMORY
+        }
 
-    fun putDouble(row: Int, column: Int, value: Double): Int = putField(row, column, FloatField(value))
-    fun putNull(row: Int, column: Int): Int = putField(row, column, Null)
+        rowSlot.fields[column] = value
+        freeSpace -= additionalSpace
 
-    @Suppress("COMPACT_OBJECT_INITIALIZATION")
-    private fun putField(row: Int, column: Int, value: Field): Int {
-        check(!isReadOnly)
-        val slot: FieldSlot = getFieldSlot(row, column) ?: return -1 // BAD_VALUE
-        slot.field = value
         return 0
     }
 
-    /**
-     * @property freeOffset
-     *   Offset of the lowest unused byte in the window
-     * @property firstChunk firstChunkOffset
-     */
-    private class Header(
-        var freeOffset: Long,
-        var firstChunk: RowSlotChunk,
+    fun clear(): Int {
+        rows.clear()
+        freeSpace = size
+        return 0
+    }
 
-        var numRows: Int,
-        var numColumns: Int,
-    )
-
-    private class RowSlotChunk {
-        val slots: MutableList<RowSlot> = MutableList(ROW_SLOT_CHUNK_NUM_ROWS) { RowSlot(0) }
-        var nextChunk: RowSlotChunk? = null
+    private fun isValidRowColumn(row: Int, column: Int): Boolean {
+        return if (row >= this.numRows || column >= this.numColumns) {
+            logger.e {
+                "Failed to read row $row, column $column from a CursorWindow which " +
+                        "has ${this.numRows} rows, ${this.numColumns} columns"
+            }
+            false
+        } else {
+            true
+        }
     }
 
     private class RowSlot(numColumns: Int) {
-        var fields: Array<FieldSlot> = Array(numColumns) { FieldSlot() }
-    }
+        val fields: Array<Field> = Array(numColumns) { Null }
 
-    class FieldSlot(
-        var field: Field = Null,
-    ) {
-        val type: CursorFieldType
-            get() = this.field.type
+        @Suppress("WRONG_NAME_OF_VARIABLE_INSIDE_ACCESSOR")
+        val payloadSize: Int
+            get() = fields.sumOf(Field::payloadSize)
     }
 
     sealed class Field(
         val type: CursorFieldType,
     ) {
+        open val payloadSize: Int = 0
+
         data object Null : Field(NULL)
+
         class IntegerField(val value: Long) : Field(INTEGER)
+
         class FloatField(val value: Double) : Field(FLOAT)
-        class StringField(val value: String) : Field(STRING)
-        class BlobField(val value: ByteArray) : Field(BLOB)
+
+        class StringField(val value: String) : Field(STRING) {
+            override val payloadSize: Int by lazy(NONE) {
+                value.encodedNullTerminatedStringLength()
+            }
+        }
+        class BlobField(val value: ByteArray) : Field(BLOB) {
+            override val payloadSize: Int = value.size
+        }
     }
 
     enum class CursorFieldType(val id: Int) {
@@ -189,7 +146,7 @@ internal class NativeCursorWindow(
         BLOB(4),
     }
 
-    companion object {
-        private const val ROW_SLOT_CHUNK_NUM_ROWS = 100
+    private companion object {
+        private const val SLOT_SIZE_BYTES = 16
     }
 }

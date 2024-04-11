@@ -8,7 +8,8 @@ package ru.pixnews.wasm.sqlite.open.helper.internal.cursor
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteException
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteClosable
+import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.CursorFieldType
+import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.Field
 
 /**
  *
@@ -26,15 +27,13 @@ internal class CursorWindow(
     name: String?,
     rootLogger: Logger,
     val windowSizeBytes: Int = WINDOW_SIZE_KB * 1024,
-) : SQLiteClosable() {
+) {
+    private val logger = rootLogger.withTag("CursorWindow")
+
     /**
-     *
      *  Sets the start position of this cursor window.
-     *
-     *
      * The start position is the zero-based index of the first row that this window contains
      * relative to the entire result set of the [Cursor].
-     *
      *
      * @param pos The new zero-based start position.
      */
@@ -44,7 +43,8 @@ internal class CursorWindow(
      * Gets the name of this cursor window, never null.
      */
     val name: String = if (name?.isNotEmpty() == true) name else "<unnamed>"
-    var window: NativeCursorWindow = NativeCursorWindow(this.name, windowSizeBytes, rootLogger = rootLogger)
+    var window: NativeCursorWindow = NativeCursorWindow(this.name, windowSizeBytes, logger)
+        private set
 
     /**
      * Gets the number of rows in this window.
@@ -59,9 +59,7 @@ internal class CursorWindow(
     }
 
     /**
-     * Clears out the existing contents of the window, making it safe to reuse
-     * for new data.
-     *
+     * Clears out the existing contents of the window, making it safe to reuse for new data.
      *
      * The start position ([.getStartPosition]), number of rows ([.getNumRows]),
      * and number of columns in the cursor are all reset to zero.
@@ -69,30 +67,17 @@ internal class CursorWindow(
      */
     fun clear() {
         startPosition = 0
-        window.clear()
+        window = NativeCursorWindow(name, windowSizeBytes, logger)
     }
 
     /**
      * Returns the type of the field at the specified row and column index.
      *
-     * The returned field types are:
-     *
-     *  * [Cursor.FIELD_TYPE_NULL]
-     *  * [Cursor.FIELD_TYPE_INTEGER]
-     *  * [Cursor.FIELD_TYPE_FLOAT]
-     *  * [Cursor.FIELD_TYPE_STRING]
-     *  * [Cursor.FIELD_TYPE_BLOB]
-     *
      * @param row The zero-based row index.
      * @param column The zero-based column index.
      * @return The field type.
      */
-    fun getType(row: Int, column: Int): NativeCursorWindow.CursorFieldType {
-        val slot: NativeCursorWindow.FieldSlot = window.getFieldSlot(row - startPosition, column) ?: error(
-            "Couldn't read row $row column $column",
-        )
-        return slot.type
-    }
+    fun getType(row: Int, column: Int): CursorFieldType = requireField(row, column).type
 
     /**
      * Gets the value of the field at the specified row and column index as a byte array.
@@ -111,156 +96,64 @@ internal class CursorWindow(
      * @return The value of the field as a byte array.
      * @throws AndroidSqliteException
      */
-    fun getBlob(row: Int, column: Int): ByteArray? {
-        val slot: NativeCursorWindow.FieldSlot = window.getFieldSlot(row - startPosition, column) ?: error(
-            "Couldn't read row $row column $column",
-        )
-
-        return slot.field.let { field ->
-            when (field) {
-                is NativeCursorWindow.Field.BlobField -> field.value
-                is NativeCursorWindow.Field.FloatField -> throw AndroidSqliteException(
-                    "FLOAT data in nativeGetBlob",
-                )
-
-                is NativeCursorWindow.Field.IntegerField -> throw AndroidSqliteException(
-                    "INTEGER data in nativeGetBlob",
-                )
-
-                NativeCursorWindow.Field.Null -> null
-                is NativeCursorWindow.Field.StringField -> field.value.encodeToByteArray()
-            }
-        }
+    fun getBlob(row: Int, column: Int): ByteArray? = when (val field = requireField(row, column)) {
+        is Field.BlobField -> field.value
+        is Field.FloatField -> throw AndroidSqliteException("FLOAT data in nativeGetBlob")
+        is Field.IntegerField -> throw AndroidSqliteException("INTEGER data in nativeGetBlob")
+        is Field.StringField -> field.value.encodeToByteArray()
+        Field.Null -> null
     }
 
     /**
      * Gets the value of the field at the specified row and column index as a string.
-     *
-     * The result is determined as follows:
-     *
-     *  * If the field is of type [Cursor.FIELD_TYPE_NULL], then the result
-     * is `null`.
-     *  * If the field is of type [Cursor.FIELD_TYPE_STRING], then the result
-     * is the string value.
-     *  * If the field is of type [Cursor.FIELD_TYPE_INTEGER], then the result
-     * is a string representation of the integer in decimal, obtained by formatting the
-     * value with the `printf` family of functions using
-     * format specifier `%lld`.
-     *  * If the field is of type [Cursor.FIELD_TYPE_FLOAT], then the result
-     * is a string representation of the floating-point value in decimal, obtained by
-     * formatting the value with the `printf` family of functions using
-     * format specifier `%g`.
-     *  * If the field is of type [Cursor.FIELD_TYPE_BLOB], then a
-     * [SQLiteException] is thrown.
      *
      * @param row The zero-based row index.
      * @param column The zero-based column index.
      * @return The value of the field as a string.
      * @throws AndroidSqliteException
      */
-    fun getString(row: Int, column: Int): String? {
-        val slot: NativeCursorWindow.FieldSlot = window.getFieldSlot(row - startPosition, column) ?: error(
-            "Couldn't read row $row column $column",
-        )
-
-        return slot.field.let { field ->
-            when (field) {
-                is NativeCursorWindow.Field.BlobField -> throw AndroidSqliteException(
-                    "Unable to convert BLOB to double",
-                )
-
-                is NativeCursorWindow.Field.FloatField -> field.value.toString()
-                is NativeCursorWindow.Field.IntegerField -> field.value.toString()
-                NativeCursorWindow.Field.Null -> null
-                is NativeCursorWindow.Field.StringField -> field.value
-            }
-        }
+    fun getString(row: Int, column: Int): String? = when (val field = requireField(row, column)) {
+        is Field.BlobField -> throw AndroidSqliteException("Unable to convert BLOB to double")
+        is Field.FloatField -> field.value.toString()
+        is Field.IntegerField -> field.value.toString()
+        is Field.StringField -> field.value
+        Field.Null -> null
     }
 
     /**
      * Gets the value of the field at the specified row and column index as a `long`.
-     *
-     *
-     * The result is determined as follows:
-     *
-     *  * If the field is of type [Cursor.FIELD_TYPE_NULL], then the result
-     * is `0L`.
-     *  * If the field is of type [Cursor.FIELD_TYPE_STRING], then the result
-     * is the value obtained by parsing the string value with `strtoll`.
-     *  * If the field is of type [Cursor.FIELD_TYPE_INTEGER], then the result
-     * is the `long` value.
-     *  * If the field is of type [Cursor.FIELD_TYPE_FLOAT], then the result
-     * is the floating-point value converted to a `long`.
-     *  * If the field is of type [Cursor.FIELD_TYPE_BLOB], then a
-     * [AndroidSqliteException] is thrown.
      *
      * @param row The zero-based row index.
      * @param column The zero-based column index.
      * @return The value of the field as a `long`.
      * @throws AndroidSqliteException
      */
-    fun getLong(row: Int, column: Int): Long {
-        val slot: NativeCursorWindow.FieldSlot = window.getFieldSlot(row - startPosition, column) ?: error(
-            "Couldn't read row $row column $column",
-        )
-
-        return slot.field.let { field ->
-            when (field) {
-                is NativeCursorWindow.Field.BlobField -> throw AndroidSqliteException(
-                    "Unable to convert BLOB to double",
-                )
-
-                is NativeCursorWindow.Field.FloatField -> field.value.toLong()
-                is NativeCursorWindow.Field.IntegerField -> field.value
-                NativeCursorWindow.Field.Null -> 0L
-                is NativeCursorWindow.Field.StringField -> field.value.toLongOrNull() ?: 0L
-            }
-        }
+    fun getLong(row: Int, column: Int): Long = when (val field = requireField(row, column)) {
+        is Field.BlobField -> throw AndroidSqliteException("Unable to convert BLOB to double")
+        is Field.FloatField -> field.value.toLong()
+        is Field.IntegerField -> field.value
+        is Field.StringField -> field.value.toLongOrNull() ?: 0L
+        Field.Null -> 0L
     }
 
     /**
-     * Gets the value of the field at the specified row and column index as a
-     * `double`.
-     *
-     * The result is determined as follows:
-     *
-     *  * If the field is of type Cursor.FIELD_TYPE_NULL, then the result
-     * is `0.0`.
-     *  * If the field is of type Cursor.FIELD_TYPE_STRING, then the result
-     * is the value obtained by parsing the string value with `strtod`.
-     *  * If the field is of type Cursor.FIELD_TYPE_INTEGER, then the result
-     * is the integer value converted to a `double`.
-     *  * If the field is of type Cursor.FIELD_TYPE_FLOAT, then the result
-     * is the `double` value.
-     *  * If the field is of type Cursor.FIELD_TYPE_BLOB, then a
-     * [AndroidSqliteException] is thrown.
+     * Gets the value of the field at the specified row and column index as a `double`.
      *
      * @param row The zero-based row index.
      * @param column The zero-based column index.
      * @return The value of the field as a `double`.
      * @throws AndroidSqliteException
      */
-    fun getDouble(row: Int, column: Int): Double {
-        val slot: NativeCursorWindow.FieldSlot = window.getFieldSlot(row - startPosition, column) ?: error(
-            "Couldn't read row $row column $column",
-        )
-        return slot.field.let { field ->
-            when (field) {
-                is NativeCursorWindow.Field.BlobField -> throw AndroidSqliteException(
-                    "Unable to convert BLOB to double",
-                )
-
-                is NativeCursorWindow.Field.FloatField -> field.value
-                is NativeCursorWindow.Field.IntegerField -> field.value.toDouble()
-                NativeCursorWindow.Field.Null -> 0.0
-                is NativeCursorWindow.Field.StringField -> field.value.toDoubleOrNull() ?: 0.0
-            }
-        }
+    fun getDouble(row: Int, column: Int): Double = when (val field = requireField(row, column)) {
+        is Field.BlobField -> throw AndroidSqliteException("Unable to convert BLOB to double")
+        is Field.FloatField -> field.value
+        is Field.IntegerField -> field.value.toDouble()
+        is Field.StringField -> field.value.toDoubleOrNull() ?: 0.0
+        Field.Null -> 0.0
     }
 
     /**
-     * Gets the value of the field at the specified row and column index as a
-     * `short`.
+     * Gets the value of the field at the specified row and column index as a `short`.
      *
      * The result is determined by invoking [.getLong] and converting the
      * result to `short`.
@@ -299,9 +192,9 @@ internal class CursorWindow(
         return getDouble(row, column).toFloat()
     }
 
-    override fun onAllReferencesReleased() {
-        window.clear()
-    }
+    private fun requireField(row: Int, column: Int): Field = window.getField(row - startPosition, column) ?: error(
+        "Couldn't read row $row column $column",
+    )
 
     override fun toString(): String = "$name {$window}"
 

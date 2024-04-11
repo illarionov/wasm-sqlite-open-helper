@@ -57,25 +57,23 @@ internal class SQLiteQuery(
         requiredPos: Int,
         countAllRows: Boolean,
     ): Int = useReference {
-        window.useReference<Int> {
-            try {
-                session.executeForCursorWindow(
-                    sql = sql,
-                    bindArgs = bindArgs,
-                    window = window,
-                    startPos = startPos,
-                    requiredPos = requiredPos,
-                    countAllRows = countAllRows,
-                    connectionFlags = connectionFlags,
-                    cancellationSignal = cancellationSignal,
-                )
-            } catch (ex: SQLiteDatabaseCorruptException) {
-                onCorruption()
-                throw ex
-            } catch (ex: SQLiteException) {
-                logger.e { "exception: ${ex.message}; query: $sql" }
-                throw ex
-            }
+        try {
+            session.executeForCursorWindow(
+                sql = sql,
+                bindArgs = bindArgs,
+                window = window,
+                startPos = startPos,
+                requiredPos = requiredPos,
+                countAllRows = countAllRows,
+                connectionFlags = connectionFlags,
+                cancellationSignal = cancellationSignal,
+            )
+        } catch (ex: SQLiteDatabaseCorruptException) {
+            onCorruption()
+            throw ex
+        } catch (ex: SQLiteException) {
+            logger.e { "exception: ${ex.message}; query: $sql" }
+            throw ex
         }
     }
 
