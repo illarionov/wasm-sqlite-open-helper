@@ -13,6 +13,8 @@ import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.Cur
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.CursorFieldType.NULL
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.CursorFieldType.STRING
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.Field.Null
+import ru.pixnews.wasm.sqlite.open.helper.internal.ext.encodedNullTerminatedStringLength
+import kotlin.LazyThreadSafetyMode.NONE
 
 internal class NativeCursorWindow(
     val name: String,
@@ -22,18 +24,11 @@ internal class NativeCursorWindow(
     private val logger = rootLogger.withTag("NativeCursorWindow")
     private val rows: ArrayDeque<RowSlot> = ArrayDeque()
     private var numColumns: Int = 0
-    private var _freeSpace: Int = size
-
-    val freeSpace: Int
-        get() = _freeSpace
+    var freeSpace: Int = size
+        private set
 
     val numRows: Int
         get() = rows.size
-
-    fun clear(): Int {
-        rows.clear()
-        return 0
-    }
 
     fun setNumColumns(numColumns: Int): Int {
         if ((this.numColumns > 0 || this.numRows > 0) && numColumns != this.numColumns) {
@@ -45,15 +40,22 @@ internal class NativeCursorWindow(
     }
 
     fun allocRow(): Int {
-        allocRowSlot().apply {
-            fields = Array(numColumns) { Null }
+        val rowSlotSize = numColumns * SLOT_SIZE_BYTES
+        if (freeSpace - rowSlotSize < 0) {
+            return -1 // NO_MEMORY
         }
-        // TODO fail on full window
+        freeSpace -= rowSlotSize
+        RowSlot(numColumns).also {
+            rows.addLast(it)
+        }
         return 0
     }
 
     fun freeLastRow() {
-        rows.removeLastOrNull()
+        if (rows.isNotEmpty()) {
+            val lastSlot = rows.removeLast()
+            freeSpace += lastSlot.fields.size * SLOT_SIZE_BYTES + lastSlot.payloadSize
+        }
     }
 
     fun getField(row: Int, column: Int): Field? {
@@ -67,22 +69,32 @@ internal class NativeCursorWindow(
         return slot.fields[column]
     }
 
+    @Suppress("ReturnCount")
     fun putField(row: Int, column: Int, value: Field): Int {
         if (!isValidRowColumn(row, column)) {
             return -1
         } // BAD_VALUE
+
         val rowSlot = rows.getOrNull(row) ?: run {
             logger.e { "Failed to find rowSlot for row $row" }
             return -1
         }
+
+        val additionalSpace = value.payloadSize
+        if (freeSpace < additionalSpace) {
+            return -1 // NO_MEMORY
+        }
+
         rowSlot.fields[column] = value
+        freeSpace -= additionalSpace
+
         return 0
     }
 
-    private fun allocRowSlot(): RowSlot {
-        return RowSlot(numColumns).also {
-            rows.addLast(it)
-        }
+    fun clear(): Int {
+        rows.clear()
+        freeSpace = size
+        return 0
     }
 
     private fun isValidRowColumn(row: Int, column: Int): Boolean {
@@ -98,17 +110,32 @@ internal class NativeCursorWindow(
     }
 
     private class RowSlot(numColumns: Int) {
-        var fields: Array<Field> = Array(numColumns) { Null }
+        val fields: Array<Field> = Array(numColumns) { Null }
+
+        @Suppress("WRONG_NAME_OF_VARIABLE_INSIDE_ACCESSOR")
+        val payloadSize: Int
+            get() = fields.sumOf(Field::payloadSize)
     }
 
     sealed class Field(
         val type: CursorFieldType,
     ) {
+        open val payloadSize: Int = 0
+
         data object Null : Field(NULL)
+
         class IntegerField(val value: Long) : Field(INTEGER)
+
         class FloatField(val value: Double) : Field(FLOAT)
-        class StringField(val value: String) : Field(STRING)
-        class BlobField(val value: ByteArray) : Field(BLOB)
+
+        class StringField(val value: String) : Field(STRING) {
+            override val payloadSize: Int by lazy(NONE) {
+                value.encodedNullTerminatedStringLength()
+            }
+        }
+        class BlobField(val value: ByteArray) : Field(BLOB) {
+            override val payloadSize: Int = value.size
+        }
     }
 
     enum class CursorFieldType(val id: Int) {
@@ -117,5 +144,9 @@ internal class NativeCursorWindow(
         FLOAT(2),
         STRING(3),
         BLOB(4),
+    }
+
+    private companion object {
+        private const val SLOT_SIZE_BYTES = 16
     }
 }

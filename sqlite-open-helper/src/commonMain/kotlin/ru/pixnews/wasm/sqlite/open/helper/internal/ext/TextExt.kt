@@ -8,6 +8,5 @@ package ru.pixnews.wasm.sqlite.open.helper.internal.ext
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
 
-// TODO: merge with MemoryUtil
 @InternalWasmSqliteHelperApi
 internal fun String.encodedNullTerminatedStringLength(): Int = this.encodeToByteArray().size + 1
