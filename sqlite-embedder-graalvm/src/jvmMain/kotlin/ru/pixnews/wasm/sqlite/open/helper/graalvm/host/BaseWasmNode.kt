@@ -12,7 +12,7 @@ import org.graalvm.wasm.memory.WasmMemory
 import org.graalvm.wasm.nodes.WasmRootNode
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.WasmHostMemoryImpl
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.GraalvmWasmHostMemoryImpl
 
 internal open class BaseWasmNode(
     language: WasmLanguage,
@@ -26,5 +26,5 @@ internal open class BaseWasmNode(
 
     override fun module(): WasmModule = module
 
-    fun WasmMemory.toHostMemory() = WasmHostMemoryImpl(this, this@BaseWasmNode, host.rootLogger)
+    fun WasmMemory.toHostMemory() = GraalvmWasmHostMemoryImpl(this, this@BaseWasmNode, host.rootLogger)
 }

@@ -19,7 +19,10 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.CiovecArray
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.IovecArray
 import java.io.ByteArrayOutputStream
 
-internal class WasmHostMemoryImpl(
+/**
+ * [Memory] implementation based on GraalVM [WasmMemory]
+ */
+internal class GraalvmWasmHostMemoryImpl(
     val memory: WasmMemory,
     internal val node: Node?,
     logger: Logger,

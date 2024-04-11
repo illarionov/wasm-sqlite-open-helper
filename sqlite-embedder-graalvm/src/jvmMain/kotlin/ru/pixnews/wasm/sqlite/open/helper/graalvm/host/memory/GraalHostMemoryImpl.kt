@@ -20,7 +20,9 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.CiovecArray
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.IovecArray
 import java.nio.ByteOrder.LITTLE_ENDIAN
 
-// TODO: remove?
+/**
+ * Generic [Memory] implementation based on [Value]
+ */
 internal class GraalHostMemoryImpl(
     val memory: Value,
     logger: Logger,

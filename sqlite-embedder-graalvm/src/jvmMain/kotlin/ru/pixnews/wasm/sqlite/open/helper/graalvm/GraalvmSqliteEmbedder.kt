@@ -16,6 +16,7 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.bindings.EmscriptenPthreadBindings
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.bindings.SqliteBindings
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.EmscriptenEnvModuleBuilder
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.GraalHostMemoryImpl
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.preview1.WasiSnapshotPreview1MobuleBuilder
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.pthread.Pthread
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.GraalvmSqliteCapiImpl
@@ -83,13 +84,14 @@ public object GraalvmSqliteEmbedder : SqliteEmbedder<GraalvmSqliteEmbedderConfig
             ),
         )
 
+        val envBindings = wasmBindings.getMember("env")
+        val memory = GraalHostMemoryImpl(envBindings.getMember("memory"), host.rootLogger)
+
         val bindings = SqliteBindings(
-            context = graalContext,
-            envBindings = wasmBindings.getMember("env"),
-            mainBindings = mainBindings,
-            logger = host.rootLogger,
+            sqliteBindings = mainBindings,
+            memory = memory,
         )
-        return GraalvmSqliteCapiImpl(bindings, callbackStore, indirectFunctionIndexes)
+        return GraalvmSqliteCapiImpl(bindings, memory, callbackStore, indirectFunctionIndexes)
     }
 
     private fun setupWasmGraalContext(
