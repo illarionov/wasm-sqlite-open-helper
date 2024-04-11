@@ -12,7 +12,6 @@ import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.memory.WasmMemory
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
@@ -23,10 +22,9 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 internal class SyscallFcntl64(
     language: WasmLanguage,
     module: WasmModule,
-    override val host: SqliteEmbedderHost,
+    host: SqliteEmbedderHost,
     functionName: String = "__syscall_fcntl64",
 ) : BaseWasmNode(language, module, host, functionName) {
-    private val logger: Logger = host.rootLogger.withTag(SyscallFcntl64::class.qualifiedName!!)
     private val fcntlHandler = FcntlHandler(host.fileSystem, host.rootLogger)
 
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {

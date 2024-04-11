@@ -12,7 +12,6 @@ import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsUint
@@ -25,11 +24,9 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 internal class SyscallFchmod(
     language: WasmLanguage,
     module: WasmModule,
-    override val host: SqliteEmbedderHost,
+    host: SqliteEmbedderHost,
     functionName: String = "__syscall_fchmod",
 ) : BaseWasmNode(language, module, host, functionName) {
-    private val logger: Logger = host.rootLogger.withTag(SyscallFchmod::class.qualifiedName!!)
-
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Int {
         val args = frame.arguments
         return syscallFchmod(

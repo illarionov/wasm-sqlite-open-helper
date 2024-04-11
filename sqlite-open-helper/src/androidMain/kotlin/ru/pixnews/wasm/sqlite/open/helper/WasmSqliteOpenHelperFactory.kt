@@ -35,7 +35,7 @@ internal class WasmSqliteOpenHelperFactory(
     private val openParams: OpenParamsBlock,
     rootLogger: Logger,
 ) : SupportSQLiteOpenHelper.Factory {
-    private val logger: Logger = rootLogger.withTag(WasmSqliteOpenHelperFactory::class.qualifiedName!!)
+    private val logger: Logger = rootLogger.withTag("WasmSqliteOpenHelperFactory")
 
     override fun create(configuration: SupportSQLiteOpenHelper.Configuration): SupportSQLiteOpenHelper {
         val bindings = GraalNativeBindings(sqliteCapi, logger)

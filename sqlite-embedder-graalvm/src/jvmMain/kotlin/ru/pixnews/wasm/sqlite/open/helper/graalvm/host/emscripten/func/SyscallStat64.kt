@@ -68,7 +68,6 @@ private class SyscallStat64(
     functionName = functionName,
     host = host,
 ) {
-    private val logger: Logger = rootLogger.withTag(SyscallStat64::class.qualifiedName!!)
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Int {
         val args = frame.arguments
         return stat64(
@@ -92,11 +91,11 @@ private class SyscallStat64(
                 path = path,
                 followSymlinks = followSymlinks,
             ).also {
-                logger.v { "$functionName($path): $it" }
+                logger.v { "`$path`: $it" }
             }.pack()
             hostMemory.write(dst, stat)
         } catch (e: SysException) {
-            logger.v { "$functionName(`$path`): error ${e.errNo}" }
+            logger.v { "`$path`: error ${e.errNo}" }
             return -e.errNo.code
         }
 

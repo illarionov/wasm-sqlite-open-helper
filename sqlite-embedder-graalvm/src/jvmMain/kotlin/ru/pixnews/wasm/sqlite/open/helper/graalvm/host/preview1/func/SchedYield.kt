@@ -20,7 +20,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 internal class SchedYield(
     language: WasmLanguage,
     module: WasmModule,
-    override val host: SqliteEmbedderHost,
+    host: SqliteEmbedderHost,
     functionName: String = "sched_yield",
 ) : BaseWasmNode(language, module, host, functionName) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {

@@ -13,7 +13,6 @@ import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.memory.WasmMemory
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
@@ -22,10 +21,9 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
 internal class TzsetJs(
     language: WasmLanguage,
     module: WasmModule,
-    override val host: SqliteEmbedderHost,
+    host: SqliteEmbedderHost,
     functionName: String = "_tzset_js",
 ) : BaseWasmNode(language, module, host, functionName) {
-    private val logger: Logger = host.rootLogger.withTag(TzsetJs::class.qualifiedName!!)
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance) {
         val args = frame.arguments
         tzsetJs(

@@ -24,7 +24,6 @@ internal class EmscriptenThreadMailboxAwait(
     @Suppress("UnusedPrivateProperty")
     private val posixThreadRef: () -> Pthread,
 ) : BaseWasmNode(language, module, host, functionName) {
-    private val logger = host.rootLogger.withTag(EmscriptenThreadMailboxAwait::class.qualifiedName!!)
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance) {
         val args = frame.arguments
         val threadPtr = args.getArgAsInt(0)

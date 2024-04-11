@@ -87,7 +87,7 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
     journalMode: SQLiteDatabaseJournalMode?,
     syncMode: SQLiteDatabaseSyncMode?,
 ) : SQLiteClosable(), SupportSQLiteDatabase {
-    private val logger = rootLogger.withTag(TAG)
+    private val logger = rootLogger.withTag("SQLiteDatabase")
 
     // Thread-local for database sessions that belong to this database.
     // Each thread has its own database session.
@@ -1300,8 +1300,6 @@ internal class SQLiteDatabase<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPt
     internal fun getTotalStatementCacheMisses(): Int = requireConnectionPoolLocked().totalPrepareStatementCacheMiss
 
     internal companion object {
-        private const val TAG = "SQLiteDatabase"
-
         /**
          * Absolute max value that can be set by [.setMaxSqlCacheSize].
          *

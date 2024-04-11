@@ -34,7 +34,7 @@ public class FcntlHandler(
     private val fileSystem: FileSystem,
     rootLogger: Logger,
 ) {
-    private val logger: Logger = rootLogger.withTag(FcntlHandler::class.qualifiedName!!)
+    private val logger: Logger = rootLogger.withTag("FcntlHandler")
     private val handlers: Map<UInt, FcntlOperationHandler> = mapOf(
         Fcntl.F_SETLK to FcntlSetLockOperation(),
     )

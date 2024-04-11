@@ -37,7 +37,7 @@ internal class Sqlite3TraceAdapter(
     language: WasmLanguage,
     module: WasmModule,
     private val callbackStore: Sqlite3CallbackStore,
-    override val host: SqliteEmbedderHost,
+    host: SqliteEmbedderHost,
     functionName: String,
 ) : BaseWasmNode(language, module, host, functionName) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {

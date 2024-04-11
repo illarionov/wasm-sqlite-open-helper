@@ -24,7 +24,7 @@ public class DefaultWasiMemoryWriter(
     private val memory: Memory,
     logger: Logger,
 ) : WasiMemoryWriter {
-    private val logger: Logger = logger.withTag(DefaultWasiMemoryWriter::class.qualifiedName!!)
+    private val logger: Logger = logger.withTag("DefaultWasiMemoryWriter")
     override fun write(channel: FdChannel, strategy: ReadWriteStrategy, cioVecs: CiovecArray): ULong {
         logger.v { "write(${channel.fd}, ${cioVecs.ciovecList.map { it.bufLen.value }})" }
         val bufs = cioVecs.toByteBuffers(memory)

@@ -13,7 +13,6 @@ import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.memory.WasmMemory
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
@@ -29,11 +28,9 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 internal class SyscallFstat64(
     language: WasmLanguage,
     module: WasmModule,
-    override val host: SqliteEmbedderHost,
+    host: SqliteEmbedderHost,
     functionName: String = "__syscall_fstat64",
 ) : BaseWasmNode(language, module, host, functionName) {
-    private val logger: Logger = host.rootLogger.withTag(SyscallFstat64::class.qualifiedName!!)
-
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {
         val args = frame.arguments
         return syscallFstat64(
@@ -51,12 +48,12 @@ internal class SyscallFstat64(
         dst: WasmPtr<StructStat>,
     ): Int = try {
         val stat = host.fileSystem.stat(fd).also {
-            logger.v { "fStat64($fd): OK $it" }
+            logger.v { "`$fd`: OK $it" }
         }.pack()
         memory.toHostMemory().write(dst, stat)
         Errno.SUCCESS.code
     } catch (e: SysException) {
-        logger.v { "fStat64($fd): Error ${e.errNo}" }
+        logger.v { "`$fd`: Error ${e.errNo}" }
         -e.errNo.code
     }
 }

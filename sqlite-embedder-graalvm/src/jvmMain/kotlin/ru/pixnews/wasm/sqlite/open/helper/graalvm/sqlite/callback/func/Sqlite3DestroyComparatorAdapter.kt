@@ -12,7 +12,6 @@ import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
@@ -25,11 +24,9 @@ internal class Sqlite3DestroyComparatorAdapter(
     language: WasmLanguage,
     module: WasmModule,
     private val callbackStore: Sqlite3CallbackStore,
-    override val host: SqliteEmbedderHost,
+    host: SqliteEmbedderHost,
     functionName: String,
 ) : BaseWasmNode(language, module, host, functionName) {
-    private val logger: Logger = host.rootLogger.withTag(Sqlite3ProgressAdapter::class.qualifiedName!!)
-
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance) {
         val args = frame.arguments
         destroyComparator(Sqlite3CallbackStore.Sqlite3ComparatorId(args.getArgAsInt(0)))
