@@ -20,7 +20,7 @@ internal class NativeCursorWindow(
     rootLogger: Logger,
 ) {
     private val logger = rootLogger.withTag("NativeCursorWindow")
-    private val data: Header = Header(0, RowSlotChunk(), 0, 0)
+    private val data: Header = Header(0, ArrayDeque(), 0, 0)
     private var _freeSpace: Int = size
 
     val freeSpace: Int
@@ -31,7 +31,7 @@ internal class NativeCursorWindow(
 
     fun clear(): Int {
         data.freeOffset = 0
-        data.firstChunk = RowSlotChunk()
+        data.chunks = ArrayDeque()
         data.numColumns = 0
         data.numRows = 0
         return 0
@@ -87,52 +87,35 @@ internal class NativeCursorWindow(
     }
 
     private fun allocRowSlot(): RowSlot {
-        var chunkPos = data.numRows
-        var rowSlotChunk: RowSlotChunk = data.firstChunk
-        while (chunkPos > ROW_SLOT_CHUNK_NUM_ROWS) {
-            rowSlotChunk = rowSlotChunk.nextChunk!!
-            chunkPos -= ROW_SLOT_CHUNK_NUM_ROWS
-        }
-        if (chunkPos == ROW_SLOT_CHUNK_NUM_ROWS) {
-            RowSlotChunk().let {
-                rowSlotChunk.nextChunk = it
-                rowSlotChunk = it
-            }
-            chunkPos = 0
+        val chunkPos = data.numRows
+        val slotPos = chunkPos / ROW_SLOT_CHUNK_NUM_ROWS
+        if (slotPos > data.chunks.lastIndex) {
+            data.chunks.addLast(RowSlotChunk())
         }
         data.numRows += 1
-        return rowSlotChunk.slots[chunkPos]
+        return data.chunks[slotPos].slots[chunkPos % ROW_SLOT_CHUNK_NUM_ROWS]
     }
 
     private fun getRowSlot(row: Int): RowSlot? {
-        var chunkPos = row
-        var rowSlotChunk: RowSlotChunk? = data.firstChunk
-        while (chunkPos >= ROW_SLOT_CHUNK_NUM_ROWS) {
-            rowSlotChunk = rowSlotChunk?.nextChunk
-            chunkPos -= ROW_SLOT_CHUNK_NUM_ROWS
-        }
-        return rowSlotChunk?.let { it.slots[chunkPos] }
+        val pos = row / ROW_SLOT_CHUNK_NUM_ROWS
+        return data.chunks.getOrNull(pos)?.slots?.get(row % ROW_SLOT_CHUNK_NUM_ROWS)
     }
 
     private fun isValidRowColumn(row: Int, column: Int): Boolean {
-        if (row >= data.numRows || column >= data.numColumns) {
+        return if (row >= data.numRows || column >= data.numColumns) {
             logger.e {
                 "Failed to read row $row, column $column from a CursorWindow which " +
                         "has ${data.numRows} rows, ${data.numColumns} columns"
             }
-            return false
+            false
+        } else {
+            true
         }
-        return true
     }
 
-    /**
-     * @property freeOffset
-     *   Offset of the lowest unused byte in the window
-     * @property firstChunk firstChunkOffset
-     */
     private class Header(
         var freeOffset: Long,
-        var firstChunk: RowSlotChunk,
+        var chunks: ArrayDeque<RowSlotChunk>,
 
         var numRows: Int,
         var numColumns: Int,
@@ -140,7 +123,6 @@ internal class NativeCursorWindow(
 
     private class RowSlotChunk {
         val slots: MutableList<RowSlot> = MutableList(ROW_SLOT_CHUNK_NUM_ROWS) { RowSlot(0) }
-        var nextChunk: RowSlotChunk? = null
     }
 
     private class RowSlot(numColumns: Int) {
