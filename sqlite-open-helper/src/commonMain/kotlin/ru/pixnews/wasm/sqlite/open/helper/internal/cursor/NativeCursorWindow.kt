@@ -20,54 +20,47 @@ internal class NativeCursorWindow(
     rootLogger: Logger,
 ) {
     private val logger = rootLogger.withTag("NativeCursorWindow")
-    private val data: Header = Header(0, ArrayDeque(), 0, 0)
+    private val rows: ArrayDeque<RowSlot> = ArrayDeque()
+    private var numColumns: Int = 0
     private var _freeSpace: Int = size
 
     val freeSpace: Int
         get() = _freeSpace
 
     val numRows: Int
-        get() = data.numRows
+        get() = rows.size
 
     fun clear(): Int {
-        data.freeOffset = 0
-        data.chunks = ArrayDeque()
-        data.numColumns = 0
-        data.numRows = 0
+        rows.clear()
         return 0
     }
 
     fun setNumColumns(numColumns: Int): Int {
-        data.numColumns.let { columnNo ->
-            if ((columnNo > 0 || data.numRows > 0) && numColumns != columnNo) {
-                logger.i { "Trying to go from $columnNo columns to $numColumns" }
-                return -1
-            }
+        if ((this.numColumns > 0 || this.numRows > 0) && numColumns != this.numColumns) {
+            logger.i { "Trying to go from ${this.numRows} columns to $numColumns" }
+            return -1
         }
-
-        data.numColumns = numColumns
+        this.numColumns = numColumns
         return 0
     }
 
     fun allocRow(): Int {
         allocRowSlot().apply {
-            fields = Array(data.numColumns) { Null }
+            fields = Array(numColumns) { Null }
         }
         // TODO fail on full window
         return 0
     }
 
     fun freeLastRow() {
-        if (data.numRows > 0) {
-            data.numRows -= 1
-        }
+        rows.removeLastOrNull()
     }
 
     fun getField(row: Int, column: Int): Field? {
         if (!isValidRowColumn(row, column)) {
             return null
         }
-        val slot = getRowSlot(row) ?: run {
+        val slot = rows.getOrNull(row) ?: run {
             logger.e { "Failed to find rowSlot for row $row" }
             return null
         }
@@ -78,7 +71,7 @@ internal class NativeCursorWindow(
         if (!isValidRowColumn(row, column)) {
             return -1
         } // BAD_VALUE
-        val rowSlot = getRowSlot(row) ?: run {
+        val rowSlot = rows.getOrNull(row) ?: run {
             logger.e { "Failed to find rowSlot for row $row" }
             return -1
         }
@@ -87,42 +80,21 @@ internal class NativeCursorWindow(
     }
 
     private fun allocRowSlot(): RowSlot {
-        val chunkPos = data.numRows
-        val slotPos = chunkPos / ROW_SLOT_CHUNK_NUM_ROWS
-        if (slotPos > data.chunks.lastIndex) {
-            data.chunks.addLast(RowSlotChunk())
+        return RowSlot(numColumns).also {
+            rows.addLast(it)
         }
-        data.numRows += 1
-        return data.chunks[slotPos].slots[chunkPos % ROW_SLOT_CHUNK_NUM_ROWS]
-    }
-
-    private fun getRowSlot(row: Int): RowSlot? {
-        val pos = row / ROW_SLOT_CHUNK_NUM_ROWS
-        return data.chunks.getOrNull(pos)?.slots?.get(row % ROW_SLOT_CHUNK_NUM_ROWS)
     }
 
     private fun isValidRowColumn(row: Int, column: Int): Boolean {
-        return if (row >= data.numRows || column >= data.numColumns) {
+        return if (row >= this.numRows || column >= this.numColumns) {
             logger.e {
                 "Failed to read row $row, column $column from a CursorWindow which " +
-                        "has ${data.numRows} rows, ${data.numColumns} columns"
+                        "has ${this.numRows} rows, ${this.numColumns} columns"
             }
             false
         } else {
             true
         }
-    }
-
-    private class Header(
-        var freeOffset: Long,
-        var chunks: ArrayDeque<RowSlotChunk>,
-
-        var numRows: Int,
-        var numColumns: Int,
-    )
-
-    private class RowSlotChunk {
-        val slots: MutableList<RowSlot> = MutableList(ROW_SLOT_CHUNK_NUM_ROWS) { RowSlot(0) }
     }
 
     private class RowSlot(numColumns: Int) {
@@ -145,9 +117,5 @@ internal class NativeCursorWindow(
         FLOAT(2),
         STRING(3),
         BLOB(4),
-    }
-
-    companion object {
-        private const val ROW_SLOT_CHUNK_NUM_ROWS = 100
     }
 }
