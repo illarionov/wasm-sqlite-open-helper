@@ -24,7 +24,6 @@ import android.net.Uri
 import android.os.Bundle
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard.CloseGuardFinalizeAction
-import ru.pixnews.wasm.sqlite.open.helper.internal.WasmSqliteCleaner.WasmSqliteCleanable
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.CursorWindow
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow
 import kotlin.math.max
@@ -57,7 +56,6 @@ internal class SQLiteCursor(
             .mapIndexed { columnNo, name -> name to columnNo }
             .toMap()
     }
-    private var windowCleaner: WasmSqliteCleanable? = null
 
     /** CloseGuard to detect leaked cursor **/
     private val closeGuard: CloseGuard = CloseGuard.get().apply {
@@ -83,16 +81,7 @@ internal class SQLiteCursor(
          */
         set(newWindow) {
             if (newWindow !== field) {
-                val oldCleaner = windowCleaner
-
                 field = newWindow
-                windowCleaner = if (newWindow != null) {
-                    WasmSqliteCleaner.register(this, CloseWindowAction(newWindow))
-                } else {
-                    null
-                }
-
-                oldCleaner?.clean()
             }
             _count = NO_COUNT
         }
@@ -367,21 +356,11 @@ internal class SQLiteCursor(
 
     override fun close() {
         closed = true
-        windowCleaner?.clean()
-        windowCleaner = null
         window = null
         closeGuard.close()
         closeGuardCleaner.clean()
         synchronized(this) {
             query.close()
-        }
-    }
-
-    private class CloseWindowAction(
-        private val window: CursorWindow,
-    ) : () -> Unit {
-        override fun invoke() {
-            window.close()
         }
     }
 

@@ -12,16 +12,11 @@ import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.Cur
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.CursorFieldType.INTEGER
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.CursorFieldType.NULL
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.CursorFieldType.STRING
-import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.Field.BlobField
-import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.Field.FloatField
-import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.Field.IntegerField
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.Field.Null
-import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.Field.StringField
 
 internal class NativeCursorWindow(
     val name: String,
     val size: Int,
-    val isReadOnly: Boolean = false,
     rootLogger: Logger,
 ) {
     private val logger = rootLogger.withTag("NativeCursorWindow")
@@ -35,9 +30,6 @@ internal class NativeCursorWindow(
         get() = data.numRows
 
     fun clear(): Int {
-        if (isReadOnly) {
-            return -1
-        }
         data.freeOffset = 0
         data.firstChunk = RowSlotChunk()
         data.numColumns = 0
@@ -46,10 +38,6 @@ internal class NativeCursorWindow(
     }
 
     fun setNumColumns(numColumns: Int): Int {
-        if (isReadOnly) {
-            return -1
-        }
-
         data.numColumns.let { columnNo ->
             if ((columnNo > 0 || data.numRows > 0) && numColumns != columnNo) {
                 logger.i { "Trying to go from $columnNo columns to $numColumns" }
@@ -62,24 +50,43 @@ internal class NativeCursorWindow(
     }
 
     fun allocRow(): Int {
-        check(!isReadOnly)
         allocRowSlot().apply {
-            fields = Array(data.numColumns) { FieldSlot() }
+            fields = Array(data.numColumns) { Null }
         }
         // TODO fail on full window
         return 0
     }
 
     fun freeLastRow() {
-        check(!isReadOnly)
         if (data.numRows > 0) {
             data.numRows -= 1
         }
     }
 
-    private fun allocRowSlot(): RowSlot {
-        check(!isReadOnly)
+    fun getField(row: Int, column: Int): Field? {
+        if (!isValidRowColumn(row, column)) {
+            return null
+        }
+        val slot = getRowSlot(row) ?: run {
+            logger.e { "Failed to find rowSlot for row $row" }
+            return null
+        }
+        return slot.fields[column]
+    }
 
+    fun putField(row: Int, column: Int, value: Field): Int {
+        if (!isValidRowColumn(row, column)) {
+            return -1
+        } // BAD_VALUE
+        val rowSlot = getRowSlot(row) ?: run {
+            logger.e { "Failed to find rowSlot for row $row" }
+            return -1
+        }
+        rowSlot.fields[column] = value
+        return 0
+    }
+
+    private fun allocRowSlot(): RowSlot {
         var chunkPos = data.numRows
         var rowSlotChunk: RowSlotChunk = data.firstChunk
         while (chunkPos > ROW_SLOT_CHUNK_NUM_ROWS) {
@@ -107,39 +114,15 @@ internal class NativeCursorWindow(
         return rowSlotChunk?.let { it.slots[chunkPos] }
     }
 
-    fun getFieldSlot(row: Int, column: Int): FieldSlot? {
+    private fun isValidRowColumn(row: Int, column: Int): Boolean {
         if (row >= data.numRows || column >= data.numColumns) {
             logger.e {
                 "Failed to read row $row, column $column from a CursorWindow which " +
                         "has ${data.numRows} rows, ${data.numColumns} columns"
             }
-            return null
+            return false
         }
-        val slot = getRowSlot(row) ?: run {
-            logger.e { "Failed to find rowSlot for row $row" }
-            return null
-        }
-        return slot.fields[column]
-    }
-
-    fun putBlob(row: Int, column: Int, value: ByteArray): Int {
-        check(!isReadOnly)
-        return putField(row, column, BlobField(value))
-    }
-
-    fun putString(row: Int, column: Int, value: String): Int = putField(row, column, StringField(value))
-
-    fun putLong(row: Int, column: Int, value: Long): Int = putField(row, column, IntegerField(value))
-
-    fun putDouble(row: Int, column: Int, value: Double): Int = putField(row, column, FloatField(value))
-    fun putNull(row: Int, column: Int): Int = putField(row, column, Null)
-
-    @Suppress("COMPACT_OBJECT_INITIALIZATION")
-    private fun putField(row: Int, column: Int, value: Field): Int {
-        check(!isReadOnly)
-        val slot: FieldSlot = getFieldSlot(row, column) ?: return -1 // BAD_VALUE
-        slot.field = value
-        return 0
+        return true
     }
 
     /**
@@ -161,14 +144,7 @@ internal class NativeCursorWindow(
     }
 
     private class RowSlot(numColumns: Int) {
-        var fields: Array<FieldSlot> = Array(numColumns) { FieldSlot() }
-    }
-
-    class FieldSlot(
-        var field: Field = Null,
-    ) {
-        val type: CursorFieldType
-            get() = this.field.type
+        var fields: Array<Field> = Array(numColumns) { Null }
     }
 
     sealed class Field(

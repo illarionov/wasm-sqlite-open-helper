@@ -16,6 +16,11 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteCapi
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteCapi.SqliteDbReadonlyResult
 import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteCantOpenDatabaseException
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow
+import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.Field.BlobField
+import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.Field.FloatField
+import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.Field.IntegerField
+import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.Field.Null
+import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.Field.StringField
 import ru.pixnews.wasm.sqlite.open.helper.internal.ext.encodedNullTerminatedStringLength
 import ru.pixnews.wasm.sqlite.open.helper.internal.ext.rethrowAndroidSqliteException
 import ru.pixnews.wasm.sqlite.open.helper.internal.ext.throwAndroidSqliteException
@@ -579,7 +584,7 @@ internal class GraalNativeBindings(
                         val text = sqlite3Api.sqlite3ColumnText(statement, columnNo) ?: run {
                             throwAndroidSqliteException("Null text at ${startPos + addedRows},$columnNo")
                         }
-                        val putStatus = window.putString(addedRows, columnNo, text)
+                        val putStatus = window.putField(addedRows, columnNo, StringField(text))
                         if (putStatus != 0) {
                             logger.v {
                                 "Failed allocating ${text.encodedNullTerminatedStringLength()} bytes for text " +
@@ -596,7 +601,7 @@ internal class GraalNativeBindings(
 
                     SQLITE_INTEGER -> {
                         val value = sqlite3Api.sqlite3ColumnInt64(statement, columnNo)
-                        val putStatus = window.putLong(addedRows, columnNo, value)
+                        val putStatus = window.putField(addedRows, columnNo, IntegerField(value))
                         if (putStatus != 0) {
                             logger.v { "Failed allocating space for a long in column $columnNo, error=$putStatus" }
                             result = CPR_FULL
@@ -607,7 +612,7 @@ internal class GraalNativeBindings(
 
                     SQLITE_FLOAT -> {
                         val value = sqlite3Api.sqlite3ColumnDouble(statement, columnNo)
-                        val putStatus = window.putDouble(addedRows, columnNo, value)
+                        val putStatus = window.putField(addedRows, columnNo, FloatField(value))
                         if (putStatus != 0) {
                             logger.v { "Failed allocating space for a double in column $columnNo, error=$putStatus" }
                             result = CPR_FULL
@@ -618,7 +623,7 @@ internal class GraalNativeBindings(
 
                     SQLITE_BLOB -> {
                         val value = sqlite3Api.sqlite3ColumnBlob(statement, columnNo)
-                        val putStatus = window.putBlob(addedRows, columnNo, value)
+                        val putStatus = window.putField(addedRows, columnNo, BlobField(value))
                         if (putStatus != 0) {
                             logger.v {
                                 "Failed allocating ${value.size} bytes for blob at " +
@@ -631,7 +636,7 @@ internal class GraalNativeBindings(
                     }
 
                     SQLITE_NULL -> {
-                        val putStatus = window.putNull(addedRows, columnNo)
+                        val putStatus = window.putField(addedRows, columnNo, Null)
                         if (putStatus != 0) {
                             logger.v {
                                 "Failed allocating space for a null in column $columnNo, error=$putStatus" +
