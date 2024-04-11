@@ -24,7 +24,7 @@ import java.nio.channels.NonReadableChannelException
 import kotlin.time.measureTimedValue
 
 internal class GraalInputStreamWasiMemoryReader(
-    private val memory: WasmHostMemoryImpl,
+    private val memory: GraalvmWasmHostMemoryImpl,
     logger: Logger,
 ) : WasiMemoryReader {
     private val logger: Logger = logger.withTag("GraalInputStreamWasiMemoryReader")

@@ -24,7 +24,7 @@ internal fun <P : Any?> Array<Any>.getArgAsWasmPtr(idx: Int): WasmPtr<P> = WasmP
     WasmArguments.getArgument(this, idx) as Int,
 )
 
-internal fun Memory.readNullTerminatedString(offsetValue: Value): String? {
+internal fun Memory.readNullableZeroTerminatedString(offsetValue: Value): String? {
     return if (!offsetValue.isNull) {
         this.readZeroTerminatedString(offsetValue.asWasmAddr())
     } else {

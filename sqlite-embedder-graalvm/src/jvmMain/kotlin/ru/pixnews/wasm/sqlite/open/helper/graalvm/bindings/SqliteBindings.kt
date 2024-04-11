@@ -6,87 +6,79 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.bindings
 
-import org.graalvm.polyglot.Context
 import org.graalvm.polyglot.Value
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.member
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.GraalHostMemoryImpl
+import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrno
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteException
 
 @Suppress("VariableNaming", "BLANK_LINE_BETWEEN_PROPERTIES")
 internal class SqliteBindings(
-    val context: Context,
-    envBindings: Value,
-    mainBindings: Value,
-    logger: Logger,
+    sqliteBindings: Value,
+    private val memory: Memory,
 ) {
-    val _initialize: Value? by mainBindings.member()
-    val __errno_location: Value? by mainBindings.member()
-    val __wasm_call_ctors by mainBindings.member()
+    val _initialize: Value? by sqliteBindings.member()
+    val __errno_location: Value? by sqliteBindings.member()
+    val __wasm_call_ctors by sqliteBindings.member()
 
-    val sqlite3_db_status by mainBindings.member()
-    val sqlite3_initialize by mainBindings.member()
+    val sqlite3_db_status by sqliteBindings.member()
+    val sqlite3_initialize by sqliteBindings.member()
 
-    val sqlite3_prepare_v2 by mainBindings.member()
-    val sqlite3_step by mainBindings.member()
-    val sqlite3_column_int64 by mainBindings.member()
-    val sqlite3_finalize by mainBindings.member()
-    val sqlite3_reset by mainBindings.member()
-    val sqlite3_clear_bindings by mainBindings.member()
-    val sqlite3_column_count by mainBindings.member()
-    val sqlite3_column_bytes by mainBindings.member()
-    val sqlite3_column_double by mainBindings.member()
-    val sqlite3_column_text by mainBindings.member()
-    val sqlite3_column_type by mainBindings.member()
-    val sqlite3_column_name by mainBindings.member()
-    val sqlite3_bind_blob by mainBindings.member()
-    val sqlite3_bind_double by mainBindings.member()
-    val sqlite3_bind_int64 by mainBindings.member()
-    val sqlite3_bind_text by mainBindings.member()
-    val sqlite3_bind_parameter_count by mainBindings.member()
-    val sqlite3_stmt_readonly by mainBindings.member()
-    val sqlite3_expanded_sql by mainBindings.member()
-    val sqlite3_errmsg by mainBindings.member()
-    val sqlite3_exec by mainBindings.member()
-    val sqlite3_libversion by mainBindings.member()
-    val sqlite3_libversion_number by mainBindings.member()
-    val sqlite3_last_insert_rowid by mainBindings.member()
-    val sqlite3_changes by mainBindings.member()
-    val sqlite3_close_v2 by mainBindings.member()
-    val sqlite3_progress_handler by mainBindings.member()
-    val sqlite3_busy_timeout by mainBindings.member()
-    val sqlite3_trace_v2 by mainBindings.member()
-    val sqlite3_errcode by mainBindings.member()
-    val sqlite3_extended_errcode by mainBindings.member()
-    val sqlite3_open by mainBindings.member()
-    val sqlite3_open_v2 by mainBindings.member()
-    val sqlite3_create_collation_v2 by mainBindings.member()
-    val sqlite3_db_readonly by mainBindings.member()
+    val sqlite3_prepare_v2 by sqliteBindings.member()
+    val sqlite3_step by sqliteBindings.member()
+    val sqlite3_column_int64 by sqliteBindings.member()
+    val sqlite3_finalize by sqliteBindings.member()
+    val sqlite3_reset by sqliteBindings.member()
+    val sqlite3_clear_bindings by sqliteBindings.member()
+    val sqlite3_column_count by sqliteBindings.member()
+    val sqlite3_column_bytes by sqliteBindings.member()
+    val sqlite3_column_double by sqliteBindings.member()
+    val sqlite3_column_text by sqliteBindings.member()
+    val sqlite3_column_type by sqliteBindings.member()
+    val sqlite3_column_name by sqliteBindings.member()
+    val sqlite3_bind_blob by sqliteBindings.member()
+    val sqlite3_bind_double by sqliteBindings.member()
+    val sqlite3_bind_int64 by sqliteBindings.member()
+    val sqlite3_bind_text by sqliteBindings.member()
+    val sqlite3_bind_parameter_count by sqliteBindings.member()
+    val sqlite3_stmt_readonly by sqliteBindings.member()
+    val sqlite3_expanded_sql by sqliteBindings.member()
+    val sqlite3_errmsg by sqliteBindings.member()
+    val sqlite3_exec by sqliteBindings.member()
+    val sqlite3_libversion by sqliteBindings.member()
+    val sqlite3_libversion_number by sqliteBindings.member()
+    val sqlite3_last_insert_rowid by sqliteBindings.member()
+    val sqlite3_changes by sqliteBindings.member()
+    val sqlite3_close_v2 by sqliteBindings.member()
+    val sqlite3_progress_handler by sqliteBindings.member()
+    val sqlite3_busy_timeout by sqliteBindings.member()
+    val sqlite3_trace_v2 by sqliteBindings.member()
+    val sqlite3_errcode by sqliteBindings.member()
+    val sqlite3_extended_errcode by sqliteBindings.member()
+    val sqlite3_open by sqliteBindings.member()
+    val sqlite3_open_v2 by sqliteBindings.member()
+    val sqlite3_create_collation_v2 by sqliteBindings.member()
+    val sqlite3_db_readonly by sqliteBindings.member()
 
-    val sqlite3_sourceid by mainBindings.member()
+    val sqlite3_sourceid by sqliteBindings.member()
 
-    val sqlite3__wasm_enum_json by mainBindings.member()
-    val sqlite3__wasm_db_config_ip by mainBindings.member()
-    val sqlite3__wasm_db_config_pii by mainBindings.member()
-    val sqlite3__wasm_db_config_s by mainBindings.member()
+    val sqlite3__wasm_enum_json by sqliteBindings.member()
+    val sqlite3__wasm_db_config_ip by sqliteBindings.member()
+    val sqlite3__wasm_db_config_pii by sqliteBindings.member()
+    val sqlite3__wasm_db_config_s by sqliteBindings.member()
 
-    val register_localized_collators by mainBindings.member()
-    val register_android_functions by mainBindings.member()
+    val register_localized_collators by sqliteBindings.member()
+    val register_android_functions by sqliteBindings.member()
 
-    private val memory = GraalHostMemoryImpl(envBindings.getMember("memory"), logger)
-
-    val memoryBindings = SqliteMemoryBindings(mainBindings, memory)
+    val memoryBindings = SqliteMemoryBindings(sqliteBindings)
 
     init {
         initSqlite()
     }
 
     private fun initSqlite() {
-         requireNotNull(__wasm_call_ctors) {
-             "__wasm_call_ctors not defined"
-         }.execute()
-        memoryBindings.init()
+         __wasm_call_ctors.execute()
+        memoryBindings.init(memory)
         postRun()
     }
 
