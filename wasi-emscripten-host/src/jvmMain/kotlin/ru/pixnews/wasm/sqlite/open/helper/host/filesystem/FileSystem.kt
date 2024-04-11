@@ -356,12 +356,6 @@ public class FileSystem(
         logger.v { "close($fd)" }
         val channel = fileDescriptors.remove(fd)
         try {
-            try {
-                channel.channel.force(true)
-            } catch (@Suppress("TooGenericExceptionCaught") ex: Throwable) {
-                // IGNORE
-                logger.v(ex) { "close($fd): sync failed: ${ex.message}" }
-            }
             channel.channel.close()
         } catch (ioe: IOException) {
             throw SysException(IO, "Can not close channel", ioe)
