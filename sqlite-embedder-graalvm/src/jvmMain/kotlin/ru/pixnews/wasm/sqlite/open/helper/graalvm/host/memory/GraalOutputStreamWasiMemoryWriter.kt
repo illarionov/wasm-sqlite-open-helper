@@ -22,11 +22,11 @@ import java.nio.channels.ClosedChannelException
 import java.nio.channels.NonReadableChannelException
 
 internal class GraalOutputStreamWasiMemoryWriter(
-    private val memory: GraalvmWasmHostMemoryImpl,
+    private val memory: GraalvmWasmHostMemoryAdapter,
     logger: Logger,
 ) : WasiMemoryWriter {
     private val logger = logger.withTag("GraalOutputStreamWasiMemoryWriter")
-    private val wasmMemory = memory.memory
+    private val wasmMemory = memory.wasmMemory
     private val defaultMemoryWriter = DefaultWasiMemoryWriter(memory, logger)
 
     override fun write(channel: FdChannel, strategy: ReadWriteStrategy, cioVecs: CiovecArray): ULong {

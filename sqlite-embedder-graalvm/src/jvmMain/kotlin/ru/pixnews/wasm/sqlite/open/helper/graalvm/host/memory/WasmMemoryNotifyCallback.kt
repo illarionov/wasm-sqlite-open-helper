@@ -15,6 +15,14 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsLong
 
+/**
+ * Сallback to be called from the GraalVM Wasm runtime when atomic_notify Wasm function is executed.
+ *
+ * @see <a
+ *   href="https://github.com/WebAssembly/threads/blob/main/proposals/threads/Overview.md#wait-and-notify-operators"
+ * >WebAssembly wait and notify operators</a>
+ *
+ */
 @InternalWasmSqliteHelperApi
 @ExportLibrary(InteropLibrary::class)
 internal class WasmMemoryNotifyCallback(

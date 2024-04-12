@@ -20,6 +20,17 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.SharedMemoryWaiter
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
+/**
+ * Сallback to be called from the GraalVM Wasm runtime when atomic_wait64 / atomic_wait32 Wasm functions are executed.
+ *
+ * Suspends the calling thread if the memory pointed to by addr is equal to expectedValue until a notification
+ * is received from [WasmMemoryNotifyCallback], or until the timeout expires.
+ *
+ * @see <a
+ *   href="https://github.com/WebAssembly/threads/blob/main/proposals/threads/Overview.md#wait-and-notify-operators"
+ * >WebAssembly wait and notify operators</a>
+ *
+ */
 @InternalWasmSqliteHelperApi
 @ExportLibrary(InteropLibrary::class)
 internal class WasmMemoryWaitCallback(

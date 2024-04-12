@@ -16,7 +16,7 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.bindings.EmscriptenPthreadBindings
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.bindings.SqliteBindings
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.EmscriptenEnvModuleBuilder
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.GraalHostMemoryImpl
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.GraalvmWasmHostMemoryAdapter
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.preview1.WasiSnapshotPreview1MobuleBuilder
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.pthread.Pthread
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.GraalvmSqliteCapiImpl
@@ -50,7 +50,7 @@ public object GraalvmSqliteEmbedder : SqliteEmbedder<GraalvmSqliteEmbedderConfig
         val ptreadRef: AtomicReference<Pthread> = AtomicReference()
 
         val sqliteCallbacksModuleBuilder = SqliteCallbacksModuleBuilder(graalContext, host, callbackStore)
-        EmscriptenEnvModuleBuilder(graalContext, host, ptreadRef::get).setupModule(
+        val envModuleInstance = EmscriptenEnvModuleBuilder(graalContext, host, ptreadRef::get).setupModule(
             minMemorySize = sqlite3Binary.wasmMinMemorySize,
             sharedMemory = sqlite3Binary.requireSharedMemory,
             useUnsafeMemory = useSharedMemory,
@@ -84,8 +84,7 @@ public object GraalvmSqliteEmbedder : SqliteEmbedder<GraalvmSqliteEmbedderConfig
             ),
         )
 
-        val envBindings = wasmBindings.getMember("env")
-        val memory = GraalHostMemoryImpl(envBindings.getMember("memory"), host.rootLogger)
+        val memory = GraalvmWasmHostMemoryAdapter(envModuleInstance, null, host.rootLogger)
 
         val bindings = SqliteBindings(
             sqliteBindings = mainBindings,
