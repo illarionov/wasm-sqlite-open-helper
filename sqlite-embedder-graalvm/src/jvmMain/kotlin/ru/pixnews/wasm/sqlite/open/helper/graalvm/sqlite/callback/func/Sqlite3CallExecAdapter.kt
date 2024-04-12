@@ -53,7 +53,7 @@ internal class Sqlite3CallExecAdapter(
         pResults: WasmPtr<WasmPtr<Byte>>,
         pColumnNames: WasmPtr<WasmPtr<Byte>>,
     ): Int {
-        logger.v { "cb() arg1: $arg1 columns: $columns names: $pColumnNames results: $pResults" }
+        logger.v { "Calling exec callback arg1: $arg1 columns: $columns names: $pColumnNames results: $pResults" }
         val hostMemory = memory.toHostMemory()
         val delegateId = Sqlite3ExecCallbackId(arg1)
         val delegate = callbackStore.sqlite3ExecCallbacks[delegateId] ?: error("Callback $delegateId not registered")

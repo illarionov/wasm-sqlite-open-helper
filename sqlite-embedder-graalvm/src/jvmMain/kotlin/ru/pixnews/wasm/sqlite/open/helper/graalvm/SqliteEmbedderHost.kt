@@ -16,7 +16,6 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.nanoseconds
 
-@Suppress("VARIABLE_HAS_PREFIX")
 public class SqliteEmbedderHost(
     public val rootLogger: Logger = Logger,
     public val systemEnvProvider: () -> Map<String, String> = System::getenv,

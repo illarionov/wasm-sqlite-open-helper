@@ -19,7 +19,7 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.EmscriptenEnvM
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.GraalvmWasmHostMemoryAdapter
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.preview1.WasiSnapshotPreview1MobuleBuilder
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.pthread.Pthread
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.GraalvmSqliteCapiImpl
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.GraalvmSqliteCapi
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.Sqlite3CallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.SqliteCallbacksModuleBuilder
 import java.util.concurrent.atomic.AtomicReference
@@ -90,7 +90,7 @@ public object GraalvmSqliteEmbedder : SqliteEmbedder<GraalvmSqliteEmbedderConfig
             sqliteBindings = mainBindings,
             memory = memory,
         )
-        return GraalvmSqliteCapiImpl(bindings, memory, callbackStore, indirectFunctionIndexes)
+        return GraalvmSqliteCapi(bindings, memory, callbackStore, indirectFunctionIndexes, host.rootLogger)
     }
 
     private fun setupWasmGraalContext(
