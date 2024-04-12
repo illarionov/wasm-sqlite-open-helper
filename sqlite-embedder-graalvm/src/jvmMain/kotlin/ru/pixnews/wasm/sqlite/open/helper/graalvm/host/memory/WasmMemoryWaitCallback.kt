@@ -37,7 +37,7 @@ internal class WasmMemoryWaitCallback(
     private val waitersStore: SharedMemoryWaiterListStore,
     logger: Logger,
 ) : TruffleObject {
-    private val logger = logger.withTag(WasmMemoryWaitCallback::class.qualifiedName!!)
+    private val logger = logger.withTag("WasmMemoryWaitCallback")
 
     @Suppress("FunctionOnlyReturningConstant")
     @ExportMessage
