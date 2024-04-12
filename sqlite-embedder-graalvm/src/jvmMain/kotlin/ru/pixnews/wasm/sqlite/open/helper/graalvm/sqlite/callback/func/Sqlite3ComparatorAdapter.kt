@@ -51,7 +51,7 @@ internal class Sqlite3ComparatorAdapter(
         str2Size: Int,
         str2: WasmPtr<Byte>,
     ): Int {
-        logger.v { "invokeComparator() db: $comparatorId" }
+        logger.v { "Calling comparator: $comparatorId" }
         val hostMemory = memory.toHostMemory()
         val delegate: SqliteComparatorCallback = callbackStore.sqlite3Comparators[comparatorId]
             ?: error("Comparator $comparatorId not registered")

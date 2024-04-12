@@ -36,6 +36,7 @@ internal class Sqlite3DestroyComparatorAdapter(
     private fun destroyComparator(
         comparatorId: Sqlite3CallbackStore.Sqlite3ComparatorId,
     ) {
+        logger.v { "Removing comparator $comparatorId" }
         callbackStore.sqlite3Comparators.remove(comparatorId)
     }
 }

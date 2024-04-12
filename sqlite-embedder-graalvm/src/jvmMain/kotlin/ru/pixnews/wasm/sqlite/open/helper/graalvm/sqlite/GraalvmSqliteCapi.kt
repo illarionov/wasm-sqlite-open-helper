@@ -9,6 +9,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite
 
 import org.graalvm.polyglot.Value
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr.Companion.WASM_SIZEOF_PTR
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr.Companion.sqlite3Null
@@ -50,12 +51,14 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTextEncoding
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceCallback
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode
 
-internal class GraalvmSqliteCapiImpl internal constructor(
-    val sqliteBindings: SqliteBindings,
+internal class GraalvmSqliteCapi internal constructor(
+    private val sqliteBindings: SqliteBindings,
     val memory: Memory,
-    val callbackStore: Sqlite3CallbackStore,
+    private val callbackStore: Sqlite3CallbackStore,
     private val callbackFunctionIndexes: Sqlite3CallbackFunctionIndexes,
+    rootLogger: Logger,
 ) : SqliteCapi {
+    private val databaseResources: SqliteOpenDatabaseResources = SqliteOpenDatabaseResources(callbackStore, rootLogger)
     private val memoryBindings: SqliteMemoryBindings = sqliteBindings.memoryBindings
 
     val sqlite3Version: String
@@ -101,6 +104,8 @@ internal class GraalvmSqliteCapiImpl internal constructor(
             pDb = memory.readPtr(ppDb)
             result.throwOnSqliteError("sqlite3_open() failed", pDb)
 
+            databaseResources.onDbOpened(pDb)
+
             return pDb
         } catch (@Suppress("TooGenericExceptionCaught") ex: Throwable) {
             sqlite3Close(pDb)
@@ -137,6 +142,8 @@ internal class GraalvmSqliteCapiImpl internal constructor(
             pDb = memory.readPtr(ppDb)
             result.throwOnSqliteError("sqlite3_open_v2() failed", pDb)
 
+            databaseResources.onDbOpened(pDb)
+
             return pDb
         } catch (@Suppress("TooGenericExceptionCaught") ex: Throwable) {
             sqlite3Close(pDb)
@@ -151,9 +158,12 @@ internal class GraalvmSqliteCapiImpl internal constructor(
     override fun sqlite3Close(
         sqliteDb: WasmPtr<SqliteDb>,
     ) {
-        // TODO: __dbCleanupMap.cleanup(pDb)
-        sqliteBindings.sqlite3_close_v2.execute(sqliteDb.addr)
-            .throwOnSqliteError("sqlite3_close_v2() failed", sqliteDb)
+        try {
+            sqliteBindings.sqlite3_close_v2.execute(sqliteDb.addr)
+                .throwOnSqliteError("sqlite3_close_v2() failed", sqliteDb)
+        } finally {
+            databaseResources.afterDbClosed(sqliteDb)
+        }
     }
 
     fun sqlite3ErrMsg(
@@ -274,7 +284,6 @@ internal class GraalvmSqliteCapiImpl internal constructor(
         mask: SqliteTraceEventCode,
         traceCallback: SqliteTraceCallback?,
     ) {
-        // TODO: remove callback on close
         if (traceCallback != null) {
             callbackStore.sqlite3TraceCallbacks[sqliteDb] = traceCallback
         }
@@ -305,7 +314,6 @@ internal class GraalvmSqliteCapiImpl internal constructor(
             null
         }
 
-        // TODO: remove callback on close
         if (activeCallback != null) {
             callbackStore.sqlite3ProgressCallbacks[sqliteDb] = activeCallback
         }
@@ -651,7 +659,9 @@ internal class GraalvmSqliteCapiImpl internal constructor(
                 sqlite3Null<Unit>().addr,
             )
             result.throwOnSqliteError("sqlite3_prepare_v2() failed", sqliteDb)
-            return memory.readPtr(ppStatement)
+            return memory.readPtr(ppStatement).also {
+                databaseResources.registerStatement(sqliteDb, it)
+            }
         } finally {
             memoryBindings.freeSilent(sqlBytesPtr)
             memoryBindings.freeSilent(ppStatement)
@@ -662,8 +672,12 @@ internal class GraalvmSqliteCapiImpl internal constructor(
         sqliteDatabase: WasmPtr<SqliteDb>,
         statement: WasmPtr<SqliteStatement>,
     ) {
-        val errCode = sqliteBindings.sqlite3_finalize.execute(statement.addr)
-        errCode.throwOnSqliteError("sqlite3_finalize() failed", sqliteDatabase)
+        try {
+            val errCode = sqliteBindings.sqlite3_finalize.execute(statement.addr)
+            errCode.throwOnSqliteError("sqlite3_finalize() failed", sqliteDatabase)
+        } finally {
+            databaseResources.unregisterStatement(sqliteDatabase, statement)
+        }
     }
 
     override fun sqlite3ExpandedSql(statement: WasmPtr<SqliteStatement>): String? {

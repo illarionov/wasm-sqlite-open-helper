@@ -40,7 +40,7 @@ internal class Sqlite3ProgressAdapter(
     private fun invokeProgressCallback(
         contextPointer: WasmPtr<SqliteDb>,
     ): Int {
-        logger.v { "invokeProgressCallback() db: $contextPointer" }
+        logger.v { "Calling progress callback for pinter: $contextPointer" }
         val delegate: SqliteProgressCallback = callbackStore.sqlite3ProgressCallbacks[contextPointer]
             ?: error("Callback $contextPointer not registered")
 
