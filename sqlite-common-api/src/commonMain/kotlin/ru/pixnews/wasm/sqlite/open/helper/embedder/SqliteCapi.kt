@@ -11,12 +11,14 @@ package ru.pixnews.wasm.sqlite.open.helper.embedder
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteColumnType
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteComparatorCallback
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteConfigParameter
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDbConfigParameter
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDbStatusParameter
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrno
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrorInfo
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteException
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteLogCallback
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteOpenFlags
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteProgressCallback
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteStatement
@@ -24,6 +26,9 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceCallback
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode
 
 public interface SqliteCapi {
+    @Throws(SqliteException::class)
+    public fun sqlite3initialize()
+
     @Throws(SqliteException::class)
     public fun sqlite3OpenV2(
         filename: String,
@@ -34,6 +39,34 @@ public interface SqliteCapi {
     @Throws(SqliteException::class)
     public fun sqlite3Close(
         sqliteDb: WasmPtr<SqliteDb>,
+    )
+
+    @Suppress("WRONG_OVERLOADING_FUNCTION_ARGUMENTS")
+    @Throws(SqliteException::class)
+    public fun sqlite3Config(
+        op: SqliteConfigParameter,
+        arg1: Int,
+    )
+
+    @Throws(SqliteException::class)
+    public fun sqlite3Config(
+        op: SqliteConfigParameter,
+        arg1: Int,
+        arg2: Int,
+    )
+
+    @Throws(SqliteException::class)
+    public fun sqlite3Config(
+        op: SqliteConfigParameter,
+        arg1: Long,
+    )
+
+    @Throws(SqliteException::class)
+    public fun sqlite3SetLogger(logger: SqliteLogCallback?)
+
+    @Throws(SqliteException::class)
+    public fun sqlite3SoftHeapLimit(
+        limit: Long,
     )
 
     @Throws(SqliteException::class)

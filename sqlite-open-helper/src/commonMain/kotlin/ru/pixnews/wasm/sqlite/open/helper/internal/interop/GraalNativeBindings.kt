@@ -15,6 +15,7 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.or
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteCapi
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteCapi.SqliteDbReadonlyResult
 import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteCantOpenDatabaseException
+import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteGlobal.SOFT_HEAP_LIMIT
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.Field.BlobField
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.Field.FloatField
@@ -32,6 +33,7 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteColumnType.Com
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteColumnType.Companion.SQLITE_FLOAT
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteColumnType.Companion.SQLITE_INTEGER
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteColumnType.Companion.SQLITE_NULL
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteConfigParameter.Companion.SQLITE_CONFIG_MULTITHREAD
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDbConfigParameter.Companion.SQLITE_DBCONFIG_LOOKASIDE
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDbStatusParameter.Companion.SQLITE_DBSTATUS_LOOKASIDE_USED
@@ -72,6 +74,26 @@ internal class GraalNativeBindings(
 ) : SqlOpenHelperNativeBindings<GraalSqlite3ConnectionPtr, GraalSqlite3StatementPtr> {
     private val logger = rootLogger.withTag("GraalNativeBindings")
     private val connections = Sqlite3ConnectionRegistry()
+
+    override fun nativeInit(
+        verboseLog: Boolean,
+    ) {
+        // Enable multi-threaded mode.  In this mode, SQLite is safe to use by multiple
+        // threads as long as no two threads use the same database connection at the same
+        // time (which we guarantee in the SQLite database wrappers).
+        sqlite3Api.sqlite3Config(SQLITE_CONFIG_MULTITHREAD, 1)
+
+        // Redirect SQLite log messages to the log.
+        val sqliteLogger = logger.withTag("sqlite3")
+        sqlite3Api.sqlite3SetLogger { errCode: Int, message: String -> sqliteLogger.w { "$errCode: $message" } }
+
+        // The soft heap limit prevents the page cache allocations from growing
+        // beyond the given limit, no matter what the max page cache sizes are
+        // set to. The limit does not, as of 3.5.0, affect any other allocations.
+        sqlite3Api.sqlite3SoftHeapLimit(SOFT_HEAP_LIMIT)
+
+        sqlite3Api.sqlite3initialize()
+    }
 
     override fun nativeOpen(
         path: String,
@@ -129,7 +151,6 @@ internal class GraalNativeBindings(
             }
             return GraalSqlite3ConnectionPtr(db)
         } catch (e: SqliteException) {
-            // TODO: unregister collation / trace callback / profile callback on close?
             db?.let {
                 sqlite3Api.sqlite3Close(it)
             }

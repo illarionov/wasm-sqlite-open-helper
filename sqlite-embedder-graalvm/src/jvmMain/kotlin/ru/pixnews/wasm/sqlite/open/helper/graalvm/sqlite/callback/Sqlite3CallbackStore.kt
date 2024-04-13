@@ -10,6 +10,7 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteComparatorCallback
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteExecCallback
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteLogCallback
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteProgressCallback
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceCallback
 import java.util.Collections
@@ -23,6 +24,9 @@ internal class Sqlite3CallbackStore {
         Collections.synchronizedMap(mutableMapOf())
     val sqlite3ProgressCallbacks: MutableMap<WasmPtr<SqliteDb>, SqliteProgressCallback> =
         Collections.synchronizedMap(mutableMapOf())
+
+    @Volatile
+    var sqlite3LogCallback: SqliteLogCallback? = null
 
     interface CallbackId {
         val id: Int
