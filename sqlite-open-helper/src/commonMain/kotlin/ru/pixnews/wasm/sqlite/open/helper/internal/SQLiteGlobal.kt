@@ -51,6 +51,15 @@ internal object SQLiteGlobal {
     const val WAL_CONNECTION_POOL_SIZE: Int = 10
 
     /**
+     * Amount of heap memory that will be by all database connections within a single process.
+     *
+     * Set to 8MB in AOSP.
+     *
+     * https://www.sqlite.org/c3ref/hard_heap_limit64.html
+     */
+    const val SOFT_HEAP_LIMIT: Long = 8 * 1024 * 1024
+
+    /**
      * Gets the default journal mode when WAL is not in use.
      */
     val DEFAULT_JOURNAL_MODE: SQLiteDatabaseJournalMode = SQLiteDatabaseJournalMode.TRUNCATE

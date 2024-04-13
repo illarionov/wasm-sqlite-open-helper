@@ -21,11 +21,13 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.fnVoid
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func.SQLITE3_COMPARATOR_CALL_FUNCTION_NAME
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func.SQLITE3_DESTROY_COMPARATOR_FUNCTION_NAME
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func.SQLITE3_EXEC_CB_FUNCTION_NAME
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func.SQLITE3_LOGGING_CB_FUNCTION_NAME
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func.SQLITE3_PROGRESS_CB_FUNCTION_NAME
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func.SQLITE3_TRACE_CB_FUNCTION_NAME
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func.Sqlite3CallExecAdapter
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func.Sqlite3ComparatorAdapter
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func.Sqlite3DestroyComparatorAdapter
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func.Sqlite3LoggingAdapter
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func.Sqlite3ProgressAdapter
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func.Sqlite3TraceAdapter
 import ru.pixnews.wasm.sqlite.open.helper.host.POINTER
@@ -102,6 +104,19 @@ internal class SqliteCallbacksModuleBuilder(
             paramTypes = listOf(I32),
             nodeFactory = { language: WasmLanguage, module: WasmModule, host: SqliteEmbedderHost, funcName: String ->
                 Sqlite3DestroyComparatorAdapter(
+                    language = language,
+                    module = module,
+                    callbackStore = callbackStore,
+                    host = host,
+                    functionName = funcName,
+                )
+            },
+        )
+        fnVoid(
+            name = SQLITE3_LOGGING_CB_FUNCTION_NAME,
+            paramTypes = listOf(I32, I32, I32),
+            nodeFactory = { language: WasmLanguage, module: WasmModule, host: SqliteEmbedderHost, funcName: String ->
+                Sqlite3LoggingAdapter(
                     language = language,
                     module = module,
                     callbackStore = callbackStore,

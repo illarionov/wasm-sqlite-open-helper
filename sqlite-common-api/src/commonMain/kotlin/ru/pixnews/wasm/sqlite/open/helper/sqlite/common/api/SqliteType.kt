@@ -33,6 +33,8 @@ public typealias SqliteTraceCallback = (trace: SqliteTrace) -> Unit
 
 public typealias SqliteProgressCallback = (db: WasmPtr<SqliteDb>) -> Int
 
+public typealias SqliteLogCallback = (errCode: Int, message: String) -> Unit
+
 public sealed class SqliteTrace {
     public class TraceStmt(
         public val db: WasmPtr<SqliteDb>,

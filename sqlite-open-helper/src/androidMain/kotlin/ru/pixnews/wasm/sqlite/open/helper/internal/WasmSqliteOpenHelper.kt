@@ -46,6 +46,7 @@ internal class WasmSqliteOpenHelper<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
     private val version: Int get() = callback.version
 
     private var isInitializing = false
+    private var sqliteInitialized: Boolean = false
     private var database: SQLiteDatabase<CP, SP>? = null
 
     init {
@@ -146,6 +147,11 @@ internal class WasmSqliteOpenHelper<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
         var db = database
         try {
             isInitializing = true
+
+            if (!sqliteInitialized) {
+                sqliteInitialized = true
+                bindings.nativeInit()
+            }
 
             if (db != null) {
                 if (db.isReadOnly) {

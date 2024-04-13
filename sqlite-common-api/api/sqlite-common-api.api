@@ -22,6 +22,9 @@ public abstract interface class ru/pixnews/wasm/sqlite/open/helper/embedder/Sqli
 	public abstract fun sqlite3ColumnName-OCuHDVA (II)Ljava/lang/String;
 	public abstract fun sqlite3ColumnText-OCuHDVA (II)Ljava/lang/String;
 	public abstract fun sqlite3ColumnType-O3iCJ6k (II)I
+	public abstract fun sqlite3Config-OBQSrn0 (II)V
+	public abstract fun sqlite3Config-OBQSrn0 (IJ)V
+	public abstract fun sqlite3Config-XNRLwjw (III)V
 	public abstract fun sqlite3CreateCollation-Q32f7bY (ILjava/lang/String;Lkotlin/jvm/functions/Function2;)V
 	public abstract fun sqlite3DbConfig-1MScVS4 (IIII)V
 	public abstract fun sqlite3DbConfig-GEwxJg8 (IIIII)V
@@ -35,9 +38,12 @@ public abstract interface class ru/pixnews/wasm/sqlite/open/helper/embedder/Sqli
 	public abstract fun sqlite3PrepareV2-8DFCcHs (ILjava/lang/String;)I
 	public abstract fun sqlite3ProgressHandler-Q32f7bY (IILkotlin/jvm/functions/Function1;)V
 	public abstract fun sqlite3Reset-0ofqlBw (I)I
+	public abstract fun sqlite3SetLogger (Lkotlin/jvm/functions/Function2;)V
+	public abstract fun sqlite3SoftHeapLimit (J)V
 	public abstract fun sqlite3Step-0ofqlBw (I)I
 	public abstract fun sqlite3StmtReadonly-MYs6Txo (I)Z
 	public abstract fun sqlite3Trace-wF_UhGc (IILkotlin/jvm/functions/Function1;)V
+	public abstract fun sqlite3initialize ()V
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/embedder/SqliteCapi$SqliteDbReadonlyResult : java/lang/Enum {
@@ -74,6 +80,49 @@ public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteCo
 	public final fun getSQLITE_FLOAT-6bi_7KY ()I
 	public final fun getSQLITE_INTEGER-6bi_7KY ()I
 	public final fun getSQLITE_NULL-6bi_7KY ()I
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteConfigParameter {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteConfigParameter$Companion;
+	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteConfigParameter;
+	public static fun constructor-impl (I)I
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (ILjava/lang/Object;)Z
+	public static final fun equals-impl0 (II)Z
+	public final fun getId ()I
+	public fun hashCode ()I
+	public static fun hashCode-impl (I)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (I)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()I
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteConfigParameter$Companion {
+	public final fun getSQLITE_CONFIG_COVERING_INDEX_SCAN-W_2IGVY ()I
+	public final fun getSQLITE_CONFIG_GETMALLOC-W_2IGVY ()I
+	public final fun getSQLITE_CONFIG_GETMUTEX-W_2IGVY ()I
+	public final fun getSQLITE_CONFIG_GETPCACHE2-W_2IGVY ()I
+	public final fun getSQLITE_CONFIG_HEAP-W_2IGVY ()I
+	public final fun getSQLITE_CONFIG_LOG-W_2IGVY ()I
+	public final fun getSQLITE_CONFIG_LOOKASIDE-W_2IGVY ()I
+	public final fun getSQLITE_CONFIG_MALLOC-W_2IGVY ()I
+	public final fun getSQLITE_CONFIG_MEMDB_MAXSIZE-W_2IGVY ()I
+	public final fun getSQLITE_CONFIG_MEMSTATUS-W_2IGVY ()I
+	public final fun getSQLITE_CONFIG_MMAP_SIZE-W_2IGVY ()I
+	public final fun getSQLITE_CONFIG_MULTITHREAD-W_2IGVY ()I
+	public final fun getSQLITE_CONFIG_MUTEX-W_2IGVY ()I
+	public final fun getSQLITE_CONFIG_PAGECACHE-W_2IGVY ()I
+	public final fun getSQLITE_CONFIG_PCACHE2-W_2IGVY ()I
+	public final fun getSQLITE_CONFIG_PCACHE_HDRSZ-W_2IGVY ()I
+	public final fun getSQLITE_CONFIG_PMASZ-W_2IGVY ()I
+	public final fun getSQLITE_CONFIG_SERIALIZED-W_2IGVY ()I
+	public final fun getSQLITE_CONFIG_SINGLETHREAD-W_2IGVY ()I
+	public final fun getSQLITE_CONFIG_SMALL_MALLOC-W_2IGVY ()I
+	public final fun getSQLITE_CONFIG_SORTERREF_SIZE-W_2IGVY ()I
+	public final fun getSQLITE_CONFIG_SQLLOG-W_2IGVY ()I
+	public final fun getSQLITE_CONFIG_STMTJRNL_SPILL-W_2IGVY ()I
+	public final fun getSQLITE_CONFIG_URI-W_2IGVY ()I
+	public final fun getSQLITE_CONFIG_WIN32_HEAPSIZE-W_2IGVY ()I
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteDbConfigParameter {

@@ -9,8 +9,6 @@ package ru.pixnews.wasm.sqlite.open.helper.graalvm.bindings
 import org.graalvm.polyglot.Value
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.member
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrno
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteException
 
 @Suppress("VariableNaming", "BLANK_LINE_BETWEEN_PROPERTIES")
 internal class SqliteBindings(
@@ -51,6 +49,7 @@ internal class SqliteBindings(
     val sqlite3_changes by sqliteBindings.member()
     val sqlite3_close_v2 by sqliteBindings.member()
     val sqlite3_progress_handler by sqliteBindings.member()
+    val sqlite3_soft_heap_limit64 by sqliteBindings.member()
     val sqlite3_busy_timeout by sqliteBindings.member()
     val sqlite3_trace_v2 by sqliteBindings.member()
     val sqlite3_errcode by sqliteBindings.member()
@@ -63,6 +62,9 @@ internal class SqliteBindings(
     val sqlite3_sourceid by sqliteBindings.member()
 
     val sqlite3__wasm_enum_json by sqliteBindings.member()
+    val sqlite3__wasm_config_i by sqliteBindings.member()
+    val sqlite3__wasm_config_ii by sqliteBindings.member()
+    val sqlite3__wasm_config_j by sqliteBindings.member()
     val sqlite3__wasm_db_config_ip by sqliteBindings.member()
     val sqlite3__wasm_db_config_pii by sqliteBindings.member()
     val sqlite3__wasm_db_config_s by sqliteBindings.member()
@@ -79,13 +81,5 @@ internal class SqliteBindings(
     private fun initSqlite() {
          __wasm_call_ctors.execute()
         memoryBindings.init(memory)
-        postRun()
-    }
-
-    private fun postRun() {
-        val sqliteInitResult = sqlite3_initialize.execute().asInt()
-        if (sqliteInitResult != SqliteErrno.SQLITE_OK.id) {
-            throw SqliteException(sqliteInitResult, sqliteInitResult)
-        }
     }
 }

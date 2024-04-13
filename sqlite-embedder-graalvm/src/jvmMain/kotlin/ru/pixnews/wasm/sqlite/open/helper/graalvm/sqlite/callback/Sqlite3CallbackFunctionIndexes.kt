@@ -9,6 +9,7 @@ package ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func.SQLITE3_COMPARATOR_CALL_FUNCTION_NAME
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func.SQLITE3_DESTROY_COMPARATOR_FUNCTION_NAME
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func.SQLITE3_EXEC_CB_FUNCTION_NAME
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func.SQLITE3_LOGGING_CB_FUNCTION_NAME
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func.SQLITE3_PROGRESS_CB_FUNCTION_NAME
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func.SQLITE3_TRACE_CB_FUNCTION_NAME
 import ru.pixnews.wasm.sqlite.open.helper.host.functiontable.IndirectFunctionTableIndex
@@ -23,4 +24,5 @@ internal class Sqlite3CallbackFunctionIndexes(
     val destroyComparatorFunction: IndirectFunctionTableIndex = functionMap.getValue(
         SQLITE3_DESTROY_COMPARATOR_FUNCTION_NAME,
     )
+    val loggingCallbackFunction: IndirectFunctionTableIndex = functionMap.getValue(SQLITE3_LOGGING_CB_FUNCTION_NAME)
 }

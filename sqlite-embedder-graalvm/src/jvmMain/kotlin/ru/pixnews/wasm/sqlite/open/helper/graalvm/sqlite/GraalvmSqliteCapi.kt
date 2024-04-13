@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-@file:Suppress("VARIABLE_HAS_PREFIX")
+@file:Suppress("VARIABLE_HAS_PREFIX", "LargeClass")
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite
 
@@ -35,6 +35,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.memory.writeZeroTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteColumnType
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteComparatorCallback
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteConfigParameter
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDbConfigParameter
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDbStatusParameter
@@ -43,6 +44,7 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrno
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrorInfo
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteException
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteExecCallback
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteLogCallback
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteOpenFlags
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteProgressCallback
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResult
@@ -116,6 +118,13 @@ internal class GraalvmSqliteCapi internal constructor(
         }
     }
 
+    override fun sqlite3initialize() {
+        val sqliteInitResult = sqliteBindings.sqlite3_initialize.execute().asInt()
+        if (sqliteInitResult != SqliteErrno.SQLITE_OK.id) {
+            throw SqliteException(sqliteInitResult, sqliteInitResult)
+        }
+    }
+
     override fun sqlite3OpenV2(
         filename: String,
         flags: SqliteOpenFlags,
@@ -163,6 +172,53 @@ internal class GraalvmSqliteCapi internal constructor(
                 .throwOnSqliteError("sqlite3_close_v2() failed", sqliteDb)
         } finally {
             databaseResources.afterDbClosed(sqliteDb)
+        }
+    }
+
+    @Suppress("WRONG_OVERLOADING_FUNCTION_ARGUMENTS")
+    override fun sqlite3Config(op: SqliteConfigParameter, arg1: Int) {
+        val errNo = sqliteBindings.sqlite3__wasm_config_i.execute(op.id, arg1).asInt()
+        if (errNo != Errno.SUCCESS.code) {
+            throw SqliteException(errNo, errNo, "sqlite3__wasm_config_i() failed")
+        }
+    }
+
+    override fun sqlite3Config(op: SqliteConfigParameter, arg1: Int, arg2: Int) {
+        val errNo = sqliteBindings.sqlite3__wasm_config_ii.execute(op.id, arg1, arg2).asInt()
+        if (errNo != Errno.SUCCESS.code) {
+            throw SqliteException(errNo, errNo, "sqlite3__wasm_config_ii() failed")
+        }
+    }
+
+    override fun sqlite3Config(op: SqliteConfigParameter, arg1: Long) {
+        val errNo = sqliteBindings.sqlite3__wasm_config_j.execute(op.id, arg1).asInt()
+        if (errNo != Errno.SUCCESS.code) {
+            throw SqliteException(errNo, errNo, "sqlite3__wasm_config_j() failed")
+        }
+    }
+
+    override fun sqlite3SetLogger(logger: SqliteLogCallback?) {
+        val oldLogger = callbackStore.sqlite3LogCallback
+        try {
+            callbackStore.sqlite3LogCallback = logger
+            val errNo = sqliteBindings.sqlite3__wasm_config_ii.execute(
+                SqliteConfigParameter.SQLITE_CONFIG_LOG.id,
+                if (logger != null) callbackFunctionIndexes.loggingCallbackFunction.funcId else 0,
+                0,
+            ).asInt()
+            if (errNo != Errno.SUCCESS.code) {
+                throw SqliteException(errNo, errNo, "sqlite3__wasm_config_ii() failed")
+            }
+        } catch (@Suppress("TooGenericExceptionCaught") ex: Throwable) {
+            callbackStore.sqlite3LogCallback = oldLogger
+            throw ex
+        }
+    }
+
+    override fun sqlite3SoftHeapLimit(limit: Long) {
+        val errNo = sqliteBindings.sqlite3_soft_heap_limit64.execute(limit).asInt()
+        if (errNo != Errno.SUCCESS.code) {
+            throw SqliteException(errNo, errNo, "sqlite3_soft_heap_limit64() failed")
         }
     }
 

@@ -13,6 +13,8 @@ internal interface SqlOpenHelperNativeBindings<
         CP : Sqlite3ConnectionPtr,
         SP : Sqlite3StatementPtr,
         > {
+    fun nativeInit(verboseLog: Boolean = false)
+
     fun nativeOpen(
         path: String,
         openFlags: SqliteOpenFlags,
