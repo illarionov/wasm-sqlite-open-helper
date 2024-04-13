@@ -47,7 +47,6 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteExecCallback
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteLogCallback
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteOpenFlags
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteProgressCallback
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResult
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteStatement
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTextEncoding
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceCallback
@@ -273,7 +272,7 @@ internal class GraalvmSqliteCapi internal constructor(
         database: WasmPtr<SqliteDb>,
         sql: String,
         callback: SqliteExecCallback? = null,
-    ): SqliteResult<Unit> {
+    ) {
         var pSql: WasmPtr<Byte> = sqlite3Null()
         var pzErrMsg: WasmPtr<WasmPtr<Byte>> = sqlite3Null()
         val pCallbackId: Sqlite3ExecCallbackId? = if (callback != null) {
@@ -293,14 +292,11 @@ internal class GraalvmSqliteCapi internal constructor(
                 pCallbackId?.id ?: 0,
                 pzErrMsg.addr,
             ).asInt()
-
-            if (errNo == Errno.SUCCESS.code) {
-                return SqliteResult.Success(Unit)
-            } else {
+            if (errNo != Errno.SUCCESS.code) {
                 val errMsgAddr: WasmPtr<Byte> = memory.readPtr(pzErrMsg)
                 val errMsg = memory.readZeroTerminatedString(errMsgAddr)
                 memoryBindings.freeSilent(errMsgAddr)
-                return SqliteResult.Error(errNo, errNo, errMsg)
+                throw SqliteException(errNo, errNo, "sqlite3_exec", errMsg)
             }
         } finally {
             pCallbackId?.let { callbackStore.sqlite3ExecCallbacks.remove(it) }
@@ -550,6 +546,17 @@ internal class GraalvmSqliteCapi internal constructor(
         return SqliteColumnType(type)
     }
 
+    private fun Value.throwOnSqliteError(
+        msgPrefix: String?,
+        sqliteDb: WasmPtr<SqliteDb>,
+    ) {
+        val errNo = this.asInt()
+        if (errNo != Errno.SUCCESS.code) {
+            val errInfo = readSqliteErrorInfo(sqliteDb)
+            throw SqliteException(errInfo, msgPrefix)
+        }
+    }
+
     override fun readSqliteErrorInfo(
         sqliteDb: WasmPtr<SqliteDb>,
     ): SqliteErrorInfo {
@@ -565,17 +572,6 @@ internal class GraalvmSqliteCapi internal constructor(
             null
         }
         return SqliteErrorInfo(errCode, extendedErrCode, errMsg)
-    }
-
-    private fun Value.throwOnSqliteError(
-        msgPrefix: String?,
-        sqliteDb: WasmPtr<SqliteDb>,
-    ) {
-        val errNo = this.asInt()
-        if (errNo != Errno.SUCCESS.code) {
-            val errInfo = readSqliteErrorInfo(sqliteDb)
-            throw SqliteException(errInfo, msgPrefix)
-        }
     }
 
     override fun sqlite3Changes(sqliteDb: WasmPtr<SqliteDb>): Int {

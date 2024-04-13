@@ -6,8 +6,6 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api
 
-import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
-
 public class SqliteException(
     public val errorInfo: SqliteErrorInfo,
     prefix: String? = null,
@@ -26,27 +24,5 @@ public class SqliteException(
 
         internal fun sqlite3ErrNoName(errNo: Int): String =
             SqliteErrno.fromErrNoCode(errNo)?.toString() ?: errNo.toString()
-    }
-}
-
-public data class SqliteErrorInfo(
-    val sqliteErrorCode: Int,
-    val sqliteExtendedErrorCode: Int = sqliteErrorCode,
-    val sqliteMsg: String? = null,
-)
-
-@InternalWasmSqliteHelperApi
-public fun SqliteErrorInfo.formatErrorMessage(prefix: String?): String = buildString {
-    append("Sqlite error ")
-    append(SqliteException.sqlite3ErrNoName(sqliteErrorCode))
-    append("/")
-    append(SqliteException.sqlite3ErrNoName(sqliteExtendedErrorCode))
-    if (prefix?.isNotEmpty() == true) {
-        append(": ")
-        append(prefix)
-    }
-    if (sqliteMsg != null) {
-        append("; ")
-        append(sqliteMsg)
     }
 }

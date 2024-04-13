@@ -416,33 +416,6 @@ public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteOp
 	public final fun getSQLITE_OPEN_WAL-KSZ_SCI ()I
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteResult$Error : ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteResult {
-	public fun <init> (IILjava/lang/String;)V
-	public synthetic fun <init> (IILjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()I
-	public final fun component2 ()I
-	public final fun component3 ()Ljava/lang/String;
-	public final fun copy (IILjava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteResult$Error;
-	public static synthetic fun copy$default (Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteResult$Error;IILjava/lang/String;ILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteResult$Error;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getSqliteErrorCode ()I
-	public final fun getSqliteExtendedErrorCode ()I
-	public final fun getSqliteMsg ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteResult$Success : ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteResult {
-	public fun <init> (Ljava/lang/Object;)V
-	public final fun component1 ()Ljava/lang/Object;
-	public final fun copy (Ljava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteResult$Success;
-	public static synthetic fun copy$default (Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteResult$Success;Ljava/lang/Object;ILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteResult$Success;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getValue ()Ljava/lang/Object;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
 public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteTextEncoding {
 	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteTextEncoding$Companion;
 	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteTextEncoding;
