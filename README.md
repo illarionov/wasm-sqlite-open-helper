@@ -30,8 +30,8 @@ Add the dependencies:
 ```kotlin
 
 dependencies {
-    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-open-helper:0.1-alpha02-SNAPSHOT")
-    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-graalvm:0.1-alpha02-SNAPSHOT")
+    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-open-helper:0.1-alpha02")
+    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-graalvm:0.1-alpha02")
 }
 ```
 
