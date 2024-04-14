@@ -8,6 +8,4 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.internal.platform
 
-import java.io.File
-
-public actual typealias File = File
+public actual typealias File = java.io.File
