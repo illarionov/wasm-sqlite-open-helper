@@ -46,7 +46,7 @@ mavenPublishing {
     signAllPublications()
 
     configure(
-        KotlinMultiplatform(javadocJar = JavadocJar.Empty()),
+        KotlinMultiplatform(javadocJar = JavadocJar.Dokka("dokkaGfm")),
     )
 
     pom {
