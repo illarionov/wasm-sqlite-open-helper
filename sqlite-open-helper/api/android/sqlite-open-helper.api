@@ -53,6 +53,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/SQLiteDatabaseSyncMode : j
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/WasmSqliteOpenHelperFactoryBuilderKt {
+	public static final fun WasmSqliteOpenHelperFactory (Lru/pixnews/wasm/sqlite/open/helper/embedder/SqliteEmbedder;Landroid/content/Context;Lkotlin/jvm/functions/Function1;)Landroidx/sqlite/db/SupportSQLiteOpenHelper$Factory;
 	public static final fun WasmSqliteOpenHelperFactory (Lru/pixnews/wasm/sqlite/open/helper/embedder/SqliteEmbedder;Lkotlin/jvm/functions/Function1;)Landroidx/sqlite/db/SupportSQLiteOpenHelper$Factory;
 }
 
