@@ -79,6 +79,9 @@ kotlin {
     sourceSets {
         named("jvmMain") {
             resources.srcDir(files(wasmResourcesDir).builtBy(copyResourcesTask))
+            dependencies {
+                api(projects.sqliteCommonApi)
+            }
         }
     }
 }
