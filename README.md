@@ -2,12 +2,14 @@
 
 Implementation of [SupportSQLiteOpenHelper] based on SQLite compiled for WASM.
 
-WIP
+## Requirements
+
+- Android API 26+ when executed on an Android device
+- Java JVM 21+ when used in unit tests on the host
 
 ## Installation
 
-Release and snapshot versions of the library are published to a temporary repository, since it is very experimental
-and at the moment it is in an early stage of development and is planned for use in only one project.
+Release and snapshot versions of the library are published to a temporary repository, since it is highly experimental.
 File a bug report if you think it could be useful on Maven Central.
 
 Add the following to your project's settings.gradle:
@@ -31,18 +33,51 @@ Add the dependencies:
 
 dependencies {
     testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-open-helper:0.1-alpha02")
+
+    // Runtime environment for executing SQLite Wasm code based on GraalVM
     testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-graalvm:0.1-alpha02")
+
+    // Sqlite WebAssembly binary
+    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-wasm:0.1-alpha02")
 }
 ```
 
 ## Usage
 
-The library can be used with Room in Android unit tests.
+Create Factory using `WasmSqliteOpenHelperFactory`:
 
-Sample:
+```kotlin
+import android.content.Context
+import androidx.sqlite.db.SupportSQLiteOpenHelper
+import ru.pixnews.wasm.sqlite.open.helper.Sqlite3Wasm.Emscripten
+import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperFactory
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmSqliteEmbedder
+
+val factory : SupportSQLiteOpenHelper.Factory = WasmSqliteOpenHelperFactory(context, GraalvmSqliteEmbedder) {
+}
+```
+
+Factory is ready for use and, for example, can be used with Android Room:
+
+```kotlin
+db = Room.databaseBuilder(mockContext, TestDatabase::class.java, "test")
+    .openHelperFactory(factory)
+    .build()
+userDao = db.getUserDao()
+
+// …
+
+db.close()
+```
+
+The main intended purpose of the library is to be used in unit tests on the host.
+
+An example of such a test:
 
 ```kotlin
 class DatabaseTest {
+    // Android Сontext is not used in the wrapper, but is defined in the public interface of
+    // the SupportSQLiteOpenHelper. So we use a mock context
     val mockContext = ContextWrapper(null)
 
     @TempDir
@@ -54,15 +89,23 @@ class DatabaseTest {
     @BeforeEach
     fun createDb() {
         val openHelperFactory = WasmSqliteOpenHelperFactory(GraalvmSqliteEmbedder) {
+            // Path resolver is used to specify the path on the file system where the database will be created
             pathResolver = DatabasePathResolver { name -> File(tempDir, name) }
+
+            // Configuration of the embedder
             embedder {
+                // GraalVM Polyglot Engine. Single instance of the Engine can be reused between tests to speed 
+                // up initialization.
                 graalvmEngine = Engine.create("wasm")
+
+                // Used Sqlite WebAssembly binary file
+                sqlite3Binary = Emscripten.sqlite3_345_android_icu_mt_pthread
             }
+
+            // Debug options 
             debug {
-                sqlLog = true
+                // Enables logging of network requests
                 sqlTime = true
-                sqlStatements = true
-                logSlowQueries = true
             }
         }
 
@@ -90,6 +133,80 @@ class DatabaseTest {
 }
 ```
 
+### Customization
+
+Below is a list of the main customization options:
+
+```kotlin
+val factory = WasmSqliteOpenHelperFactory(GraalvmSqliteEmbedder) {
+    // Path resolver is used to resolve the database file path on the file system.
+    // Not used for in-memory databases.
+    pathResolver = DatabasePathResolver { name -> File(dstDir, name) }
+
+    // Logger used to log debug messages from SupportSQLiteOpenHelper.
+    // By default, messages are not logged
+    logger = Logger
+
+    // Parameters used when opening a database
+    openParams {
+        // Flags to control database access mode.
+        // See https://developer.android.com/reference/android/database/sqlite/SQLiteDatabase.OpenParams.Builder#setOpenFlags(int)
+        // Combination of OPEN_READONLY, OPEN_READWRITE, OPEN_CREATE, NO_LOCALIZED_COLLATORS, ENABLE_WRITE_AHEAD_LOGGING
+        openFlags = EMPTY
+
+        // Default locale to open the database. Default: en_US
+        locale = Locale("ru_RU")
+
+        // Configures lookaside memory allocator https://sqlite.org/malloc.html#lookaside
+        // If not set, SQLite defaults will be used
+        setLookasideConfig(
+            slotSize = 1200,
+            slotCount = 100,
+        )
+
+        // Sets the journal mode for databases associated with the current database connection
+        // The journalMode for an in-memory database is either MEMORY or OFF.
+        // By default, TRUNCATE mode will be used if WAL is not enabled. 
+        journalMode = WAL
+
+        // Sets the filesystem sync mode
+        // The default sync mode will be NORMAL if WAL is enabled, and FULL otherwise.
+        //
+        syncMode = NORMAL
+    }
+
+    // Configuration of the Wasm embedder (GraalVM)
+    embedder {
+        // Instance of the GraalVM WebAssembly engine. Single instance of the Engine can be reused to speed up
+        // initialization.
+        // See https://www.graalvm.org/latest/reference-manual/embed-languages/#managing-the-code-cache
+        graalvmEngine = Engine.create("wasm")
+
+        // Sets used Sqlite WebAssembly binary file
+        sqlite3Binary = Sqlite3Wasm.Emscripten.sqlite3_345_android_icu_mt_pthread
+    }
+
+    // Sets the debugging options
+    debug {
+        // Controls the printing of informational SQL log messages.
+        sqlLog = true
+
+        // Controls the printing of SQL statements as they are executed.
+        sqlStatements = true
+
+        // Controls the printing of wall-clock time taken to execute SQL statements as they are executed.
+        sqlTime = true
+
+        //  True to enable database performance testing instrumentation.
+        logSlowQueries = true
+
+        // Value of the "db.log.slow_query_threshold" system property, which can be changed by the user at any time.
+        // If the value is zero, then all queries will be considered slow.
+        // If the value does not exist or is negative, then no queries will be considered slow.
+        slowQueryThresholdProvider = { -1 }
+    }
+}
+```
 
 [SupportSQLiteOpenHelper]: https://developer.android.com/reference/androidx/sqlite/db/SupportSQLiteOpenHelper
 
