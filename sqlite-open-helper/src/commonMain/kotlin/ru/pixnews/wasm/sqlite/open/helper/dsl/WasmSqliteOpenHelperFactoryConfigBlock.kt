@@ -15,15 +15,28 @@ import ru.pixnews.wasm.sqlite.open.helper.path.DatabasePathResolver
 public class WasmSqliteOpenHelperFactoryConfigBlock<E : SqliteEmbedderConfig>(
     defaultDatabasePathResolver: DatabasePathResolver,
 ) {
+    /**
+     * Sets the logger used to log debug messages from SupportSQLiteOpenHelper.
+     *
+     * By default, messages are not logged
+     */
     public var logger: Logger = Logger
+
+    /**
+     * Sets the path resolver to be used to resolve the database file path on the file system.
+     * Not used for in-memory databases.
+     */
+    public var pathResolver: DatabasePathResolver = defaultDatabasePathResolver
     internal var debugConfigBlock: DebugConfigBlock.() -> Unit = { }
         private set
-    public var pathResolver: DatabasePathResolver = defaultDatabasePathResolver
     internal var openParams: OpenParamsBlock.() -> Unit = {}
         private set
     internal var embedderConfig: E.() -> Unit = {}
         private set
 
+    /**
+     * Sets the configuration of the Wasm ebedder
+     */
     public fun embedder(block: E.() -> Unit) {
         val oldConfig = embedderConfig
         embedderConfig = {
@@ -32,6 +45,9 @@ public class WasmSqliteOpenHelperFactoryConfigBlock<E : SqliteEmbedderConfig>(
         }
     }
 
+    /**
+     * Sets the debugging options
+     */
     public fun debug(block: DebugConfigBlock.() -> Unit) {
         val old = this.debugConfigBlock
         debugConfigBlock = {
@@ -40,6 +56,9 @@ public class WasmSqliteOpenHelperFactoryConfigBlock<E : SqliteEmbedderConfig>(
         }
     }
 
+    /**
+     * Sets the parameters used when opening a database
+     */
     public fun openParams(block: OpenParamsBlock.() -> Unit) {
         val old = this.openParams
         this.openParams = {

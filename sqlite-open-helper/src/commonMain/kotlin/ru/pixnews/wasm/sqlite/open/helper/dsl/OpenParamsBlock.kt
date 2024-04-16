@@ -14,37 +14,57 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale
 import ru.pixnews.wasm.sqlite.open.helper.common.api.clear
 import ru.pixnews.wasm.sqlite.open.helper.common.api.or
 
+/**
+ * Parameters used when opening the database
+ */
 @WasmSqliteOpenHelperDsl
 public class OpenParamsBlock {
     /**
-     * Flags to control database access mode. Default value is 0.
+     * Flags to control database access mode.
+     *
+     * Default: empty
      */
     public var openFlags: OpenFlags = OpenFlags.EMPTY
 
     /**
-     * Default locale to open the database
+     * Default locale to open the database.
+     *
+     * Default: en_us
      */
     public var locale: Locale = Locale.EN_US
 
     /**
      * Size in bytes of each lookaside slot or -1 if not set.
+     *
+     * Default: not set
      */
     public var lookasideSlotSize: Int = -1
         private set
 
     /**
      * Total number of lookaside memory slots per database connection or -1 if not set
+     *
+     * Default: not set
      */
     public var lookasideSlotCount: Int = -1
         private set
 
     /**
-     * [journal mode](https://sqlite.org/pragma.html#pragma_journal_mode)
+     * Sets the journal mode for databases associated with the current database connection
+     * The journalMode for an in-memory database is either MEMORY or OFF.
+     *
+     * Default value: Not set. TRUNCATE mode will be used if WAL is not eanbled.
+     *
+     * See: [https://sqlite.org/pragma.html#pragma_journal_mode](https://sqlite.org/pragma.html#pragma_journal_mode)
      */
     public var journalMode: SQLiteDatabaseJournalMode? = null
 
     /**
-     * [synchronous mode](https://sqlite.org/pragma.html#pragma_synchronous).
+     * Sets the filesystem sync mode.
+     *
+     * Default value: not set. Sync mode will be NORMAL if WAL is enabled, and FULL otherwise.
+     *
+     * See: [https://sqlite.org/pragma.html#pragma_synchronous](https://sqlite.org/pragma.html#pragma_synchronous)
      */
     public var syncMode: SQLiteDatabaseSyncMode? = null
 
