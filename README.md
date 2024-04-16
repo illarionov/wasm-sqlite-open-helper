@@ -30,7 +30,6 @@ pluginManagement {
 Add the dependencies:
 
 ```kotlin
-
 dependencies {
     testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-open-helper:0.1-alpha02")
 
@@ -198,6 +197,33 @@ val factory = WasmSqliteOpenHelperFactory(GraalvmSqliteEmbedder) {
 ```
 
 [SupportSQLiteOpenHelper]: https://developer.android.com/reference/androidx/sqlite/db/SupportSQLiteOpenHelper
+
+## Development notes
+
+To build the project, you need to have Emscripten SDK installed.
+Check [this link](https://emscripten.org/docs/getting_started/downloads.html#installation-instructions-using-the-emsdk-recommended)
+for instructions on installing the SDK.
+
+`EMSDK` environment variable must point to the root of the installed SDK.
+Version of the SDK used in the project must be activated (check the `emscripten` version
+in [gradle/libs.versions.toml](gradle/libs.versions.toml)).
+
+Alternatively, you can specify the Emscripten SDK root by setting the `emsdkRoot` project property.
+You can do this for example in `~/.gradle/gradle.properties`:
+
+```properties
+emsdkRoot=/opt/emsdk
+```
+
+Install and activate the SDK version used in the project (not the latest one):
+
+```shell
+./emsdk install 3.1.57
+./emsdk activate 3.1.57
+source ./emsdk_env.sh
+```
+
+The first build may take quite a long time, since the ICU and SQLite libraries are build from source code.
 
 ## Contributing
 

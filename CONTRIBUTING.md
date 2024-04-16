@@ -2,7 +2,7 @@
 
 All types of contributions are encouraged and valued.
 
-If you would like to contribute code to wasm-sqlite-open-helper you can do so through GitHub by forking the 
+If you would like to contribute code to wasm-sqlite-open-helper you can do so through GitHub by forking the
 repository and sending a pull request.
 
 Before submitting a PR, get working code in a personal branch with tests passing:

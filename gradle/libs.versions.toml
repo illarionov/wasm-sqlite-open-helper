@@ -36,7 +36,7 @@ androidx-room-compiler = { group = "androidx.room", name = "room-compiler", vers
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "androidx-room" }
 androidx-room-testing = { group = "androidx.room", name = "room-testing", version.ref = "androidx-room" }
 androidx-sqlite-sqlite = { group = "androidx.sqlite", name = "sqlite", version.ref = "androidx-sqlite" }
-androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidx-test"}
+androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidx-test" }
 assertk = { group = "com.willowtreeapps.assertk", name = "assertk", version.ref = "assertk" }
 chicory = { group = "com.dylibso.chicory", name = "runtime", version.ref = "chicory" }
 graalvm-polyglot-js = { group = "org.graalvm.polyglot", name = "js-community", version.ref = "graalvm" }
