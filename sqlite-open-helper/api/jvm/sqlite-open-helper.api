@@ -54,8 +54,6 @@ public final class ru/pixnews/wasm/sqlite/open/helper/SQLiteDatabaseSyncMode : j
 
 public final class ru/pixnews/wasm/sqlite/open/helper/dsl/DebugConfigBlock {
 	public fun <init> ()V
-	public fun <init> (ZZZZLkotlin/jvm/functions/Function0;)V
-	public synthetic fun <init> (ZZZZLkotlin/jvm/functions/Function0;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getLogSlowQueries ()Z
 	public final fun getSlowQueryThresholdProvider ()Lkotlin/jvm/functions/Function0;
 	public final fun getSqlLog ()Z
