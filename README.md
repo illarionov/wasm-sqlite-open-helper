@@ -57,7 +57,7 @@ val factory : SupportSQLiteOpenHelper.Factory = WasmSqliteOpenHelperFactory(cont
 }
 ```
 
-Factory is ready for use and, for example, can be used with Android Room:
+Created factory can be used standalone or with Android Room:
 
 ```kotlin
 db = Room.databaseBuilder(mockContext, TestDatabase::class.java, "test")
@@ -70,9 +70,7 @@ userDao = db.getUserDao()
 db.close()
 ```
 
-The main intended purpose of the library is to be used in unit tests on the host.
-
-An example of such a test:
+The intended purpose of the library is to be used in unit tests on the host. An example of such a test:
 
 ```kotlin
 class DatabaseTest {
@@ -89,22 +87,14 @@ class DatabaseTest {
     @BeforeEach
     fun createDb() {
         val openHelperFactory = WasmSqliteOpenHelperFactory(GraalvmSqliteEmbedder) {
-            // Path resolver is used to specify the path on the file system where the database will be created
             pathResolver = DatabasePathResolver { name -> File(tempDir, name) }
 
-            // Configuration of the embedder
             embedder {
-                // GraalVM Polyglot Engine. Single instance of the Engine can be reused between tests to speed 
-                // up initialization.
                 graalvmEngine = Engine.create("wasm")
-
-                // Used Sqlite WebAssembly binary file
                 sqlite3Binary = Emscripten.sqlite3_345_android_icu_mt_pthread
             }
 
-            // Debug options 
             debug {
-                // Enables logging of network requests
                 sqlTime = true
             }
         }
@@ -171,14 +161,13 @@ val factory = WasmSqliteOpenHelperFactory(GraalvmSqliteEmbedder) {
 
         // Sets the filesystem sync mode
         // The default sync mode will be NORMAL if WAL is enabled, and FULL otherwise.
-        //
         syncMode = NORMAL
     }
 
     // Configuration of the Wasm embedder (GraalVM)
     embedder {
-        // Instance of the GraalVM WebAssembly engine. Single instance of the Engine can be reused to speed up
-        // initialization.
+        // Instance of the GraalVM WebAssembly engine. Single instance of the Engine can be reused to
+        // speed up initialization.
         // See https://www.graalvm.org/latest/reference-manual/embed-languages/#managing-the-code-cache
         graalvmEngine = Engine.create("wasm")
 

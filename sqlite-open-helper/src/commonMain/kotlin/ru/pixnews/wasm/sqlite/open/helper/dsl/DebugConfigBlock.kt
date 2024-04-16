@@ -10,13 +10,11 @@ import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDebug
 import ru.pixnews.wasm.sqlite.open.helper.internal.platform.getSystemProp
 
-
 /**
  * Debugging options
  */
 @WasmSqliteOpenHelperDsl
 public class DebugConfigBlock {
-
     /**
      * Controls the printing of informational SQL log messages.
      */

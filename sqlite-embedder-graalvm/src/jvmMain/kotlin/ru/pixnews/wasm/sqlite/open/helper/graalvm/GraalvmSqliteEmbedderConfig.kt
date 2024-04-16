@@ -20,7 +20,6 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 public class GraalvmSqliteEmbedderConfig internal constructor(
     rootLogger: Logger,
 ) : SqliteEmbedderConfig {
-
     /**
      * Instance of the GraalVM WebAssembly engine. Single instance of the Engine can be reused to speed
      * up initialization.

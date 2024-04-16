@@ -78,7 +78,6 @@ public class OpenParamsBlock {
      * recommendation. The system may choose different values depending on a device, e.g.
      * lookaside allocations can be disabled on low-RAM devices
      *
-     * Default:
      * @param slotSize The size in bytes of each lookaside slot.
      * @param slotCount The total number of lookaside memory slots per database connection.
      */
