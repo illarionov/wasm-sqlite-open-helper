@@ -207,8 +207,8 @@ By leveraging the 'Threads and Atomics' and 'Bulk memory operations' WebAssembly
 implementation can create SQLite connections to the same database from different threads.
 
 By default, GraalVM executes code in interpreter mode, which can be slow. GraalVM offers runtime optimizations to
-improve performance.
-For more details, see this link: https://www.graalvm.org/latest/reference-manual/embed-languages/#runtime-optimization-support
+improve performance. For more details, see this link:
+https://www.graalvm.org/latest/reference-manual/embed-languages/#runtime-optimization-support
 
 To enable optimizations when running code on OpenJDK or other non-GraalVM runtimes, you'll need to use the
 `-XX:+EnableJVMCI` option and add the GraalVM compiler to the `--upgrade-module-path` classpath. 
@@ -221,6 +221,15 @@ Check this link for more information: https://www.graalvm.org/latest/reference-m
 
 [graalwm-wasm]: https://www.graalvm.org/latest/reference-manual/wasm/
 
+## SQLite WebAssembly binary
+
+The project uses SQLite with patches from Android AOSP and WebAssembly extensions.
+Build configuration is similar to AOSP's, with multithreading and the Android-specific Localized collator enabled.
+
+The ICU library is statically compiled, resulting in a SQLite binary size of about 30 megabytes.
+This binary is loaded into RAM during execution, so the RAM requirements are quite high.
+
+You can check the SQLite build configuration in the implementation of the [sqlite-wasm/] module.
 
 ## Development notes
 
