@@ -198,6 +198,30 @@ val factory = WasmSqliteOpenHelperFactory(GraalvmSqliteEmbedder) {
 
 [SupportSQLiteOpenHelper]: https://developer.android.com/reference/androidx/sqlite/db/SupportSQLiteOpenHelper
 
+## WebAssembly embedders
+
+To execute WebAssembly code on the JVM, we use the [GraalVM WebAssembly implementation][graalwm-wasm]. 
+It works both on Android API 26+ and on JVM JDK 21+.
+
+By leveraging the 'Threads and Atomics' and 'Bulk memory operations' WebAssembly extensions, our SqliteOpenHelper
+implementation can create SQLite connections to the same database from different threads.
+
+By default, GraalVM executes code in interpreter mode, which can be slow. GraalVM offers runtime optimizations to
+improve performance.
+For more details, see this link: https://www.graalvm.org/latest/reference-manual/embed-languages/#runtime-optimization-support
+
+To enable optimizations when running code on OpenJDK or other non-GraalVM runtimes, you'll need to use the
+`-XX:+EnableJVMCI` option and add the GraalVM compiler to the `--upgrade-module-path` classpath. 
+This can be tricky to set up with Gradle. 
+Additionally, the GraalVM version used in the project requires JDK 22 or later to run GraalVM Compiler.
+
+You can reuse a single instance of the GraalVM Engine between tests to speed up initialization. To do this, specify
+the instance using the `graalvmEngine` parameter in the `embedder` block when creating the factory.
+Check this link for more information: https://www.graalvm.org/latest/reference-manual/embed-languages/#managing-the-code-cache 
+
+[graalwm-wasm]: https://www.graalvm.org/latest/reference-manual/wasm/
+
+
 ## Development notes
 
 To build the project, you need to have Emscripten SDK installed.
@@ -228,6 +252,7 @@ The first build may take quite a long time, since the ICU and SQLite libraries a
 ## Contributing
 
 Any type of contributions are welcome. Please see the [contribution guide](CONTRIBUTING.md).
+
 
 ## License
 
