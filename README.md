@@ -210,10 +210,27 @@ By default, GraalVM executes code in interpreter mode, which can be slow. GraalV
 improve performance. For more details, see this link:
 https://www.graalvm.org/latest/reference-manual/embed-languages/#runtime-optimization-support
 
-To enable optimizations when running code on OpenJDK or other non-GraalVM runtimes, you'll need to use the
+To run tests with runtime optimizations enabled, you can leverage Gradle toolchains to execute Android unit tests 
+on a compatible Graal VM version.
+
+```kotlin
+android {
+    testOptions {
+        unitTests.all {
+            it.javaLauncher = javaToolchains.launcherFor {
+                languageVersion = JavaLanguageVersion.of(22)
+                vendor = JvmVendorSpec.GRAAL_VM
+            }
+        }
+    }
+}
+```
+
+To enable optimizations when running code on OpenJDK or other non-GraalVM runtime, you'll need to use the
 `-XX:+EnableJVMCI` option and add the GraalVM compiler to the `--upgrade-module-path` classpath. 
-This can be tricky to set up with Gradle. 
-Additionally, the GraalVM version used in the project requires JDK 22 or later to run GraalVM Compiler.
+This can be tricky to set up with Gradle. Additionally, the GraalVM version used in the project requires JDK 22 or
+later to run GraalVM Compiler. For an example of how to enable the GraalVM compiler in Android unit tests, take a look
+at [this gist](https://gist.github.com/illarionov/9ce560f95366649876133c1634a03b88).
 
 You can reuse a single instance of the GraalVM Engine between tests to speed up initialization. To do this, specify
 the instance using the `graalvmEngine` parameter in the `embedder` block when creating the factory.
