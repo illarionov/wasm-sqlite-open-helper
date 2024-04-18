@@ -17,11 +17,11 @@ import androidx.sqlite.db.SupportSQLiteOpenHelper
 import ru.pixnews.wasm.sqlite.open.helper.base.DatabaseErrorHandler
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.dsl.OpenParamsBlock
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteCapi
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDatabaseOpenParams
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDebug
 import ru.pixnews.wasm.sqlite.open.helper.internal.WasmSqliteOpenHelper
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.GraalNativeBindings
+import ru.pixnews.wasm.sqlite.open.helper.internal.interop.JvmSqlOpenHelperNativeBindings
+import ru.pixnews.wasm.sqlite.open.helper.internal.interop.SqliteCapi
 import ru.pixnews.wasm.sqlite.open.helper.path.DatabasePathResolver
 
 /**
@@ -38,7 +38,7 @@ internal class WasmSqliteOpenHelperFactory(
     private val logger: Logger = rootLogger.withTag("WasmSqliteOpenHelperFactory")
 
     override fun create(configuration: SupportSQLiteOpenHelper.Configuration): SupportSQLiteOpenHelper {
-        val bindings = GraalNativeBindings(sqliteCapi, logger)
+        val bindings = JvmSqlOpenHelperNativeBindings(sqliteCapi, logger)
 
         val openParamsBuilder: SQLiteDatabaseOpenParams.Builder = SQLiteDatabaseOpenParams.Builder().apply {
             errorHandler = DatabaseErrorHandler { dbObj -> configuration.callback.onCorruption(dbObj) }

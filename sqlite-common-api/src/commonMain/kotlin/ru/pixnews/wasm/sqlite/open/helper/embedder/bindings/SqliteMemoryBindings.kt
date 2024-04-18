@@ -11,12 +11,11 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 
 @InternalWasmSqliteHelperApi
 public interface SqliteMemoryBindings {
-    // TODO: prefix
-    public fun <P : Any?> allocOrThrow(len: UInt): WasmPtr<P>
-    public fun free(ptr: WasmPtr<*>)
+    public fun <P : Any?> sqliteAllocOrThrow(len: UInt): WasmPtr<P>
+    public fun sqliteFree(ptr: WasmPtr<*>)
 }
 
 @InternalWasmSqliteHelperApi
-public fun SqliteMemoryBindings.freeSilent(value: WasmPtr<*>): Result<Unit> = kotlin.runCatching {
-    free(value)
+public fun SqliteMemoryBindings.sqliteFreeSilent(value: WasmPtr<*>): Result<Unit> = kotlin.runCatching {
+    sqliteFree(value)
 }

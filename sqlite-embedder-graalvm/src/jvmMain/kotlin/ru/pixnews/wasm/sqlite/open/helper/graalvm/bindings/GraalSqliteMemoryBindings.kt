@@ -48,7 +48,7 @@ internal class GraalSqliteMemoryBindings(
         }
     }
 
-    override fun <P : Any?> allocOrThrow(len: UInt): WasmPtr<P> {
+    override fun <P : Any?> sqliteAllocOrThrow(len: UInt): WasmPtr<P> {
         check(len > 0U)
         val mem: WasmPtr<P> = sqlite3_malloc.executeForPtr(len.toInt())
 
@@ -59,7 +59,7 @@ internal class GraalSqliteMemoryBindings(
         return mem
     }
 
-    override fun free(ptr: WasmPtr<*>) {
+    override fun sqliteFree(ptr: WasmPtr<*>) {
         sqlite3_free.executeVoid(ptr)
     }
 

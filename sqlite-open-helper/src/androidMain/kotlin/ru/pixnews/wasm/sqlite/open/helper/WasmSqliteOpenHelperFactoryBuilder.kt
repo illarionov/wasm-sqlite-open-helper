@@ -19,8 +19,8 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import ru.pixnews.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
 import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard
 import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard.Reporter
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.GraalvmSqliteCapi
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.JvmSqliteCallbackStore
+import ru.pixnews.wasm.sqlite.open.helper.internal.interop.SqliteCapi
 import ru.pixnews.wasm.sqlite.open.helper.path.AndroidDatabasePathResolver
 import ru.pixnews.wasm.sqlite.open.helper.path.DatabasePathResolver
 import ru.pixnews.wasm.sqlite.open.helper.path.JvmDatabasePathResolver
@@ -76,7 +76,7 @@ internal fun <E : SqliteEmbedderConfig> WasmSqliteOpenHelperFactory(
         callbackStore = callbackStore,
         embedderConfigBuilder = config.embedderConfig,
     )
-    val sqliteCapi = GraalvmSqliteCapi(
+    val sqliteCapi = SqliteCapi(
         sqliteBindings = embedderEnv.sqliteBindings,
         memory = embedderEnv.memory,
         callbackStore = callbackStore,

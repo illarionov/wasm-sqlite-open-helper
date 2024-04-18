@@ -18,10 +18,9 @@ import ru.pixnews.wasm.sqlite.open.helper.common.embedder.readPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.readZeroTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.write
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.writeZeroTerminatedString
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteCapi
 import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.SqliteBindings
 import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.SqliteMemoryBindings
-import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.freeSilent
+import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.sqliteFreeSilent
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore.SqliteComparatorId
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore.SqliteExecCallbackId
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
@@ -46,13 +45,13 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceCallback
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode
 
 @Suppress("LargeClass")
-internal class GraalvmSqliteCapi internal constructor(
+internal class SqliteCapi internal constructor(
     private val sqliteBindings: SqliteBindings,
     val memory: EmbedderMemory,
     private val callbackStore: JvmSqliteCallbackStore,
     private val callbackFunctionIndexes: Sqlite3CallbackFunctionIndexes,
     rootLogger: Logger,
-) : SqliteCapi {
+) {
     private val databaseResources: SqliteOpenDatabaseResources = SqliteOpenDatabaseResources(callbackStore, rootLogger)
     private val memoryBindings: SqliteMemoryBindings = sqliteBindings.memoryBindings
 
@@ -91,7 +90,7 @@ internal class GraalvmSqliteCapi internal constructor(
         var pFileName: WasmPtr<Byte> = WasmPtr.sqlite3Null()
         var pDb: WasmPtr<SqliteDb> = WasmPtr.sqlite3Null()
         try {
-            ppDb = memoryBindings.allocOrThrow(WasmPtr.WASM_SIZEOF_PTR)
+            ppDb = memoryBindings.sqliteAllocOrThrow(WasmPtr.WASM_SIZEOF_PTR)
             pFileName = allocZeroTerminatedString(filename)
 
             val result = sqliteBindings.sqlite3_open.executeForInt(pFileName.addr, ppDb.addr)
@@ -106,19 +105,19 @@ internal class GraalvmSqliteCapi internal constructor(
             sqlite3Close(pDb)
             throw ex
         } finally {
-            memoryBindings.freeSilent(ppDb)
-            memoryBindings.freeSilent(pFileName)
+            memoryBindings.sqliteFreeSilent(ppDb)
+            memoryBindings.sqliteFreeSilent(pFileName)
         }
     }
 
-    override fun sqlite3initialize() {
+    fun sqlite3initialize() {
         val sqliteInitResult = sqliteBindings.sqlite3_initialize.executeForInt()
         if (sqliteInitResult != SqliteErrno.SQLITE_OK.id) {
             throw SqliteException(sqliteInitResult, sqliteInitResult)
         }
     }
 
-    override fun sqlite3OpenV2(
+    fun sqlite3OpenV2(
         filename: String,
         flags: SqliteOpenFlags,
         vfsName: String?,
@@ -128,7 +127,7 @@ internal class GraalvmSqliteCapi internal constructor(
         var pVfsName: WasmPtr<Byte> = WasmPtr.sqlite3Null()
         var pDb: WasmPtr<SqliteDb> = WasmPtr.sqlite3Null()
         try {
-            ppDb = memoryBindings.allocOrThrow(WasmPtr.WASM_SIZEOF_PTR)
+            ppDb = memoryBindings.sqliteAllocOrThrow(WasmPtr.WASM_SIZEOF_PTR)
             pFileName = allocZeroTerminatedString(filename)
             if (vfsName != null) {
                 pVfsName = allocZeroTerminatedString(vfsName)
@@ -151,13 +150,13 @@ internal class GraalvmSqliteCapi internal constructor(
             sqlite3Close(pDb)
             throw ex
         } finally {
-            memoryBindings.freeSilent(ppDb)
-            memoryBindings.freeSilent(pFileName)
-            memoryBindings.freeSilent(pVfsName)
+            memoryBindings.sqliteFreeSilent(ppDb)
+            memoryBindings.sqliteFreeSilent(pFileName)
+            memoryBindings.sqliteFreeSilent(pVfsName)
         }
     }
 
-    override fun sqlite3Close(
+    fun sqlite3Close(
         sqliteDb: WasmPtr<SqliteDb>,
     ) {
         try {
@@ -169,28 +168,28 @@ internal class GraalvmSqliteCapi internal constructor(
     }
 
     @Suppress("WRONG_OVERLOADING_FUNCTION_ARGUMENTS")
-    override fun sqlite3Config(op: SqliteConfigParameter, arg1: Int) {
+    fun sqlite3Config(op: SqliteConfigParameter, arg1: Int) {
         val errNo = sqliteBindings.sqlite3__wasm_config_i.executeForInt(op.id, arg1)
         if (errNo != Errno.SUCCESS.code) {
             throw SqliteException(errNo, errNo, "sqlite3__wasm_config_i() failed")
         }
     }
 
-    override fun sqlite3Config(op: SqliteConfigParameter, arg1: Int, arg2: Int) {
+    fun sqlite3Config(op: SqliteConfigParameter, arg1: Int, arg2: Int) {
         val errNo = sqliteBindings.sqlite3__wasm_config_ii.executeForInt(op.id, arg1, arg2)
         if (errNo != Errno.SUCCESS.code) {
             throw SqliteException(errNo, errNo, "sqlite3__wasm_config_ii() failed")
         }
     }
 
-    override fun sqlite3Config(op: SqliteConfigParameter, arg1: Long) {
+    fun sqlite3Config(op: SqliteConfigParameter, arg1: Long) {
         val errNo = sqliteBindings.sqlite3__wasm_config_j.executeForInt(op.id, arg1)
         if (errNo != Errno.SUCCESS.code) {
             throw SqliteException(errNo, errNo, "sqlite3__wasm_config_j() failed")
         }
     }
 
-    override fun sqlite3SetLogger(logger: SqliteLogCallback?) {
+    fun sqlite3SetLogger(logger: SqliteLogCallback?) {
         val oldLogger = callbackStore.sqlite3LogCallback
         try {
             callbackStore.sqlite3LogCallback = logger
@@ -208,7 +207,7 @@ internal class GraalvmSqliteCapi internal constructor(
         }
     }
 
-    override fun sqlite3SoftHeapLimit(limit: Long) {
+    fun sqlite3SoftHeapLimit(limit: Long) {
         val errNo = sqliteBindings.sqlite3_soft_heap_limit64.executeForInt(limit)
         if (errNo != Errno.SUCCESS.code) {
             throw SqliteException(errNo, errNo, "sqlite3_soft_heap_limit64() failed")
@@ -234,7 +233,7 @@ internal class GraalvmSqliteCapi internal constructor(
         return sqliteBindings.sqlite3_extended_errcode.executeForInt(sqliteDb.addr)
     }
 
-    override fun sqlite3CreateCollation(
+    fun sqlite3CreateCollation(
         database: WasmPtr<SqliteDb>,
         name: String,
         comparator: SqliteComparatorCallback?,
@@ -255,7 +254,7 @@ internal class GraalvmSqliteCapi internal constructor(
             if (pCallbackId != null) callbackFunctionIndexes.comparatorFunction.funcId else 0,
             if (pCallbackId != null) callbackFunctionIndexes.destroyComparatorFunction.funcId else 0,
         )
-        memoryBindings.freeSilent(pName)
+        memoryBindings.sqliteFreeSilent(pName)
         if (errNo != Errno.SUCCESS.code && pCallbackId != null) {
             callbackStore.sqlite3Comparators.remove(pCallbackId)
         }
@@ -277,7 +276,7 @@ internal class GraalvmSqliteCapi internal constructor(
 
         try {
             pSql = allocZeroTerminatedString(sql)
-            pzErrMsg = memoryBindings.allocOrThrow(WasmPtr.WASM_SIZEOF_PTR)
+            pzErrMsg = memoryBindings.sqliteAllocOrThrow(WasmPtr.WASM_SIZEOF_PTR)
 
             val errNo = sqliteBindings.sqlite3_exec.executeForInt(
                 database.addr,
@@ -289,20 +288,20 @@ internal class GraalvmSqliteCapi internal constructor(
             if (errNo != Errno.SUCCESS.code) {
                 val errMsgAddr: WasmPtr<Byte> = memory.readPtr(pzErrMsg)
                 val errMsg = memory.readZeroTerminatedString(errMsgAddr)
-                memoryBindings.freeSilent(errMsgAddr)
+                memoryBindings.sqliteFreeSilent(errMsgAddr)
                 throw SqliteException(errNo, errNo, "sqlite3_exec", errMsg)
             }
         } finally {
             pCallbackId?.let { callbackStore.sqlite3ExecCallbacks.remove(it) }
-            memoryBindings.freeSilent(pSql)
-            memoryBindings.freeSilent(pzErrMsg)
+            memoryBindings.sqliteFreeSilent(pSql)
+            memoryBindings.sqliteFreeSilent(pzErrMsg)
         }
     }
 
-    override fun sqlite3DbReadonly(
+    fun sqlite3DbReadonly(
         sqliteDb: WasmPtr<SqliteDb>,
         dbName: String?,
-    ): SqliteCapi.SqliteDbReadonlyResult {
+    ): SqliteDbReadonlyResult {
         val pDbName = if (dbName != null) {
             allocZeroTerminatedString(dbName)
         } else {
@@ -311,13 +310,13 @@ internal class GraalvmSqliteCapi internal constructor(
 
         try {
             val readonlyResultId = sqliteBindings.sqlite3_db_readonly.executeForInt(sqliteDb.addr, pDbName.addr)
-            return SqliteCapi.SqliteDbReadonlyResult.fromId(readonlyResultId)
+            return SqliteDbReadonlyResult.fromId(readonlyResultId)
         } finally {
-            memoryBindings.freeSilent(pDbName)
+            memoryBindings.sqliteFreeSilent(pDbName)
         }
     }
 
-    override fun sqlite3BusyTimeout(
+    fun sqlite3BusyTimeout(
         sqliteDb: WasmPtr<SqliteDb>,
         ms: Int,
     ) {
@@ -325,7 +324,7 @@ internal class GraalvmSqliteCapi internal constructor(
         result.throwOnSqliteError("sqlite3BusyTimeout() failed", sqliteDb)
     }
 
-    override fun sqlite3Trace(
+    fun sqlite3Trace(
         sqliteDb: WasmPtr<SqliteDb>,
         mask: SqliteTraceEventCode,
         traceCallback: SqliteTraceCallback?,
@@ -348,7 +347,7 @@ internal class GraalvmSqliteCapi internal constructor(
         errNo.throwOnSqliteError("sqlite3_trace_v2() failed", sqliteDb)
     }
 
-    override fun sqlite3ProgressHandler(
+    fun sqlite3ProgressHandler(
         sqliteDb: WasmPtr<SqliteDb>,
         instructions: Int,
         progressCallback: SqliteProgressCallback?,
@@ -378,17 +377,17 @@ internal class GraalvmSqliteCapi internal constructor(
         errNo.throwOnSqliteError("sqlite3ProgressHandler() failed", sqliteDb)
     }
 
-    override fun sqlite3DbStatus(
+    fun sqlite3DbStatus(
         sqliteDb: WasmPtr<SqliteDb>,
         op: SqliteDbStatusParameter,
         resetFlag: Boolean,
-    ): SqliteCapi.SqliteDbStatusResult {
+    ): SqliteDbStatusResult {
         var pCur: WasmPtr<Int> = WasmPtr.sqlite3Null()
         var pHiwtr: WasmPtr<Int> = WasmPtr.sqlite3Null()
 
         try {
-            pCur = memoryBindings.allocOrThrow(4U)
-            pHiwtr = memoryBindings.allocOrThrow(4U)
+            pCur = memoryBindings.sqliteAllocOrThrow(4U)
+            pHiwtr = memoryBindings.sqliteAllocOrThrow(4U)
 
             val errCode = sqliteBindings.sqlite3_db_status.executeForInt(
                 sqliteDb.addr,
@@ -398,14 +397,14 @@ internal class GraalvmSqliteCapi internal constructor(
                 if (resetFlag) 1 else 0,
             )
             errCode.throwOnSqliteError(null, sqliteDb)
-            return SqliteCapi.SqliteDbStatusResult(0, 0)
+            return SqliteDbStatusResult(0, 0)
         } finally {
-            memoryBindings.freeSilent(pCur)
-            memoryBindings.freeSilent(pHiwtr)
+            memoryBindings.sqliteFreeSilent(pCur)
+            memoryBindings.sqliteFreeSilent(pHiwtr)
         }
     }
 
-    override fun sqlite3DbConfig(
+    fun sqlite3DbConfig(
         sqliteDb: WasmPtr<SqliteDb>,
         op: SqliteDbConfigParameter,
         arg1: Int,
@@ -420,7 +419,7 @@ internal class GraalvmSqliteCapi internal constructor(
         errCode.throwOnSqliteError("sqlite3DbConfig() failed", sqliteDb)
     }
 
-    override fun sqlite3DbConfig(
+    fun sqlite3DbConfig(
         sqliteDb: WasmPtr<SqliteDb>,
         op: SqliteDbConfigParameter,
         pArg1: WasmPtr<*>,
@@ -437,7 +436,7 @@ internal class GraalvmSqliteCapi internal constructor(
         errCode.throwOnSqliteError("sqlite3DbConfig() failed", sqliteDb)
     }
 
-    override fun sqlite3DbConfig(sqliteDb: WasmPtr<SqliteDb>, op: SqliteDbConfigParameter, pArg1: WasmPtr<Byte>) {
+    fun sqlite3DbConfig(sqliteDb: WasmPtr<SqliteDb>, op: SqliteDbConfigParameter, pArg1: WasmPtr<Byte>) {
         val errCode = sqliteBindings.sqlite3__wasm_db_config_s.executeForInt(
             sqliteDb.addr,
             op.id,
@@ -446,13 +445,13 @@ internal class GraalvmSqliteCapi internal constructor(
         errCode.throwOnSqliteError("sqlite3DbConfig() failed", sqliteDb)
     }
 
-    override fun sqlite3ColumnCount(
+    fun sqlite3ColumnCount(
         statement: WasmPtr<SqliteStatement>,
     ): Int {
         return sqliteBindings.sqlite3_column_count.executeForInt(statement.addr)
     }
 
-    override fun sqlite3ColumnText(
+    fun sqlite3ColumnText(
         statement: WasmPtr<SqliteStatement>,
         columnIndex: Int,
     ): String? {
@@ -460,21 +459,21 @@ internal class GraalvmSqliteCapi internal constructor(
         return memory.readNullableZeroTerminatedString(ptr)
     }
 
-    override fun sqlite3ColumnInt64(
+    fun sqlite3ColumnInt64(
         statement: WasmPtr<SqliteStatement>,
         columnIndex: Int,
     ): Long {
         return sqliteBindings.sqlite3_column_int64.executeForLong(statement.addr, columnIndex)
     }
 
-    override fun sqlite3ColumnDouble(
+    fun sqlite3ColumnDouble(
         statement: WasmPtr<SqliteStatement>,
         columnIndex: Int,
     ): Double {
         return sqliteBindings.sqlite3_column_double.executeForDouble(statement.addr, columnIndex)
     }
 
-    override fun sqlite3ColumnBlob(
+    fun sqlite3ColumnBlob(
         statement: WasmPtr<SqliteStatement>,
         columnIndex: Int,
     ): ByteArray {
@@ -489,14 +488,14 @@ internal class GraalvmSqliteCapi internal constructor(
         return memory.readBytes(ptr, bytes)
     }
 
-    override fun registerAndroidFunctions(db: WasmPtr<SqliteDb>, utf16Storage: Boolean) {
+    fun registerAndroidFunctions(db: WasmPtr<SqliteDb>, utf16Storage: Boolean) {
         sqliteBindings.register_android_functions.executeForInt(
             db.addr,
             if (utf16Storage) 1 else 0,
         ).throwOnSqliteError("register_android_functions() failed", db)
     }
 
-    override fun registerLocalizedCollators(ptr: WasmPtr<SqliteDb>, newLocale: String, utf16Storage: Boolean) {
+    fun registerLocalizedCollators(ptr: WasmPtr<SqliteDb>, newLocale: String, utf16Storage: Boolean) {
         var pNewLocale: WasmPtr<Byte> = WasmPtr.sqlite3Null()
         try {
             pNewLocale = allocZeroTerminatedString(newLocale)
@@ -507,25 +506,25 @@ internal class GraalvmSqliteCapi internal constructor(
             )
             errCode.throwOnSqliteError("register_localized_collators($newLocale) failed", ptr)
         } finally {
-            memoryBindings.freeSilent(pNewLocale)
+            memoryBindings.sqliteFreeSilent(pNewLocale)
         }
     }
 
-    override fun sqlite3Step(
+    fun sqlite3Step(
         statement: WasmPtr<SqliteStatement>,
     ): SqliteErrno {
         val errCode = sqliteBindings.sqlite3_step.executeForInt(statement.addr)
         return SqliteErrno.fromErrNoCode(errCode) ?: error("Unknown error code $errCode")
     }
 
-    override fun sqlite3Reset(
+    fun sqlite3Reset(
         statement: WasmPtr<SqliteStatement>,
     ): SqliteErrno {
         val errCode = sqliteBindings.sqlite3_reset.executeForInt(statement.addr)
         return SqliteErrno.fromErrNoCode(errCode) ?: error("Unknown error code $errCode")
     }
 
-    override fun sqlite3ColumnType(
+    fun sqlite3ColumnType(
         statement: WasmPtr<SqliteStatement>,
         columnIndex: Int,
     ): SqliteColumnType {
@@ -543,7 +542,7 @@ internal class GraalvmSqliteCapi internal constructor(
         }
     }
 
-    override fun readSqliteErrorInfo(
+    fun readSqliteErrorInfo(
         sqliteDb: WasmPtr<SqliteDb>,
     ): SqliteErrorInfo {
         if (sqliteDb.isSqlite3Null()) {
@@ -560,27 +559,27 @@ internal class GraalvmSqliteCapi internal constructor(
         return SqliteErrorInfo(errCode, extendedErrCode, errMsg)
     }
 
-    override fun sqlite3Changes(sqliteDb: WasmPtr<SqliteDb>): Int {
+    fun sqlite3Changes(sqliteDb: WasmPtr<SqliteDb>): Int {
         return sqliteBindings.sqlite3_changes.executeForInt(sqliteDb.addr)
     }
 
-    override fun sqlite3LastInsertRowId(
+    fun sqlite3LastInsertRowId(
         sqliteDb: WasmPtr<SqliteDb>,
     ): Long {
         return sqliteBindings.sqlite3_last_insert_rowid.executeForLong(sqliteDb.addr)
     }
 
-    override fun sqlite3ClearBindings(statement: WasmPtr<SqliteStatement>): SqliteErrno {
+    fun sqlite3ClearBindings(statement: WasmPtr<SqliteStatement>): SqliteErrno {
         val errCode = sqliteBindings.sqlite3_clear_bindings.executeForInt(statement.addr)
         return SqliteErrno.fromErrNoCode(errCode) ?: error("Unknown error code $errCode")
     }
 
-    override fun sqlite3BindBlobTransient(
+    fun sqlite3BindBlobTransient(
         sqliteDb: WasmPtr<SqliteStatement>,
         index: Int,
         value: ByteArray,
     ): SqliteErrno {
-        val pValue: WasmPtr<Byte> = memoryBindings.allocOrThrow(value.size.toUInt())
+        val pValue: WasmPtr<Byte> = memoryBindings.sqliteAllocOrThrow(value.size.toUInt())
         memory.write(pValue, value, 0, value.size)
         val errCode = try {
             sqliteBindings.sqlite3_bind_blob.executeForInt(
@@ -591,13 +590,13 @@ internal class GraalvmSqliteCapi internal constructor(
                 SqliteDestructorType.SQLITE_TRANSIENT.id, // TODO: change to destructor?
             )
         } finally {
-            memoryBindings.freeSilent(pValue)
+            memoryBindings.sqliteFreeSilent(pValue)
         }
 
         return SqliteErrno.fromErrNoCode(errCode) ?: error("Unknown error code $errCode")
     }
 
-    override fun sqlite3BindStringTransient(
+    fun sqlite3BindStringTransient(
         sqliteDb: WasmPtr<SqliteStatement>,
         index: Int,
         value: String,
@@ -605,7 +604,7 @@ internal class GraalvmSqliteCapi internal constructor(
         val encoded = value.encodeToByteArray()
         val size = encoded.size
 
-        val pValue: WasmPtr<Byte> = memoryBindings.allocOrThrow(size.toUInt())
+        val pValue: WasmPtr<Byte> = memoryBindings.sqliteAllocOrThrow(size.toUInt())
         memory.write(pValue, encoded, 0, size)
         val errCode = try {
             sqliteBindings.sqlite3_bind_text.executeForInt(
@@ -616,13 +615,13 @@ internal class GraalvmSqliteCapi internal constructor(
                 SqliteDestructorType.SQLITE_TRANSIENT.id, // TODO: change to destructor?
             )
         } finally {
-            memoryBindings.freeSilent(pValue)
+            memoryBindings.sqliteFreeSilent(pValue)
         }
 
         return SqliteErrno.fromErrNoCode(errCode) ?: error("Unknown error code $errCode")
     }
 
-    override fun sqlite3BindDouble(
+    fun sqlite3BindDouble(
         sqliteDb: WasmPtr<SqliteStatement>,
         index: Int,
         value: Double,
@@ -635,7 +634,7 @@ internal class GraalvmSqliteCapi internal constructor(
         return SqliteErrno.fromErrNoCode(errCode) ?: error("Unknown error code $errCode")
     }
 
-    override fun sqlite3BindLong(
+    fun sqlite3BindLong(
         sqliteDb: WasmPtr<SqliteStatement>,
         index: Int,
         value: Long,
@@ -648,7 +647,7 @@ internal class GraalvmSqliteCapi internal constructor(
         return SqliteErrno.fromErrNoCode(errCode) ?: error("Unknown error code $errCode")
     }
 
-    override fun sqlite3BindNull(
+    fun sqlite3BindNull(
         sqliteDb: WasmPtr<SqliteStatement>,
         index: Int,
     ): SqliteErrno {
@@ -656,7 +655,7 @@ internal class GraalvmSqliteCapi internal constructor(
         return SqliteErrno.fromErrNoCode(errCode) ?: error("Unknown error code $errCode")
     }
 
-    override fun sqlite3ColumnName(
+    fun sqlite3ColumnName(
         statement: WasmPtr<SqliteStatement>,
         index: Int,
     ): String? {
@@ -664,15 +663,15 @@ internal class GraalvmSqliteCapi internal constructor(
         return memory.readNullableZeroTerminatedString(ptr)
     }
 
-    override fun sqlite3StmtReadonly(statement: WasmPtr<SqliteStatement>): Boolean {
+    fun sqlite3StmtReadonly(statement: WasmPtr<SqliteStatement>): Boolean {
         return sqliteBindings.sqlite3_stmt_readonly.executeForInt(statement.addr) != 0
     }
 
-    override fun sqlite3BindParameterCount(statement: WasmPtr<SqliteStatement>): Int {
+    fun sqlite3BindParameterCount(statement: WasmPtr<SqliteStatement>): Int {
         return sqliteBindings.sqlite3_bind_parameter_count.executeForInt(statement.addr)
     }
 
-    override fun sqlite3PrepareV2(
+    fun sqlite3PrepareV2(
         sqliteDb: WasmPtr<SqliteDb>,
         sql: String,
     ): WasmPtr<SqliteStatement> {
@@ -683,8 +682,8 @@ internal class GraalvmSqliteCapi internal constructor(
             val sqlEncoded = sql.encodeToByteArray()
             val nullTerminatedSqlSize = sqlEncoded.size + 1
 
-            sqlBytesPtr = memoryBindings.allocOrThrow(nullTerminatedSqlSize.toUInt())
-            ppStatement = memoryBindings.allocOrThrow(WasmPtr.WASM_SIZEOF_PTR)
+            sqlBytesPtr = memoryBindings.sqliteAllocOrThrow(nullTerminatedSqlSize.toUInt())
+            ppStatement = memoryBindings.sqliteAllocOrThrow(WasmPtr.WASM_SIZEOF_PTR)
 
             memory.write(sqlBytesPtr, sqlEncoded)
             memory.writeByte(sqlBytesPtr + sqlEncoded.size, 0)
@@ -701,12 +700,12 @@ internal class GraalvmSqliteCapi internal constructor(
                 databaseResources.registerStatement(sqliteDb, it)
             }
         } finally {
-            memoryBindings.freeSilent(sqlBytesPtr)
-            memoryBindings.freeSilent(ppStatement)
+            memoryBindings.sqliteFreeSilent(sqlBytesPtr)
+            memoryBindings.sqliteFreeSilent(ppStatement)
         }
     }
 
-    override fun sqlite3Finalize(
+    fun sqlite3Finalize(
         sqliteDatabase: WasmPtr<SqliteDb>,
         statement: WasmPtr<SqliteStatement>,
     ) {
@@ -718,14 +717,14 @@ internal class GraalvmSqliteCapi internal constructor(
         }
     }
 
-    override fun sqlite3ExpandedSql(statement: WasmPtr<SqliteStatement>): String? {
+    fun sqlite3ExpandedSql(statement: WasmPtr<SqliteStatement>): String? {
         val ptr: WasmPtr<Byte> = sqliteBindings.sqlite3_expanded_sql.executeForPtr(statement.addr)
         return memory.readNullableZeroTerminatedString(ptr)
     }
 
     private fun allocZeroTerminatedString(string: String): WasmPtr<Byte> {
         val bytes = string.encodeToByteArray()
-        val mem: WasmPtr<Byte> = memoryBindings.allocOrThrow(bytes.size.toUInt() + 1U)
+        val mem: WasmPtr<Byte> = memoryBindings.sqliteAllocOrThrow(bytes.size.toUInt() + 1U)
         memory.writeZeroTerminatedString(mem, string)
         return mem
     }
@@ -734,5 +733,22 @@ internal class GraalvmSqliteCapi internal constructor(
         val version: String,
         val versionNumber: Int,
         val sourceId: String,
+    )
+
+    internal enum class SqliteDbReadonlyResult(public val id: Int) {
+        READ_ONLY(1),
+        READ_WRITE(0),
+        INVALID_NAME(-1),
+
+        ;
+
+        public companion object {
+            public fun fromId(id: Int): SqliteDbReadonlyResult = entries.first { it.id == id }
+        }
+    }
+
+    internal class SqliteDbStatusResult(
+        public val current: Int,
+        public val highestInstantaneousValue: Int,
     )
 }
