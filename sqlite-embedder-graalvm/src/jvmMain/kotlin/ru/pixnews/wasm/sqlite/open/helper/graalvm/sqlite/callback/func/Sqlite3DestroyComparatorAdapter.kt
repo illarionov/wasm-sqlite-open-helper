@@ -12,10 +12,12 @@ import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
+import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
+import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore.SqliteComparatorId
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.Sqlite3CallbackStore
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteComparatorCallback
 
 internal const val SQLITE3_DESTROY_COMPARATOR_FUNCTION_NAME = "sqlite3_comparator_destroy"
 
@@ -23,20 +25,20 @@ internal const val SQLITE3_DESTROY_COMPARATOR_FUNCTION_NAME = "sqlite3_comparato
 internal class Sqlite3DestroyComparatorAdapter(
     language: WasmLanguage,
     module: WasmModule,
-    private val callbackStore: Sqlite3CallbackStore,
+    private val comparatorStore: SqliteCallbackStore.SqliteCallbackIdMap<SqliteComparatorId, SqliteComparatorCallback>,
     host: SqliteEmbedderHost,
     functionName: String,
 ) : BaseWasmNode(language, module, host, functionName) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance) {
         val args = frame.arguments
-        destroyComparator(Sqlite3CallbackStore.Sqlite3ComparatorId(args.getArgAsInt(0)))
+        destroyComparator(args.getArgAsInt(0))
     }
 
     @CompilerDirectives.TruffleBoundary
     private fun destroyComparator(
-        comparatorId: Sqlite3CallbackStore.Sqlite3ComparatorId,
+        comparatorId: Int,
     ) {
         logger.v { "Removing comparator $comparatorId" }
-        callbackStore.sqlite3Comparators.remove(comparatorId)
+        comparatorStore.remove(SqliteComparatorId(comparatorId))
     }
 }

@@ -8,14 +8,16 @@ package ru.pixnews.wasm.sqlite.open.helper.graalvm.bindings
 
 import org.graalvm.polyglot.Value
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.asWasmAddr
+import ru.pixnews.wasm.sqlite.open.helper.common.api.isSqlite3Null
+import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.SqliteMemoryBindings
+import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.WasmFunctionBinding
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.member
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
 
 @Suppress("VariableNaming", "MagicNumber", "UnusedPrivateProperty", "BLANK_LINE_BETWEEN_PROPERTIES")
-internal class SqliteMemoryBindings(
+internal class GraalSqliteMemoryBindings(
     mainBindings: Value,
-) {
+) : SqliteMemoryBindings {
     val malloc by mainBindings.member()
     val free by mainBindings.member()
     val realloc by mainBindings.member()
@@ -25,7 +27,9 @@ internal class SqliteMemoryBindings(
     val stackAlloc by mainBindings.member()
 
     private val emscripten_builtin_memalign by mainBindings.member()
-    private val emscripten_stack_init: Value? = mainBindings.getMember("emscripten_stack_init")
+    private val emscripten_stack_init: WasmFunctionBinding? = mainBindings
+        .getMember("emscripten_stack_init")
+        ?.let(::GraalWasmFunctionBinding)
     private val emscripten_stack_get_free by mainBindings.member()
     private val emscripten_stack_get_base by mainBindings.member()
     private val emscripten_stack_get_end by mainBindings.member()
@@ -38,44 +42,40 @@ internal class SqliteMemoryBindings(
     private val sqlite3_realloc64 by mainBindings.member()
 
     // https://github.com/emscripten-core/emscripten/blob/main/system/lib/README.md
-    public fun init(memory: Memory) {
+    fun init(memory: Memory) {
         if (emscripten_stack_init != null) {
             EmscriptenInitializer(memory, emscripten_stack_init, emscripten_stack_get_end).init()
         }
     }
 
-    public fun <P : Any?> allocOrThrow(len: UInt): WasmPtr<P> {
+    override fun <P : Any?> allocOrThrow(len: UInt): WasmPtr<P> {
         check(len > 0U)
-        val mem = sqlite3_malloc.execute(len.toInt())
+        val mem: WasmPtr<P> = sqlite3_malloc.executeForPtr(len.toInt())
 
-        if (mem.isNull) {
+        if (mem.isSqlite3Null()) {
             throw OutOfMemoryError()
         }
 
-        return mem.asWasmAddr()
+        return mem
     }
 
-    public fun free(ptr: WasmPtr<*>) {
-        sqlite3_free.execute(ptr)
-    }
-
-    public fun freeSilent(value: WasmPtr<*>): Result<Unit> = kotlin.runCatching {
-        free(value)
+    override fun free(ptr: WasmPtr<*>) {
+        sqlite3_free.executeVoid(ptr)
     }
 
     private class EmscriptenInitializer(
         private val memory: Memory,
-        private val emscriptenStackInit: Value,
-        private val emscriptenStackGetEnd: Value,
+        private val emscriptenStackInit: WasmFunctionBinding,
+        private val emscriptenStackGetEnd: WasmFunctionBinding,
     ) {
         fun init() {
-            emscriptenStackInit.execute()
-                writeStackCookie()
-                checkStackCookie()
+            emscriptenStackInit.executeVoid()
+            writeStackCookie()
+            checkStackCookie()
         }
 
         private fun writeStackCookie() {
-            var max = emscriptenStackGetEnd.execute().asInt()
+            var max = emscriptenStackGetEnd.executeForInt()
             check(max.and(0x03) == 0)
 
             if (max == 0) {
@@ -88,7 +88,7 @@ internal class SqliteMemoryBindings(
         }
 
         private fun checkStackCookie() {
-            var max = emscriptenStackGetEnd.execute().asInt()
+            var max = emscriptenStackGetEnd.executeForInt()
             check(max.and(0x03) == 0)
 
             if (max == 0) {

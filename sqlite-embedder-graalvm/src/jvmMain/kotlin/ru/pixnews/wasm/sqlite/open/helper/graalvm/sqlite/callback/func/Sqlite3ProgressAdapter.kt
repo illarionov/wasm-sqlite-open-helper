@@ -16,7 +16,6 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.Sqlite3CallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteProgressCallback
 
@@ -25,7 +24,7 @@ internal const val SQLITE3_PROGRESS_CB_FUNCTION_NAME = "sqlite3_progress_cb"
 internal class Sqlite3ProgressAdapter(
     language: WasmLanguage,
     module: WasmModule,
-    private val callbackStore: Sqlite3CallbackStore,
+    private val progressCallbackStore: (WasmPtr<SqliteDb>) -> SqliteProgressCallback?,
     host: SqliteEmbedderHost,
     functionName: String,
 ) : BaseWasmNode(language, module, host, functionName) {
@@ -41,7 +40,7 @@ internal class Sqlite3ProgressAdapter(
         contextPointer: WasmPtr<SqliteDb>,
     ): Int {
         logger.v { "Calling progress callback for pinter: $contextPointer" }
-        val delegate: SqliteProgressCallback = callbackStore.sqlite3ProgressCallbacks[contextPointer]
+        val delegate: SqliteProgressCallback = progressCallbackStore(contextPointer)
             ?: error("Callback $contextPointer not registered")
 
         return delegate.invoke(contextPointer)

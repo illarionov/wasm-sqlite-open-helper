@@ -10,42 +10,48 @@ import org.graalvm.polyglot.Context
 import org.graalvm.polyglot.Engine
 import org.graalvm.polyglot.Source
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteConfiguration
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteCapi
+import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
+import ru.pixnews.wasm.sqlite.open.helper.common.embedder.EmbedderMemory
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedder
+import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteWasmEnvironment
 import ru.pixnews.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
+import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.SqliteBindings
+import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
+import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.bindings.EmscriptenPthreadBindings
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.bindings.SqliteBindings
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.bindings.GraalSqliteBindings
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.EmscriptenEnvModuleBuilder
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.GraalvmWasmHostMemoryAdapter
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.preview1.WasiSnapshotPreview1MobuleBuilder
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.pthread.Pthread
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.GraalvmSqliteCapi
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.Sqlite3CallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.SqliteCallbacksModuleBuilder
 import java.util.concurrent.atomic.AtomicReference
 
 public object GraalvmSqliteEmbedder : SqliteEmbedder<GraalvmSqliteEmbedderConfig> {
     private const val USE_UNSAFE_MEMORY: Boolean = false
 
-    override fun createCapi(
+    @InternalWasmSqliteHelperApi
+    override fun createSqliteWasmEnvironment(
         commonConfig: WasmSqliteCommonConfig,
+        callbackStore: SqliteCallbackStore,
         embedderConfigBuilder: GraalvmSqliteEmbedderConfig.() -> Unit,
-    ): SqliteCapi {
+    ): SqliteWasmEnvironment {
         val config = GraalvmSqliteEmbedderConfig(commonConfig.logger).apply(embedderConfigBuilder)
-        return createGraalvmSqliteCapi(
+        return createGraalvmSqliteWasmEnvironment(
             config.graalvmEngine,
             config.host,
+            callbackStore,
             config.sqlite3Binary,
         )
     }
 
-    private fun createGraalvmSqliteCapi(
+    private fun createGraalvmSqliteWasmEnvironment(
         graalvmEngine: Engine,
         host: SqliteEmbedderHost,
+        callbackStore: SqliteCallbackStore,
         sqlite3Binary: WasmSqliteConfiguration,
-    ): SqliteCapi {
+    ): SqliteWasmEnvironment {
         val useSharedMemory = USE_UNSAFE_MEMORY || sqlite3Binary.requireSharedMemory
-        val callbackStore = Sqlite3CallbackStore()
         val graalContext: Context = setupWasmGraalContext(graalvmEngine, useSharedMemory, sqlite3Binary.requireThreads)
         val ptreadRef: AtomicReference<Pthread> = AtomicReference()
 
@@ -86,11 +92,15 @@ public object GraalvmSqliteEmbedder : SqliteEmbedder<GraalvmSqliteEmbedderConfig
 
         val memory = GraalvmWasmHostMemoryAdapter(envModuleInstance, null, host.rootLogger)
 
-        val bindings = SqliteBindings(
+        val bindings = GraalSqliteBindings(
             sqliteBindings = mainBindings,
             memory = memory,
         )
-        return GraalvmSqliteCapi(bindings, memory, callbackStore, indirectFunctionIndexes, host.rootLogger)
+        return object : SqliteWasmEnvironment {
+            override val sqliteBindings: SqliteBindings = bindings
+            override val memory: EmbedderMemory = memory
+            override val callbackFunctionIndexes: Sqlite3CallbackFunctionIndexes = indirectFunctionIndexes
+        }
     }
 
     private fun setupWasmGraalContext(

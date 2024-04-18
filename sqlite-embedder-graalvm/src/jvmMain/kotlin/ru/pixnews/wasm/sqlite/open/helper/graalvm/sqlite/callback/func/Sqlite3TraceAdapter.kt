@@ -20,10 +20,10 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsUint
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.Sqlite3CallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteStatement
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTrace
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceCallback
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode.Companion.SQLITE_TRACE_CLOSE
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode.Companion.SQLITE_TRACE_PROFILE
@@ -36,7 +36,7 @@ internal const val SQLITE3_TRACE_CB_FUNCTION_NAME = "sqlite3_trace_cb"
 internal class Sqlite3TraceAdapter(
     language: WasmLanguage,
     module: WasmModule,
-    private val callbackStore: Sqlite3CallbackStore,
+    private val traceCallbackStore: (WasmPtr<SqliteDb>) -> SqliteTraceCallback?,
     host: SqliteEmbedderHost,
     functionName: String,
 ) : BaseWasmNode(language, module, host, functionName) {
@@ -60,7 +60,7 @@ internal class Sqlite3TraceAdapter(
         arg2: Long,
     ): Int {
         val delegate: (trace: SqliteTrace) -> Unit =
-            callbackStore.sqlite3TraceCallbacks[contextPointer] ?: error("Callback $contextPointer not registered")
+            traceCallbackStore(contextPointer) ?: error("Callback $contextPointer not registered")
 
         if (flags.contains(SQLITE_TRACE_STMT)) {
             val traceInfo = SqliteTrace.TraceStmt(

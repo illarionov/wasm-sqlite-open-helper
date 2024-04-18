@@ -66,7 +66,6 @@ dependencies {
 kotlin {
     androidTarget()
     jvm()
-    linuxX64()
 
     applyDefaultHierarchyTemplate()
 
@@ -92,6 +91,7 @@ kotlin {
         commonMain.dependencies {
             api(projects.commonApi)
             api(projects.sqliteCommonApi)
+            implementation(projects.wasiEmscriptenHost)
             api(libs.androidx.collection)
         }
         commonTest.dependencies {

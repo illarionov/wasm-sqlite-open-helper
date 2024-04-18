@@ -1,6 +1,5 @@
 public final class ru/pixnews/wasm/sqlite/open/helper/graalvm/GraalvmSqliteEmbedder : ru/pixnews/wasm/sqlite/open/helper/embedder/SqliteEmbedder {
 	public static final field INSTANCE Lru/pixnews/wasm/sqlite/open/helper/graalvm/GraalvmSqliteEmbedder;
-	public fun createCapi (Lru/pixnews/wasm/sqlite/open/helper/embedder/WasmSqliteCommonConfig;Lkotlin/jvm/functions/Function1;)Lru/pixnews/wasm/sqlite/open/helper/embedder/SqliteCapi;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/graalvm/GraalvmSqliteEmbedderConfig : ru/pixnews/wasm/sqlite/open/helper/embedder/SqliteEmbedderConfig {

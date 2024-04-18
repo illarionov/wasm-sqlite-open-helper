@@ -139,52 +139,6 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/fd/FileLoc
 	public fun toString ()Ljava/lang/String;
 }
 
-public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/functiontable/IndirectFunctionRef {
-	public abstract fun getRef ()I
-}
-
-public final class ru/pixnews/wasm/sqlite/open/helper/host/functiontable/IndirectFunctionRef$ExternalRef : ru/pixnews/wasm/sqlite/open/helper/host/functiontable/IndirectFunctionRef {
-	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/host/functiontable/IndirectFunctionRef$ExternalRef;
-	public static fun constructor-impl (I)I
-	public fun equals (Ljava/lang/Object;)Z
-	public static fun equals-impl (ILjava/lang/Object;)Z
-	public static final fun equals-impl0 (II)Z
-	public fun getRef ()I
-	public fun hashCode ()I
-	public static fun hashCode-impl (I)I
-	public fun toString ()Ljava/lang/String;
-	public static fun toString-impl (I)Ljava/lang/String;
-	public final synthetic fun unbox-impl ()I
-}
-
-public final class ru/pixnews/wasm/sqlite/open/helper/host/functiontable/IndirectFunctionRef$FuncRef : ru/pixnews/wasm/sqlite/open/helper/host/functiontable/IndirectFunctionRef {
-	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/host/functiontable/IndirectFunctionRef$FuncRef;
-	public static fun constructor-impl (I)I
-	public fun equals (Ljava/lang/Object;)Z
-	public static fun equals-impl (ILjava/lang/Object;)Z
-	public static final fun equals-impl0 (II)Z
-	public fun getRef ()I
-	public fun hashCode ()I
-	public static fun hashCode-impl (I)I
-	public fun toString ()Ljava/lang/String;
-	public static fun toString-impl (I)Ljava/lang/String;
-	public final synthetic fun unbox-impl ()I
-}
-
-public final class ru/pixnews/wasm/sqlite/open/helper/host/functiontable/IndirectFunctionTableIndex {
-	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/host/functiontable/IndirectFunctionTableIndex;
-	public static fun constructor-impl (I)I
-	public fun equals (Ljava/lang/Object;)Z
-	public static fun equals-impl (ILjava/lang/Object;)Z
-	public static final fun equals-impl0 (II)Z
-	public final fun getFuncId ()I
-	public fun hashCode ()I
-	public static fun hashCode-impl (I)I
-	public fun toString ()Ljava/lang/String;
-	public static fun toString-impl (I)Ljava/lang/String;
-	public final synthetic fun unbox-impl ()I
-}
-
 public abstract class ru/pixnews/wasm/sqlite/open/helper/host/include/DirFd {
 	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/include/DirFd$Companion;
 	public synthetic fun <init> (ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -572,15 +526,8 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/memory/DefaultWasiMem
 	public fun write-ullT8eY (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/fd/FdChannel;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/ReadWriteStrategy;Ljava/util/List;)J
 }
 
-public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/memory/Memory {
-	public abstract fun readBytes-OCuHDVA (II)[B
+public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/memory/Memory : ru/pixnews/wasm/sqlite/open/helper/common/embedder/EmbedderMemory {
 	public abstract fun readFromChannel-dPCOrck (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/fd/FdChannel;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/ReadWriteStrategy;Ljava/util/List;)J
-	public abstract fun readI32-MYs6Txo (I)I
-	public abstract fun readI8-MYs6Txo (I)B
-	public abstract fun write-QS5n4iw (I[BII)V
-	public abstract fun writeByte-OCuHDVA (IB)V
-	public abstract fun writeI32-OCuHDVA (II)V
-	public abstract fun writeI64-OCuHDVA (IJ)V
 	public abstract fun writeToChannel-ullT8eY (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/fd/FdChannel;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/ReadWriteStrategy;Ljava/util/List;)J
 }
 
@@ -590,15 +537,6 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/memory/MemoryKt {
 	public static final fun readU8-wTLQxr0 (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;I)B
 	public static final fun write--6ori6s (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;I[B)V
 	public static final fun writePtr-0BaN380 (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;II)V
-}
-
-public final class ru/pixnews/wasm/sqlite/open/helper/host/memory/MemoryUtilKt {
-	public static final fun encodeToNullTerminatedByteArray (Ljava/lang/String;)[B
-	public static final fun encodedNullTerminatedStringLength (Ljava/lang/String;)I
-	public static final fun encodedStringLength (Ljava/lang/String;)I
-	public static final fun readNullableZeroTerminatedString-wTLQxr0 (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;I)Ljava/lang/String;
-	public static final fun readZeroTerminatedString-wTLQxr0 (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;I)Ljava/lang/String;
-	public static final fun writeZeroTerminatedString--6ori6s (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;ILjava/lang/String;)I
 }
 
 public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/memory/WasiMemoryReader {
