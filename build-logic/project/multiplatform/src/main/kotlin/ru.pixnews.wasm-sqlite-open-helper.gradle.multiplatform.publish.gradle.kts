@@ -51,7 +51,7 @@ mavenPublishing {
 
     pom {
         name.set(project.name)
-        description.set("mplementation of SupportSQLiteOpenHelper based on SQLite compiled for WASM")
+        description.set("Implementation of SupportSQLiteOpenHelper based on SQLite compiled for WebAssembly")
         url.set("https://github.com/illarionov/wasm-sqlite-open-helper")
 
         licenses {
