@@ -1,6 +1,6 @@
 # Wasm SQLite Open Helper
 
-Implementation of [SupportSQLiteOpenHelper] based on SQLite compiled for WASM.
+Implementation of [SupportSQLiteOpenHelper] based on SQLite compiled for WebAssembly.
 
 ## Requirements
 

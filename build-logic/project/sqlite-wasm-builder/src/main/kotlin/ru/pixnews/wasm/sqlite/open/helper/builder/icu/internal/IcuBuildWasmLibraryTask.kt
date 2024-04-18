@@ -37,7 +37,7 @@ import java.io.File
 import javax.inject.Inject
 
 /**
- * Builds the ICU for WASM using Emscripten
+ * Builds the ICU for WebAssembly using Emscripten
  */
 @CacheableTask
 public abstract class IcuBuildWasmLibraryTask @Inject constructor(

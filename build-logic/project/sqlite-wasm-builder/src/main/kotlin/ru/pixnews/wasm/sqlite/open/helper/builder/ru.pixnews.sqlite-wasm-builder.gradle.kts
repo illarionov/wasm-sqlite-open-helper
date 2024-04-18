@@ -38,7 +38,7 @@ import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.internal.SqliteAddition
 import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.internal.createSqliteSourceConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.internal.setupUnpackingSqliteAttributes
 
-// Convention Plugin for building Sqlite WASM using Emscripten
+// Convention Plugin for building Sqlite WebAssembly using Emscripten
 plugins {
     base
 }
@@ -93,7 +93,7 @@ configurations {
         }
     }
     resolvable("wasmHeadersClasspath") {
-        description = "Header files from included WASM libraries used to compile Sqlite"
+        description = "Header files from included WebAssembly libraries used to compile SQLite"
         extendsFrom(configurations["wasmLibraries"])
         attributes {
             attribute(USAGE_ATTRIBUTE, objects.named(C_PLUS_PLUS_API))

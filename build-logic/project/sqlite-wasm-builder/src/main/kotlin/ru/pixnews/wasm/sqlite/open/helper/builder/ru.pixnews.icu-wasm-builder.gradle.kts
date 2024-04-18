@@ -32,7 +32,7 @@ import ru.pixnews.wasm.sqlite.open.helper.builder.icu.internal.IcuBuildWasmLibra
 import ru.pixnews.wasm.sqlite.open.helper.builder.icu.internal.createIcuSourceConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.builder.icu.internal.setupUnpackingIcuAttributes
 
-// Convention Plugin for building ICU for WASM using Emscripten
+// Convention Plugin for building ICU for WebAssembly using Emscripten
 plugins {
     base
 }
@@ -79,7 +79,7 @@ private fun setupTasksForBuild(buildSpec: IcuWasmBuildSpec) {
 
     val buildIcuTask = tasks.register<IcuBuildWasmLibraryTask>("buildIcu$buildName") {
         group = "Build"
-        description = "Compiles ICU `$buildName` for WASM"
+        description = "Compiles ICU `$buildName` for WebAssembly"
 
         icuSource.fileProvider(icuSourceDir)
         emscriptenSdk.emccVersion = versionCatalogs.named("libs").findVersion("emscripten").get().toString()
