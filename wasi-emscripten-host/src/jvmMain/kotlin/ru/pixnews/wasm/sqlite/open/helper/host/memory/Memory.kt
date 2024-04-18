@@ -7,22 +7,13 @@
 package ru.pixnews.wasm.sqlite.open.helper.host.memory
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.common.embedder.EmbedderMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.FdChannel
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.CiovecArray
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.IovecArray
 
-public interface Memory {
-    // todo: rename
-    public fun readI8(addr: WasmPtr<*>): Byte
-    public fun readI32(addr: WasmPtr<*>): Int
-    public fun readBytes(addr: WasmPtr<*>, length: Int): ByteArray
-
-    public fun writeByte(addr: WasmPtr<*>, data: Byte)
-    public fun writeI32(addr: WasmPtr<*>, data: Int)
-    public fun writeI64(addr: WasmPtr<*>, data: Long)
-    public fun write(addr: WasmPtr<*>, data: ByteArray, offset: Int, size: Int)
-
+public interface Memory : EmbedderMemory {
     public fun readFromChannel(
         channel: FdChannel,
         strategy: ReadWriteStrategy,

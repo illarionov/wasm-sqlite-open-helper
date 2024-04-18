@@ -18,14 +18,14 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.Sqlite3CallbackStore
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteLogCallback
 
 internal const val SQLITE3_LOGGING_CB_FUNCTION_NAME = "sqlite3_logging_cb"
 
 internal class Sqlite3LoggingAdapter(
     language: WasmLanguage,
     module: WasmModule,
-    private val callbackStore: Sqlite3CallbackStore,
+    private val logCallbackStore: () -> SqliteLogCallback?,
     host: SqliteEmbedderHost,
     functionName: String,
 ) : BaseWasmNode(language, module, host, functionName) {
@@ -45,7 +45,7 @@ internal class Sqlite3LoggingAdapter(
         errCode: Int,
         messagePointer: WasmPtr<Byte>,
     ) {
-        val delegate = callbackStore.sqlite3LogCallback ?: return
+        val delegate = logCallbackStore() ?: return
         val message = memory.readString(messagePointer.addr, null)
         delegate.invoke(errCode, message)
     }

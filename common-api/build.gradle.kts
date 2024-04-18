@@ -25,9 +25,8 @@ kotlin {
     mingwX64()
 
     sourceSets {
-        commonTest.dependencies {
-            implementation(kotlin("test"))
-            implementation(libs.assertk)
+        commonMain.dependencies {
+            implementation(libs.okio.okio)
         }
     }
 }

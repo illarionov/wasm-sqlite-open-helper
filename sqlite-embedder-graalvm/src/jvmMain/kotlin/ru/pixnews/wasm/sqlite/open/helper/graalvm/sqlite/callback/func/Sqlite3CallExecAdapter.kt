@@ -16,20 +16,20 @@ import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr.Companion.WASM_SIZEOF_PTR
 import ru.pixnews.wasm.sqlite.open.helper.common.api.plus
+import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore.SqliteExecCallbackId
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.Sqlite3CallbackStore
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.Sqlite3CallbackStore.Sqlite3ExecCallbackId
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.readPtr
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteExecCallback
 
 internal const val SQLITE3_EXEC_CB_FUNCTION_NAME = "sqlite3_exec_cb"
 
 internal class Sqlite3CallExecAdapter(
     language: WasmLanguage,
     module: WasmModule,
-    private val callbackStore: Sqlite3CallbackStore,
+    private val execCallbackStore: (SqliteExecCallbackId) -> SqliteExecCallback?,
     host: SqliteEmbedderHost,
     functionName: String,
 ) : BaseWasmNode(language, module, host, functionName) {
@@ -55,8 +55,8 @@ internal class Sqlite3CallExecAdapter(
     ): Int {
         logger.v { "Calling exec callback arg1: $arg1 columns: $columns names: $pColumnNames results: $pResults" }
         val hostMemory = memory.toHostMemory()
-        val delegateId = Sqlite3ExecCallbackId(arg1)
-        val delegate = callbackStore.sqlite3ExecCallbacks[delegateId] ?: error("Callback $delegateId not registered")
+        val delegateId = SqliteExecCallbackId(arg1)
+        val delegate = execCallbackStore(delegateId) ?: error("Callback $delegateId not registered")
 
         val columnNames = (0 until columns).map { columnNo ->
             val ptr: WasmPtr<Byte> = hostMemory.readPtr(pColumnNames + (columnNo * WASM_SIZEOF_PTR.toInt()))

@@ -14,11 +14,11 @@ import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore.SqliteComparatorId
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.Sqlite3CallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteComparatorCallback
 
 internal const val SQLITE3_COMPARATOR_CALL_FUNCTION_NAME = "sqlite3_comparator_call_cb"
@@ -26,7 +26,7 @@ internal const val SQLITE3_COMPARATOR_CALL_FUNCTION_NAME = "sqlite3_comparator_c
 internal class Sqlite3ComparatorAdapter(
     language: WasmLanguage,
     module: WasmModule,
-    private val callbackStore: Sqlite3CallbackStore,
+    private val comparatorStore: (SqliteComparatorId) -> SqliteComparatorCallback?,
     host: SqliteEmbedderHost,
     functionName: String,
 ) : BaseWasmNode(language, module, host, functionName) {
@@ -34,7 +34,7 @@ internal class Sqlite3ComparatorAdapter(
         val args = frame.arguments
         return invokeComparator(
             memory(frame),
-            Sqlite3CallbackStore.Sqlite3ComparatorId(args.getArgAsInt(0)),
+            args.getArgAsInt(0),
             args.getArgAsInt(1),
             args.getArgAsWasmPtr(2),
             args.getArgAsInt(3),
@@ -45,7 +45,7 @@ internal class Sqlite3ComparatorAdapter(
     @CompilerDirectives.TruffleBoundary
     private fun invokeComparator(
         memory: WasmMemory,
-        comparatorId: Sqlite3CallbackStore.Sqlite3ComparatorId,
+        comparatorId: Int,
         str1Size: Int,
         str1: WasmPtr<Byte>,
         str2Size: Int,
@@ -53,7 +53,7 @@ internal class Sqlite3ComparatorAdapter(
     ): Int {
         logger.v { "Calling comparator: $comparatorId" }
         val hostMemory = memory.toHostMemory()
-        val delegate: SqliteComparatorCallback = callbackStore.sqlite3Comparators[comparatorId]
+        val delegate: SqliteComparatorCallback = comparatorStore(SqliteComparatorId(comparatorId))
             ?: error("Comparator $comparatorId not registered")
 
         val str1Bytes = hostMemory.readBytes(str1, str1Size)

@@ -8,9 +8,9 @@ package ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.ext
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.api.plus
+import ru.pixnews.wasm.sqlite.open.helper.common.embedder.encodedNullTerminatedStringLength
+import ru.pixnews.wasm.sqlite.open.helper.common.embedder.writeZeroTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
-import ru.pixnews.wasm.sqlite.open.helper.host.memory.encodedNullTerminatedStringLength
-import ru.pixnews.wasm.sqlite.open.helper.host.memory.writeZeroTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 
 public object WasiEnvironmentFunc {

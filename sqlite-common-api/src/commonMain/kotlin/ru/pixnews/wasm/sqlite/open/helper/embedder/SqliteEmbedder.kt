@@ -6,9 +6,24 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.embedder
 
+import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
+import ru.pixnews.wasm.sqlite.open.helper.common.embedder.EmbedderMemory
+import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.SqliteBindings
+import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
+import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
+
 public interface SqliteEmbedder<E : SqliteEmbedderConfig> {
-    public fun createCapi(
+    @InternalWasmSqliteHelperApi
+    public fun createSqliteWasmEnvironment(
         commonConfig: WasmSqliteCommonConfig,
+        callbackStore: SqliteCallbackStore,
         embedderConfigBuilder: E.() -> Unit,
-    ): SqliteCapi
+    ): SqliteWasmEnvironment
+}
+
+@InternalWasmSqliteHelperApi
+public interface SqliteWasmEnvironment {
+    public val sqliteBindings: SqliteBindings
+    public val memory: EmbedderMemory
+    public val callbackFunctionIndexes: Sqlite3CallbackFunctionIndexes
 }

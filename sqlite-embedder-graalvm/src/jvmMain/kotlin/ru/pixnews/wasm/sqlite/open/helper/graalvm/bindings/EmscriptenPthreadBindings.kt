@@ -25,20 +25,20 @@ internal class EmscriptenPthreadBindings(
     val threadPtrGlobal = mainBindings.getMember("\$thread_ptr")
     val tlsBaseGlobal = mainBindings.getMember("\$__tls_base")
 
-    val _emscripten_check_mailbox: Value by mainBindings.member()
-    val _emscripten_run_on_main_thread_js: Value by mainBindings.member()
-    val _emscripten_thread_crashed: Value by mainBindings.member()
-    val _emscripten_thread_exit: Value by mainBindings.member()
-    val _emscripten_thread_free_data: Value by mainBindings.member()
-    private val _emscripten_thread_init: Value by mainBindings.member()
-    private val _emscripten_tls_init: Value by mainBindings.member()
-    val emscripten_main_runtime_thread_id: Value by mainBindings.member()
-    val emscripten_main_thread_process_queued_calls: Value by mainBindings.member()
-    val emscripten_stack_set_limits: Value by mainBindings.member()
-    val pthread_self: Value by mainBindings.member()
+    val _emscripten_check_mailbox by mainBindings.member()
+    val _emscripten_run_on_main_thread_js by mainBindings.member()
+    val _emscripten_thread_crashed by mainBindings.member()
+    val _emscripten_thread_exit by mainBindings.member()
+    val _emscripten_thread_free_data by mainBindings.member()
+    private val _emscripten_thread_init by mainBindings.member()
+    private val _emscripten_tls_init by mainBindings.member()
+    val emscripten_main_runtime_thread_id by mainBindings.member()
+    val emscripten_main_thread_process_queued_calls by mainBindings.member()
+    val emscripten_stack_set_limits by mainBindings.member()
+    val pthread_self by mainBindings.member()
 
     fun emscriptenTlsInit() {
-        _emscripten_tls_init.execute()
+        _emscripten_tls_init.executeVoid()
     }
 
     fun emscriptenThreadInit(
@@ -49,7 +49,7 @@ internal class EmscriptenPthreadBindings(
         defaultStackSize: Int = 524288,
         startProfiling: Boolean = false,
     ) {
-        _emscripten_thread_init.execute(
+        _emscripten_thread_init.executeVoid(
             threadPtr.addr,
             isMain.toInt(),
             isRuntime.toInt(),

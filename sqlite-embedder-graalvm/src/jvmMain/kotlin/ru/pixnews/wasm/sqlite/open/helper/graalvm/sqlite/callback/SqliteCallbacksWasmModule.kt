@@ -10,6 +10,9 @@ import org.graalvm.polyglot.Context
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
+import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
+import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.IndirectFunctionTableIndex
+import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.functionTable
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.setupImportedEnvMemory
@@ -32,7 +35,6 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func.Sqlite3Pr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func.Sqlite3TraceAdapter
 import ru.pixnews.wasm.sqlite.open.helper.host.POINTER
 import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType.WebAssemblyTypes.I32
-import ru.pixnews.wasm.sqlite.open.helper.host.functiontable.IndirectFunctionTableIndex
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.WasiValueTypes.U32
 
 internal const val SQLITE3_CALLBACK_MANAGER_MODULE_NAME = "sqlite3-callback-manager"
@@ -40,7 +42,7 @@ internal const val SQLITE3_CALLBACK_MANAGER_MODULE_NAME = "sqlite3-callback-mana
 internal class SqliteCallbacksModuleBuilder(
     private val graalContext: Context,
     private val host: SqliteEmbedderHost,
-    private val callbackStore: Sqlite3CallbackStore,
+    private val callbackStore: SqliteCallbackStore,
 ) {
     private val sqliteCallbackHostFunctions: List<HostFunction> = buildList {
         fn(
@@ -51,7 +53,7 @@ internal class SqliteCallbacksModuleBuilder(
                 Sqlite3CallExecAdapter(
                     language = language,
                     module = module,
-                    callbackStore = callbackStore,
+                    execCallbackStore = callbackStore.sqlite3ExecCallbacks::get,
                     host = host,
                     functionName = funcName,
                 )
@@ -65,7 +67,7 @@ internal class SqliteCallbacksModuleBuilder(
                 Sqlite3TraceAdapter(
                     language = language,
                     module = module,
-                    callbackStore = callbackStore,
+                    traceCallbackStore = callbackStore.sqlite3TraceCallbacks::get,
                     host = host,
                     functionName = funcName,
                 )
@@ -79,7 +81,7 @@ internal class SqliteCallbacksModuleBuilder(
                 Sqlite3ProgressAdapter(
                     language = language,
                     module = module,
-                    callbackStore = callbackStore,
+                    progressCallbackStore = callbackStore.sqlite3ProgressCallbacks::get,
                     host = host,
                     functionName = funName,
                 )
@@ -93,7 +95,7 @@ internal class SqliteCallbacksModuleBuilder(
                 Sqlite3ComparatorAdapter(
                     language = language,
                     module = module,
-                    callbackStore = callbackStore,
+                    comparatorStore = callbackStore.sqlite3Comparators::get,
                     host = host,
                     functionName = funcName,
                 )
@@ -106,7 +108,7 @@ internal class SqliteCallbacksModuleBuilder(
                 Sqlite3DestroyComparatorAdapter(
                     language = language,
                     module = module,
-                    callbackStore = callbackStore,
+                    comparatorStore = callbackStore.sqlite3Comparators,
                     host = host,
                     functionName = funcName,
                 )
@@ -119,7 +121,7 @@ internal class SqliteCallbacksModuleBuilder(
                 Sqlite3LoggingAdapter(
                     language = language,
                     module = module,
-                    callbackStore = callbackStore,
+                    logCallbackStore = callbackStore::sqlite3LogCallback,
                     host = host,
                     functionName = funcName,
                 )
@@ -160,6 +162,6 @@ internal class SqliteCallbacksModuleBuilder(
                 functionTable[indirectFuncId] = funcInstance
                 funcName to IndirectFunctionTableIndex(indirectFuncId)
             }.toMap()
-        return Sqlite3CallbackFunctionIndexes(funcIdx)
+        return GraalvmSqliteCallbackFunctionIndexes(funcIdx)
     }
 }

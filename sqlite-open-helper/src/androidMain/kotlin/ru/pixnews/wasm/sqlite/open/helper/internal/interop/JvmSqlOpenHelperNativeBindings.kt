@@ -12,8 +12,6 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr.Companion.SQLITE3_N
 import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
 import ru.pixnews.wasm.sqlite.open.helper.common.api.isSqlite3Null
 import ru.pixnews.wasm.sqlite.open.helper.common.api.or
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteCapi
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteCapi.SqliteDbReadonlyResult
 import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteCantOpenDatabaseException
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteGlobal.SOFT_HEAP_LIMIT
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow
@@ -25,8 +23,9 @@ import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.Fie
 import ru.pixnews.wasm.sqlite.open.helper.internal.ext.encodedNullTerminatedStringLength
 import ru.pixnews.wasm.sqlite.open.helper.internal.ext.rethrowAndroidSqliteException
 import ru.pixnews.wasm.sqlite.open.helper.internal.ext.throwAndroidSqliteException
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.GraalNativeBindings.CopyRowResult.CPR_FULL
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.GraalNativeBindings.CopyRowResult.CPR_OK
+import ru.pixnews.wasm.sqlite.open.helper.internal.interop.JvmSqlOpenHelperNativeBindings.CopyRowResult.CPR_FULL
+import ru.pixnews.wasm.sqlite.open.helper.internal.interop.JvmSqlOpenHelperNativeBindings.CopyRowResult.CPR_OK
+import ru.pixnews.wasm.sqlite.open.helper.internal.interop.SqliteCapi.SqliteDbReadonlyResult
 import ru.pixnews.wasm.sqlite.open.helper.internal.platform.yieldSleepAroundMSec
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteColumnType.Companion.SQLITE3_TEXT
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteColumnType.Companion.SQLITE_BLOB
@@ -68,7 +67,7 @@ internal value class GraalSqlite3StatementPtr(
     override fun isNull(): Boolean = ptr.isSqlite3Null()
 }
 
-internal class GraalNativeBindings(
+internal class JvmSqlOpenHelperNativeBindings(
     private val sqlite3Api: SqliteCapi,
     rootLogger: Logger,
 ) : SqlOpenHelperNativeBindings<GraalSqlite3ConnectionPtr, GraalSqlite3StatementPtr> {
