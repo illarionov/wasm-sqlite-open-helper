@@ -6,9 +6,28 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.internal.interop
 
+import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.common.api.isSqlite3Null
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteStatement
+
 internal interface Sqlite3Ptr {
     fun isNull(): Boolean
 }
 
 internal interface Sqlite3ConnectionPtr : Sqlite3Ptr
 internal interface Sqlite3StatementPtr : Sqlite3Ptr
+
+@JvmInline
+internal value class WasmSqlite3StatementPtr(
+    val ptr: WasmPtr<SqliteStatement>,
+) : Sqlite3StatementPtr {
+    override fun isNull(): Boolean = ptr.isSqlite3Null()
+}
+
+@JvmInline
+internal value class WasmSqlite3ConnectionPtr(
+    val ptr: WasmPtr<SqliteDb>,
+) : Sqlite3ConnectionPtr {
+    override fun isNull(): Boolean = ptr.isSqlite3Null()
+}

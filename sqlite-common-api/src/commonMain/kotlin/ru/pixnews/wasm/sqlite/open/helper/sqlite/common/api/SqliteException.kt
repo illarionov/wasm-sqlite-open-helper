@@ -6,6 +6,8 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api
 
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode.Companion.name
+
 public class SqliteException(
     public val errorInfo: SqliteErrorInfo,
     prefix: String? = null,
@@ -13,16 +15,13 @@ public class SqliteException(
     errorInfo.formatErrorMessage(prefix),
 ) {
     public constructor(
-        sqliteErrorCode: Int,
-        sqliteExtendedErrorCode: Int,
+        sqliteErrorCode: SqliteResultCode,
+        sqliteExtendedErrorCode: SqliteResultCode,
         prefix: String? = null,
         sqliteMsg: String? = null,
     ) : this(SqliteErrorInfo(sqliteErrorCode, sqliteExtendedErrorCode, sqliteMsg), prefix)
 
     public companion object {
-        public val SqliteException.sqlite3ErrNoName: String get() = sqlite3ErrNoName(errorInfo.sqliteExtendedErrorCode)
-
-        internal fun sqlite3ErrNoName(errNo: Int): String =
-            SqliteErrno.fromErrNoCode(errNo)?.toString() ?: errNo.toString()
+        public val SqliteException.sqlite3ErrNoName: String get() = errorInfo.sqliteExtendedErrorCode.name
     }
 }
