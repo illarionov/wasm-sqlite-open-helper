@@ -168,6 +168,9 @@
 - name: USE_DATA_CLASS
   enabled: false
 
+- name: VARIABLE_HAS_PREFIX
+  enabled: false
+
 - name: VARIABLE_NAME_INCORRECT_FORMAT
   enabled: false
 

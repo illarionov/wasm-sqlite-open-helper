@@ -20,7 +20,6 @@ public value class FileAccessibilityCheck(
 
     override fun toString(): String = "0${mask.toString(8)}"
 
-    @Suppress("VARIABLE_HAS_PREFIX")
     public companion object {
         public val F_OK: FileAccessibilityCheck = FileAccessibilityCheck(Fcntl.F_OK)
         public val R_OK: FileAccessibilityCheck = FileAccessibilityCheck(Fcntl.R_OK)

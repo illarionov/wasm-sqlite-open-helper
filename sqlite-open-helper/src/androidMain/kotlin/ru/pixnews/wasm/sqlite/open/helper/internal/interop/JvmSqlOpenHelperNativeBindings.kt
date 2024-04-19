@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-@file:Suppress("LargeClass", "VARIABLE_HAS_PREFIX")
+@file:Suppress("LargeClass")
 
 package ru.pixnews.wasm.sqlite.open.helper.internal.interop
 

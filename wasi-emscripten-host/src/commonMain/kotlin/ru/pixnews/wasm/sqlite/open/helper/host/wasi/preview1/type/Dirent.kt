@@ -16,7 +16,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType
  * @param dNamlen The length of the name of the directory entry.
  * @param dType The type of the file referred to by this directory entry.
  */
-@Suppress("VARIABLE_HAS_PREFIX", "KDOC_NO_CONSTRUCTOR_PROPERTY_WITH_COMMENT")
+@Suppress("KDOC_NO_CONSTRUCTOR_PROPERTY_WITH_COMMENT")
 public data class Dirent(
     val dNext: Dircookie, // (field $d_next $dircookie)
     val dIno: Inode, // (field $d_ino $inode)

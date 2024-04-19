@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-@file:Suppress("VARIABLE_HAS_PREFIX", "BLANK_LINE_BETWEEN_PROPERTIES")
+@file:Suppress("BLANK_LINE_BETWEEN_PROPERTIES")
 
 package ru.pixnews.wasm.sqlite.open.helper.host.include
 

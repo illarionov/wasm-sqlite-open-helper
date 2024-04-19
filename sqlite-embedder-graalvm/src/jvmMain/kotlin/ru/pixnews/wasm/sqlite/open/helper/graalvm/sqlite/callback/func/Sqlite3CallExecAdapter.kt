@@ -45,7 +45,6 @@ internal class Sqlite3CallExecAdapter(
     }
 
     @CompilerDirectives.TruffleBoundary
-    @Suppress("VARIABLE_HAS_PREFIX")
     private fun callDelegate(
         memory: WasmMemory,
         arg1: Int,
