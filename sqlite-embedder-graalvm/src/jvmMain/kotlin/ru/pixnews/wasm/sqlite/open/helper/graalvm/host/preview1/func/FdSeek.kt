@@ -44,7 +44,7 @@ internal class FdSeek(
     }
 
     @TruffleBoundary
-    @Suppress("MemberNameEqualsClassName", "VARIABLE_HAS_PREFIX")
+    @Suppress("MemberNameEqualsClassName")
     private fun fdSeek(
         memory: WasmMemory,
         fd: Fd,

@@ -14,7 +14,6 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Iovec
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.IovecArray
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Size
 
-@Suppress("VARIABLE_HAS_PREFIX")
 public object FdReadExt {
     public fun readIovecs(
         memory: Memory,

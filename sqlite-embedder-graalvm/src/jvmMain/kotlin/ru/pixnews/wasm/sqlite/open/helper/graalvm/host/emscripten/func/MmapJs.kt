@@ -47,7 +47,7 @@ internal class MmapJs(
     }
 
     @TruffleBoundary
-    @Suppress("MemberNameEqualsClassName", "VARIABLE_HAS_PREFIX")
+    @Suppress("MemberNameEqualsClassName")
     private fun mmapJs(
         len: Int,
         prot: SysMmanProt,

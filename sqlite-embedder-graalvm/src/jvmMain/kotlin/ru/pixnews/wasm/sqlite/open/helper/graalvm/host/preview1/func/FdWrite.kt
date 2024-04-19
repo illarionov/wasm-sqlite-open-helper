@@ -61,7 +61,7 @@ private class FdWrite(
     }
 
     @TruffleBoundary
-    @Suppress("MemberNameEqualsClassName", "VARIABLE_HAS_PREFIX")
+    @Suppress("MemberNameEqualsClassName")
     private fun fdWrite(
         memory: WasmMemory,
         fd: Fd,

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-@file:Suppress("ThrowsCount", "VARIABLE_HAS_PREFIX", "NO_BRACES_IN_CONDITIONALS_AND_LOOPS")
+@file:Suppress("ThrowsCount", "NO_BRACES_IN_CONDITIONALS_AND_LOOPS")
 
 package ru.pixnews.wasm.sqlite.open.helper.host.filesystem
 
@@ -105,7 +105,7 @@ public class FileSystem(
         return stat(stream.path, true)
     }
 
-    @Suppress("CyclomaticComplexMethod", "VARIABLE_HAS_PREFIX")
+    @Suppress("CyclomaticComplexMethod")
     public fun stat(
         filePath: Path,
         followSymlinks: Boolean = true,

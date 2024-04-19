@@ -61,7 +61,7 @@ private class FdRead(
     }
 
     @TruffleBoundary
-    @Suppress("MemberNameEqualsClassName", "VARIABLE_HAS_PREFIX")
+    @Suppress("MemberNameEqualsClassName")
     private fun fdRead(
         memory: WasmMemory,
         fd: Fd,
