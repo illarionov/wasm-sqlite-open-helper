@@ -25,17 +25,15 @@ import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteOutOfMemoryExce
 import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteReadOnlyDatabaseException
 import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteTableLockedException
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrorInfo
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteException
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode.Companion.SQLITE_DONE
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode.Companion.SQLITE_OK
 
-internal fun SqliteException.rethrowAndroidSqliteException(msg: String? = null): Nothing {
-    throwAndroidSqliteException(errorInfo, msg, this)
-}
-
-internal fun throwAndroidSqliteException(message: String?): Nothing = throwAndroidSqliteException(
-    SqliteErrorInfo(SQLITE_OK, SQLITE_OK, null),
+internal fun throwAndroidSqliteException(
+    message: String?,
+    errorCode: SqliteResultCode = SQLITE_OK,
+): Nothing = throwAndroidSqliteException(
+    SqliteErrorInfo(errorCode, errorCode, null),
     message,
 )
 

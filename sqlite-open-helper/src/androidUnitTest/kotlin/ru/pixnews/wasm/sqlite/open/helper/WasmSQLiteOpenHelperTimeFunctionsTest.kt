@@ -22,6 +22,7 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.util.Date
+import java.util.TimeZone
 import kotlin.time.Duration.Companion.minutes
 
 class WasmSQLiteOpenHelperTimeFunctionsTest {
@@ -50,7 +51,9 @@ class WasmSQLiteOpenHelperTimeFunctionsTest {
             it.simpleQueryForString()
         }
         assertThat(dateString).isEqualTo(
-            SimpleDateFormat("YYYY-MM-dd").format(Date()),
+            SimpleDateFormat("YYYY-MM-dd").apply {
+                timeZone = TimeZone.getTimeZone("UTC")
+            }.format(Date()),
         )
     }
 

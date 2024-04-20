@@ -68,10 +68,10 @@ internal class Sqlite3DbFunctions(
 
             when (result) {
                 is Success -> databaseResources.onDbOpened(pDb)
-                is Error -> sqlite3Close(pDb).also { closeResult ->
-                    if (closeResult != SQLITE_OK) {
+                is Error -> sqlite3Close(pDb).also { closeError ->
+                    if (closeError != SQLITE_OK) {
                         logger.e {
-                            "sqlite3Close() failed with error code `${closeResult.name}` after opening database failed"
+                            "sqlite3Close() failed with error code `${closeError.name}` after opening database failed"
                         }
                     }
                 }

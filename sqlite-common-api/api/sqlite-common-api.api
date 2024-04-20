@@ -236,19 +236,6 @@ public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteEr
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteException : java/lang/RuntimeException {
-	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteException$Companion;
-	public synthetic fun <init> (IILjava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public synthetic fun <init> (IILjava/lang/String;Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteErrorInfo;Ljava/lang/String;)V
-	public synthetic fun <init> (Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteErrorInfo;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun getErrorInfo ()Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteErrorInfo;
-}
-
-public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteException$Companion {
-	public final fun getSqlite3ErrNoName (Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteException;)Ljava/lang/String;
-}
-
 public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteOpenFlags : ru/pixnews/wasm/sqlite/open/helper/common/api/SqliteUintBitMask {
 	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteOpenFlags$Companion;
 	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteOpenFlags;

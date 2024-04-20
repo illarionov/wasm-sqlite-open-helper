@@ -22,7 +22,6 @@ import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.Fie
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.Field.Null
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.Field.StringField
 import ru.pixnews.wasm.sqlite.open.helper.internal.ext.encodedNullTerminatedStringLength
-import ru.pixnews.wasm.sqlite.open.helper.internal.ext.rethrowAndroidSqliteException
 import ru.pixnews.wasm.sqlite.open.helper.internal.ext.throwAndroidSqliteException
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.JvmSqlOpenHelperNativeBindings.CopyRowResult.CPR_FULL
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.JvmSqlOpenHelperNativeBindings.CopyRowResult.CPR_OK
@@ -42,8 +41,6 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteConfigParamete
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDbConfigParameter.Companion.SQLITE_DBCONFIG_LOOKASIDE
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDbStatusParameter.Companion.SQLITE_DBSTATUS_LOOKASIDE_USED
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrorInfo
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteException
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteOpenFlags
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteOpenFlags.Companion.SQLITE_OPEN_READWRITE
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
@@ -73,21 +70,21 @@ internal class JvmSqlOpenHelperNativeBindings(
         // threads as long as no two threads use the same database connection at the same
         // time (which we guarantee in the SQLite database wrappers).
         cApi.config.sqlite3Config(SQLITE_CONFIG_MULTITHREAD, 1)
-            .throwOnSqliteError("sqlite3__wasm_config_i() failed")
+            .throwOnError("sqlite3__wasm_config_i() failed")
 
         // Redirect SQLite log messages to the log.
         val sqliteLogger = logger.withTag("sqlite3")
         cApi.config.sqlite3SetLogger { errCode, message -> sqliteLogger.w { "$errCode: $message" } }
-            .throwOnSqliteError("sqliteSetLogger() failed")
+            .throwOnError("sqliteSetLogger() failed")
 
         // The soft heap limit prevents the page cache allocations from growing
         // beyond the given limit, no matter what the max page cache sizes are
         // set to. The limit does not, as of 3.5.0, affect any other allocations.
         cApi.config.sqlite3SoftHeapLimit(SOFT_HEAP_LIMIT)
-            .throwOnSqliteError("sqlite3_soft_heap_limit64() failed")
+            .throwOnError("sqlite3_soft_heap_limit64() failed")
 
         cApi.config.sqlite3initialize()
-            .throwOnSqliteError("sqlite3_initialize failed")
+            .throwOnError("sqlite3_initialize failed")
     }
 
     @Suppress("CyclomaticComplexMethod")
@@ -106,7 +103,7 @@ internal class JvmSqlOpenHelperNativeBindings(
                 filename = path,
                 flags = openFlags,
                 vfsName = null,
-            ).orThrow("sqlite3OpenV2() failed")
+            ).getOrThrow("sqlite3OpenV2() failed")
 
             if (lookasideSlotSize > 0 && lookasideSlotCount > 0) {
                 cApi.db.sqlite3DbConfig(
@@ -115,7 +112,7 @@ internal class JvmSqlOpenHelperNativeBindings(
                     SQLITE3_NULL,
                     lookasideSlotSize,
                     lookasideSlotCount,
-                ).orThrow("sqlite3DbConfig() failed")
+                ).getOrThrow("sqlite3DbConfig() failed")
             }
 
             // Check that the database is really read/write when that is what we asked for.
@@ -127,11 +124,11 @@ internal class JvmSqlOpenHelperNativeBindings(
 
             // Set the default busy handler to retry automatically before returning SQLITE_BUSY.
             cApi.db.sqlite3BusyTimeout(db, BUSY_TIMEOUT_MS)
-                .orThrow("sqlite3BusyTimeout() failed")
+                .getOrThrow("sqlite3BusyTimeout() failed")
 
             // Register custom Android functions.
             cApi.db.registerAndroidFunctions(db)
-                .orThrow("register_android_functions() failed failed")
+                .getOrThrow("register_android_functions() failed failed")
 
             // Register wrapper object
             connections.add(db, path)
@@ -148,9 +145,6 @@ internal class JvmSqlOpenHelperNativeBindings(
                 cApi.db.sqlite3Trace(db, mask, ::sqliteTraceCallback)
             }
             return WasmSqlite3ConnectionPtr(db)
-        } catch (e: SqliteException) {
-            closeDatabaseSilent(db)
-            e.rethrowAndroidSqliteException()
         } catch (@Suppress("TooGenericExceptionCaught") otherException: RuntimeException) {
             closeDatabaseSilent(db)
             throw otherException
@@ -168,8 +162,12 @@ internal class JvmSqlOpenHelperNativeBindings(
 
     override fun nativeRegisterLocalizedCollators(connectionPtr: WasmSqlite3ConnectionPtr, newLocale: String) {
         logger.v { "nativeRegisterLocalizedCollators($connectionPtr, $newLocale)" }
-        cApi.db.registerLocalizedCollators(connectionPtr.ptr, newLocale)
-            .orThrow("register_localized_collators() failed")
+        val errCode = cApi.db.registerLocalizedCollators(connectionPtr.ptr, newLocale)
+        if (errCode is Error) {
+            // This can happen if sub-objects aren't closed first.  Make sure the caller knows.
+            logger.i { "register_localized_collators(${connectionPtr.ptr}) failed: ${errCode.info}" }
+            throwAndroidSqliteException(errCode.info, "Count not close db.")
+        }
     }
 
     override fun nativeClose(connectionPtr: WasmSqlite3ConnectionPtr) {
@@ -178,7 +176,7 @@ internal class JvmSqlOpenHelperNativeBindings(
         if (errCode != SQLITE_OK) {
             // This can happen if sub-objects aren't closed first.  Make sure the caller knows.
             logger.i { "sqlite3_close(${connectionPtr.ptr}) failed: ${errCode.name}" }
-            errCode.throwOnSqliteError("Count not close db.")
+            throwAndroidSqliteException("Count not close db.", errCode)
         }
     }
 
@@ -198,7 +196,7 @@ internal class JvmSqlOpenHelperNativeBindings(
         if (result is Error) {
             logger.i { "nativeResetCancel(${connectionPtr.ptr}) failed: ${result.info}" }
         }
-        result.orThrow("Count not close db.")
+        result.getOrThrow("Count not close db.")
     }
 
     @Suppress("COMPACT_OBJECT_INITIALIZATION")
@@ -304,7 +302,7 @@ internal class JvmSqlOpenHelperNativeBindings(
                         @Suppress("MagicNumber")
                         if (retryCount > 50) {
                             logger.e { "Bailing on database busy retry" }
-                            throwAndroidSqliteException(connectionPtr.ptr, "retrycount exceeded")
+                            readErrorThrowAndroidSqliteException(connectionPtr.ptr, "retrycount exceeded")
                         } else {
                             // Sleep to give the thread holding the lock a chance to finish
                             yieldSleepAroundMSec()
@@ -312,11 +310,9 @@ internal class JvmSqlOpenHelperNativeBindings(
                         }
                     }
 
-                    else -> throwAndroidSqliteException(connectionPtr.ptr, "sqlite3Step() failed")
+                    else -> readErrorThrowAndroidSqliteException(connectionPtr.ptr, "sqlite3Step() failed")
                 }
             }
-        } catch (exception: SqliteException) {
-            exception.rethrowAndroidSqliteException("nativeExecuteForCursorWindow() failed")
         } finally {
             logger.v {
                 "Resetting statement $statement after fetching $totalRows rows and adding $addedRows rows" +
@@ -394,10 +390,10 @@ internal class JvmSqlOpenHelperNativeBindings(
     ) {
         val err = cApi.statement.sqlite3Reset(statementPtr.ptr)
         if (err != SQLITE_OK) {
-            throwAndroidSqliteException(connectionPtr.ptr)
+            readErrorThrowAndroidSqliteException(connectionPtr.ptr)
         }
         if (cApi.statement.sqlite3ClearBindings(statementPtr.ptr) != SQLITE_OK) {
-            throwAndroidSqliteException(connectionPtr.ptr)
+            readErrorThrowAndroidSqliteException(connectionPtr.ptr)
         }
     }
 
@@ -409,7 +405,7 @@ internal class JvmSqlOpenHelperNativeBindings(
     ) {
         val err = cApi.statement.sqlite3BindBlobTransient(statementPtr.ptr, index, value)
         if (err != SQLITE_OK) {
-            throwAndroidSqliteException(connectionPtr.ptr)
+            readErrorThrowAndroidSqliteException(connectionPtr.ptr)
         }
     }
 
@@ -421,7 +417,7 @@ internal class JvmSqlOpenHelperNativeBindings(
     ) {
         val err = cApi.statement.sqlite3BindStringTransient(statementPtr.ptr, index, value)
         if (err != SQLITE_OK) {
-            throwAndroidSqliteException(connectionPtr.ptr)
+            readErrorThrowAndroidSqliteException(connectionPtr.ptr)
         }
     }
 
@@ -433,7 +429,7 @@ internal class JvmSqlOpenHelperNativeBindings(
     ) {
         val err = cApi.statement.sqlite3BindDouble(statementPtr.ptr, index, value)
         if (err != SQLITE_OK) {
-            throwAndroidSqliteException(connectionPtr.ptr)
+            readErrorThrowAndroidSqliteException(connectionPtr.ptr)
         }
     }
 
@@ -445,7 +441,7 @@ internal class JvmSqlOpenHelperNativeBindings(
     ) {
         val err = cApi.statement.sqlite3BindLong(statementPtr.ptr, index, value)
         if (err != SQLITE_OK) {
-            throwAndroidSqliteException(connectionPtr.ptr)
+            readErrorThrowAndroidSqliteException(connectionPtr.ptr)
         }
     }
 
@@ -456,7 +452,7 @@ internal class JvmSqlOpenHelperNativeBindings(
     ) {
         val err = cApi.statement.sqlite3BindNull(statementPtr.ptr, index)
         if (err != SQLITE_OK) {
-            throwAndroidSqliteException(connectionPtr.ptr)
+            readErrorThrowAndroidSqliteException(connectionPtr.ptr)
         }
     }
 
@@ -499,7 +495,7 @@ internal class JvmSqlOpenHelperNativeBindings(
                 return WasmSqlite3StatementPtr(statementPtr.value)
             }
 
-            is Error -> throwAndroidSqliteException(connectionPtr.ptr, ", while compiling: $sql")
+            is Error -> readErrorThrowAndroidSqliteException(connectionPtr.ptr, ", while compiling: $sql")
         }
     }
 
@@ -534,7 +530,7 @@ internal class JvmSqlOpenHelperNativeBindings(
             )
 
             SQLITE_DONE -> Unit
-            else -> throwAndroidSqliteException(db.ptr)
+            else -> readErrorThrowAndroidSqliteException(db.ptr)
         }
     }
 
@@ -544,7 +540,7 @@ internal class JvmSqlOpenHelperNativeBindings(
     ) {
         val err = cApi.statement.sqlite3Step(statement.ptr)
         if (err != SQLITE_ROW) {
-            throwAndroidSqliteException(database.ptr)
+            readErrorThrowAndroidSqliteException(database.ptr)
         }
     }
 
@@ -569,16 +565,7 @@ internal class JvmSqlOpenHelperNativeBindings(
         return if (connection.isCancelled) 1 else 0
     }
 
-    private fun throwAndroidSqliteException(
-        db: WasmPtr<SqliteDb>,
-        message: String? = null,
-    ): Nothing {
-        val errInfo = cApi.errors.readSqliteErrorInfo(db)
-        throwAndroidSqliteException(errInfo, message)
-    }
-
     @Suppress("LongMethod", "CyclomaticComplexMethod")
-    @Throws(SqliteException::class)
     private fun copyRow(
         window: NativeCursorWindow,
         statement: WasmPtr<SqliteStatement>,
@@ -682,25 +669,27 @@ internal class JvmSqlOpenHelperNativeBindings(
         return result
     }
 
-    private fun <R : Any> Sqlite3Result<R>.orThrow(
+    private fun <R : Any> Sqlite3Result<R>.getOrThrow(
         msgPrefix: String?,
     ): R = when (this) {
         is Success<R> -> this.value
-        is Error -> throw SqliteException(this.info, msgPrefix)
+        is Error -> throwAndroidSqliteException(this.info, msgPrefix)
     }
 
-    private fun SqliteResultCode.throwOnSqliteError(
+    private fun SqliteResultCode.throwOnError(
         msgPrefix: String?,
-        sqliteDb: WasmPtr<SqliteDb>? = null,
     ) {
         if (this != SQLITE_OK) {
-            val errInfo = if (sqliteDb != null) {
-                cApi.errors.readSqliteErrorInfo(sqliteDb)
-            } else {
-                SqliteErrorInfo(this, this, msgPrefix)
-            }
-            throw SqliteException(errInfo, msgPrefix)
+            throwAndroidSqliteException(msgPrefix, this)
         }
+    }
+
+    private fun readErrorThrowAndroidSqliteException(
+        db: WasmPtr<SqliteDb>,
+        message: String? = null,
+    ): Nothing {
+        val errInfo = cApi.errors.readSqliteErrorInfo(db)
+        throwAndroidSqliteException(errInfo, message)
     }
 
     private enum class CopyRowResult {
