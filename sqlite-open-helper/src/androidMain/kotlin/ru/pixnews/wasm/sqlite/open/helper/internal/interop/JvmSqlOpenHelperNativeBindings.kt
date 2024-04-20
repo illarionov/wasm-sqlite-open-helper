@@ -40,7 +40,6 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteColumnType.Com
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteConfigParameter.Companion.SQLITE_CONFIG_MULTITHREAD
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDbConfigParameter.Companion.SQLITE_DBCONFIG_LOOKASIDE
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDbStatusParameter.Companion.SQLITE_DBSTATUS_LOOKASIDE_USED
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteOpenFlags
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteOpenFlags.Companion.SQLITE_OPEN_READWRITE
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
@@ -206,25 +205,6 @@ internal class JvmSqlOpenHelperNativeBindings(
             return
         }
         connection.isCancelled = true
-    }
-
-    override fun nativeGetDbLookaside(connectionPtr: WasmSqlite3ConnectionPtr): Int {
-        val connection = connections.get(connectionPtr.ptr) ?: run {
-            logger.i { "nativeGetDbLookaside(${connectionPtr.ptr}): connection not open" }
-            return -1
-        }
-        val lookasideUsedResult = cApi.db.sqlite3DbStatus(
-            connection.dbPtr,
-            SQLITE_DBSTATUS_LOOKASIDE_USED,
-            false,
-        )
-        return when (lookasideUsedResult) {
-            is Success -> lookasideUsedResult.value.current
-            is Error -> {
-                logger.i { "nativeGetDbLookaside(${connectionPtr.ptr}) failed: ${lookasideUsedResult.info}" }
-                -1
-            }
-        }
     }
 
     @Suppress(

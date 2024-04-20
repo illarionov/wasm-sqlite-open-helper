@@ -134,10 +134,6 @@ internal interface SqlOpenHelperNativeBindings<
         countAllRows: Boolean,
     ): Long
 
-    fun nativeGetDbLookaside(
-        connectionPtr: CP,
-    ): Int
-
     fun nativeCancel(
         connectionPtr: CP,
     )
