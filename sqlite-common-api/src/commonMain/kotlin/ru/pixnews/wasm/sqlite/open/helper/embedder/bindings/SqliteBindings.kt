@@ -29,6 +29,7 @@ public interface SqliteBindings {
     public val sqlite3_bind_blob: WasmFunctionBinding
     public val sqlite3_bind_double: WasmFunctionBinding
     public val sqlite3_bind_int64: WasmFunctionBinding
+    public val sqlite3_bind_null: WasmFunctionBinding
     public val sqlite3_bind_text: WasmFunctionBinding
     public val sqlite3_bind_parameter_count: WasmFunctionBinding
     public val sqlite3_stmt_readonly: WasmFunctionBinding

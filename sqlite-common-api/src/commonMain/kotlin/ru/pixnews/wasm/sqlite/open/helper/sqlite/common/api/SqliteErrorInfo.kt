@@ -7,19 +7,20 @@
 package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode.Companion.name
 
 public data class SqliteErrorInfo(
-    val sqliteErrorCode: Int,
-    val sqliteExtendedErrorCode: Int = sqliteErrorCode,
+    val sqliteErrorCode: SqliteResultCode,
+    val sqliteExtendedErrorCode: SqliteResultCode = sqliteErrorCode,
     val sqliteMsg: String? = null,
 )
 
 @InternalWasmSqliteHelperApi
 public fun SqliteErrorInfo.formatErrorMessage(prefix: String?): String = buildString {
     append("Sqlite error ")
-    append(SqliteException.sqlite3ErrNoName(sqliteErrorCode))
+    append(sqliteErrorCode.name)
     append("/")
-    append(SqliteException.sqlite3ErrNoName(sqliteExtendedErrorCode))
+    append(sqliteExtendedErrorCode.name)
     if (prefix?.isNotEmpty() == true) {
         append(": ")
         append(prefix)

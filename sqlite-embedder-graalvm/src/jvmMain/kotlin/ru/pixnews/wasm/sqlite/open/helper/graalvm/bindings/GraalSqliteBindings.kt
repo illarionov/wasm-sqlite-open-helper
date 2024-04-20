@@ -40,6 +40,7 @@ internal class GraalSqliteBindings(
     override val sqlite3_bind_blob by sqliteBindings.member()
     override val sqlite3_bind_double by sqliteBindings.member()
     override val sqlite3_bind_int64 by sqliteBindings.member()
+    override val sqlite3_bind_null by sqliteBindings.member()
     override val sqlite3_bind_text by sqliteBindings.member()
     override val sqlite3_bind_parameter_count by sqliteBindings.member()
     override val sqlite3_stmt_readonly by sqliteBindings.member()

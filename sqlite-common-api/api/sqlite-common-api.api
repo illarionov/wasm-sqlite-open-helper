@@ -126,6 +126,9 @@ public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteCo
 	public final fun getSQLITE_CONFIG_WIN32_HEAPSIZE-W_2IGVY ()I
 }
 
+public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteDb {
+}
+
 public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteDbConfigParameter {
 	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteDbConfigParameter$Companion;
 	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteDbConfigParameter;
@@ -217,161 +220,20 @@ public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteDe
 	public final fun getSQLITE_TRANSIENT-jk1Xn-E ()I
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteErrno {
-	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteErrno$Companion;
-	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteErrno;
-	public static fun constructor-impl (I)I
-	public fun equals (Ljava/lang/Object;)Z
-	public static fun equals-impl (ILjava/lang/Object;)Z
-	public static final fun equals-impl0 (II)Z
-	public final fun getId ()I
-	public fun hashCode ()I
-	public static fun hashCode-impl (I)I
-	public fun toString ()Ljava/lang/String;
-	public static fun toString-impl (I)Ljava/lang/String;
-	public final synthetic fun unbox-impl ()I
-}
-
-public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteErrno$Companion {
-	public final fun fromErrNoCode-aQlEAg0 (I)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteErrno;
-	public final fun getEntriesMap ()Ljava/util/Map;
-	public final fun getSQLITE_ABORT-8JmpfWM ()I
-	public final fun getSQLITE_ABORT_ROLLBACK-8JmpfWM ()I
-	public final fun getSQLITE_AUTH-8JmpfWM ()I
-	public final fun getSQLITE_AUTH_USER-8JmpfWM ()I
-	public final fun getSQLITE_BUSY-8JmpfWM ()I
-	public final fun getSQLITE_BUSY_RECOVERY-8JmpfWM ()I
-	public final fun getSQLITE_BUSY_SNAPSHOT-8JmpfWM ()I
-	public final fun getSQLITE_BUSY_TIMEOUT-8JmpfWM ()I
-	public final fun getSQLITE_CANTOPEN-8JmpfWM ()I
-	public final fun getSQLITE_CANTOPEN_CONVPATH-8JmpfWM ()I
-	public final fun getSQLITE_CANTOPEN_DIRTYWAL-8JmpfWM ()I
-	public final fun getSQLITE_CANTOPEN_FULLPATH-8JmpfWM ()I
-	public final fun getSQLITE_CANTOPEN_ISDIR-8JmpfWM ()I
-	public final fun getSQLITE_CANTOPEN_NOTEMPDIR-8JmpfWM ()I
-	public final fun getSQLITE_CANTOPEN_SYMLINK-8JmpfWM ()I
-	public final fun getSQLITE_CONSTRAINT-8JmpfWM ()I
-	public final fun getSQLITE_CONSTRAINT_CHECK-8JmpfWM ()I
-	public final fun getSQLITE_CONSTRAINT_COMMITHOOK-8JmpfWM ()I
-	public final fun getSQLITE_CONSTRAINT_DATATYPE-8JmpfWM ()I
-	public final fun getSQLITE_CONSTRAINT_FOREIGNKEY-8JmpfWM ()I
-	public final fun getSQLITE_CONSTRAINT_FUNCTION-8JmpfWM ()I
-	public final fun getSQLITE_CONSTRAINT_NOTNULL-8JmpfWM ()I
-	public final fun getSQLITE_CONSTRAINT_PINNED-8JmpfWM ()I
-	public final fun getSQLITE_CONSTRAINT_PRIMARYKEY-8JmpfWM ()I
-	public final fun getSQLITE_CONSTRAINT_ROWID-8JmpfWM ()I
-	public final fun getSQLITE_CONSTRAINT_TRIGGER-8JmpfWM ()I
-	public final fun getSQLITE_CONSTRAINT_UNIQUE-8JmpfWM ()I
-	public final fun getSQLITE_CONSTRAINT_VTAB-8JmpfWM ()I
-	public final fun getSQLITE_CORRUPT-8JmpfWM ()I
-	public final fun getSQLITE_CORRUPT_INDEX-8JmpfWM ()I
-	public final fun getSQLITE_CORRUPT_SEQUENCE-8JmpfWM ()I
-	public final fun getSQLITE_CORRUPT_VTAB-8JmpfWM ()I
-	public final fun getSQLITE_DONE-8JmpfWM ()I
-	public final fun getSQLITE_EMPTY-8JmpfWM ()I
-	public final fun getSQLITE_ERROR-8JmpfWM ()I
-	public final fun getSQLITE_ERROR_MISSING_COLLSEQ-8JmpfWM ()I
-	public final fun getSQLITE_ERROR_RETRY-8JmpfWM ()I
-	public final fun getSQLITE_ERROR_SNAPSHOT-8JmpfWM ()I
-	public final fun getSQLITE_FORMAT-8JmpfWM ()I
-	public final fun getSQLITE_FULL-8JmpfWM ()I
-	public final fun getSQLITE_INTERNAL-8JmpfWM ()I
-	public final fun getSQLITE_INTERRUPT-8JmpfWM ()I
-	public final fun getSQLITE_IOERR-8JmpfWM ()I
-	public final fun getSQLITE_IOERR_ACCESS-8JmpfWM ()I
-	public final fun getSQLITE_IOERR_AUTH-8JmpfWM ()I
-	public final fun getSQLITE_IOERR_BEGIN_ATOMIC-8JmpfWM ()I
-	public final fun getSQLITE_IOERR_BLOCKED-8JmpfWM ()I
-	public final fun getSQLITE_IOERR_CHECKRESERVEDLOCK-8JmpfWM ()I
-	public final fun getSQLITE_IOERR_CLOSE-8JmpfWM ()I
-	public final fun getSQLITE_IOERR_COMMIT_ATOMIC-8JmpfWM ()I
-	public final fun getSQLITE_IOERR_CONVPATH-8JmpfWM ()I
-	public final fun getSQLITE_IOERR_CORRUPTFS-8JmpfWM ()I
-	public final fun getSQLITE_IOERR_DATA-8JmpfWM ()I
-	public final fun getSQLITE_IOERR_DELETE-8JmpfWM ()I
-	public final fun getSQLITE_IOERR_DELETE_NOENT-8JmpfWM ()I
-	public final fun getSQLITE_IOERR_DIR_CLOSE-8JmpfWM ()I
-	public final fun getSQLITE_IOERR_DIR_FSYNC-8JmpfWM ()I
-	public final fun getSQLITE_IOERR_FSTAT-8JmpfWM ()I
-	public final fun getSQLITE_IOERR_FSYNC-8JmpfWM ()I
-	public final fun getSQLITE_IOERR_GETTEMPPATH-8JmpfWM ()I
-	public final fun getSQLITE_IOERR_IN_PAGE-8JmpfWM ()I
-	public final fun getSQLITE_IOERR_LOCK-8JmpfWM ()I
-	public final fun getSQLITE_IOERR_MMAP-8JmpfWM ()I
-	public final fun getSQLITE_IOERR_NOMEM-8JmpfWM ()I
-	public final fun getSQLITE_IOERR_RDLOCK-8JmpfWM ()I
-	public final fun getSQLITE_IOERR_READ-8JmpfWM ()I
-	public final fun getSQLITE_IOERR_ROLLBACK_ATOMIC-8JmpfWM ()I
-	public final fun getSQLITE_IOERR_SEEK-8JmpfWM ()I
-	public final fun getSQLITE_IOERR_SHMLOCK-8JmpfWM ()I
-	public final fun getSQLITE_IOERR_SHMMAP-8JmpfWM ()I
-	public final fun getSQLITE_IOERR_SHMOPEN-8JmpfWM ()I
-	public final fun getSQLITE_IOERR_SHMSIZE-8JmpfWM ()I
-	public final fun getSQLITE_IOERR_SHORT_READ-8JmpfWM ()I
-	public final fun getSQLITE_IOERR_TRUNCATE-8JmpfWM ()I
-	public final fun getSQLITE_IOERR_UNLOCK-8JmpfWM ()I
-	public final fun getSQLITE_IOERR_VNODE-8JmpfWM ()I
-	public final fun getSQLITE_IOERR_WRITE-8JmpfWM ()I
-	public final fun getSQLITE_LOCKED-8JmpfWM ()I
-	public final fun getSQLITE_LOCKED_SHAREDCACHE-8JmpfWM ()I
-	public final fun getSQLITE_LOCKED_VTAB-8JmpfWM ()I
-	public final fun getSQLITE_MISMATCH-8JmpfWM ()I
-	public final fun getSQLITE_MISUSE-8JmpfWM ()I
-	public final fun getSQLITE_NOLFS-8JmpfWM ()I
-	public final fun getSQLITE_NOMEM-8JmpfWM ()I
-	public final fun getSQLITE_NOTADB-8JmpfWM ()I
-	public final fun getSQLITE_NOTFOUND-8JmpfWM ()I
-	public final fun getSQLITE_NOTICE-8JmpfWM ()I
-	public final fun getSQLITE_NOTICE_RBU-8JmpfWM ()I
-	public final fun getSQLITE_NOTICE_RECOVER_ROLLBACK-8JmpfWM ()I
-	public final fun getSQLITE_NOTICE_RECOVER_WAL-8JmpfWM ()I
-	public final fun getSQLITE_OK-8JmpfWM ()I
-	public final fun getSQLITE_OK_LOAD_PERMANENTLY-8JmpfWM ()I
-	public final fun getSQLITE_OK_SYMLINK-8JmpfWM ()I
-	public final fun getSQLITE_PERM-8JmpfWM ()I
-	public final fun getSQLITE_PROTOCOL-8JmpfWM ()I
-	public final fun getSQLITE_RANGE-8JmpfWM ()I
-	public final fun getSQLITE_READONLY-8JmpfWM ()I
-	public final fun getSQLITE_READONLY_CANTINIT-8JmpfWM ()I
-	public final fun getSQLITE_READONLY_CANTLOCK-8JmpfWM ()I
-	public final fun getSQLITE_READONLY_DBMOVED-8JmpfWM ()I
-	public final fun getSQLITE_READONLY_DIRECTORY-8JmpfWM ()I
-	public final fun getSQLITE_READONLY_RECOVERY-8JmpfWM ()I
-	public final fun getSQLITE_READONLY_ROLLBACK-8JmpfWM ()I
-	public final fun getSQLITE_ROW-8JmpfWM ()I
-	public final fun getSQLITE_SCHEMA-8JmpfWM ()I
-	public final fun getSQLITE_TOOBIG-8JmpfWM ()I
-	public final fun getSQLITE_WARNING-8JmpfWM ()I
-	public final fun getSQLITE_WARNING_AUTOINDEX-8JmpfWM ()I
-}
-
 public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteErrorInfo {
-	public fun <init> (IILjava/lang/String;)V
 	public synthetic fun <init> (IILjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()I
-	public final fun component2 ()I
+	public synthetic fun <init> (IILjava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-1NYHulU ()I
+	public final fun component2-1NYHulU ()I
 	public final fun component3 ()Ljava/lang/String;
-	public final fun copy (IILjava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteErrorInfo;
-	public static synthetic fun copy$default (Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteErrorInfo;IILjava/lang/String;ILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteErrorInfo;
+	public final fun copy-dGbTOlg (IILjava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteErrorInfo;
+	public static synthetic fun copy-dGbTOlg$default (Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteErrorInfo;IILjava/lang/String;ILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteErrorInfo;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getSqliteErrorCode ()I
-	public final fun getSqliteExtendedErrorCode ()I
+	public final fun getSqliteErrorCode-1NYHulU ()I
+	public final fun getSqliteExtendedErrorCode-1NYHulU ()I
 	public final fun getSqliteMsg ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
-}
-
-public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteException : java/lang/RuntimeException {
-	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteException$Companion;
-	public fun <init> (IILjava/lang/String;Ljava/lang/String;)V
-	public synthetic fun <init> (IILjava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteErrorInfo;Ljava/lang/String;)V
-	public synthetic fun <init> (Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteErrorInfo;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun getErrorInfo ()Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteErrorInfo;
-}
-
-public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteException$Companion {
-	public final fun getSqlite3ErrNoName (Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteException;)Ljava/lang/String;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteOpenFlags : ru/pixnews/wasm/sqlite/open/helper/common/api/SqliteUintBitMask {
@@ -415,6 +277,136 @@ public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteOp
 	public final fun getSQLITE_OPEN_TRANSIENT_DB-KSZ_SCI ()I
 	public final fun getSQLITE_OPEN_URI-KSZ_SCI ()I
 	public final fun getSQLITE_OPEN_WAL-KSZ_SCI ()I
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteResultCode {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteResultCode$Companion;
+	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteResultCode;
+	public static fun constructor-impl (I)I
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (ILjava/lang/Object;)Z
+	public static final fun equals-impl0 (II)Z
+	public final fun getId ()I
+	public fun hashCode ()I
+	public static fun hashCode-impl (I)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (I)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()I
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteResultCode$Companion {
+	public final fun getName-ckpkAhs (I)Ljava/lang/String;
+	public final fun getSQLITE_ABORT-1NYHulU ()I
+	public final fun getSQLITE_ABORT_ROLLBACK-1NYHulU ()I
+	public final fun getSQLITE_AUTH-1NYHulU ()I
+	public final fun getSQLITE_AUTH_USER-1NYHulU ()I
+	public final fun getSQLITE_BUSY-1NYHulU ()I
+	public final fun getSQLITE_BUSY_RECOVERY-1NYHulU ()I
+	public final fun getSQLITE_BUSY_SNAPSHOT-1NYHulU ()I
+	public final fun getSQLITE_BUSY_TIMEOUT-1NYHulU ()I
+	public final fun getSQLITE_CANTOPEN-1NYHulU ()I
+	public final fun getSQLITE_CANTOPEN_CONVPATH-1NYHulU ()I
+	public final fun getSQLITE_CANTOPEN_DIRTYWAL-1NYHulU ()I
+	public final fun getSQLITE_CANTOPEN_FULLPATH-1NYHulU ()I
+	public final fun getSQLITE_CANTOPEN_ISDIR-1NYHulU ()I
+	public final fun getSQLITE_CANTOPEN_NOTEMPDIR-1NYHulU ()I
+	public final fun getSQLITE_CANTOPEN_SYMLINK-1NYHulU ()I
+	public final fun getSQLITE_CONSTRAINT-1NYHulU ()I
+	public final fun getSQLITE_CONSTRAINT_CHECK-1NYHulU ()I
+	public final fun getSQLITE_CONSTRAINT_COMMITHOOK-1NYHulU ()I
+	public final fun getSQLITE_CONSTRAINT_DATATYPE-1NYHulU ()I
+	public final fun getSQLITE_CONSTRAINT_FOREIGNKEY-1NYHulU ()I
+	public final fun getSQLITE_CONSTRAINT_FUNCTION-1NYHulU ()I
+	public final fun getSQLITE_CONSTRAINT_NOTNULL-1NYHulU ()I
+	public final fun getSQLITE_CONSTRAINT_PINNED-1NYHulU ()I
+	public final fun getSQLITE_CONSTRAINT_PRIMARYKEY-1NYHulU ()I
+	public final fun getSQLITE_CONSTRAINT_ROWID-1NYHulU ()I
+	public final fun getSQLITE_CONSTRAINT_TRIGGER-1NYHulU ()I
+	public final fun getSQLITE_CONSTRAINT_UNIQUE-1NYHulU ()I
+	public final fun getSQLITE_CONSTRAINT_VTAB-1NYHulU ()I
+	public final fun getSQLITE_CORRUPT-1NYHulU ()I
+	public final fun getSQLITE_CORRUPT_INDEX-1NYHulU ()I
+	public final fun getSQLITE_CORRUPT_SEQUENCE-1NYHulU ()I
+	public final fun getSQLITE_CORRUPT_VTAB-1NYHulU ()I
+	public final fun getSQLITE_DONE-1NYHulU ()I
+	public final fun getSQLITE_EMPTY-1NYHulU ()I
+	public final fun getSQLITE_ERROR-1NYHulU ()I
+	public final fun getSQLITE_ERROR_MISSING_COLLSEQ-1NYHulU ()I
+	public final fun getSQLITE_ERROR_RETRY-1NYHulU ()I
+	public final fun getSQLITE_ERROR_SNAPSHOT-1NYHulU ()I
+	public final fun getSQLITE_FORMAT-1NYHulU ()I
+	public final fun getSQLITE_FULL-1NYHulU ()I
+	public final fun getSQLITE_INTERNAL-1NYHulU ()I
+	public final fun getSQLITE_INTERRUPT-1NYHulU ()I
+	public final fun getSQLITE_IOERR-1NYHulU ()I
+	public final fun getSQLITE_IOERR_ACCESS-1NYHulU ()I
+	public final fun getSQLITE_IOERR_AUTH-1NYHulU ()I
+	public final fun getSQLITE_IOERR_BEGIN_ATOMIC-1NYHulU ()I
+	public final fun getSQLITE_IOERR_BLOCKED-1NYHulU ()I
+	public final fun getSQLITE_IOERR_CHECKRESERVEDLOCK-1NYHulU ()I
+	public final fun getSQLITE_IOERR_CLOSE-1NYHulU ()I
+	public final fun getSQLITE_IOERR_COMMIT_ATOMIC-1NYHulU ()I
+	public final fun getSQLITE_IOERR_CONVPATH-1NYHulU ()I
+	public final fun getSQLITE_IOERR_CORRUPTFS-1NYHulU ()I
+	public final fun getSQLITE_IOERR_DATA-1NYHulU ()I
+	public final fun getSQLITE_IOERR_DELETE-1NYHulU ()I
+	public final fun getSQLITE_IOERR_DELETE_NOENT-1NYHulU ()I
+	public final fun getSQLITE_IOERR_DIR_CLOSE-1NYHulU ()I
+	public final fun getSQLITE_IOERR_DIR_FSYNC-1NYHulU ()I
+	public final fun getSQLITE_IOERR_FSTAT-1NYHulU ()I
+	public final fun getSQLITE_IOERR_FSYNC-1NYHulU ()I
+	public final fun getSQLITE_IOERR_GETTEMPPATH-1NYHulU ()I
+	public final fun getSQLITE_IOERR_IN_PAGE-1NYHulU ()I
+	public final fun getSQLITE_IOERR_LOCK-1NYHulU ()I
+	public final fun getSQLITE_IOERR_MMAP-1NYHulU ()I
+	public final fun getSQLITE_IOERR_NOMEM-1NYHulU ()I
+	public final fun getSQLITE_IOERR_RDLOCK-1NYHulU ()I
+	public final fun getSQLITE_IOERR_READ-1NYHulU ()I
+	public final fun getSQLITE_IOERR_ROLLBACK_ATOMIC-1NYHulU ()I
+	public final fun getSQLITE_IOERR_SEEK-1NYHulU ()I
+	public final fun getSQLITE_IOERR_SHMLOCK-1NYHulU ()I
+	public final fun getSQLITE_IOERR_SHMMAP-1NYHulU ()I
+	public final fun getSQLITE_IOERR_SHMOPEN-1NYHulU ()I
+	public final fun getSQLITE_IOERR_SHMSIZE-1NYHulU ()I
+	public final fun getSQLITE_IOERR_SHORT_READ-1NYHulU ()I
+	public final fun getSQLITE_IOERR_TRUNCATE-1NYHulU ()I
+	public final fun getSQLITE_IOERR_UNLOCK-1NYHulU ()I
+	public final fun getSQLITE_IOERR_VNODE-1NYHulU ()I
+	public final fun getSQLITE_IOERR_WRITE-1NYHulU ()I
+	public final fun getSQLITE_LOCKED-1NYHulU ()I
+	public final fun getSQLITE_LOCKED_SHAREDCACHE-1NYHulU ()I
+	public final fun getSQLITE_LOCKED_VTAB-1NYHulU ()I
+	public final fun getSQLITE_MISMATCH-1NYHulU ()I
+	public final fun getSQLITE_MISUSE-1NYHulU ()I
+	public final fun getSQLITE_NOLFS-1NYHulU ()I
+	public final fun getSQLITE_NOMEM-1NYHulU ()I
+	public final fun getSQLITE_NOTADB-1NYHulU ()I
+	public final fun getSQLITE_NOTFOUND-1NYHulU ()I
+	public final fun getSQLITE_NOTICE-1NYHulU ()I
+	public final fun getSQLITE_NOTICE_RBU-1NYHulU ()I
+	public final fun getSQLITE_NOTICE_RECOVER_ROLLBACK-1NYHulU ()I
+	public final fun getSQLITE_NOTICE_RECOVER_WAL-1NYHulU ()I
+	public final fun getSQLITE_OK-1NYHulU ()I
+	public final fun getSQLITE_OK_LOAD_PERMANENTLY-1NYHulU ()I
+	public final fun getSQLITE_OK_SYMLINK-1NYHulU ()I
+	public final fun getSQLITE_PERM-1NYHulU ()I
+	public final fun getSQLITE_PROTOCOL-1NYHulU ()I
+	public final fun getSQLITE_RANGE-1NYHulU ()I
+	public final fun getSQLITE_READONLY-1NYHulU ()I
+	public final fun getSQLITE_READONLY_CANTINIT-1NYHulU ()I
+	public final fun getSQLITE_READONLY_CANTLOCK-1NYHulU ()I
+	public final fun getSQLITE_READONLY_DBMOVED-1NYHulU ()I
+	public final fun getSQLITE_READONLY_DIRECTORY-1NYHulU ()I
+	public final fun getSQLITE_READONLY_RECOVERY-1NYHulU ()I
+	public final fun getSQLITE_READONLY_ROLLBACK-1NYHulU ()I
+	public final fun getSQLITE_ROW-1NYHulU ()I
+	public final fun getSQLITE_SCHEMA-1NYHulU ()I
+	public final fun getSQLITE_TOOBIG-1NYHulU ()I
+	public final fun getSQLITE_WARNING-1NYHulU ()I
+	public final fun getSQLITE_WARNING_AUTOINDEX-1NYHulU ()I
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteStatement {
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteTextEncoding {

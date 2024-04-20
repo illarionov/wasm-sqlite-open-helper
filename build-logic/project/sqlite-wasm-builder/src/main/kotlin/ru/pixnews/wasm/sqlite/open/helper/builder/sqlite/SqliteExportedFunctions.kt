@@ -13,6 +13,7 @@ public object SqliteExportedFunctions {
         "_sqlite3_bind_double",
         "_sqlite3_bind_int64",
         "_sqlite3_bind_parameter_count",
+        "_sqlite3_bind_null",
         "_sqlite3_bind_text",
         "_sqlite3_busy_timeout",
         "_sqlite3_changes",

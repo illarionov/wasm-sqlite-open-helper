@@ -7,12 +7,12 @@
 package ru.pixnews.wasm.sqlite.open.helper.internal.interop
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.common.api.isSqlite3Null
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteStatement
 
-@JvmInline
-internal value class GraalSqlite3StatementPtr(
-    val ptr: WasmPtr<SqliteStatement>,
-) : Sqlite3StatementPtr {
-    override fun isNull(): Boolean = ptr.isSqlite3Null()
+internal interface SqliteDatabaseResourcesRegistry {
+    fun onDbOpened(db: WasmPtr<SqliteDb>)
+    fun registerStatement(db: WasmPtr<SqliteDb>, statement: WasmPtr<SqliteStatement>)
+    fun unregisterStatement(db: WasmPtr<SqliteDb>, statement: WasmPtr<SqliteStatement>)
+    fun afterDbClosed(closedDb: WasmPtr<SqliteDb>)
 }

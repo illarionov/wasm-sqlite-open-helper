@@ -24,17 +24,16 @@ import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteMisuseException
 import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteOutOfMemoryException
 import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteReadOnlyDatabaseException
 import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteTableLockedException
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrno
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrno.Companion.SQLITE_DONE
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrorInfo
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteException
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode.Companion.SQLITE_DONE
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode.Companion.SQLITE_OK
 
-internal fun SqliteException.rethrowAndroidSqliteException(msg: String? = null): Nothing {
-    throwAndroidSqliteException(errorInfo, msg, this)
-}
-
-internal fun throwAndroidSqliteException(message: String?): Nothing = throwAndroidSqliteException(
-    SqliteErrorInfo(0, 0, null),
+internal fun throwAndroidSqliteException(
+    message: String?,
+    errorCode: SqliteResultCode = SQLITE_OK,
+): Nothing = throwAndroidSqliteException(
+    SqliteErrorInfo(errorCode, errorCode, null),
     message,
 )
 
@@ -65,24 +64,26 @@ internal fun throwAndroidSqliteException(
         message
     }
 
-    val androidException = when (SqliteErrno.fromErrNoCode(errorInfo.sqliteErrorCode)) {
-        SqliteErrno.SQLITE_IOERR -> AndroidSqliteDiskIoException(fullErMsg)
-        SqliteErrno.SQLITE_CORRUPT, SqliteErrno.SQLITE_NOTADB -> AndroidSqliteDatabaseCorruptException(fullErMsg)
-        SqliteErrno.SQLITE_CONSTRAINT -> AndroidSqliteConstraintException(fullErMsg)
-        SqliteErrno.SQLITE_ABORT -> AndroidSqliteAbortException(fullErMsg)
+    val androidException = when (errorInfo.sqliteErrorCode) {
+        SqliteResultCode.SQLITE_IOERR -> AndroidSqliteDiskIoException(fullErMsg)
+        SqliteResultCode.SQLITE_CORRUPT, SqliteResultCode.SQLITE_NOTADB ->
+            AndroidSqliteDatabaseCorruptException(fullErMsg)
+
+        SqliteResultCode.SQLITE_CONSTRAINT -> AndroidSqliteConstraintException(fullErMsg)
+        SqliteResultCode.SQLITE_ABORT -> AndroidSqliteAbortException(fullErMsg)
         SQLITE_DONE -> AndroidSqliteDoneException(fullErMsg)
-        SqliteErrno.SQLITE_FULL -> AndroidSqliteFullException(fullErMsg)
-        SqliteErrno.SQLITE_MISUSE -> AndroidSqliteMisuseException(fullErMsg)
-        SqliteErrno.SQLITE_PERM -> AndroidSqliteAccessPermException(fullErMsg)
-        SqliteErrno.SQLITE_BUSY -> AndroidSqliteDatabaseLockedException(fullErMsg)
-        SqliteErrno.SQLITE_LOCKED -> AndroidSqliteTableLockedException(fullErMsg)
-        SqliteErrno.SQLITE_READONLY -> AndroidSqliteReadOnlyDatabaseException(fullErMsg)
-        SqliteErrno.SQLITE_CANTOPEN -> AndroidSqliteCantOpenDatabaseException(fullErMsg)
-        SqliteErrno.SQLITE_TOOBIG -> AndroidSqliteBlobTooBigException(fullErMsg)
-        SqliteErrno.SQLITE_RANGE -> AndroidSqliteBindOrColumnIndexOutOfRangeException(fullErMsg)
-        SqliteErrno.SQLITE_NOMEM -> AndroidSqliteOutOfMemoryException(fullErMsg)
-        SqliteErrno.SQLITE_MISMATCH -> AndroidSqliteDatatypeMismatchException(fullErMsg)
-        SqliteErrno.SQLITE_INTERRUPT -> AndroidOperationCanceledException(fullErMsg)
+        SqliteResultCode.SQLITE_FULL -> AndroidSqliteFullException(fullErMsg)
+        SqliteResultCode.SQLITE_MISUSE -> AndroidSqliteMisuseException(fullErMsg)
+        SqliteResultCode.SQLITE_PERM -> AndroidSqliteAccessPermException(fullErMsg)
+        SqliteResultCode.SQLITE_BUSY -> AndroidSqliteDatabaseLockedException(fullErMsg)
+        SqliteResultCode.SQLITE_LOCKED -> AndroidSqliteTableLockedException(fullErMsg)
+        SqliteResultCode.SQLITE_READONLY -> AndroidSqliteReadOnlyDatabaseException(fullErMsg)
+        SqliteResultCode.SQLITE_CANTOPEN -> AndroidSqliteCantOpenDatabaseException(fullErMsg)
+        SqliteResultCode.SQLITE_TOOBIG -> AndroidSqliteBlobTooBigException(fullErMsg)
+        SqliteResultCode.SQLITE_RANGE -> AndroidSqliteBindOrColumnIndexOutOfRangeException(fullErMsg)
+        SqliteResultCode.SQLITE_NOMEM -> AndroidSqliteOutOfMemoryException(fullErMsg)
+        SqliteResultCode.SQLITE_MISMATCH -> AndroidSqliteDatatypeMismatchException(fullErMsg)
+        SqliteResultCode.SQLITE_INTERRUPT -> AndroidOperationCanceledException(fullErMsg)
         else -> AndroidSqliteException(fullErMsg, cause)
     }
     throw androidException

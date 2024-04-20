@@ -13,17 +13,16 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteStatement
 
-// TODO: interfaces?
 @InternalWasmSqliteHelperApi
-public class SqliteOpenDatabaseResources(
+internal class JvmSqliteDatabaseResourcesRegistry(
     private val callbackStore: SqliteCallbackStore,
     rootLogger: Logger,
-) {
+) : SqliteDatabaseResourcesRegistry {
     private val logger: Logger = rootLogger.withTag("SqliteOpenDatabaseResources")
     private val lock = Any()
     private val openedDatabases: MutableMap<WasmPtr<SqliteDb>, DbResources> = mutableMapOf()
 
-    public fun onDbOpened(
+    override fun onDbOpened(
         db: WasmPtr<SqliteDb>,
     ): Unit = synchronized(lock) {
         val old = openedDatabases.putIfAbsent(db, DbResources())
@@ -32,7 +31,7 @@ public class SqliteOpenDatabaseResources(
         }
     }
 
-    public fun registerStatement(
+    override fun registerStatement(
         db: WasmPtr<SqliteDb>,
         statement: WasmPtr<SqliteStatement>,
     ): Unit = synchronized(lock) {
@@ -45,7 +44,7 @@ public class SqliteOpenDatabaseResources(
         }
     }
 
-    public fun unregisterStatement(
+    override fun unregisterStatement(
         db: WasmPtr<SqliteDb>,
         statement: WasmPtr<SqliteStatement>,
     ): Unit = synchronized(lock) {
@@ -58,7 +57,7 @@ public class SqliteOpenDatabaseResources(
         }
     }
 
-    public fun afterDbClosed(closedDb: WasmPtr<SqliteDb>): Unit = synchronized(lock) {
+    override fun afterDbClosed(closedDb: WasmPtr<SqliteDb>): Unit = synchronized(lock) {
         val db = openedDatabases.remove(closedDb)
         if (db == null) {
             logger.e { "afterDbClosed(): database $closedDb not registered" }
