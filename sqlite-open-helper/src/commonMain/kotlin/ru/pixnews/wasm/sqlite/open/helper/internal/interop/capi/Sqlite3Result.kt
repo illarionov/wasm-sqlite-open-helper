@@ -10,12 +10,12 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrorInfo
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
 
 @Suppress("WRONG_ORDER_IN_CLASS_LIKE_STRUCTURES")
-internal sealed interface Sqlite3Result<R> {
+internal sealed interface Sqlite3Result<out R : Any> {
     val sqliteErrCode: SqliteResultCode
 
     @JvmInline
-    value class Success<R>(
-        val result: R,
+    value class Success<out R : Any>(
+        val value: R,
     ) : Sqlite3Result<R> {
         override val sqliteErrCode: SqliteResultCode get() = SqliteResultCode.SQLITE_OK
     }

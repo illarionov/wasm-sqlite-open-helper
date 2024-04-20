@@ -9,8 +9,8 @@ package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import kotlin.time.Duration
 
-public typealias SqliteDb = Unit
-public typealias SqliteStatement = Unit
+public class SqliteDb private constructor()
+public class SqliteStatement private constructor()
 
 public typealias SqliteExecCallback = (
     results: List<String>, // **char

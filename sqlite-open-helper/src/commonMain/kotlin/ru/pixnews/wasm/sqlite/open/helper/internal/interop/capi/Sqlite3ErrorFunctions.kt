@@ -11,9 +11,11 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.isSqlite3Null
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.EmbedderMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.readNullableZeroTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.SqliteBindings
+import ru.pixnews.wasm.sqlite.open.helper.internal.interop.capi.Sqlite3ErrorFunctions.Companion.readSqliteErrorInfo
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrorInfo
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode.Companion.SQLITE_OK
 
 /**
  * Wrappers for SQLite3 C Api error functions: `sqlite3_errcode`, `sqlite3_extended_errcode`, `sqlite3_errmsg`
@@ -42,16 +44,31 @@ internal class Sqlite3ErrorFunctions(
     }
 
     companion object {
+        fun <R : Any> Sqlite3ErrorFunctions.createSqlite3Result(
+            errCode: SqliteResultCode,
+            result: R,
+            sqliteDb: WasmPtr<SqliteDb>? = null,
+        ): Sqlite3Result<R> = if (errCode == SQLITE_OK) {
+            Sqlite3Result.Success(result)
+        } else {
+            val errorInfo = if (sqliteDb != null) {
+                this.readSqliteErrorInfo(sqliteDb)
+            } else {
+                SqliteErrorInfo(errCode, errCode, null)
+            }
+            Sqlite3Result.Error(errorInfo)
+        }
+
         fun Sqlite3ErrorFunctions.readSqliteErrorInfo(
             sqliteDb: WasmPtr<SqliteDb>,
         ): SqliteErrorInfo {
             if (sqliteDb.isSqlite3Null()) {
-                return SqliteErrorInfo(SqliteResultCode.SQLITE_OK, SqliteResultCode.SQLITE_OK, null)
+                return SqliteErrorInfo(SQLITE_OK, SQLITE_OK, null)
             }
 
             val errCode = sqlite3ErrCode(sqliteDb)
             val extendedErrCode = sqlite3ExtendedErrCode(sqliteDb)
-            val errMsg = if (errCode != SqliteResultCode.SQLITE_OK) {
+            val errMsg = if (errCode != SQLITE_OK) {
                 sqlite3ErrMsg(sqliteDb)
             } else {
                 null

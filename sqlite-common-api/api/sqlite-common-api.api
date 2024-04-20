@@ -126,6 +126,9 @@ public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteCo
 	public final fun getSQLITE_CONFIG_WIN32_HEAPSIZE-W_2IGVY ()I
 }
 
+public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteDb {
+}
+
 public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteDbConfigParameter {
 	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteDbConfigParameter$Companion;
 	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteDbConfigParameter;
@@ -414,6 +417,9 @@ public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteRe
 	public final fun getSQLITE_TOOBIG-1NYHulU ()I
 	public final fun getSQLITE_WARNING-1NYHulU ()I
 	public final fun getSQLITE_WARNING_AUTOINDEX-1NYHulU ()I
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteStatement {
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteTextEncoding {

@@ -25,6 +25,8 @@ import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDebug
 import ru.pixnews.wasm.sqlite.open.helper.internal.WasmSqliteOpenHelper
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.JvmSqlOpenHelperNativeBindings
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.JvmSqliteCallbackStore
+import ru.pixnews.wasm.sqlite.open.helper.internal.interop.JvmSqliteDatabaseResourcesRegistry
+import ru.pixnews.wasm.sqlite.open.helper.internal.interop.capi.Sqlite3CApi
 import ru.pixnews.wasm.sqlite.open.helper.path.DatabasePathResolver
 
 /**
@@ -44,13 +46,16 @@ internal class WasmSqliteOpenHelperFactory(
     private val logger: Logger = rootLogger.withTag("WasmSqliteOpenHelperFactory")
 
     override fun create(configuration: SupportSQLiteOpenHelper.Configuration): SupportSQLiteOpenHelper {
-        val bindings = JvmSqlOpenHelperNativeBindings(
+        val cApi = Sqlite3CApi(
             sqliteBindings = sqliteBindings,
             memory = memory,
             callbackStore = callbackStore,
             callbackFunctionIndexes = callbackFunctionIndexes,
+            databaseResourcesRegistry = JvmSqliteDatabaseResourcesRegistry(callbackStore, logger),
             rootLogger = logger,
         )
+
+        val bindings = JvmSqlOpenHelperNativeBindings(cApi, logger)
 
         val openParamsBuilder: SQLiteDatabaseOpenParams.Builder = SQLiteDatabaseOpenParams.Builder().apply {
             errorHandler = DatabaseErrorHandler { dbObj -> configuration.callback.onCorruption(dbObj) }

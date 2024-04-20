@@ -11,7 +11,6 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 
 @InternalWasmSqliteHelperApi
 public interface WasmFunctionBinding {
-    // TODO: split to interfaces?
     public fun executeVoid(vararg args: Any?)
     public fun executeForInt(vararg args: Any?): Int
     public fun executeForLong(vararg args: Any?): Long
