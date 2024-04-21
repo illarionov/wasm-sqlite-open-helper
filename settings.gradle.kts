@@ -26,9 +26,11 @@ buildscript {
 rootProject.name = "wasm-sqlite-open-helper"
 
 include("common-api")
-include("icu-wasm")
 include("sqlite-common-api")
 include("sqlite-embedder-graalvm")
+include("sqlite-embedder-chicory")
 include("sqlite-open-helper")
-include("sqlite-wasm")
+include("native:icu-wasm")
+include("native:sqlite-android-wasm-emscripten-icu-mt-pthread-345")
+include("native:sqlite-android-wasm-emscripten-icu-345")
 include("wasi-emscripten-host")

@@ -99,8 +99,10 @@ private fun setupTasksForBuild(buildSpec: IcuWasmBuildSpec) {
 
     setupOutgoingArtifacts(buildSpec, buildIcuTask)
 
-    tasks.named("assemble").configure {
-        dependsOn(buildIcuTask)
+    if (buildSpec.buildByDefault.get()) {
+        tasks.named("assemble").configure {
+            dependsOn(buildIcuTask)
+        }
     }
 }
 

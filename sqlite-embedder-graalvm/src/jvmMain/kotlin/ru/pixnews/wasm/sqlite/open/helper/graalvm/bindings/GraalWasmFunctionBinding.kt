@@ -8,8 +8,8 @@ package ru.pixnews.wasm.sqlite.open.helper.graalvm.bindings
 
 import org.graalvm.polyglot.Value
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.WasmFunctionBinding
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.asWasmAddr
+import ru.pixnews.wasm.sqlite.open.helper.host.WasmFunctionBinding
 
 internal class GraalWasmFunctionBinding(
     private val member: Value,

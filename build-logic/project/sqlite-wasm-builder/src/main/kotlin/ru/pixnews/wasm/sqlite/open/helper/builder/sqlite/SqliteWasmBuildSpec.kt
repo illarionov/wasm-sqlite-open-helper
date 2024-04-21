@@ -26,7 +26,7 @@ public open class SqliteWasmBuildSpec @Inject internal constructor(
     projectLayout: ProjectLayout,
     private val name: String,
 ) : Named, Serializable {
-    private val sqliteWasmFilesSrdDir = projectLayout.projectDirectory.dir("src/main/cpp/sqlite")
+    private val sqliteWasmFilesSrdDir = projectLayout.projectDirectory.dir("../sqlite-android-common/sqlite")
 
     public val sqliteVersion: Property<String> = objects.property(String::class.java)
         .convention("3450100")
@@ -59,19 +59,19 @@ public open class SqliteWasmBuildSpec @Inject internal constructor(
         )
 
     public val codeGenerationOptions: ListProperty<String> = objects.listProperty(String::class.java)
-        .convention(SqliteCodeGenerationOptions.codeGenerationOptions)
+        .convention(SqliteCodeGenerationOptions.codeGenerationOptionsMultithread)
 
     public val codeOptimizationOptions: ListProperty<String> = objects.listProperty(String::class.java)
         .convention(SqliteCodeGenerationOptions.codeOptimizationOptionsO2)
 
     public val emscriptenConfigurationOptions: ListProperty<String> = objects.listProperty(String::class.java)
-        .convention(SqliteCodeGenerationOptions.emscriptenConfigurationOptions)
+        .convention(SqliteCodeGenerationOptions.emscriptenConfigurationOptionMultithread)
 
     public val exportedFunctions: ListProperty<String> = objects.listProperty(String::class.java)
         .convention(SqliteExportedFunctions.openHelperExportedFunctions)
 
     public val sqliteConfigOptions: ListProperty<String> = objects.listProperty(String::class.java)
-        .convention(SqliteConfigurationOptions.openHelperConfig)
+        .convention(SqliteConfigurationOptions.openHelperConfig())
 
     override fun getName(): String = name
 

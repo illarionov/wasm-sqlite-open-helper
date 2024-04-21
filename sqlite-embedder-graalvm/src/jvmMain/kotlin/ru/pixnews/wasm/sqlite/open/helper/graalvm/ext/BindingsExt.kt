@@ -7,8 +7,8 @@
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.ext
 
 import org.graalvm.polyglot.Value
-import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.WasmFunctionBinding
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.bindings.GraalWasmFunctionBinding
+import ru.pixnews.wasm.sqlite.open.helper.host.WasmFunctionBinding
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 

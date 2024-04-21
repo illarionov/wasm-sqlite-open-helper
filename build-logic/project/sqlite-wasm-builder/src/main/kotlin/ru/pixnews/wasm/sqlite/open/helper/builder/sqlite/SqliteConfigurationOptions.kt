@@ -10,32 +10,6 @@ import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.SqliteConfigurationOpti
 import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.SqliteConfigurationOptions.DefaultUnixVfs.UNIX_NONE
 
 public object SqliteConfigurationOptions {
-    public val openHelperConfig: List<String> = AndroidGoogleSource.androidIcu - listOf(
-        "-DUSE_PREAD64",
-        "-Werror",
-    ) + listOf(
-        // Do not create threads from Sqlite native code
-        "-DSQLITE_MAX_WORKER_THREADS=0",
-        // Mmap is not implemented
-        "-DSQLITE_MAX_MMAP_SIZE=0",
-
-        // default file system
-        UNIX_EXCL.sqliteBuildOption,
-
-        // Additional features
-        "-DSQLITE_ENABLE_FTS3_PARENTHESIS",
-        "-DSQLITE_ENABLE_FTS5",
-        "-DSQLITE_ENABLE_JSON1",
-        "-DSQLITE_ENABLE_RTREE",
-        "-DSQLITE_ENABLE_STMTVTAB",
-
-        // Other
-        "-DSQLITE_ENABLE_DBPAGE_VTAB",
-        "-DSQLITE_OMIT_DEPRECATED",
-        "-DSQLITE_OMIT_SHARED_CACHE",
-        "-DSQLITE_WASM_ENABLE_C_TESTS",
-    )
-
     /**
      * Build configuration from https://github.com/requery/sqlite-android.git
      */
@@ -109,6 +83,59 @@ public object SqliteConfigurationOptions {
             "-DSQLITE_ENABLE_DBSTAT_VTAB",
         )
         public val androidIcu: List<String> = sqliteDefaults + "-DSQLITE_ENABLE_ICU"
+    }
+
+    public fun openHelperConfig(
+        enableIcu: Boolean = true,
+        enableMultithreading: Boolean = true,
+        defaultUnixVfs: DefaultUnixVfs = UNIX_EXCL,
+    ): List<String> = buildList {
+        // Base config
+        if (enableIcu) {
+            addAll(AndroidGoogleSource.androidIcu)
+        } else {
+            addAll(AndroidGoogleSource.sqliteDefaults)
+        }
+
+        // WASM environment adjustments
+        remove("-DUSE_PREAD64")
+        remove("-Werror")
+
+        // Multithreading adjustments
+        if (!enableMultithreading) {
+            remove("-DSQLITE_THREADSAFE=2")
+            add("-DSQLITE_THREADSAFE=0")
+        }
+
+        // Do not create threads from Sqlite native code
+        add("-DSQLITE_MAX_WORKER_THREADS=0")
+
+        // Mmap is not implemented
+        add("-DSQLITE_MAX_MMAP_SIZE=0")
+
+        // Default file system
+        add(defaultUnixVfs.sqliteBuildOption)
+
+        // Additional features
+        addAll(
+            listOf(
+                "-DSQLITE_ENABLE_FTS3_PARENTHESIS",
+                "-DSQLITE_ENABLE_FTS5",
+                "-DSQLITE_ENABLE_JSON1",
+                "-DSQLITE_ENABLE_RTREE",
+                "-DSQLITE_ENABLE_STMTVTAB",
+            ),
+        )
+
+        // Other
+        addAll(
+            listOf(
+                "-DSQLITE_ENABLE_DBPAGE_VTAB",
+                "-DSQLITE_OMIT_DEPRECATED",
+                "-DSQLITE_OMIT_SHARED_CACHE",
+                "-DSQLITE_WASM_ENABLE_C_TESTS",
+            ),
+        )
     }
 
     /**

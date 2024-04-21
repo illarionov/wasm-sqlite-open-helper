@@ -20,6 +20,19 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/JvmTimeZoneInfoProvid
 	public fun invoke ()Lru/pixnews/wasm/sqlite/open/helper/host/include/TimeZoneInfo;
 }
 
+public final class ru/pixnews/wasm/sqlite/open/helper/host/WasmModules {
+	public static final field ENV_MODULE_NAME Ljava/lang/String;
+	public static final field INSTANCE Lru/pixnews/wasm/sqlite/open/helper/host/WasmModules;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/WasmSizes {
+	public static final field INSTANCE Lru/pixnews/wasm/sqlite/open/helper/host/WasmSizes;
+	public static final field WASM_MEMORY_32_MAX_PAGES J
+	public static final field WASM_MEMORY_64_MAX_PAGES J
+	public static final field WASM_MEMORY_PAGE_SIZE J
+	public static final field WASM_MEMORY_SQLITE_MAX_PAGES J
+}
+
 public final class ru/pixnews/wasm/sqlite/open/helper/host/WasmValueType {
 	public static final field WebAssemblyTypes Lru/pixnews/wasm/sqlite/open/helper/host/WasmValueType$WebAssemblyTypes;
 	public static final synthetic fun box-impl (Ljava/lang/Byte;)Lru/pixnews/wasm/sqlite/open/helper/host/WasmValueType;
@@ -49,6 +62,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/WasmValueType$WebAsse
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/WasmValueTypeExtKt {
 	public static final fun getPOINTER ()Ljava/lang/Byte;
+	public static final fun getPointer (Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/WasiTypename;)Ljava/lang/Byte;
 	public static final fun getPointer-otkXctc (Ljava/lang/Byte;)Ljava/lang/Byte;
 }
 

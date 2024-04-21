@@ -10,7 +10,6 @@ import org.graalvm.polyglot.Context
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmModule
-import org.graalvm.wasm.constants.Sizes
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.setupWasmModuleFunctions
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.withWasmContext
@@ -49,6 +48,8 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.WasmMemoryNotifyCa
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.WasmMemoryWaitCallback
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.preview1.func.SyscallFdatasync
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.pthread.Pthread
+import ru.pixnews.wasm.sqlite.open.helper.host.WasmModules.ENV_MODULE_NAME
+import ru.pixnews.wasm.sqlite.open.helper.host.WasmSizes
 import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType.WebAssemblyTypes.F64
 import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType.WebAssemblyTypes.I32
 import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType.WebAssemblyTypes.I64
@@ -266,18 +267,18 @@ internal class EmscriptenEnvModuleBuilder(
     private fun setupMemory(
         context: WasmContext,
         envModule: WasmModule,
-        minMemorySize: Long = 50331648L,
+        minMemorySize: Long = 50_331_648L,
         sharedMemory: Boolean = false,
         useUnsafeMemory: Boolean = false,
     ) {
-        val minSize = minMemorySize / WASM_MEMORY_PAGE_SIZE
+        val minSize = minMemorySize / WasmSizes.WASM_MEMORY_PAGE_SIZE
         val maxSize: Long
         val is64Bit: Boolean
         if (context.contextOptions.supportMemory64()) {
-            maxSize = Sizes.MAX_MEMORY_64_DECLARATION_SIZE
+            maxSize = WasmSizes.WASM_MEMORY_64_MAX_PAGES
             is64Bit = true
         } else {
-            maxSize = 32768
+            maxSize = WasmSizes.WASM_MEMORY_SQLITE_MAX_PAGES
             is64Bit = false
         }
 
@@ -293,10 +294,5 @@ internal class EmscriptenEnvModuleBuilder(
                 notifyCallback = WasmMemoryNotifyCallback(memoryWaiters, host.rootLogger)
             }
         }
-    }
-
-    companion object {
-        private const val ENV_MODULE_NAME = "env"
-        private const val WASM_MEMORY_PAGE_SIZE = 65536L
     }
 }

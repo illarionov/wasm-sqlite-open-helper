@@ -18,11 +18,11 @@ version = wasmSqliteVersions.getSubmoduleVersionProvider(
 
 kotlin {
     jvm()
-    linuxX64()
 
     sourceSets {
         commonMain.dependencies {
             api(projects.commonApi)
+            api(projects.wasiEmscriptenHost)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))

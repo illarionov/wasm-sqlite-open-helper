@@ -10,7 +10,6 @@ import org.gradle.api.Named
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
 import ru.pixnews.wasm.sqlite.open.helper.builder.attribute.ICU_DATA_PACKAGING_STATIC
 import ru.pixnews.wasm.sqlite.open.helper.builder.ext.WasmBuildDsl
@@ -37,10 +36,12 @@ public abstract class IcuWasmBuildSpec @Inject internal constructor(
         .convention(icuAdditionalCflags)
     public val icuAdditionalForceLibs: ListProperty<String> = objects.listProperty(String::class.java)
         .convention(IcuBuildDefaults.ICU_FORCE_LIBS)
-    public val usePthreads: Provider<Boolean> = objects.property(Boolean::class.java)
+    public val usePthreads: Property<Boolean> = objects.property(Boolean::class.java)
         .convention(IcuBuildDefaults.ICU_USE_PTHREADS)
     public val icuDataDir: Property<String> = objects.property(String::class.java)
         .convention(ICU_DATA_DIR)
+    public val buildByDefault: Property<Boolean> = objects.property(Boolean::class.java)
+        .convention(true)
 
     override fun getName(): String = name
 
