@@ -18,7 +18,7 @@ import org.gradle.nativeplatform.OperatingSystemFamily
 /**
  * Attribute to mark code compiled with multithreading support using pthread
  */
-internal val EMSCRIPTEN_USE_PTHREADS_ATTRIBUTE: Attribute<Boolean> = Attribute.of(
+public val EMSCRIPTEN_USE_PTHREADS_ATTRIBUTE: Attribute<Boolean> = Attribute.of(
     "ru.pixnews.wasm.sqlite.open.helper.builder.emscripten.pthreads",
     Boolean::class.javaObjectType,
 )

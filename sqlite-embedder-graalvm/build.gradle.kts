@@ -24,10 +24,12 @@ kotlin {
     }
 
     sourceSets {
-        jvmMain.dependencies {
+        commonMain.dependencies {
             api(projects.sqliteCommonApi)
-            implementation(projects.sqliteWasm)
+            implementation(projects.native.sqliteAndroidWasmEmscriptenIcuMtPthread345)
             implementation(projects.wasiEmscriptenHost)
+        }
+        jvmMain.dependencies {
             api(libs.graalvm.polyglot.polyglot)
             compileOnly(libs.graalvm.wasm.language)
             implementation(libs.graalvm.polyglot.wasm)

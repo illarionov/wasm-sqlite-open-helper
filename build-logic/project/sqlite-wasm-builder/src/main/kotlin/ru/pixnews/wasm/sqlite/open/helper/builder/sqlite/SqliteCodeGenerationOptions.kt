@@ -15,6 +15,8 @@ public object SqliteCodeGenerationOptions {
         "--minify", "0",
         "--no-entry",
         "-Wno-limited-postlink-optimizations",
+    )
+    public val codeGenerationOptionsMultithread: List<String> = codeGenerationOptions + listOf(
         "-pthread",
     )
 
@@ -44,6 +46,8 @@ public object SqliteCodeGenerationOptions {
         "-sUSE_CLOSURE_COMPILER=0",
         "-sUSE_ES6_IMPORT_META",
         "-sWASM_BIGINT",
+    )
+    public val emscriptenConfigurationOptionMultithread: List<String> = emscriptenConfigurationOptions + listOf(
         "-sSHARED_MEMORY",
     )
 }

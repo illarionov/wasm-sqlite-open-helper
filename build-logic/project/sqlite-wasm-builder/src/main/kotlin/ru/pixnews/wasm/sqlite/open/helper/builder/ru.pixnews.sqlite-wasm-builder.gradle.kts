@@ -44,7 +44,9 @@ plugins {
 }
 
 setupUnpackingSqliteAttributes(
-    androidSqlitePatchFile = project.layout.projectDirectory.file(provider { "src/main/cpp/android/Android.patch" }),
+    androidSqlitePatchFile = project.layout.projectDirectory.file(
+        provider { "../sqlite-android-common/android/Android.patch" },
+    ),
 )
 
 configurations {
