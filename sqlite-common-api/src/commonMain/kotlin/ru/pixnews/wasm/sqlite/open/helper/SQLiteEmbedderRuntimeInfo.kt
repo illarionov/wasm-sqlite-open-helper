@@ -4,10 +4,5 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.chicory
+package ru.pixnews.wasm.sqlite.open.helper
 
-import ru.pixnews.wasm.sqlite.open.helper.tests.AbstractCommonFactoryTest
-
-class ChicoryBaseFactoryTest : AbstractCommonFactoryTest<ChicorySqliteEmbedderConfig>(
-    factoryCreator = ChicoryFactoryCreator,
-)

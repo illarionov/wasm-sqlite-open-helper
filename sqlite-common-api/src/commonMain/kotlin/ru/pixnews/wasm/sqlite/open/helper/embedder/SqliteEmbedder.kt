@@ -24,6 +24,7 @@ public interface SqliteEmbedder<E : SqliteEmbedderConfig> {
 @InternalWasmSqliteHelperApi
 public interface SqliteWasmEnvironment {
     public val sqliteBindings: SqliteBindings
+    public val embedderInfo: SQLiteEmbedderRuntimeInfo
     public val memory: EmbedderMemory
     public val callbackFunctionIndexes: Sqlite3CallbackFunctionIndexes
 }

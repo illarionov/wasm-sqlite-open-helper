@@ -14,6 +14,7 @@ import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.EnvModuleBuilder
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.EnvModuleBuilder.EnvModule
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.EmbedderMemory
+import ru.pixnews.wasm.sqlite.open.helper.embedder.SQLiteEmbedderRuntimeInfo
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedder
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteWasmEnvironment
 import ru.pixnews.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
@@ -41,6 +42,11 @@ public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig
         @Suppress("UnusedParameter") callbackStore: SqliteCallbackStore,
         sqlite3Binary: WasmSqliteConfiguration,
     ): SqliteWasmEnvironment {
+        require(!sqlite3Binary.requireThreads) {
+            "The specified SQLite binary is compiled with threading support, which is not compatible with the " +
+                    "Chicory WebAssembly runtime. Use a version of SQLite compiled without thread support."
+        }
+
         val sqlite3Module = sqlite3Binary.sqliteUrl.openStream().use {
             Module.builder(it).build()
         }
@@ -55,6 +61,9 @@ public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig
 
         return object : SqliteWasmEnvironment {
             override val sqliteBindings: SqliteBindings = bindings
+            override val embedderInfo: SQLiteEmbedderRuntimeInfo = object : SQLiteEmbedderRuntimeInfo {
+                override val supportMultithreading: Boolean = false
+            }
             override val memory: EmbedderMemory = envModule.memory
             override val callbackFunctionIndexes: Sqlite3CallbackFunctionIndexes = envModule.indirectFunctionIndexes
         }

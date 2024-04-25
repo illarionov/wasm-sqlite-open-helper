@@ -16,6 +16,7 @@ import ru.pixnews.wasm.sqlite.open.helper.dsl.OpenParamsBlock
 import ru.pixnews.wasm.sqlite.open.helper.dsl.WasmSqliteOpenHelperFactoryConfigBlock
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedder
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
+import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteWasmEnvironment
 import ru.pixnews.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
 import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard
 import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard.Reporter
@@ -70,7 +71,7 @@ internal fun <E : SqliteEmbedderConfig> WasmSqliteOpenHelperFactory(
     setupCloseGuard(config.logger)
 
     val callbackStore = JvmSqliteCallbackStore()
-    val embedderEnv = embedder.createSqliteWasmEnvironment(
+    val embedderEnv: SqliteWasmEnvironment = embedder.createSqliteWasmEnvironment(
         commonConfig = commonConfig,
         callbackStore = callbackStore,
         embedderConfigBuilder = config.embedderConfig,
@@ -79,6 +80,7 @@ internal fun <E : SqliteEmbedderConfig> WasmSqliteOpenHelperFactory(
     return WasmSqliteOpenHelperFactory(
         pathResolver = config.pathResolver,
         sqliteBindings = embedderEnv.sqliteBindings,
+        embedderInfo =  embedderEnv.embedderInfo,
         memory = embedderEnv.memory,
         callbackStore = callbackStore,
         callbackFunctionIndexes = embedderEnv.callbackFunctionIndexes,
