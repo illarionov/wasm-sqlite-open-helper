@@ -8,10 +8,10 @@ package ru.pixnews.wasm.sqlite.open.helper.internal.interop.capi
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.EmbedderMemory
+import ru.pixnews.wasm.sqlite.open.helper.embedder.SQLiteEmbedderRuntimeInfo
 import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.SqliteBindings
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SQLiteEmbedderRuntimeInfo
 import ru.pixnews.wasm.sqlite.open.helper.internal.interop.SqliteDatabaseResourcesRegistry
 
 internal class Sqlite3CApi(

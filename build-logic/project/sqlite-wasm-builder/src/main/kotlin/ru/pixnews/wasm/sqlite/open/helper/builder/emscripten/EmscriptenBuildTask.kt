@@ -15,7 +15,6 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.IgnoreEmptyDirectories
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
@@ -31,12 +30,13 @@ import org.gradle.kotlin.dsl.listProperty
 import org.gradle.kotlin.dsl.newInstance
 import org.gradle.process.CommandLineArgumentProvider
 import org.gradle.process.ExecOperations
+import org.gradle.work.DisableCachingByDefault
 import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.internal.BuildDirPath.COMPILE_WORK_DIR
 import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.internal.BuildDirPath.compileUnstrippedResultDir
 import java.io.File
 import javax.inject.Inject
 
-@CacheableTask
+@DisableCachingByDefault(because = "Caching is temporarily disabled due to suspected malfunction")
 public abstract class EmscriptenBuildTask @Inject constructor(
     private val execOperations: ExecOperations,
     objects: ObjectFactory,

@@ -13,7 +13,6 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
-import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Internal
@@ -26,6 +25,7 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.property
 import org.gradle.process.ExecOperations
+import org.gradle.work.DisableCachingByDefault
 import ru.pixnews.wasm.sqlite.open.helper.builder.attribute.ICU_DATA_PACKAGING_STATIC
 import ru.pixnews.wasm.sqlite.open.helper.builder.emscripten.EmscriptenSdk
 import ru.pixnews.wasm.sqlite.open.helper.builder.icu.IcuBuildFeature
@@ -39,7 +39,7 @@ import javax.inject.Inject
 /**
  * Builds the ICU for WebAssembly using Emscripten
  */
-@CacheableTask
+@DisableCachingByDefault(because = "Caching is temporarily disabled due to suspected malfunction")
 public abstract class IcuBuildWasmLibraryTask @Inject constructor(
     private val execOperations: ExecOperations,
     objects: ObjectFactory,
@@ -163,7 +163,7 @@ public abstract class IcuBuildWasmLibraryTask @Inject constructor(
         } + emscriptenSdk.getEmsdkEnvironment() + mapOf(
             "CFLAGS" to cflags.joinToString(" "),
             "CXXFLAGS" to cxxflags.joinToString(" "),
-            "ICU_FORCE_LIBS" to icuForceLibs.getWithPthreadDefaults(ICU_PTHREAD_FORCE_LIBS).joinToString(" "),
+            "FORCE_LIBS" to icuForceLibs.getWithPthreadDefaults(ICU_PTHREAD_FORCE_LIBS).joinToString(" "),
             "PKGDATA_OPTS" to ICU_PKGDATA_OPTS.joinToString(" "),
             "PATH" to (System.getenv()["PATH"] ?: ""),
         )
