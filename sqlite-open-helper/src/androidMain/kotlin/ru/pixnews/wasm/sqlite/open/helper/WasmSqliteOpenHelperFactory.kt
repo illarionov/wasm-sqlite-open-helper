@@ -18,6 +18,7 @@ import ru.pixnews.wasm.sqlite.open.helper.base.DatabaseErrorHandler
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.EmbedderMemory
 import ru.pixnews.wasm.sqlite.open.helper.dsl.OpenParamsBlock
+import ru.pixnews.wasm.sqlite.open.helper.embedder.SQLiteEmbedderRuntimeInfo
 import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.SqliteBindings
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDatabaseOpenParams
@@ -38,6 +39,7 @@ internal class WasmSqliteOpenHelperFactory(
     private val debugConfig: SQLiteDebug,
     private val openParams: OpenParamsBlock,
     private val sqliteBindings: SqliteBindings,
+    private val embedderInfo: SQLiteEmbedderRuntimeInfo,
     private val memory: EmbedderMemory,
     private val callbackStore: JvmSqliteCallbackStore,
     private val callbackFunctionIndexes: Sqlite3CallbackFunctionIndexes,
@@ -48,6 +50,7 @@ internal class WasmSqliteOpenHelperFactory(
     override fun create(configuration: SupportSQLiteOpenHelper.Configuration): SupportSQLiteOpenHelper {
         val cApi = Sqlite3CApi(
             sqliteBindings = sqliteBindings,
+            embedderInfo = embedderInfo,
             memory = memory,
             callbackStore = callbackStore,
             callbackFunctionIndexes = callbackFunctionIndexes,

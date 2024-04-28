@@ -8,6 +8,10 @@ public abstract interface class ru/pixnews/wasm/sqlite/open/helper/WasmSqliteCon
 public abstract interface annotation class ru/pixnews/wasm/sqlite/open/helper/WasmSqliteOpenHelperDsl : java/lang/annotation/Annotation {
 }
 
+public abstract interface class ru/pixnews/wasm/sqlite/open/helper/embedder/SQLiteEmbedderRuntimeInfo {
+	public abstract fun getSupportMultithreading ()Z
+}
+
 public abstract interface class ru/pixnews/wasm/sqlite/open/helper/embedder/SqliteEmbedder {
 }
 

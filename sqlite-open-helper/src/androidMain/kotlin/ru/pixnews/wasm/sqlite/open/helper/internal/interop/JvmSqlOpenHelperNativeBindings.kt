@@ -65,11 +65,13 @@ internal class JvmSqlOpenHelperNativeBindings(
     override fun nativeInit(
         verboseLog: Boolean,
     ) {
-        // Enable multi-threaded mode.  In this mode, SQLite is safe to use by multiple
-        // threads as long as no two threads use the same database connection at the same
-        // time (which we guarantee in the SQLite database wrappers).
-        cApi.config.sqlite3Config(SQLITE_CONFIG_MULTITHREAD, 1)
-            .throwOnError("sqlite3__wasm_config_i() failed")
+        if (cApi.embedderInfo.supportMultithreading) {
+            // Enable multi-threaded mode.  In this mode, SQLite is safe to use by multiple
+            // threads as long as no two threads use the same database connection at the same
+            // time (which we guarantee in the SQLite database wrappers).
+            cApi.config.sqlite3Config(SQLITE_CONFIG_MULTITHREAD, 1)
+                .throwOnError("sqlite3__wasm_config_i() failed")
+        }
 
         // Redirect SQLite log messages to the log.
         val sqliteLogger = logger.withTag("sqlite3")

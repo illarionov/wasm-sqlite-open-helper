@@ -12,6 +12,7 @@ import org.graalvm.polyglot.Source
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.EmbedderMemory
+import ru.pixnews.wasm.sqlite.open.helper.embedder.SQLiteEmbedderRuntimeInfo
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedder
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteWasmEnvironment
 import ru.pixnews.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
@@ -52,7 +53,8 @@ public object GraalvmSqliteEmbedder : SqliteEmbedder<GraalvmSqliteEmbedderConfig
         sqlite3Binary: WasmSqliteConfiguration,
     ): SqliteWasmEnvironment {
         val useSharedMemory = USE_UNSAFE_MEMORY || sqlite3Binary.requireSharedMemory
-        val graalContext: Context = setupWasmGraalContext(graalvmEngine, useSharedMemory, sqlite3Binary.requireThreads)
+        val wasmThreadsEnabled = sqlite3Binary.requireThreads
+        val graalContext: Context = setupWasmGraalContext(graalvmEngine, useSharedMemory, wasmThreadsEnabled)
         val ptreadRef: AtomicReference<Pthread> = AtomicReference()
 
         val sqliteCallbacksModuleBuilder = SqliteCallbacksModuleBuilder(graalContext, host, callbackStore)
@@ -98,6 +100,9 @@ public object GraalvmSqliteEmbedder : SqliteEmbedder<GraalvmSqliteEmbedderConfig
         )
         return object : SqliteWasmEnvironment {
             override val sqliteBindings: SqliteBindings = bindings
+            override val embedderInfo: SQLiteEmbedderRuntimeInfo = GraalvmEmbedderInfo(
+                wasmThreadsEnabled = sqlite3Binary.requireThreads,
+            )
             override val memory: EmbedderMemory = memory
             override val callbackFunctionIndexes: Sqlite3CallbackFunctionIndexes = indirectFunctionIndexes
         }
@@ -123,5 +128,15 @@ public object GraalvmSqliteEmbedder : SqliteEmbedder<GraalvmSqliteEmbedderConfig
             .build()
         graalContext.initialize("wasm")
         return graalContext
+    }
+
+    private class GraalvmEmbedderInfo private constructor(
+        override val supportMultithreading: Boolean,
+    ) : SQLiteEmbedderRuntimeInfo {
+        companion object {
+            operator fun invoke(
+                wasmThreadsEnabled: Boolean,
+            ): GraalvmEmbedderInfo = GraalvmEmbedderInfo(supportMultithreading = wasmThreadsEnabled)
+        }
     }
 }
