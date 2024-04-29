@@ -22,7 +22,7 @@ internal class EmscriptenInitMainThreadJs(
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
-    functionName: String = "__emscripten_init_main_thread_js",
+    functionName: String = "_emscripten_init_main_thread_js",
     private val posixThreadRef: () -> Pthread,
 ) : BaseWasmNode(language, module, host, functionName) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance) {

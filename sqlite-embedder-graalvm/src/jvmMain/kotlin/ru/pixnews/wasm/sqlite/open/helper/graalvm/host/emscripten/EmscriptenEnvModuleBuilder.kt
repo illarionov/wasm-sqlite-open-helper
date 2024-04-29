@@ -220,7 +220,7 @@ internal class EmscriptenEnvModuleBuilder(
         fnVoid("_emscripten_thread_set_strongref", listOf(I32))
         fnVoid("emscripten_exit_with_live_runtime", listOf())
         fnVoid(
-            name = "__emscripten_init_main_thread_js",
+            name = "_emscripten_init_main_thread_js",
             paramTypes = listOf(I32),
             nodeFactory = { language, module, host: SqliteEmbedderHost, functionName ->
                 EmscriptenInitMainThreadJs(
@@ -249,7 +249,7 @@ internal class EmscriptenEnvModuleBuilder(
         fnVoid("emscripten_check_blocking_allowed", listOf())
         fn("__pthread_create_js", List(4) { I32 }, I32)
         fnVoid("exit", listOf(I32))
-        fnVoid("__emscripten_thread_cleanup", listOf(I32))
+        fnVoid("_emscripten_thread_cleanup", listOf(I32))
         fnVoid("_emscripten_notify_mailbox_postmessage", listOf(I32, I32, I32))
     }
 
