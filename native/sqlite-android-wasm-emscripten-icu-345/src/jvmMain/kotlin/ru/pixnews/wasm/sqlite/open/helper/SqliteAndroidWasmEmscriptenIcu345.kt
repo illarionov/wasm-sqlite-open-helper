@@ -12,7 +12,7 @@ public object SqliteAndroidWasmEmscriptenIcu345 : WasmSqliteConfiguration {
     override val sqliteUrl: URL
         get() = requireNotNull(
             SqliteAndroidWasmEmscriptenIcu345::class.java.getResource(
-                "sqlite3-android-icu-3450200.wasm",
+                "sqlite3-android-icu-3450300.wasm",
             ),
         )
     override val wasmMinMemorySize: Long = 50_331_648L
