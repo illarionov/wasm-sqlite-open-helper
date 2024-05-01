@@ -19,8 +19,6 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteProgressCallback
 
-internal const val SQLITE3_PROGRESS_CB_FUNCTION_NAME = "sqlite3_progress_cb"
-
 internal class Sqlite3ProgressAdapter(
     language: WasmLanguage,
     module: WasmModule,

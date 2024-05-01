@@ -9,11 +9,12 @@ package ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten
 import org.graalvm.polyglot.Context
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
+import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.setupWasmModuleFunctions
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.withWasmContext
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.HostFunction
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.NodeFactory
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.Abort
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.AssertFail
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.EmscriptenDateNow
@@ -41,18 +42,16 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.SyscallUt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.TzsetJs
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.syscallLstat64
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.syscallStat64
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.fn
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.fnVoid
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.SharedMemoryWaiterListStore
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.WasmMemoryNotifyCallback
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.WasmMemoryWaitCallback
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.notImplementedFunctionNodeFactory
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.preview1.func.SyscallFdatasync
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.pthread.Pthread
 import ru.pixnews.wasm.sqlite.open.helper.host.WasmModules.ENV_MODULE_NAME
 import ru.pixnews.wasm.sqlite.open.helper.host.WasmSizes
-import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType.WebAssemblyTypes.F64
-import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType.WebAssemblyTypes.I32
-import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType.WebAssemblyTypes.I64
+import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
 
 internal class EmscriptenEnvModuleBuilder(
     private val graalContext: Context,
@@ -60,197 +59,86 @@ internal class EmscriptenEnvModuleBuilder(
     private val pthreadRef: () -> Pthread,
     private val moduleName: String = ENV_MODULE_NAME,
 ) {
-    private val envFunctions: List<HostFunction> = buildList {
-        fnVoid(
-            name = "abort",
-            paramTypes = listOf(),
-            nodeFactory = ::Abort,
-        )
-        fnVoid(
-            name = "__assert_fail",
-            paramTypes = List(4) { I32 },
-            nodeFactory = ::AssertFail,
-        )
-        fn(
-            name = "emscripten_date_now",
-            paramTypes = listOf(),
-            retType = F64,
-            nodeFactory = ::EmscriptenDateNow,
-        )
-        fn(
-            name = "emscripten_get_now",
-            paramTypes = listOf(),
-            retType = F64,
-            nodeFactory = ::EmscriptenGetNow,
-        )
-        fn(
-            name = "_emscripten_get_now_is_monotonic",
-            paramTypes = listOf(),
-            retType = I32,
-            nodeFactory = ::EmscriptenGetNowIsMonotonic,
-        )
-        fn(
-            name = "emscripten_resize_heap",
-            paramTypes = listOf(I32),
-            retType = I32,
-            nodeFactory = ::EmscriptenResizeHeap,
-        )
-        fnVoid(
-            name = "_localtime_js",
-            paramTypes = listOf(I64, I32),
-            nodeFactory = ::LocaltimeJs,
-        )
-        fn(
-            name = "_mmap_js",
-            paramTypes = listOf(I32, I32, I32, I32, I64, I32, I32),
-            retType = I32,
-            nodeFactory = ::MmapJs,
-        )
-        fn(
-            name = "_munmap_js",
-            paramTypes = listOf(I32, I32, I32, I32, I32, I64),
-            retType = I32,
-            nodeFactory = ::MunapJs,
-        )
-        fn(
-            name = "__syscall_chmod",
-            paramTypes = listOf(I32, I32),
-            retType = I32,
-            nodeFactory = ::SyscallChmod,
-        )
-        fn(
-            name = "__syscall_faccessat",
-            paramTypes = List(4) { I32 },
-            retType = I32,
-            nodeFactory = ::SyscallFaccessat,
-        )
-        fn(
-            name = "__syscall_fchmod",
-            paramTypes = listOf(I32, I32),
-            retType = I32,
-            nodeFactory = ::SyscallFchmod,
-        )
-        fn(
-            name = "__syscall_fchown32",
-            paramTypes = List(3) { I32 },
-            retType = I32,
-            nodeFactory = ::SyscallFchown32,
-        )
-        fn(
-            name = "__syscall_fcntl64",
-            paramTypes = List(3) { I32 },
-            retType = I32,
-            nodeFactory = ::SyscallFcntl64,
-        )
-        fn(
-            name = "__syscall_fdatasync",
-            paramTypes = listOf(I32),
-            retType = I32,
-            nodeFactory = ::SyscallFdatasync,
-        )
-        fn(
-            name = "__syscall_fstat64",
-            paramTypes = listOf(I32, I32),
-            retType = I32,
-            nodeFactory = ::SyscallFstat64,
-        )
-        fn(
-            name = "__syscall_ftruncate64",
-            paramTypes = listOf(I32, I64),
-            retType = I32,
-            nodeFactory = ::SyscallFtruncate64,
-        )
-        fn(
-            name = "__syscall_getcwd",
-            paramTypes = listOf(I32, I32),
-            retType = I32,
-            nodeFactory = ::SyscallGetcwd,
-        )
-        fn("__syscall_ioctl", List(3) { I32 })
-        fn(
-            name = "__syscall_mkdirat",
-            paramTypes = List(3) { I32 },
-            retType = I32,
-            nodeFactory = ::SyscallMkdirat,
-        )
-        fn("__syscall_newfstatat", List(4) { I32 })
-        fn(
-            name = "__syscall_openat",
-            paramTypes = List(4) { I32 },
-            retType = I32,
-            nodeFactory = ::SyscallOpenat,
-        )
-        fn("__syscall_readlinkat", List(4) { I32 })
-        fn(
-            name = "__syscall_rmdir",
-            paramTypes = listOf(I32),
-            retType = I32,
-            nodeFactory = ::SyscallRmdir,
-        )
-        fn(
-            name = "__syscall_stat64",
-            paramTypes = listOf(I32, I32),
-            retType = I32,
-            nodeFactory = ::syscallStat64,
-        )
-        fn(
-            name = "__syscall_lstat64",
-            paramTypes = listOf(I32, I32),
-            retType = I32,
-            nodeFactory = ::syscallLstat64,
-        )
-        fn(
-            name = "__syscall_unlinkat",
-            paramTypes = List(3) { I32 },
-            retType = I32,
-            nodeFactory = ::SyscallUnlinkat,
-        )
-        fn(
-            name = "__syscall_utimensat",
-            paramTypes = List(4) { I32 },
-            retType = I32,
-            nodeFactory = ::SyscallUtimensat,
-        )
-        fnVoid(
-            name = "_tzset_js",
-            paramTypes = List(4) { I32 },
-            nodeFactory = ::TzsetJs,
-        )
-
-        fnVoid("_emscripten_thread_set_strongref", listOf(I32))
-        fnVoid("emscripten_exit_with_live_runtime", listOf())
-        fnVoid(
-            name = "_emscripten_init_main_thread_js",
-            paramTypes = listOf(I32),
-            nodeFactory = { language, module, host: SqliteEmbedderHost, functionName ->
-                EmscriptenInitMainThreadJs(
-                    language = language,
-                    module = module,
-                    host = host,
-                    functionName = functionName,
-                    posixThreadRef = pthreadRef,
-                )
-            },
-        )
-        fnVoid(
-            "_emscripten_thread_mailbox_await",
-            listOf(I32),
-            nodeFactory = { language, module, _, functionName ->
-                EmscriptenThreadMailboxAwait(
-                    language = language,
-                    module = module,
-                    host = host,
-                    functionName = functionName,
-                    posixThreadRef = pthreadRef,
-                )
-            },
-        )
-        fn("_emscripten_receive_on_main_thread_js", List(5) { I32 }, F64)
-        fnVoid("emscripten_check_blocking_allowed", listOf())
-        fn("__pthread_create_js", List(4) { I32 }, I32)
-        fnVoid("exit", listOf(I32))
-        fnVoid("_emscripten_thread_cleanup", listOf(I32))
-        fnVoid("_emscripten_notify_mailbox_postmessage", listOf(I32, I32, I32))
+    private val envFunctions: Map<out HostFunction, NodeFactory> = mapOf(
+        EmscriptenHostFunction.ABORT to ::Abort,
+        EmscriptenHostFunction.ASSERT_FAIL to ::AssertFail,
+        EmscriptenHostFunction.EMSCRIPTEN_DATE_NOW to ::EmscriptenDateNow,
+        EmscriptenHostFunction.EMSCRIPTEN_GET_NOW to ::EmscriptenGetNow,
+        EmscriptenHostFunction.EMSCRIPTEN_GET_NOW_IS_MONOTONIC to {
+                language: WasmLanguage,
+                module: WasmModule,
+                host: SqliteEmbedderHost,
+                functionName: String,
+            ->
+            EmscriptenGetNowIsMonotonic(
+                language = language,
+                module = module,
+                host = host,
+                functionName = functionName,
+            )
+        },
+        EmscriptenHostFunction.EMSCRIPTEN_RESIZE_HEAP to ::EmscriptenResizeHeap,
+        EmscriptenHostFunction.LOCALTIME_JS to ::LocaltimeJs,
+        EmscriptenHostFunction.MMAP_JS to ::MmapJs,
+        EmscriptenHostFunction.MUNMAP_JS to ::MunapJs,
+        EmscriptenHostFunction.SYSCALL_CHMOD to ::SyscallChmod,
+        EmscriptenHostFunction.SYSCALL_FACCESSAT to ::SyscallFaccessat,
+        EmscriptenHostFunction.SYSCALL_FCHMOD to ::SyscallFchmod,
+        EmscriptenHostFunction.SYSCALL_FCHOWN32 to ::SyscallFchown32,
+        EmscriptenHostFunction.SYSCALL_FCNTL64 to ::SyscallFcntl64,
+        EmscriptenHostFunction.SYSCALL_FDATASYNC to ::SyscallFdatasync,
+        EmscriptenHostFunction.SYSCALL_FSTAT64 to ::SyscallFstat64,
+        EmscriptenHostFunction.SYSCALL_FTRUNCATE64 to ::SyscallFtruncate64,
+        EmscriptenHostFunction.SYSCALL_GETCWD to ::SyscallGetcwd,
+        EmscriptenHostFunction.SYSCALL_IOCTL to notImplementedFunctionNodeFactory,
+        EmscriptenHostFunction.SYSCALL_MKDIRAT to ::SyscallMkdirat,
+        EmscriptenHostFunction.SYSCALL_NEWFSTATAT to notImplementedFunctionNodeFactory,
+        EmscriptenHostFunction.SYSCALL_OPENAT to ::SyscallOpenat,
+        EmscriptenHostFunction.SYSCALL_READLINKAT to notImplementedFunctionNodeFactory,
+        EmscriptenHostFunction.SYSCALL_RMDIR to ::SyscallRmdir,
+        EmscriptenHostFunction.SYSCALL_STAT64 to ::syscallStat64,
+        EmscriptenHostFunction.SYSCALL_LSTAT64 to ::syscallLstat64,
+        EmscriptenHostFunction.SYSCALL_UNLINKAT to ::SyscallUnlinkat,
+        EmscriptenHostFunction.SYSCALL_UTIMENSAT to ::SyscallUtimensat,
+        EmscriptenHostFunction.TZSET_JS to ::TzsetJs,
+        EmscriptenHostFunction.EMSCRIPTEN_THREAD_SET_STRONGREF to notImplementedFunctionNodeFactory,
+        EmscriptenHostFunction.EMSCRIPTEN_EXIT_WITH_LIVE_RUNTIME to notImplementedFunctionNodeFactory,
+        EmscriptenHostFunction.EMSCRIPTEN_INIT_MAIN_THREAD_JS to {
+                language: WasmLanguage,
+                module: WasmModule,
+                host: SqliteEmbedderHost,
+                functionName: String,
+            ->
+            EmscriptenInitMainThreadJs(
+                language = language,
+                module = module,
+                host = host,
+                functionName = functionName,
+                posixThreadRef = pthreadRef,
+            )
+        },
+        EmscriptenHostFunction.EMSCRIPTEN_THREAD_MAILBOX_AWAIT to {
+                language: WasmLanguage,
+                module: WasmModule,
+                host: SqliteEmbedderHost,
+                functionName: String,
+            ->
+            EmscriptenThreadMailboxAwait(
+                language = language,
+                module = module,
+                host = host,
+                functionName = functionName,
+                posixThreadRef = pthreadRef,
+            )
+        },
+        EmscriptenHostFunction.EMSCRIPTEN_RECEIVE_ON_MAIN_THREAD_JS to notImplementedFunctionNodeFactory,
+        EmscriptenHostFunction.EMSCRIPTEN_CHECK_BLOCKING_ALLOWED to notImplementedFunctionNodeFactory,
+        EmscriptenHostFunction.PTHREAD_CREATE_JS to notImplementedFunctionNodeFactory,
+        EmscriptenHostFunction.EXIT to notImplementedFunctionNodeFactory,
+        EmscriptenHostFunction.EMSCRIPTEN_THREAD_CLEANUP to notImplementedFunctionNodeFactory,
+        EmscriptenHostFunction.EMSCRIPTEN_NOTIFY_MAILBOX_POSTMESSAGE to notImplementedFunctionNodeFactory,
+    ).also {
+        check(it.size == EmscriptenHostFunction.entries.size)
     }
 
     fun setupModule(

@@ -79,6 +79,25 @@ public abstract interface class ru/pixnews/wasm/sqlite/open/helper/embedder/func
 	public abstract fun getTraceFunction-76yzr8E ()I
 }
 
+public final class ru/pixnews/wasm/sqlite/open/helper/embedder/sqlitecb/SqliteCallbacksModuleFunction : java/lang/Enum, ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunction {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/embedder/sqlitecb/SqliteCallbacksModuleFunction$Companion;
+	public static final field SQLITE3_COMPARATOR_CALL_CALLBACK Lru/pixnews/wasm/sqlite/open/helper/embedder/sqlitecb/SqliteCallbacksModuleFunction;
+	public static final field SQLITE3_DESTROY_COMPARATOR_FUNCTION Lru/pixnews/wasm/sqlite/open/helper/embedder/sqlitecb/SqliteCallbacksModuleFunction;
+	public static final field SQLITE3_EXEC_CALLBACK Lru/pixnews/wasm/sqlite/open/helper/embedder/sqlitecb/SqliteCallbacksModuleFunction;
+	public static final field SQLITE3_LOGGING_CALLBACK Lru/pixnews/wasm/sqlite/open/helper/embedder/sqlitecb/SqliteCallbacksModuleFunction;
+	public static final field SQLITE3_PROGRESS_CALLBACK Lru/pixnews/wasm/sqlite/open/helper/embedder/sqlitecb/SqliteCallbacksModuleFunction;
+	public static final field SQLITE3_TRACE_CALLBACK Lru/pixnews/wasm/sqlite/open/helper/embedder/sqlitecb/SqliteCallbacksModuleFunction;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public fun getType ()Lru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunction$HostFunctionType;
+	public fun getWasmName ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/embedder/sqlitecb/SqliteCallbacksModuleFunction;
+	public static fun values ()[Lru/pixnews/wasm/sqlite/open/helper/embedder/sqlitecb/SqliteCallbacksModuleFunction;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/embedder/sqlitecb/SqliteCallbacksModuleFunction$Companion {
+	public final fun getByWasmName ()Ljava/util/Map;
+}
+
 public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteColumnType$Companion {
 	public final fun getSQLITE3_TEXT-6bi_7KY ()I
 	public final fun getSQLITE_BLOB-6bi_7KY ()I

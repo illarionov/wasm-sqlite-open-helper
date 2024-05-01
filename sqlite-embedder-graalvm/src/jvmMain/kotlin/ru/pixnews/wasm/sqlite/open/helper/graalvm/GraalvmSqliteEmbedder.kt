@@ -23,7 +23,7 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.bindings.EmscriptenPthreadBind
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.bindings.GraalSqliteBindings
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.EmscriptenEnvModuleBuilder
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.GraalvmWasmHostMemoryAdapter
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.preview1.WasiSnapshotPreview1MobuleBuilder
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.preview1.WasiSnapshotPreview1ModuleBuilder
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.pthread.Pthread
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.SqliteCallbacksModuleBuilder
 import java.util.concurrent.atomic.AtomicReference
@@ -63,7 +63,7 @@ public object GraalvmSqliteEmbedder : SqliteEmbedder<GraalvmSqliteEmbedderConfig
             sharedMemory = sqlite3Binary.requireSharedMemory,
             useUnsafeMemory = useSharedMemory,
         )
-        WasiSnapshotPreview1MobuleBuilder(graalContext, host).setupModule(
+        WasiSnapshotPreview1ModuleBuilder(graalContext, host).setupModule(
             sharedMemory = sqlite3Binary.requireSharedMemory,
             useUnsafeMemory = useSharedMemory,
         )

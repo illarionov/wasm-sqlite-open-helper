@@ -20,8 +20,6 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteLogCallback
 
-internal const val SQLITE3_LOGGING_CB_FUNCTION_NAME = "sqlite3_logging_cb"
-
 internal class Sqlite3LoggingAdapter(
     language: WasmLanguage,
     module: WasmModule,

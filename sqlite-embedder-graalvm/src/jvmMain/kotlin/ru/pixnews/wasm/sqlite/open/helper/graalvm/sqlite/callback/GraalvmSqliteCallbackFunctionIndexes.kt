@@ -9,27 +9,24 @@ package ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.IndirectFunctionTableIndex
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func.SQLITE3_COMPARATOR_CALL_FUNCTION_NAME
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func.SQLITE3_DESTROY_COMPARATOR_FUNCTION_NAME
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func.SQLITE3_EXEC_CB_FUNCTION_NAME
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func.SQLITE3_LOGGING_CB_FUNCTION_NAME
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func.SQLITE3_PROGRESS_CB_FUNCTION_NAME
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func.SQLITE3_TRACE_CB_FUNCTION_NAME
+import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
+import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction.SQLITE3_COMPARATOR_CALL_CALLBACK
+import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction.SQLITE3_DESTROY_COMPARATOR_FUNCTION
+import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction.SQLITE3_EXEC_CALLBACK
+import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction.SQLITE3_LOGGING_CALLBACK
+import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction.SQLITE3_PROGRESS_CALLBACK
+import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction.SQLITE3_TRACE_CALLBACK
 
 @InternalWasmSqliteHelperApi
 internal class GraalvmSqliteCallbackFunctionIndexes(
-    functionMap: Map<String, IndirectFunctionTableIndex>,
+    functionMap: Map<SqliteCallbacksModuleFunction, IndirectFunctionTableIndex>,
 ) : Sqlite3CallbackFunctionIndexes {
-    override val execCallbackFunction: IndirectFunctionTableIndex = functionMap.getValue(SQLITE3_EXEC_CB_FUNCTION_NAME)
-    override val traceFunction: IndirectFunctionTableIndex = functionMap.getValue(SQLITE3_TRACE_CB_FUNCTION_NAME)
-    override val progressFunction: IndirectFunctionTableIndex = functionMap.getValue(SQLITE3_PROGRESS_CB_FUNCTION_NAME)
-    override val comparatorFunction: IndirectFunctionTableIndex = functionMap.getValue(
-        SQLITE3_COMPARATOR_CALL_FUNCTION_NAME,
-    )
+    override val execCallbackFunction: IndirectFunctionTableIndex = functionMap.getValue(SQLITE3_EXEC_CALLBACK)
+    override val traceFunction: IndirectFunctionTableIndex = functionMap.getValue(SQLITE3_TRACE_CALLBACK)
+    override val progressFunction: IndirectFunctionTableIndex = functionMap.getValue(SQLITE3_PROGRESS_CALLBACK)
+    override val comparatorFunction: IndirectFunctionTableIndex = functionMap.getValue(SQLITE3_COMPARATOR_CALL_CALLBACK)
     override val destroyComparatorFunction: IndirectFunctionTableIndex = functionMap.getValue(
-        SQLITE3_DESTROY_COMPARATOR_FUNCTION_NAME,
+        SQLITE3_DESTROY_COMPARATOR_FUNCTION,
     )
-    override val loggingCallbackFunction: IndirectFunctionTableIndex = functionMap.getValue(
-        SQLITE3_LOGGING_CB_FUNCTION_NAME,
-    )
+    override val loggingCallbackFunction: IndirectFunctionTableIndex = functionMap.getValue(SQLITE3_LOGGING_CALLBACK)
 }

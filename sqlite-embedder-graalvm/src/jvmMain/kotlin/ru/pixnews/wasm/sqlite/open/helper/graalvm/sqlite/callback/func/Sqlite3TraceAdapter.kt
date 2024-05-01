@@ -31,8 +31,6 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode.Companion.SQLITE_TRACE_STMT
 import kotlin.time.Duration.Companion.nanoseconds
 
-internal const val SQLITE3_TRACE_CB_FUNCTION_NAME = "sqlite3_trace_cb"
-
 internal class Sqlite3TraceAdapter(
     language: WasmLanguage,
     module: WasmModule,

@@ -21,8 +21,6 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteComparatorCallback
 
-internal const val SQLITE3_COMPARATOR_CALL_FUNCTION_NAME = "sqlite3_comparator_call_cb"
-
 internal class Sqlite3ComparatorAdapter(
     language: WasmLanguage,
     module: WasmModule,
