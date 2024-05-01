@@ -13,24 +13,26 @@ import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.constants.Sizes
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.HostFunction
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.HostFunctionType
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.NodeFactory
 import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType
+import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction
+import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction.HostFunctionType
+import ru.pixnews.wasm.sqlite.open.helper.host.base.function.functionTypes
 
 internal fun setupWasmModuleFunctions(
     context: WasmContext,
     host: SqliteEmbedderHost,
     module: WasmModule,
-    functions: List<HostFunction>,
+    functions: Map<out HostFunction, NodeFactory>,
 ): WasmInstance {
-    val functionTypes: Map<HostFunctionType, Int> = allocateFunctionTypes(module, functions)
-    val exportedFunctions: Map<String, WasmFunction> = declareExportedFunctions(module, functionTypes, functions)
+    val functionTypes: Map<HostFunctionType, Int> = allocateFunctionTypes(module, functions.keys.functionTypes())
+    val exportedFunctions: Map<String, WasmFunction> = declareExportedFunctions(module, functionTypes, functions.keys)
 
     val moduleInstance: WasmInstance = context.readInstance(module)
 
-    functions.forEach { fn: HostFunction ->
-        val node = fn.nodeFactory(context.language(), module, host, fn.name)
-        val exportedIndex = exportedFunctions.getValue(fn.name).index()
+    functions.forEach { (fn, factory) ->
+        val node = factory(context.language(), module, host, fn.wasmName)
+        val exportedIndex = exportedFunctions.getValue(fn.wasmName).index()
         moduleInstance.setTarget(exportedIndex, node.callTarget)
     }
     return moduleInstance
@@ -38,11 +40,10 @@ internal fun setupWasmModuleFunctions(
 
 internal fun allocateFunctionTypes(
     symbolTable: SymbolTable,
-    functions: List<HostFunction>,
+    functionTypes: Collection<HostFunctionType>,
 ): Map<HostFunctionType, Int> {
     val functionTypeMap: MutableMap<HostFunctionType, Int> = mutableMapOf()
-    functions.forEach { fn ->
-        val type: HostFunctionType = fn.type
+    functionTypes.forEach { type ->
         functionTypeMap.getOrPut(type) {
             val typeIdx = symbolTable.allocateFunctionType(
                 type.params.toTypesByteArray(),
@@ -62,12 +63,12 @@ internal fun List<WasmValueType>.toTypesByteArray(): ByteArray = ByteArray(this.
 internal fun declareExportedFunctions(
     symbolTable: SymbolTable,
     functionTypes: Map<HostFunctionType, Int>,
-    functions: List<HostFunction>,
+    functions: Collection<HostFunction>,
 ): Map<String, WasmFunction> {
     return functions.associate { fn ->
         val typeIdx = functionTypes.getValue(fn.type)
-        val functionIdx = symbolTable.declareExportedFunction(typeIdx, fn.name)
-        fn.name to functionIdx
+        val functionIdx = symbolTable.declareExportedFunction(typeIdx, fn.wasmName)
+        fn.wasmName to functionIdx
     }
 }
 

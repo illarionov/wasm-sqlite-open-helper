@@ -24,8 +24,6 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.readPtr
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteExecCallback
 
-internal const val SQLITE3_EXEC_CB_FUNCTION_NAME = "sqlite3_exec_cb"
-
 internal class Sqlite3CallExecAdapter(
     language: WasmLanguage,
     module: WasmModule,

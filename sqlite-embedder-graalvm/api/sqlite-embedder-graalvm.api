@@ -25,7 +25,3 @@ public final class ru/pixnews/wasm/sqlite/open/helper/graalvm/SqliteEmbedderHost
 	public final fun getTimeZoneInfo ()Lkotlin/jvm/functions/Function0;
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/graalvm/host/HostFunctionKt {
-	public static synthetic fun fn-8nz3sYw$default (Ljava/util/List;Ljava/lang/String;Ljava/util/List;Lru/pixnews/wasm/sqlite/open/helper/host/WasmValueType;Lkotlin/jvm/functions/Function4;ILjava/lang/Object;)Z
-}
-

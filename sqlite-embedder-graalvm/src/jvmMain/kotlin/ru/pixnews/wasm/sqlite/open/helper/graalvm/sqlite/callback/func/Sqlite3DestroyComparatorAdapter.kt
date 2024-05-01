@@ -19,8 +19,6 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteComparatorCallback
 
-internal const val SQLITE3_DESTROY_COMPARATOR_FUNCTION_NAME = "sqlite3_comparator_destroy"
-
 @Suppress("UnusedPrivateProperty")
 internal class Sqlite3DestroyComparatorAdapter(
     language: WasmLanguage,
