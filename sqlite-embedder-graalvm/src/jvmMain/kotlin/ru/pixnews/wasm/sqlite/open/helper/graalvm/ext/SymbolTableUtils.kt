@@ -12,8 +12,8 @@ import org.graalvm.wasm.WasmFunction
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.constants.Sizes
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.NodeFactory
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction.HostFunctionType
@@ -46,7 +46,7 @@ internal fun allocateFunctionTypes(
     functionTypes.forEach { type ->
         functionTypeMap.getOrPut(type) {
             val typeIdx = symbolTable.allocateFunctionType(
-                type.params.toTypesByteArray(),
+                type.paramTypes.toTypesByteArray(),
                 type.returnTypes.toTypesByteArray(),
                 false,
             )

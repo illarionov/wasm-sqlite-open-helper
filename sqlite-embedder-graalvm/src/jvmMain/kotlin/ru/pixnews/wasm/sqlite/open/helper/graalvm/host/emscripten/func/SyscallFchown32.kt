@@ -12,11 +12,10 @@ import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.SyscallFchown32FunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 
 internal class SyscallFchown32(
@@ -25,6 +24,7 @@ internal class SyscallFchown32(
     host: SqliteEmbedderHost,
     functionName: String = "__syscall_fchown32",
 ) : BaseWasmNode(language, module, host, functionName) {
+    private val handle = SyscallFchown32FunctionHandle(host)
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Int {
         val args = frame.arguments
         return syscallFchown32(
@@ -40,11 +40,5 @@ internal class SyscallFchown32(
         fd: Int,
         owner: Int,
         group: Int,
-    ): Int = try {
-        host.fileSystem.chown(Fd(fd), owner, group)
-        Errno.SUCCESS.code
-    } catch (e: SysException) {
-        logger.v { "chown($fd, $owner, $group): Error ${e.errNo}" }
-        -e.errNo.code
-    }
+    ): Int = handle.execute(Fd(fd), owner, group)
 }

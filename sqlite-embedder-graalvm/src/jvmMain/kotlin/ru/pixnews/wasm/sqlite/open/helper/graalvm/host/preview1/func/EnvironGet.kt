@@ -14,10 +14,10 @@ import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.ext.WasiEnvironmentFunc
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.function.EnvironGetFunctionHandle
 
 internal class EnvironGet(
     language: WasmLanguage,
@@ -25,6 +25,7 @@ internal class EnvironGet(
     host: SqliteEmbedderHost,
     functionName: String = "environ_get",
 ) : BaseWasmNode(language, module, host, functionName) {
+    private val handle = EnvironGetFunctionHandle(host)
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
         val args = frame.arguments
         return environGet(
@@ -40,12 +41,5 @@ internal class EnvironGet(
         memory: WasmMemory,
         environPAddr: WasmPtr<Int>,
         environBufAddr: WasmPtr<Int>,
-    ): Int {
-        return WasiEnvironmentFunc.environGet(
-            envProvider = host.systemEnvProvider,
-            memory = memory.toHostMemory(),
-            environPAddr = environPAddr,
-            environBufAddr = environBufAddr,
-        ).code
-    }
+    ): Int = handle.execute(memory.toHostMemory(), environPAddr, environBufAddr).code
 }

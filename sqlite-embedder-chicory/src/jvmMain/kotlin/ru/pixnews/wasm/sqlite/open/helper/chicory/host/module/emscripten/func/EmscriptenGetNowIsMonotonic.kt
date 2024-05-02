@@ -6,20 +6,20 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.func
 
-import com.dylibso.chicory.runtime.HostFunction
+import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.wasm.types.Value
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.ENV_MODULE_NAME
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.emscriptenEnvHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType.WebAssemblyTypes.I32
+import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.EmscriptenHostFunctionHandle
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.EmscriptenGetNowIsMonotonicFunctionHandle
+import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
 
-internal fun emscriptenGetNowIsMonotonic(
-    isMonotonic: Boolean = true,
-    moduleName: String = ENV_MODULE_NAME,
-): HostFunction = emscriptenEnvHostFunction(
-    funcName = "_emscripten_get_now_is_monotonic",
-    paramTypes = listOf(),
-    returnType = I32,
-    moduleName = moduleName,
-) { _, _ ->
-    Value.i32(if (isMonotonic) 1 else 0)
+internal class EmscriptenGetNowIsMonotonic(
+    host: SqliteEmbedderHost,
+    @Suppress("UNUSED_PARAMETER") memory: Memory,
+) : EmscriptenHostFunctionHandle {
+    private val handle = EmscriptenGetNowIsMonotonicFunctionHandle(host)
+
+    override fun apply(instance: Instance, vararg args: Value): Value {
+        return Value.i32(handle.execute().toLong())
+    }
 }

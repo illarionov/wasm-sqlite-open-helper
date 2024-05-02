@@ -12,8 +12,9 @@ import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.EmscriptenDateNowFunctionHandle
 
 internal class EmscriptenDateNow(
     language: WasmLanguage,
@@ -21,11 +22,13 @@ internal class EmscriptenDateNow(
     host: SqliteEmbedderHost,
     functionName: String = "emscripten_date_now",
 ) : BaseWasmNode(language, module, host, functionName) {
+    private val handle = EmscriptenDateNowFunctionHandle(host)
+
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
         return emscriptenDateNow()
     }
 
     @TruffleBoundary
     @Suppress("MemberNameEqualsClassName")
-    private fun emscriptenDateNow(): Double = host.clock().inWholeMilliseconds.toDouble()
+    private fun emscriptenDateNow(): Double = handle.execute()
 }

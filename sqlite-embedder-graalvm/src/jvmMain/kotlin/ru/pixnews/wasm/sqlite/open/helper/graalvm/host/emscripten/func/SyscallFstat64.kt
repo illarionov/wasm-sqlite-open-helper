@@ -14,15 +14,12 @@ import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.SyscallFstat64FunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.StructStat
-import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.pack
-import ru.pixnews.wasm.sqlite.open.helper.host.memory.write
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 
 internal class SyscallFstat64(
@@ -31,6 +28,7 @@ internal class SyscallFstat64(
     host: SqliteEmbedderHost,
     functionName: String = "__syscall_fstat64",
 ) : BaseWasmNode(language, module, host, functionName) {
+    private val handle = SyscallFstat64FunctionHandle(host)
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {
         val args = frame.arguments
         return syscallFstat64(
@@ -46,14 +44,5 @@ internal class SyscallFstat64(
         memory: WasmMemory,
         fd: Fd,
         dst: WasmPtr<StructStat>,
-    ): Int = try {
-        val stat = host.fileSystem.stat(fd).also {
-            logger.v { "`$fd`: OK $it" }
-        }.pack()
-        memory.toHostMemory().write(dst, stat)
-        Errno.SUCCESS.code
-    } catch (e: SysException) {
-        logger.v { "`$fd`: Error ${e.errNo}" }
-        -e.errNo.code
-    }
+    ): Int = handle.execute(memory.toHostMemory(), fd, dst)
 }

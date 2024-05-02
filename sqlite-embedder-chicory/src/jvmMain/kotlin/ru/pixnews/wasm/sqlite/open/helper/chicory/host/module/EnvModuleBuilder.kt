@@ -13,13 +13,13 @@ import com.dylibso.chicory.runtime.HostImports
 import com.dylibso.chicory.runtime.HostMemory
 import com.dylibso.chicory.runtime.HostTable
 import com.dylibso.chicory.wasm.types.MemoryLimits
-import ru.pixnews.wasm.sqlite.open.helper.chicory.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.memory.ChicoryMemoryAdapter
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.ENV_MODULE_NAME
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.EmscriptenEnvBindings
+import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.EmscriptenEnvFunctionsBuilder
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.WasiSnapshotPreview1Builtins
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.IndirectFunctionTableIndex
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.WasmModules.ENV_MODULE_NAME
 import ru.pixnews.wasm.sqlite.open.helper.host.WasmSizes
 import com.dylibso.chicory.runtime.Memory as ChicoryMemory
 
@@ -33,12 +33,14 @@ internal class EnvModuleBuilder(
 
         val memoryAdapter = ChicoryMemoryAdapter(memory.memory(), host.rootLogger)
 
-        val fsWasiBuildins = WasiSnapshotPreview1Builtins(memoryAdapter, host.fileSystem)
-        val emscriptenEnvBindings = EmscriptenEnvBindings(memoryAdapter, host.fileSystem, host.rootLogger)
+        val wasiFunctions = WasiSnapshotPreview1Builtins(memoryAdapter, host)
+            .asChicoryHostFunctions(moduleName)
+        val emscriptenFunctions = EmscriptenEnvFunctionsBuilder(memoryAdapter, host)
+            .asChicoryHostFunctions(moduleName)
 
         return EnvModule(
             hostImports = HostImports(
-                (emscriptenEnvBindings.functions + fsWasiBuildins.functions).toTypedArray(),
+                (emscriptenFunctions + wasiFunctions).toTypedArray(),
                 arrayOf<HostGlobal>(),
                 memory,
                 arrayOf<HostTable>(),

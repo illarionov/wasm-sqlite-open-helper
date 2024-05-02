@@ -6,43 +6,22 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func
 
-import com.dylibso.chicory.runtime.HostFunction
 import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.wasm.types.Value
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.WASI_SNAPSHOT_PREVIEW1
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.WasiHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.wasiHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
+import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.WasiHostFunctionHandle
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.function.FdCloseFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
-import java.util.logging.Level
-import java.util.logging.Logger
 
-internal fun fdClose(
-    filesystem: FileSystem,
-    moduleName: String = WASI_SNAPSHOT_PREVIEW1,
-): HostFunction = wasiHostFunction(
-    funcName = "fd_close",
-    paramTypes = listOf(
-        Fd.wasmValueType, // Fd
-    ),
-    moduleName = moduleName,
-    handle = FdClose(filesystem),
-)
+internal class FdClose(
+    host: SqliteEmbedderHost,
+    @Suppress("UNUSED_PARAMETER") memory: Memory,
+) : WasiHostFunctionHandle {
+    private val handle = FdCloseFunctionHandle(host)
 
-private class FdClose(
-    private val filesystem: FileSystem,
-    private val logger: Logger = Logger.getLogger(FdClose::class.qualifiedName),
-) : WasiHostFunction {
     override fun apply(instance: Instance, vararg args: Value): Errno {
-        val fd = Fd(args[0].asInt())
-        return try {
-            filesystem.close(fd)
-            Errno.SUCCESS
-        } catch (e: SysException) {
-            logger.log(Level.INFO, e) { "fd_close() error: $e" }
-            e.errNo
-        }
+        return handle.execute(Fd(args[0].asInt()))
     }
 }

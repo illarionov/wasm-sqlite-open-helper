@@ -14,10 +14,10 @@ import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.ext.WasiEnvironmentFunc
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.function.EnvironSizesGetFunctionHandle
 
 internal class EnvironSizesGet(
     language: WasmLanguage,
@@ -25,6 +25,7 @@ internal class EnvironSizesGet(
     host: SqliteEmbedderHost,
     functionName: String = "environ_sizes_get",
 ) : BaseWasmNode(language, module, host, functionName) {
+    private val handle = EnvironSizesGetFunctionHandle(host)
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
         val args = frame.arguments
         return environSizesGet(
@@ -40,12 +41,5 @@ internal class EnvironSizesGet(
         memory: WasmMemory,
         environCountAddr: WasmPtr<Int>,
         environSizeAddr: WasmPtr<Int>,
-    ): Int {
-        return WasiEnvironmentFunc.environSizesGet(
-            envProvider = host.systemEnvProvider,
-            memory = memory.toHostMemory(),
-            environCountAddr = environCountAddr,
-            environSizeAddr = environSizeAddr,
-        ).code
-    }
+    ): Int = handle.execute(memory.toHostMemory(), environCountAddr, environSizeAddr).code
 }

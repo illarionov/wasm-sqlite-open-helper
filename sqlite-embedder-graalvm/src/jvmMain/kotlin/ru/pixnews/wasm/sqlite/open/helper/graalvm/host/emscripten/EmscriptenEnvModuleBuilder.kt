@@ -11,7 +11,6 @@ import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.setupWasmModuleFunctions
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.withWasmContext
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.NodeFactory
@@ -48,9 +47,9 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.WasmMemoryWaitCall
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.notImplementedFunctionNodeFactory
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.preview1.func.SyscallFdatasync
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.pthread.Pthread
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.WasmModules.ENV_MODULE_NAME
 import ru.pixnews.wasm.sqlite.open.helper.host.WasmSizes
-import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
 
 internal class EmscriptenEnvModuleBuilder(
@@ -59,87 +58,89 @@ internal class EmscriptenEnvModuleBuilder(
     private val pthreadRef: () -> Pthread,
     private val moduleName: String = ENV_MODULE_NAME,
 ) {
-    private val envFunctions: Map<out HostFunction, NodeFactory> = mapOf(
-        EmscriptenHostFunction.ABORT to ::Abort,
-        EmscriptenHostFunction.ASSERT_FAIL to ::AssertFail,
-        EmscriptenHostFunction.EMSCRIPTEN_DATE_NOW to ::EmscriptenDateNow,
-        EmscriptenHostFunction.EMSCRIPTEN_GET_NOW to ::EmscriptenGetNow,
-        EmscriptenHostFunction.EMSCRIPTEN_GET_NOW_IS_MONOTONIC to {
-                language: WasmLanguage,
-                module: WasmModule,
-                host: SqliteEmbedderHost,
-                functionName: String,
-            ->
-            EmscriptenGetNowIsMonotonic(
-                language = language,
-                module = module,
-                host = host,
-                functionName = functionName,
-            )
-        },
-        EmscriptenHostFunction.EMSCRIPTEN_RESIZE_HEAP to ::EmscriptenResizeHeap,
-        EmscriptenHostFunction.LOCALTIME_JS to ::LocaltimeJs,
-        EmscriptenHostFunction.MMAP_JS to ::MmapJs,
-        EmscriptenHostFunction.MUNMAP_JS to ::MunapJs,
-        EmscriptenHostFunction.SYSCALL_CHMOD to ::SyscallChmod,
-        EmscriptenHostFunction.SYSCALL_FACCESSAT to ::SyscallFaccessat,
-        EmscriptenHostFunction.SYSCALL_FCHMOD to ::SyscallFchmod,
-        EmscriptenHostFunction.SYSCALL_FCHOWN32 to ::SyscallFchown32,
-        EmscriptenHostFunction.SYSCALL_FCNTL64 to ::SyscallFcntl64,
-        EmscriptenHostFunction.SYSCALL_FDATASYNC to ::SyscallFdatasync,
-        EmscriptenHostFunction.SYSCALL_FSTAT64 to ::SyscallFstat64,
-        EmscriptenHostFunction.SYSCALL_FTRUNCATE64 to ::SyscallFtruncate64,
-        EmscriptenHostFunction.SYSCALL_GETCWD to ::SyscallGetcwd,
-        EmscriptenHostFunction.SYSCALL_IOCTL to notImplementedFunctionNodeFactory,
-        EmscriptenHostFunction.SYSCALL_MKDIRAT to ::SyscallMkdirat,
-        EmscriptenHostFunction.SYSCALL_NEWFSTATAT to notImplementedFunctionNodeFactory,
-        EmscriptenHostFunction.SYSCALL_OPENAT to ::SyscallOpenat,
-        EmscriptenHostFunction.SYSCALL_READLINKAT to notImplementedFunctionNodeFactory,
-        EmscriptenHostFunction.SYSCALL_RMDIR to ::SyscallRmdir,
-        EmscriptenHostFunction.SYSCALL_STAT64 to ::syscallStat64,
-        EmscriptenHostFunction.SYSCALL_LSTAT64 to ::syscallLstat64,
-        EmscriptenHostFunction.SYSCALL_UNLINKAT to ::SyscallUnlinkat,
-        EmscriptenHostFunction.SYSCALL_UTIMENSAT to ::SyscallUtimensat,
-        EmscriptenHostFunction.TZSET_JS to ::TzsetJs,
-        EmscriptenHostFunction.EMSCRIPTEN_THREAD_SET_STRONGREF to notImplementedFunctionNodeFactory,
-        EmscriptenHostFunction.EMSCRIPTEN_EXIT_WITH_LIVE_RUNTIME to notImplementedFunctionNodeFactory,
-        EmscriptenHostFunction.EMSCRIPTEN_INIT_MAIN_THREAD_JS to {
-                language: WasmLanguage,
-                module: WasmModule,
-                host: SqliteEmbedderHost,
-                functionName: String,
-            ->
-            EmscriptenInitMainThreadJs(
-                language = language,
-                module = module,
-                host = host,
-                functionName = functionName,
-                posixThreadRef = pthreadRef,
-            )
-        },
-        EmscriptenHostFunction.EMSCRIPTEN_THREAD_MAILBOX_AWAIT to {
-                language: WasmLanguage,
-                module: WasmModule,
-                host: SqliteEmbedderHost,
-                functionName: String,
-            ->
-            EmscriptenThreadMailboxAwait(
-                language = language,
-                module = module,
-                host = host,
-                functionName = functionName,
-                posixThreadRef = pthreadRef,
-            )
-        },
-        EmscriptenHostFunction.EMSCRIPTEN_RECEIVE_ON_MAIN_THREAD_JS to notImplementedFunctionNodeFactory,
-        EmscriptenHostFunction.EMSCRIPTEN_CHECK_BLOCKING_ALLOWED to notImplementedFunctionNodeFactory,
-        EmscriptenHostFunction.PTHREAD_CREATE_JS to notImplementedFunctionNodeFactory,
-        EmscriptenHostFunction.EXIT to notImplementedFunctionNodeFactory,
-        EmscriptenHostFunction.EMSCRIPTEN_THREAD_CLEANUP to notImplementedFunctionNodeFactory,
-        EmscriptenHostFunction.EMSCRIPTEN_NOTIFY_MAILBOX_POSTMESSAGE to notImplementedFunctionNodeFactory,
-    ).also {
-        check(it.size == EmscriptenHostFunction.entries.size)
-    }
+    private val EmscriptenHostFunction.nodeFactory: NodeFactory
+        get() = when (this) {
+            EmscriptenHostFunction.ABORT -> ::Abort
+            EmscriptenHostFunction.ASSERT_FAIL -> ::AssertFail
+            EmscriptenHostFunction.EMSCRIPTEN_DATE_NOW -> ::EmscriptenDateNow
+            EmscriptenHostFunction.EMSCRIPTEN_GET_NOW -> ::EmscriptenGetNow
+            EmscriptenHostFunction.EMSCRIPTEN_GET_NOW_IS_MONOTONIC -> {
+                    language: WasmLanguage,
+                    module: WasmModule,
+                    host: SqliteEmbedderHost,
+                    functionName: String,
+                ->
+                EmscriptenGetNowIsMonotonic(
+                    language = language,
+                    module = module,
+                    host = host,
+                    functionName = functionName,
+                )
+            }
+
+            EmscriptenHostFunction.EMSCRIPTEN_RESIZE_HEAP -> ::EmscriptenResizeHeap
+            EmscriptenHostFunction.LOCALTIME_JS -> ::LocaltimeJs
+            EmscriptenHostFunction.MMAP_JS -> ::MmapJs
+            EmscriptenHostFunction.MUNMAP_JS -> ::MunapJs
+            EmscriptenHostFunction.SYSCALL_CHMOD -> ::SyscallChmod
+            EmscriptenHostFunction.SYSCALL_FACCESSAT -> ::SyscallFaccessat
+            EmscriptenHostFunction.SYSCALL_FCHMOD -> ::SyscallFchmod
+            EmscriptenHostFunction.SYSCALL_FCHOWN32 -> ::SyscallFchown32
+            EmscriptenHostFunction.SYSCALL_FCNTL64 -> ::SyscallFcntl64
+            EmscriptenHostFunction.SYSCALL_FDATASYNC -> ::SyscallFdatasync
+            EmscriptenHostFunction.SYSCALL_FSTAT64 -> ::SyscallFstat64
+            EmscriptenHostFunction.SYSCALL_FTRUNCATE64 -> ::SyscallFtruncate64
+            EmscriptenHostFunction.SYSCALL_GETCWD -> ::SyscallGetcwd
+            EmscriptenHostFunction.SYSCALL_IOCTL -> notImplementedFunctionNodeFactory
+            EmscriptenHostFunction.SYSCALL_MKDIRAT -> ::SyscallMkdirat
+            EmscriptenHostFunction.SYSCALL_NEWFSTATAT -> notImplementedFunctionNodeFactory
+            EmscriptenHostFunction.SYSCALL_OPENAT -> ::SyscallOpenat
+            EmscriptenHostFunction.SYSCALL_READLINKAT -> notImplementedFunctionNodeFactory
+            EmscriptenHostFunction.SYSCALL_RMDIR -> ::SyscallRmdir
+            EmscriptenHostFunction.SYSCALL_STAT64 -> ::syscallStat64
+            EmscriptenHostFunction.SYSCALL_LSTAT64 -> ::syscallLstat64
+            EmscriptenHostFunction.SYSCALL_UNLINKAT -> ::SyscallUnlinkat
+            EmscriptenHostFunction.SYSCALL_UTIMENSAT -> ::SyscallUtimensat
+            EmscriptenHostFunction.TZSET_JS -> ::TzsetJs
+            EmscriptenHostFunction.EMSCRIPTEN_THREAD_SET_STRONGREF -> notImplementedFunctionNodeFactory
+            EmscriptenHostFunction.EMSCRIPTEN_EXIT_WITH_LIVE_RUNTIME -> notImplementedFunctionNodeFactory
+            EmscriptenHostFunction.EMSCRIPTEN_INIT_MAIN_THREAD_JS -> {
+                    language: WasmLanguage,
+                    module: WasmModule,
+                    host: SqliteEmbedderHost,
+                    functionName: String,
+                ->
+                EmscriptenInitMainThreadJs(
+                    language = language,
+                    module = module,
+                    host = host,
+                    functionName = functionName,
+                    posixThreadRef = pthreadRef,
+                )
+            }
+
+            EmscriptenHostFunction.EMSCRIPTEN_THREAD_MAILBOX_AWAIT -> {
+                    language: WasmLanguage,
+                    module: WasmModule,
+                    host: SqliteEmbedderHost,
+                    functionName: String,
+                ->
+                EmscriptenThreadMailboxAwait(
+                    language = language,
+                    module = module,
+                    host = host,
+                    functionName = functionName,
+                    posixThreadRef = pthreadRef,
+                )
+            }
+
+            EmscriptenHostFunction.EMSCRIPTEN_RECEIVE_ON_MAIN_THREAD_JS -> notImplementedFunctionNodeFactory
+            EmscriptenHostFunction.EMSCRIPTEN_CHECK_BLOCKING_ALLOWED -> notImplementedFunctionNodeFactory
+            EmscriptenHostFunction.PTHREAD_CREATE_JS -> notImplementedFunctionNodeFactory
+            EmscriptenHostFunction.EXIT -> notImplementedFunctionNodeFactory
+            EmscriptenHostFunction.EMSCRIPTEN_THREAD_CLEANUP -> notImplementedFunctionNodeFactory
+            EmscriptenHostFunction.EMSCRIPTEN_NOTIFY_MAILBOX_POSTMESSAGE -> notImplementedFunctionNodeFactory
+        }
 
     fun setupModule(
         minMemorySize: Long = 50331648L,
@@ -148,7 +149,12 @@ internal class EmscriptenEnvModuleBuilder(
     ): WasmInstance = graalContext.withWasmContext { wasmContext ->
         val envModule = WasmModule.create(moduleName, null)
         setupMemory(wasmContext, envModule, minMemorySize, sharedMemory, useUnsafeMemory)
-        return setupWasmModuleFunctions(wasmContext, host, envModule, envFunctions)
+        return setupWasmModuleFunctions(
+            wasmContext,
+            host,
+            envModule,
+            EmscriptenHostFunction.entries.associateWith { it.nodeFactory },
+        )
     }
 
     @Suppress("MagicNumber", "LOCAL_VARIABLE_EARLY_DECLARATION")

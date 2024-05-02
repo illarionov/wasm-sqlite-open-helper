@@ -14,13 +14,11 @@ import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsUint
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
-import ru.pixnews.wasm.sqlite.open.helper.host.include.FileMode
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.SyscallChmodFunctionHandle
 
 internal class SyscallChmod(
     language: WasmLanguage,
@@ -28,6 +26,8 @@ internal class SyscallChmod(
     host: SqliteEmbedderHost,
     functionName: String = "__syscall_chmod",
 ) : BaseWasmNode(language, module, host, functionName) {
+    private val handle = SyscallChmodFunctionHandle(host)
+
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Int {
         val args = frame.arguments
         return syscallChmod(
@@ -43,15 +43,5 @@ internal class SyscallChmod(
         memory: WasmMemory,
         pathnamePtr: WasmPtr<Byte>,
         mode: UInt,
-    ): Int {
-        val fileMode = FileMode(mode)
-        val path = memory.readString(pathnamePtr.addr, null)
-        return try {
-            host.fileSystem.chmod(path, fileMode)
-            Errno.SUCCESS.code
-        } catch (e: SysException) {
-            logger.v { "chmod($path, $fileMode): Error ${e.errNo}" }
-            -e.errNo.code
-        }
-    }
+    ): Int = handle.execute(memory.toHostMemory(), pathnamePtr, mode)
 }

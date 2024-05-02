@@ -6,34 +6,27 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.func
 
-import com.dylibso.chicory.runtime.HostFunction
 import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.wasm.types.Value
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.ENV_MODULE_NAME
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.EmscriptenHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.emscriptenEnvHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType.WebAssemblyTypes.I32
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
+import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.EmscriptenHostFunctionHandle
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.SyscallFcntl64FunctionHandle
+import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 
-internal fun syscallFcntl64(
-    filesystem: FileSystem,
-    moduleName: String = ENV_MODULE_NAME,
-): HostFunction = emscriptenEnvHostFunction(
-    funcName = "__syscall_fcntl64",
-    paramTypes = listOf(
-        I32,
-        I32, // owner,
-        I32, // group,
-    ),
-    returnType = I32,
-    moduleName = moduleName,
-    handle = SyscallFcntl64(filesystem),
-)
+internal class SyscallFcntl64(
+    host: SqliteEmbedderHost,
+    private val memory: Memory,
+) : EmscriptenHostFunctionHandle {
+    private val handle = SyscallFcntl64FunctionHandle(host)
 
-private class SyscallFcntl64(
-    private val filesystem: FileSystem,
-) : EmscriptenHostFunction {
-    override fun apply(instance: Instance, vararg params: Value): Value {
-        TODO("Not yet implemented")
+    override fun apply(instance: Instance, vararg args: Value): Value? {
+        val result: Int = handle.execute(
+            memory,
+            Fd(args[0].asInt()),
+            args[1].asInt(),
+            args[2].asInt(),
+        )
+        return Value.i32(result.toLong())
     }
 }

@@ -11,8 +11,8 @@ import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.memory.WasmMemory
 import org.graalvm.wasm.nodes.WasmRootNode
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.GraalvmWasmHostMemoryAdapter
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
 
 internal open class BaseWasmNode(
     language: WasmLanguage,

@@ -3,23 +3,9 @@ public final class ru/pixnews/wasm/sqlite/open/helper/chicory/ChicorySqliteEmbed
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/chicory/ChicorySqliteEmbedderConfig : ru/pixnews/wasm/sqlite/open/helper/embedder/SqliteEmbedderConfig {
-	public final fun getHost ()Lru/pixnews/wasm/sqlite/open/helper/chicory/SqliteEmbedderHost;
+	public final fun getHost ()Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;
 	public final fun getSqlite3Binary ()Lru/pixnews/wasm/sqlite/open/helper/WasmSqliteConfiguration;
-	public final fun setHost (Lru/pixnews/wasm/sqlite/open/helper/chicory/SqliteEmbedderHost;)V
+	public final fun setHost (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;)V
 	public final fun setSqlite3Binary (Lru/pixnews/wasm/sqlite/open/helper/WasmSqliteConfiguration;)V
-}
-
-public final class ru/pixnews/wasm/sqlite/open/helper/chicory/SqliteEmbedderHost {
-	public fun <init> ()V
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/FileSystem;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;)V
-	public synthetic fun <init> (Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/FileSystem;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun getClock ()Lkotlin/jvm/functions/Function0;
-	public final fun getCommandArgsProvider ()Lkotlin/jvm/functions/Function0;
-	public final fun getFileSystem ()Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/FileSystem;
-	public final fun getLocalTimeFormatter ()Lkotlin/jvm/functions/Function1;
-	public final fun getMonotonicClock ()Lkotlin/jvm/functions/Function0;
-	public final fun getRootLogger ()Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;
-	public final fun getSystemEnvProvider ()Lkotlin/jvm/functions/Function0;
-	public final fun getTimeZoneInfo ()Lkotlin/jvm/functions/Function0;
 }
 

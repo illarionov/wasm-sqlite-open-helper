@@ -14,6 +14,9 @@ import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType.WebAssemblyTypes.I3
 import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType.WebAssemblyTypes.I64
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction.HostFunctionType
+import ru.pixnews.wasm.sqlite.open.helper.host.pointer
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.WasiValueTypes.U8
 
 public enum class EmscriptenHostFunction(
     public override val wasmName: String,
@@ -25,7 +28,12 @@ public enum class EmscriptenHostFunction(
     ),
     ASSERT_FAIL(
         wasmName = "__assert_fail",
-        paramTypes = List(4) { I32 },
+        paramTypes = listOf(
+            U8.pointer, // pCondition
+            U8.pointer, // filename
+            I32, // line
+            U8.pointer, // func
+        ),
     ),
     EMSCRIPTEN_DATE_NOW(
         wasmName = "emscripten_date_now",
@@ -44,7 +52,9 @@ public enum class EmscriptenHostFunction(
     ),
     EMSCRIPTEN_RESIZE_HEAP(
         wasmName = "emscripten_resize_heap",
-        paramTypes = listOf(I32),
+        paramTypes = listOf(
+            I32, // requestedSize
+        ),
         retType = I32,
     ),
     LOCALTIME_JS(
@@ -78,12 +88,20 @@ public enum class EmscriptenHostFunction(
     ),
     SYSCALL_FCHOWN32(
         wasmName = "__syscall_fchown32",
-        paramTypes = List(3) { I32 },
+        paramTypes = listOf(
+            Fd.wasmValueType, // fd
+            I32, // owner,
+            I32, // group,
+        ),
         retType = I32,
     ),
     SYSCALL_FCNTL64(
         wasmName = "__syscall_fcntl64",
-        paramTypes = List(3) { I32 },
+        paramTypes = listOf(
+            I32,
+            I32, // owner,
+            I32, // group,
+        ),
         retType = I32,
     ),
     SYSCALL_FDATASYNC(
@@ -93,7 +111,10 @@ public enum class EmscriptenHostFunction(
     ),
     SYSCALL_FSTAT64(
         wasmName = "__syscall_fstat64",
-        paramTypes = listOf(I32, I32),
+        paramTypes = listOf(
+            Fd.wasmValueType,
+            U8.pointer, // statbuf
+        ),
         retType = I32,
     ),
     SYSCALL_FTRUNCATE64(
@@ -103,7 +124,10 @@ public enum class EmscriptenHostFunction(
     ),
     SYSCALL_GETCWD(
         wasmName = "__syscall_getcwd",
-        paramTypes = listOf(I32, I32),
+        paramTypes = listOf(
+            U8.pointer, // buf
+            I32, // size
+        ),
         retType = I32,
     ),
     SYSCALL_IOCTL(
@@ -123,7 +147,12 @@ public enum class EmscriptenHostFunction(
     ),
     SYSCALL_OPENAT(
         wasmName = "__syscall_openat",
-        paramTypes = List(4) { I32 },
+        paramTypes = listOf(
+            I32, // dirfd
+            U8.pointer, // pathname
+            I32, // flags
+            I32, // mode / varargs
+        ),
         retType = I32,
     ),
     SYSCALL_READLINKAT(
@@ -153,7 +182,12 @@ public enum class EmscriptenHostFunction(
     ),
     SYSCALL_UTIMENSAT(
         wasmName = "__syscall_utimensat",
-        paramTypes = List(4) { I32 },
+        paramTypes = listOf(
+            I32, // dirfd
+            U8.pointer, // pathname
+            U8.pointer, // times
+            I32, // flags
+        ),
         retType = I32,
     ),
     TZSET_JS(

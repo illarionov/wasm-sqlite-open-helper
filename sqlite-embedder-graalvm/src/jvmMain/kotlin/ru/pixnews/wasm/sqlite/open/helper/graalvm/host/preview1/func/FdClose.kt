@@ -12,11 +12,10 @@ import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.function.FdCloseFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 
 internal class FdClose(
@@ -25,22 +24,13 @@ internal class FdClose(
     host: SqliteEmbedderHost,
     functionName: String = "fd_close",
 ) : BaseWasmNode(language, module, host, functionName) {
+    private val handle = FdCloseFunctionHandle(host)
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {
         val args = frame.arguments
-        return fdClose(Fd(args.getArgAsInt(0)))
+        return fdClose(args.getArgAsInt(0))
     }
 
     @TruffleBoundary
     @Suppress("MemberNameEqualsClassName")
-    private fun fdClose(
-        fd: Fd,
-    ): Int {
-        return try {
-            host.fileSystem.close(fd)
-            Errno.SUCCESS
-        } catch (e: SysException) {
-            logger.i(e) { "fd_close() error: $e" }
-            e.errNo
-        }.code
-    }
+    private fun fdClose(fd: Int): Int = handle.execute(Fd(fd)).code
 }

@@ -14,21 +14,12 @@ import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.common.api.isSqlite3Null
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsUint
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
-import ru.pixnews.wasm.sqlite.open.helper.host.include.DirFd
-import ru.pixnews.wasm.sqlite.open.helper.host.include.Fcntl
-import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.SysStat.UTIME_NOW
-import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.SysStat.UTIME_OMIT
-import kotlin.LazyThreadSafetyMode.NONE
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.nanoseconds
-import kotlin.time.Duration.Companion.seconds
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.SyscallUtimensatFunctionHandle
 
 internal class SyscallUtimensat(
     language: WasmLanguage,
@@ -36,6 +27,7 @@ internal class SyscallUtimensat(
     host: SqliteEmbedderHost,
     functionName: String = "__syscall_utimensat",
 ) : BaseWasmNode(language, module, host, functionName) {
+    private val handle = SyscallUtimensatFunctionHandle(host)
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
         val args: Array<Any> = frame.arguments
         return syscallUtimensat(
@@ -55,42 +47,5 @@ internal class SyscallUtimensat(
         pathnamePtr: WasmPtr<Byte>,
         times: WasmPtr<Byte>,
         flags: UInt,
-    ): Int {
-        val dirFd = DirFd(rawDirFd)
-        val noFolowSymlinks: Boolean = (flags and Fcntl.AT_SYMLINK_NOFOLLOW) != 0U
-        val path = memory.readString(pathnamePtr.addr, null)
-        var atime: Duration?
-        val mtime: Duration?
-        @Suppress("MagicNumber")
-        if (times.isSqlite3Null()) {
-            atime = host.clock.invoke()
-            mtime = atime
-        } else {
-            val atimeSeconds = memory.load_i64(this, times.addr.toLong())
-            val atimeNanoseconds = memory.load_i64(this, times.addr.toLong() + 8)
-
-            val mtimeSeconds = memory.load_i64(this, times.addr.toLong() + 16)
-            val mtimeNanoseconds = memory.load_i64(this, times.addr.toLong() + 24)
-
-            val now: Duration by lazy(NONE) { host.clock.invoke() }
-            atime = timesToDuration(atimeSeconds, atimeNanoseconds) { now }
-            mtime = timesToDuration(mtimeSeconds, mtimeNanoseconds) { now }
-        }
-        try {
-            host.fileSystem.setTimesAt(dirFd, path, atime, mtime, noFolowSymlinks)
-            return 0
-        } catch (e: SysException) {
-            return -e.errNo.code
-        }
-    }
-
-    private fun timesToDuration(
-        seconds: Long,
-        nanoseconds: Long,
-        now: () -> Duration,
-    ): Duration? = when (nanoseconds) {
-        UTIME_NOW.toLong() -> now()
-        UTIME_OMIT.toLong() -> null
-        else -> seconds.seconds + nanoseconds.nanoseconds
-    }
+    ): Int = handle.execute(memory.toHostMemory(), rawDirFd, pathnamePtr, times, flags)
 }

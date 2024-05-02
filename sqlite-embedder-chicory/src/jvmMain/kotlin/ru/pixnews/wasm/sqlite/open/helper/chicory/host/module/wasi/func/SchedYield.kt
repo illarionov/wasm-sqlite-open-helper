@@ -6,26 +6,19 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func
 
-import com.dylibso.chicory.runtime.HostFunction
 import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.wasm.types.Value
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.WASI_SNAPSHOT_PREVIEW1
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.WasiHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.wasiHostFunction
+import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.WasiHostFunctionHandle
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.function.SchedYieldFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 
-internal fun schedYield(
-    moduleName: String = WASI_SNAPSHOT_PREVIEW1,
-): HostFunction = wasiHostFunction(
-    funcName = "sched_yield",
-    paramTypes = listOf(),
-    moduleName = moduleName,
-    handle = SchedYield(),
-)
+internal class SchedYield(
+    host: SqliteEmbedderHost,
+    @Suppress("UNUSED_PARAMETER") memory: Memory,
+) : WasiHostFunctionHandle {
+    private val handle = SchedYieldFunctionHandle(host)
 
-private class SchedYield : WasiHostFunction {
-    override fun apply(instance: Instance, vararg args: Value): Errno {
-        Thread.yield()
-        return Errno.SUCCESS
-    }
+    override fun apply(instance: Instance, vararg args: Value): Errno = handle.execute()
 }

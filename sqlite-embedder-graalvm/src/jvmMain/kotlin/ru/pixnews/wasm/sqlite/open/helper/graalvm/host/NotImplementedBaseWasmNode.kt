@@ -11,7 +11,7 @@ import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
 
 internal val notImplementedFunctionNodeFactory: NodeFactory = { language, module, host, name ->
     NotImplementedBaseWasmNode(language, module, host, name)

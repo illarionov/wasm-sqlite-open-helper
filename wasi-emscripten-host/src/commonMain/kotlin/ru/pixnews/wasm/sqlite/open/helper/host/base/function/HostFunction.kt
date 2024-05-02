@@ -13,7 +13,7 @@ public interface HostFunction {
     public val type: HostFunctionType
 
     public interface HostFunctionType {
-        public val params: List<WasmValueType>
+        public val paramTypes: List<WasmValueType>
         public val returnTypes: List<WasmValueType>
 
         public companion object {
@@ -23,7 +23,7 @@ public interface HostFunction {
             ): HostFunctionType = DefaultHostFunctionType(params, returnTypes)
 
             private data class DefaultHostFunctionType(
-                override val params: List<WasmValueType>,
+                override val paramTypes: List<WasmValueType>,
                 override val returnTypes: List<WasmValueType>,
             ) : HostFunctionType
         }

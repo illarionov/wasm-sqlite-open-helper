@@ -14,12 +14,11 @@ import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.common.embedder.encodeToNullTerminatedByteArray
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.SyscallGetcwdFunctionHandle
 
 internal class SyscallGetcwd(
     language: WasmLanguage,
@@ -27,6 +26,8 @@ internal class SyscallGetcwd(
     host: SqliteEmbedderHost,
     functionName: String = "__syscall_getcwd",
 ) : BaseWasmNode(language, module, host, functionName) {
+    private val handle = SyscallGetcwdFunctionHandle(host)
+
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {
         val args = frame.arguments
         return syscallGetcwd(
@@ -42,20 +43,5 @@ internal class SyscallGetcwd(
         memory: WasmMemory,
         dst: WasmPtr<Byte>,
         size: Int,
-    ): Int {
-        logger.v { "getCwd(dst: $dst size: $size)" }
-        if (size == 0) {
-            return -Errno.INVAL.code
-        }
-
-        val path = host.fileSystem.getCwd()
-        val pathBytes: ByteArray = path.encodeToNullTerminatedByteArray()
-
-        if (size < pathBytes.size) {
-            return -Errno.RANGE.code
-        }
-        memory.initialize(pathBytes, 0, dst.addr.toLong(), pathBytes.size)
-
-        return pathBytes.size
-    }
+    ): Int = handle.execute(memory.toHostMemory(), dst, size)
 }

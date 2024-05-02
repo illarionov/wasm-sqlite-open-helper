@@ -6,15 +6,20 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.func
 
-import com.dylibso.chicory.runtime.HostFunction
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.ENV_MODULE_NAME
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.emscriptenEnvHostFunction
+import com.dylibso.chicory.runtime.Instance
+import com.dylibso.chicory.wasm.types.Value
+import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.EmscriptenHostFunctionHandle
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.AbortFunctionHandle
+import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
 
-internal fun abortFunc(
-    moduleName: String = ENV_MODULE_NAME,
-): HostFunction = emscriptenEnvHostFunction(
-    funcName = "abort",
-    paramTypes = listOf(),
-    returnType = null,
-    moduleName = moduleName,
-) { _, _ -> error("native code called abort()") }
+internal class Abort(
+    host: SqliteEmbedderHost,
+    @Suppress("UNUSED_PARAMETER") memory: Memory,
+) : EmscriptenHostFunctionHandle {
+    private val handle = AbortFunctionHandle(host)
+
+    override fun apply(instance: Instance, vararg args: Value): Value? {
+        handle.execute()
+    }
+}

@@ -14,14 +14,12 @@ import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsUint
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
-import ru.pixnews.wasm.sqlite.open.helper.host.include.DirFd
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.SyscallUnlinkatFunctionHandle
 
 internal class SyscallUnlinkat(
     language: WasmLanguage,
@@ -29,6 +27,7 @@ internal class SyscallUnlinkat(
     host: SqliteEmbedderHost,
     functionName: String = "__syscall_unlinkat",
 ) : BaseWasmNode(language, module, host, functionName) {
+    private val handle = SyscallUnlinkatFunctionHandle(host)
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {
         val args = frame.arguments
         return syscallUnlinkat(
@@ -46,14 +45,5 @@ internal class SyscallUnlinkat(
         rawDirfd: Int,
         pathnamePtr: WasmPtr<Byte>,
         flags: UInt,
-    ): Int {
-        val errNo = try {
-            val path = memory.readString(pathnamePtr.addr, null)
-            host.fileSystem.unlinkAt(DirFd(rawDirfd), path, flags)
-            Errno.SUCCESS
-        } catch (e: SysException) {
-            e.errNo
-        }
-        return -errNo.code
-    }
+    ): Int = handle.execute(memory.toHostMemory(), rawDirfd, pathnamePtr, flags)
 }

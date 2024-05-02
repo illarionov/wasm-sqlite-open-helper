@@ -14,7 +14,6 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.IndirectFunctionTableIndex
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.functionTable
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.setupImportedEnvMemory
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.setupWasmModuleFunctions
@@ -26,6 +25,7 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func.Sqlite3De
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func.Sqlite3LoggingAdapter
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func.Sqlite3ProgressAdapter
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func.Sqlite3TraceAdapter
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
 
 internal const val SQLITE3_CALLBACK_MANAGER_MODULE_NAME = "sqlite3-callback-manager"
 

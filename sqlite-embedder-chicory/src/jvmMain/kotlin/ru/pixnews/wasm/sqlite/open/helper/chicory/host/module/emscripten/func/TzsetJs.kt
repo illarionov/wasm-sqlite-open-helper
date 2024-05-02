@@ -6,30 +6,28 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.func
 
-import com.dylibso.chicory.runtime.HostFunction
 import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.wasm.types.Value
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.ENV_MODULE_NAME
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.EmscriptenHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.emscriptenEnvHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType.WebAssemblyTypes.I32
+import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.asWasmAddr
+import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.EmscriptenHostFunctionHandle
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.TzsetJsFunctionHandle
+import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
 
-internal fun tzsetJs(
-    moduleName: String = ENV_MODULE_NAME,
-): HostFunction = emscriptenEnvHostFunction(
-    funcName = "__syscall_utimensat",
-    paramTypes = listOf(
-        I32,
-        I32,
-        I32,
-    ),
-    returnType = null,
-    moduleName = moduleName,
-    handle = TzsetJs(),
-)
+internal class TzsetJs(
+    host: SqliteEmbedderHost,
+    private val memory: Memory,
+) : EmscriptenHostFunctionHandle {
+    private val handle = TzsetJsFunctionHandle(host)
 
-private class TzsetJs : EmscriptenHostFunction {
-    override fun apply(instance: Instance, vararg args: Value): Value {
-        TODO("Not yet implemented")
+    override fun apply(instance: Instance, vararg args: Value): Value? {
+        handle.execute(
+            memory,
+            args[0].asWasmAddr(),
+            args[1].asWasmAddr(),
+            args[2].asWasmAddr(),
+            args[3].asWasmAddr(),
+        )
+        return null
     }
 }

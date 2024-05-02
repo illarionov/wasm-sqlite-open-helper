@@ -13,16 +13,12 @@ import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.memory.WasmMemory
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.SyscallStatLstat64FunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.StructStat
-import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.pack
-import ru.pixnews.wasm.sqlite.open.helper.host.memory.write
 
 internal fun syscallLstat64(
     language: WasmLanguage,
@@ -33,10 +29,8 @@ internal fun syscallLstat64(
     language = language,
     module = module,
     functionName = functionName,
-    followSymlinks = false,
     host = host,
-    rootLogger = host.rootLogger,
-    filesystem = host.fileSystem,
+    handle = SyscallStatLstat64FunctionHandle.syscallLstat64(host),
 )
 
 internal fun syscallStat64(
@@ -48,20 +42,16 @@ internal fun syscallStat64(
     language = language,
     module = module,
     functionName = functionName,
-    followSymlinks = true,
     host = host,
-    rootLogger = host.rootLogger,
-    filesystem = host.fileSystem,
+    handle = SyscallStatLstat64FunctionHandle.syscallStat64(host),
 )
 
 private class SyscallStat64(
     language: WasmLanguage,
     module: WasmModule,
-    rootLogger: Logger,
     functionName: String,
     host: SqliteEmbedderHost,
-    private val followSymlinks: Boolean = false,
-    private val filesystem: FileSystem,
+    private val handle: SyscallStatLstat64FunctionHandle,
 ) : BaseWasmNode(
     language = language,
     module = module,
@@ -82,23 +72,5 @@ private class SyscallStat64(
         memory: WasmMemory,
         pathnamePtr: WasmPtr<Byte>,
         dst: WasmPtr<StructStat>,
-    ): Int {
-        var path = ""
-        val hostMemory = memory.toHostMemory()
-        try {
-            path = hostMemory.readNullTerminatedString(pathnamePtr)
-            val stat = filesystem.stat(
-                path = path,
-                followSymlinks = followSymlinks,
-            ).also {
-                logger.v { "`$path`: $it" }
-            }.pack()
-            hostMemory.write(dst, stat)
-        } catch (e: SysException) {
-            logger.v { "`$path`: error ${e.errNo}" }
-            return -e.errNo.code
-        }
-
-        return 0
-    }
+    ): Int = handle.execute(memory.toHostMemory(), pathnamePtr, dst)
 }

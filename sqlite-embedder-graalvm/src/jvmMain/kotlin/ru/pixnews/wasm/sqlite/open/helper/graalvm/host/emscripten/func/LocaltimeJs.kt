@@ -14,14 +14,12 @@ import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsLong
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.LocaltimeJsFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.include.StructTm
-import ru.pixnews.wasm.sqlite.open.helper.host.include.pack
-import ru.pixnews.wasm.sqlite.open.helper.host.memory.write
-import kotlin.time.Duration.Companion.seconds
 
 internal class LocaltimeJs(
     language: WasmLanguage,
@@ -29,6 +27,7 @@ internal class LocaltimeJs(
     host: SqliteEmbedderHost,
     functionName: String = "_localtime_js",
 ) : BaseWasmNode(language, module, host, functionName) {
+    private val handle = LocaltimeJsFunctionHandle(host)
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance) {
         val args = frame.arguments
         localtimeJs(
@@ -44,11 +43,5 @@ internal class LocaltimeJs(
         memory: WasmMemory,
         time: Long,
         timePtr: WasmPtr<StructTm>,
-    ) {
-        val localTime = host.localTimeFormatter(time.seconds)
-        logger.v { "localtimeJs($time): $localTime" }
-
-        val bytes = localTime.pack()
-        memory.toHostMemory().write(timePtr, bytes)
-    }
+    ) = handle.execute(memory.toHostMemory(), time, timePtr)
 }

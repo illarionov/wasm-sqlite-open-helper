@@ -14,17 +14,13 @@ import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsLong
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.FdChannel
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.position
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.function.FdSeekFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Whence
 
 internal class FdSeek(
     language: WasmLanguage,
@@ -32,11 +28,12 @@ internal class FdSeek(
     host: SqliteEmbedderHost,
     functionName: String = "fd_seek",
 ) : BaseWasmNode(language, module, host, functionName) {
+    private val handle = FdSeekFunctionHandle(host)
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {
         val args = frame.arguments
         return fdSeek(
             memory(frame),
-            Fd(args.getArgAsInt(0)),
+            args.getArgAsInt(0),
             args.getArgAsLong(1),
             args.getArgAsInt(2),
             args.getArgAsWasmPtr(3),
@@ -47,24 +44,9 @@ internal class FdSeek(
     @Suppress("MemberNameEqualsClassName")
     private fun fdSeek(
         memory: WasmMemory,
-        fd: Fd,
+        fd: Int,
         offset: Long,
         whenceInt: Int,
         pNewOffset: WasmPtr<Long>,
-    ): Int {
-        val whence = Whence.fromIdOrNull(whenceInt) ?: return Errno.INVAL.code
-        return try {
-            val channel: FdChannel = host.fileSystem.getStreamByFd(fd)
-            host.fileSystem.seek(channel, offset, whence)
-
-            val newPosition = channel.position
-
-            memory.store_i64(this, pNewOffset.addr.toLong(), newPosition)
-
-            Errno.SUCCESS
-        } catch (sysException: SysException) {
-            logger.i(sysException) { "fdSeek() error" }
-            sysException.errNo
-        }.code
-    }
+    ): Int = handle.execute(memory.toHostMemory(), Fd(fd), offset, whenceInt, pNewOffset).code
 }

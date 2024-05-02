@@ -13,7 +13,18 @@ import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType.WebAssemblyTypes.I3
 import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType.WebAssemblyTypes.I64
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction.HostFunctionType
+import ru.pixnews.wasm.sqlite.open.helper.host.pointer
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.IovecArray
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Size
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.WasiValueTypes.U8
 
+/**
+ * WASI Preview1 function descriptors
+ *
+ * https://github.com/WebAssembly/WASI/blob/main/legacy/preview1/witx/wasi_snapshot_preview1.witx
+ */
 public enum class WasiHostFunction(
     public override val wasmName: String,
     public override val type: HostFunctionType,
@@ -33,19 +44,50 @@ public enum class WasiHostFunction(
         paramTypes = listOf(I32, I64, I32),
         retType = I32,
     ),
+
+    /**
+     * Read environment variable data.
+     * The sizes of the buffers should match that returned by `environ_sizes_get`.
+     * Key/value pairs are expected to be joined with `=`s, and terminated with `\0`s.
+     *
+     * (@interface func (export "environ_get")
+     *     (param $environ (@witx pointer (@witx pointer u8)))
+     *     (param $environ_buf (@witx pointer u8))
+     *     (result $error (expected (error $errno)))
+     *   )
+     */
     ENVIRON_GET(
         wasmName = "environ_get",
-        paramTypes = listOf(I32, I32),
+        paramTypes = listOf(
+            U8.pointer.pointer,
+            U8.pointer,
+        ),
         retType = I32,
     ),
+
+    /**
+     * Return environment variable data sizes.
+     *
+     * (@interface func (export "environ_sizes_get")
+     *   ;;; Returns the number of environment variable arguments and the size of the
+     *   ;;; environment variable data.
+     *   (result $error (expected (tuple $size $size) (error $errno)))
+     * )
+     *
+     */
     ENVIRON_SIZES_GET(
         wasmName = "environ_sizes_get",
-        paramTypes = listOf(I32, I32),
-        retType = I32,
+        paramTypes = listOf(
+            Size.pointer, // *environ_count
+            Size.pointer, // *environ_buf_size
+        ),
+        retType = Errno.wasmValueType,
     ),
     FD_CLOSE(
         wasmName = "fd_close",
-        paramTypes = listOf(I32),
+        paramTypes = listOf(
+            Fd.wasmValueType, // Fd
+        ),
         retType = I32,
     ),
     FD_FDSTAT_GET(
@@ -75,18 +117,33 @@ public enum class WasiHostFunction(
     ),
     FD_READ(
         wasmName = "fd_read",
-        paramTypes = List(4) { I32 },
-        retType = I32,
+        paramTypes = listOf(
+            Fd.wasmValueType, // Fd
+            IovecArray.pointer, // iov
+            I32, // iov_cnt
+            I32.pointer, // pNum
+        ),
+        retType = Errno.wasmValueType,
     ),
     FD_PREAD(
         wasmName = "fd_pread",
-        paramTypes = List(4) { I32 },
-        retType = I32,
+        paramTypes = listOf(
+            Fd.wasmValueType, // Fd
+            IovecArray.pointer, // iov
+            I32, // iov_cnt
+            I32.pointer, // pNum
+        ),
+        retType = Errno.wasmValueType,
     ),
     FD_SEEK(
         wasmName = "fd_seek",
-        paramTypes = listOf(I32, I64, I32, I32),
-        retType = I32,
+        paramTypes = listOf(
+            Fd.wasmValueType, // fd
+            I64, // offset
+            I32, // whence
+            I64.pointer, // *newOffset
+        ),
+        retType = Errno.wasmValueType,
     ),
     FD_SYNC(
         wasmName = "fd_sync",

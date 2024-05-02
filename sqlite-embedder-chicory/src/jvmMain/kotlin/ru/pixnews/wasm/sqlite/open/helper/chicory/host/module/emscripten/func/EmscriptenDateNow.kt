@@ -6,22 +6,20 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.func
 
-import com.dylibso.chicory.runtime.HostFunction
+import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.wasm.types.Value
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.ENV_MODULE_NAME
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.emscriptenEnvHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType
-import java.time.Clock
+import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.EmscriptenHostFunctionHandle
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.EmscriptenDateNowFunctionHandle
+import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
 
-internal fun emscriptenDateNow(
-    clock: Clock = Clock.systemDefaultZone(),
-    moduleName: String = ENV_MODULE_NAME,
-): HostFunction = emscriptenEnvHostFunction(
-    funcName = "emscripten_date_now",
-    paramTypes = listOf(),
-    returnType = WasmValueType.F64,
-    moduleName = moduleName,
-) { _, _ ->
-    val millis = clock.millis()
-    Value.fromDouble(millis.toDouble())
+internal class EmscriptenDateNow(
+    host: SqliteEmbedderHost,
+    @Suppress("UnusedPrivateProperty") private val memory: Memory,
+) : EmscriptenHostFunctionHandle {
+    private val handle = EmscriptenDateNowFunctionHandle(host)
+
+    override fun apply(instance: Instance, vararg args: Value): Value {
+        return Value.fromDouble(handle.execute())
+    }
 }

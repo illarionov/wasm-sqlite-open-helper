@@ -6,31 +6,22 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.func
 
-import com.dylibso.chicory.runtime.HostFunction
 import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.wasm.types.Value
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.ENV_MODULE_NAME
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.EmscriptenHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.emscriptenEnvHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType.WebAssemblyTypes.I32
-import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType.WebAssemblyTypes.I64
-import java.time.Clock
+import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.asWasmAddr
+import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.EmscriptenHostFunctionHandle
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.LocaltimeJsFunctionHandle
+import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
 
-internal fun localtimeJs(
-    clock: Clock = Clock.systemDefaultZone(),
-    moduleName: String = ENV_MODULE_NAME,
-): HostFunction = emscriptenEnvHostFunction(
-    funcName = "_localtime_js",
-    paramTypes = listOf(I64, I32),
-    returnType = null,
-    moduleName = moduleName,
-    handle = LocaltimeJs(clock),
-)
+internal class LocaltimeJs(
+    host: SqliteEmbedderHost,
+    @Suppress("UnusedPrivateProperty") private val memory: Memory,
+) : EmscriptenHostFunctionHandle {
+    private val handle = LocaltimeJsFunctionHandle(host)
 
-private class LocaltimeJs(
-    private val clock: Clock,
-) : EmscriptenHostFunction {
     override fun apply(instance: Instance, vararg args: Value): Value? {
-        TODO("Not yet implemented")
+        handle.execute(memory, args[0].asLong(), args[1].asWasmAddr())
+        return null
     }
 }
