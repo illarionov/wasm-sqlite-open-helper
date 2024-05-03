@@ -17,12 +17,12 @@ public value class Riflags(
     public val rawMask: UShort,
 ) {
     public constructor(
-        vararg flags: RiFlags,
+        vararg flags: RiFlagsValue,
     ) : this(
         flags.fold(0.toUShort()) { acc, flag -> acc.or(flag.mask) },
     )
 
-    public enum class RiFlags(
+    public enum class RiFlagsValue(
         public val mask: UShort,
     ) {
         /**

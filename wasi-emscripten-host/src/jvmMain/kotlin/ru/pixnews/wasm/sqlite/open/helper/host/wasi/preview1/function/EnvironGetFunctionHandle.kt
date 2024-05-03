@@ -7,11 +7,13 @@
 package ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.function
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.common.api.plus
+import ru.pixnews.wasm.sqlite.open.helper.common.embedder.writeZeroTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.ext.WasiEnvironmentFunc
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.ext.WasiEnvironmentFunc.encodeEnvToWasi
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 
 public class EnvironGetFunctionHandle(
@@ -22,11 +24,16 @@ public class EnvironGetFunctionHandle(
         environPAddr: WasmPtr<Int>,
         environBufAddr: WasmPtr<Int>,
     ): Errno {
-        return WasiEnvironmentFunc.environGet(
-            envProvider = host.systemEnvProvider,
-            memory = memory,
-            environPAddr = environPAddr,
-            environBufAddr = environBufAddr,
-        )
+        var pp = environPAddr
+        var bufP = environBufAddr
+        host.systemEnvProvider()
+            .entries
+            .map { it.encodeEnvToWasi() }
+            .forEach { envString ->
+                memory.writeI32(pp, bufP.addr)
+                pp += 4
+                bufP += memory.writeZeroTerminatedString(bufP, envString)
+            }
+        return Errno.SUCCESS
     }
 }

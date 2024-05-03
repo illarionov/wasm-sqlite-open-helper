@@ -7,18 +7,20 @@
 package ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.function
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.common.api.plus
 import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.memory.readPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.ext.FdWriteExt.readCiovecs
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.CioVec
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.CiovecArray
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Size
 
 public class FdWriteFdPWriteFunctionHandle private constructor(
     host: SqliteEmbedderHost,
@@ -60,5 +62,21 @@ public class FdWriteFdPWriteFunctionHandle private constructor(
             WasiHostFunction.FD_PWRITE,
             ReadWriteStrategy.DO_NOT_CHANGE_POSITION,
         )
+
+        @Suppress("UNCHECKED_CAST")
+        private fun readCiovecs(
+            memory: Memory,
+            pCiov: WasmPtr<CioVec>,
+            ciovCnt: Int,
+        ): CiovecArray {
+            val iovecs = MutableList(ciovCnt) { idx ->
+                val pCiovec: WasmPtr<*> = pCiov + 8 * idx
+                CioVec(
+                    buf = memory.readPtr(pCiovec as WasmPtr<WasmPtr<Byte>>),
+                    bufLen = Size(memory.readI32(pCiovec + 4).toUInt()),
+                )
+            }
+            return CiovecArray(iovecs)
+        }
     }
 }
