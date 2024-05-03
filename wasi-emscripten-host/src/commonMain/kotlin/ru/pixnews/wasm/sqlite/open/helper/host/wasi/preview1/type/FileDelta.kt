@@ -11,12 +11,14 @@ import kotlin.jvm.JvmInline
 
 /**
  * Relative offset within a file.
+ *
+ * (typename $filedelta s64)
  */
 @JvmInline
 public value class FileDelta(
-    public val rawValue: Int,
+    public val rawValue: Long,
 ) {
     public companion object : WasiTypename {
-        public override val wasmValueType: WasmValueType = WasmValueType.I32
+        public override val wasmValueType: WasmValueType = WasmValueType.I64
     }
 }

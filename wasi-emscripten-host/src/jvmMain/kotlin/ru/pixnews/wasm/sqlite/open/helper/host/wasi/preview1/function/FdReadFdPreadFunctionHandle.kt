@@ -7,18 +7,20 @@
 package ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.function
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.common.api.plus
 import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.memory.readPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.ext.FdReadExt.readIovecs
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Iovec
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.IovecArray
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Size
 
 public class FdReadFdPreadFunctionHandle private constructor(
     host: SqliteEmbedderHost,
@@ -60,5 +62,21 @@ public class FdReadFdPreadFunctionHandle private constructor(
             WasiHostFunction.FD_PREAD,
             ReadWriteStrategy.DO_NOT_CHANGE_POSITION,
         )
+
+        private fun readIovecs(
+            memory: Memory,
+            pIov: WasmPtr<Iovec>,
+            iovCnt: Int,
+        ): IovecArray {
+            @Suppress("UNCHECKED_CAST")
+            val iovecs = MutableList(iovCnt) { idx ->
+                val pIovec: WasmPtr<*> = pIov + 8 * idx
+                Iovec(
+                    buf = memory.readPtr(pIovec as WasmPtr<WasmPtr<Byte>>),
+                    bufLen = Size(memory.readI32(pIovec + 4).toUInt()),
+                )
+            }
+            return IovecArray(iovecs)
+        }
     }
 }
