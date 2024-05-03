@@ -15,19 +15,12 @@ import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsUint
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.resolveAbsolutePath
-import ru.pixnews.wasm.sqlite.open.helper.host.include.DirFd
-import ru.pixnews.wasm.sqlite.open.helper.host.include.Fcntl
-import ru.pixnews.wasm.sqlite.open.helper.host.include.FileMode
-import ru.pixnews.wasm.sqlite.open.helper.host.include.oMaskToString
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
-import java.nio.file.Path
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.SyscallOpenatFunctionHandle
 
 internal class SyscallOpenat(
     language: WasmLanguage,
@@ -35,6 +28,7 @@ internal class SyscallOpenat(
     host: SqliteEmbedderHost,
     functionName: String = "__syscall_openat",
 ) : BaseWasmNode(language, module, host, functionName) {
+    private val handle = SyscallOpenatFunctionHandle(host)
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
         val args = frame.arguments
         val memory = memory(frame)
@@ -61,39 +55,5 @@ internal class SyscallOpenat(
         pathnamePtr: WasmPtr<Byte>,
         flags: UInt,
         rawMode: UInt,
-    ): Int {
-        val fs = host.fileSystem
-        val dirFd = DirFd(rawDirFd)
-        val mode = FileMode(rawMode)
-        val path = memory.readString(pathnamePtr.addr, null)
-        val absolutePath = fs.resolveAbsolutePath(dirFd, path)
-
-        return try {
-            val fd = fs.open(absolutePath, flags, mode).fd
-            logger.v { formatCallString(dirFd, path, absolutePath, flags, mode, fd) }
-            fd.fd
-        } catch (e: SysException) {
-            logger.v {
-                formatCallString(dirFd, path, absolutePath, flags, mode, null) +
-                        "openAt() error ${e.errNo}"
-            }
-            -e.errNo.code
-        }
-    }
-
-    @Suppress("MagicNumber")
-    private fun formatCallString(
-        dirfd: DirFd,
-        path: String,
-        absolutePath: Path,
-        flags: UInt,
-        mode: FileMode,
-        fd: Fd?,
-    ): String = "openAt() dirfd: " +
-            "$dirfd, " +
-            "path: `$path`, " +
-            "full path: `$absolutePath`, " +
-            "flags: 0${flags.toString(8)} (${Fcntl.oMaskToString(flags)}), " +
-            "mode: $mode" +
-            if (fd != null) ": $fd" else ""
+    ): Int = handle.execute(memory.toHostMemory(), rawDirFd, pathnamePtr, flags, rawMode)
 }

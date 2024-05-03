@@ -14,15 +14,12 @@ import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsUint
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
-import ru.pixnews.wasm.sqlite.open.helper.host.include.DirFd
-import ru.pixnews.wasm.sqlite.open.helper.host.include.FileAccessibilityCheck
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.SyscallFaccessatFunctionHandle
 
 internal class SyscallFaccessat(
     language: WasmLanguage,
@@ -30,6 +27,7 @@ internal class SyscallFaccessat(
     host: SqliteEmbedderHost,
     functionName: String = "__syscall_faccessat",
 ) : BaseWasmNode(language, module, host, functionName) {
+    private val handle = SyscallFaccessatFunctionHandle(host)
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
         val args = frame.arguments
         val memory = memory(frame)
@@ -51,17 +49,5 @@ internal class SyscallFaccessat(
         pathnamePtr: WasmPtr<Byte>,
         amode: UInt,
         flags: UInt,
-    ): Int {
-        val fs = host.fileSystem
-        val dirFd = DirFd(rawDirFd)
-        val path = memory.readString(pathnamePtr.addr, null)
-        val check = FileAccessibilityCheck(amode)
-        return try {
-            fs.faccessat(dirFd, path, check, flags)
-            Errno.SUCCESS.code
-        } catch (e: SysException) {
-            logger.v { "__syscall_faccessat($rawDirFd, $path, $check, $flags) failed: ${e.errNo}" }
-            -e.errNo.code
-        }
-    }
+    ): Int = handle.execute(memory.toHostMemory(), rawDirFd, pathnamePtr, amode, flags)
 }

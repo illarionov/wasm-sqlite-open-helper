@@ -6,39 +6,34 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.func
 
-import com.dylibso.chicory.runtime.HostFunction
 import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.wasm.types.Value
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.ENV_MODULE_NAME
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.EmscriptenHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.emscriptenEnvHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType.WebAssemblyTypes.I32
-import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType.WebAssemblyTypes.I64
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
+import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.asWasmAddr
+import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.EmscriptenHostFunctionHandle
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.MmapJsFunctionHandle
+import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.SysMmanMapFlags
+import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.SysMmanProt
+import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 
-internal fun mmapJs(
-    filesystem: FileSystem,
-    moduleName: String = ENV_MODULE_NAME,
-): HostFunction = emscriptenEnvHostFunction(
-    funcName = "_mmap_js",
-    paramTypes = listOf(
-        I32,
-        I32,
-        I32,
-        I32,
-        I64,
-        I32,
-        I32,
-    ),
-    returnType = I32,
-    moduleName = moduleName,
-    handle = MmapJs(filesystem),
-)
+internal class MmapJs(
+    host: SqliteEmbedderHost,
+    @Suppress("UNUSED_PARAMETER") memory: Memory,
+) : EmscriptenHostFunctionHandle {
+    private val handle = MmapJsFunctionHandle(host)
 
-private class MmapJs(
-    private val filesystem: FileSystem,
-) : EmscriptenHostFunction {
+    @Suppress("MagicNumber")
     override fun apply(instance: Instance, vararg args: Value): Value? {
-        TODO("Not yet implemented")
+        val result: Int = handle.execute(
+            args[0].asInt(),
+            SysMmanProt(args[1].asUInt().toUInt()),
+            SysMmanMapFlags(args[2].asUInt().toUInt()),
+            Fd(args[3].asInt()),
+            args[4].asLong().toULong(),
+            args[5].asWasmAddr(),
+            args[6].asWasmAddr(),
+        )
+        return Value.i32(result.toLong())
     }
 }

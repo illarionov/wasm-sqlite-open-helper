@@ -14,11 +14,12 @@ import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.function.FdSyncSyscallFdatasyncFunctionHandle
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.function.FdSyncSyscallFdatasyncFunctionHandle.Companion.fdSync
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.function.FdSyncSyscallFdatasyncFunctionHandle.Companion.syscallFdatasync
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 
 internal fun FdSync(
@@ -26,38 +27,28 @@ internal fun FdSync(
     module: WasmModule,
     host: SqliteEmbedderHost,
     functionName: String = "fd_sync",
-): BaseWasmNode = FdSync(language, module, host, functionName, syncMetadata = true)
+): BaseWasmNode = FdSync(language, module, host, functionName, fdSync(host))
 
 internal fun SyscallFdatasync(
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
     functionName: String = "__syscall_fdatasync",
-): BaseWasmNode = FdSync(language, module, host, functionName, syncMetadata = false)
+): BaseWasmNode = FdSync(language, module, host, functionName, syscallFdatasync(host))
 
 private class FdSync(
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
     functionName: String = "fd_sync",
-    private val syncMetadata: Boolean = true,
+    private val handle: FdSyncSyscallFdatasyncFunctionHandle,
 ) : BaseWasmNode(language, module, host, functionName) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {
         val args = frame.arguments
-        return fdSync(Fd(args.getArgAsInt(0)))
+        return fdSync(args.getArgAsInt(0))
     }
 
     @TruffleBoundary
     @Suppress("MemberNameEqualsClassName")
-    private fun fdSync(
-        fd: Fd,
-    ): Int {
-        return try {
-            host.fileSystem.sync(fd, metadata = syncMetadata)
-            Errno.SUCCESS
-        } catch (e: SysException) {
-            logger.i(e) { "sync() error" }
-            e.errNo
-        }.code
-    }
+    private fun fdSync(fd: Int): Int = handle.execute(Fd(fd)).code
 }

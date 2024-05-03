@@ -9,76 +9,88 @@
 package ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi
 
 import com.dylibso.chicory.runtime.HostFunction
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.argsGet
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.argsSizesGet
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.clockTimeGet
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.environGet
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.environSizesGet
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.fdClose
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.fdFdstatGet
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.fdFdstatSetFlags
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.fdFilestatGet
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.fdPread
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.fdPrestatDirName
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.fdPrestatGet
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.fdPwrite
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.fdRead
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.fdSeek
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.fdSync
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.fdWrite
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.pathCreateDirectory
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.pathFilestatGet
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.pathFilestatSetTimes
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.pathLink
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.pathOpen
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.pathReadlink
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.pathRemoveDirectory
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.pathRename
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.pathSymlink
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.pathUnlinkFile
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.randomGet
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.schedYield
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
+import com.dylibso.chicory.runtime.Instance
+import com.dylibso.chicory.wasm.types.Value
+import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.chicory
+import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.EnvironGet
+import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.EnvironSizesGet
+import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.FdClose
+import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.FdReadFdPread.Companion.fdPread
+import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.FdReadFdPread.Companion.fdRead
+import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.FdSeek
+import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.FdSync
+import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.FdWriteFdPwrite.Companion.fdPwrite
+import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.FdWriteFdPwrite.Companion.fdWrite
+import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.SchedYield
+import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.func.notImplementedWasiHostFunctionHandleFactory
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
-import java.time.Clock
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction
+import com.dylibso.chicory.runtime.WasmFunctionHandle as ChicoryWasmFunctionHandle
 
 // https://github.com/WebAssembly/WASI/tree/main
 internal class WasiSnapshotPreview1Builtins(
-    memory: Memory,
-    fileSystem: FileSystem,
-    argsProvider: () -> List<String> = ::emptyList,
-    envProvider: () -> Map<String, String> = System::getenv,
-    clock: Clock = Clock.systemDefaultZone(),
+    private val memory: Memory,
+    private val host: SqliteEmbedderHost,
 ) {
-    val functions: List<HostFunction> = listOf(
-        argsGet(argsProvider),            // Not yet implemented
-        argsSizesGet(argsProvider),       // Not yet implemented
-        clockTimeGet(clock),              // Not yet implemented
-        environGet(memory, envProvider),
-        environSizesGet(memory, envProvider),
-        fdClose(fileSystem),
-        fdFdstatGet(fileSystem),          // Not yet implemented
-        fdFdstatSetFlags(fileSystem),     // Not yet implemented
-        fdFilestatGet(fileSystem),        // Not yet implemented
-        fdPread(memory, fileSystem),
-        fdPrestatDirName(fileSystem),     // Not yet implemented
-        fdPrestatGet(fileSystem),         // Not yet implemented
-        fdPwrite(memory, fileSystem),
-        fdRead(memory, fileSystem),
-        fdSeek(memory, fileSystem),
-        fdSync(fileSystem),
-        fdWrite(memory, fileSystem),
-        pathCreateDirectory(fileSystem),  // Not yet implemented
-        pathFilestatGet(fileSystem),      // Not yet implemented
-        pathFilestatSetTimes(fileSystem), // Not yet implemented
-        pathLink(fileSystem),             // Not yet implemented
-        pathOpen(fileSystem),             // Not yet implemented
-        pathReadlink(fileSystem),         // Not yet implemented
-        pathRemoveDirectory(fileSystem),  // Not yet implemented
-        pathRename(fileSystem),           // Not yet implemented
-        pathSymlink(fileSystem),          // Not yet implemented
-        pathUnlinkFile(fileSystem),       // Not yet implemented
-        randomGet(fileSystem),            // Not yet implemented
-        schedYield(),                     // Not yet implemented
-    )
+    fun asChicoryHostFunctions(
+        moduleName: String = WASI_SNAPSHOT_PREVIEW1_MODULE_NAME,
+    ): List<HostFunction> {
+        return WasiHostFunction.entries.map { wasiFunc ->
+            HostFunction(
+                WasiHostFunctionAdapter(wasiFunc.functionFactory(host, memory)),
+                moduleName,
+                wasiFunc.wasmName,
+                wasiFunc.type.paramTypes.map(WasmValueType::chicory),
+                wasiFunc.type.returnTypes.map(WasmValueType::chicory),
+            )
+        }
+    }
+
+    private class WasiHostFunctionAdapter(
+        private val delegate: WasiHostFunctionHandle,
+    ) : ChicoryWasmFunctionHandle {
+        override fun apply(instance: Instance, vararg args: Value): Array<Value> {
+            val result = delegate.apply(instance, args = args)
+            return arrayOf(Value.i32(result.code.toLong()))
+        }
+    }
+
+    private companion object {
+        const val WASI_SNAPSHOT_PREVIEW1_MODULE_NAME = "wasi_snapshot_preview1"
+
+        val WasiHostFunction.functionFactory: WasiHostFunctionHandleFactory
+            get() = when (this) {
+                WasiHostFunction.ARGS_GET -> notImplementedWasiHostFunctionHandleFactory
+                WasiHostFunction.ARGS_SIZES_GET -> notImplementedWasiHostFunctionHandleFactory
+                WasiHostFunction.CLOCK_TIME_GET -> notImplementedWasiHostFunctionHandleFactory
+                WasiHostFunction.ENVIRON_GET -> ::EnvironGet
+                WasiHostFunction.ENVIRON_SIZES_GET -> ::EnvironSizesGet
+                WasiHostFunction.FD_CLOSE -> ::FdClose
+                WasiHostFunction.FD_FDSTAT_GET -> notImplementedWasiHostFunctionHandleFactory
+                WasiHostFunction.FD_FDSTAT_SET_FLAGS -> notImplementedWasiHostFunctionHandleFactory
+                WasiHostFunction.FD_FILESTAT_GET -> notImplementedWasiHostFunctionHandleFactory
+                WasiHostFunction.FD_PRESTAT_DIR_NAME -> notImplementedWasiHostFunctionHandleFactory
+                WasiHostFunction.FD_PRESTAT_GET -> notImplementedWasiHostFunctionHandleFactory
+                WasiHostFunction.FD_READ -> ::fdRead
+                WasiHostFunction.FD_PREAD -> ::fdPread
+                WasiHostFunction.FD_SEEK -> ::FdSeek
+                WasiHostFunction.FD_SYNC -> ::FdSync
+                WasiHostFunction.FD_WRITE -> ::fdWrite
+                WasiHostFunction.FD_PWRITE -> ::fdPwrite
+                WasiHostFunction.PATH_CREATE_DIRECTORY -> notImplementedWasiHostFunctionHandleFactory
+                WasiHostFunction.PATH_FILESTAT_GET -> notImplementedWasiHostFunctionHandleFactory
+                WasiHostFunction.PATH_FILESTAT_SET_TIMES -> notImplementedWasiHostFunctionHandleFactory
+                WasiHostFunction.PATH_LINK -> notImplementedWasiHostFunctionHandleFactory
+                WasiHostFunction.PATH_OPEN -> notImplementedWasiHostFunctionHandleFactory
+                WasiHostFunction.PATH_READLINK -> notImplementedWasiHostFunctionHandleFactory
+                WasiHostFunction.PATH_REMOVE_DIRECTORY -> notImplementedWasiHostFunctionHandleFactory
+                WasiHostFunction.PATH_RENAME -> notImplementedWasiHostFunctionHandleFactory
+                WasiHostFunction.PATH_SYMLINK -> notImplementedWasiHostFunctionHandleFactory
+                WasiHostFunction.PATH_UNLINK_FILE -> notImplementedWasiHostFunctionHandleFactory
+                WasiHostFunction.RANDOM_GET -> notImplementedWasiHostFunctionHandleFactory
+                WasiHostFunction.SCHED_YIELD -> ::SchedYield
+            }
+    }
 }

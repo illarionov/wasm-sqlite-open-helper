@@ -44,6 +44,10 @@ internal class ChicoryMemoryAdapter(
         return wasmMemory.readI32(addr.addr).asInt()
     }
 
+    override fun readI64(addr: WasmPtr<*>): Long {
+        return wasmMemory.readI64(addr.addr).asLong()
+    }
+
     override fun readBytes(addr: WasmPtr<*>, length: Int): ByteArray {
         return wasmMemory.readBytes(addr.addr, length)
     }

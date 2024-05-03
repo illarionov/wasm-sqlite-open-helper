@@ -12,12 +12,11 @@ import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsUlong
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.SyscallFtruncate64FunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 
 internal class SyscallFtruncate64(
@@ -26,6 +25,8 @@ internal class SyscallFtruncate64(
     host: SqliteEmbedderHost,
     functionName: String = "__syscall_ftruncate64",
 ) : BaseWasmNode(language, module, host, functionName) {
+    private val handle = SyscallFtruncate64FunctionHandle(host)
+
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
         val args: Array<Any> = frame.arguments
         return syscallFtruncate64(
@@ -39,11 +40,5 @@ internal class SyscallFtruncate64(
     private fun syscallFtruncate64(
         fd: Int,
         length: ULong,
-    ): Int = try {
-        host.fileSystem.ftruncate(Fd(fd), length)
-        Errno.SUCCESS.code
-    } catch (e: SysException) {
-        logger.v { "ftruncate64($fd, $length): Error ${e.errNo}" }
-        -e.errNo.code
-    }
+    ): Int = handle.execute(Fd(fd), length)
 }

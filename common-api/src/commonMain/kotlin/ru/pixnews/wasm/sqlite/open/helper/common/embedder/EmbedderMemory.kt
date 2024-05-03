@@ -13,6 +13,7 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 public interface EmbedderMemory {
     public fun readI8(addr: WasmPtr<*>): Byte
     public fun readI32(addr: WasmPtr<*>): Int
+    public fun readI64(addr: WasmPtr<*>): Long
     public fun readBytes(addr: WasmPtr<*>, length: Int): ByteArray
 
     public fun writeByte(addr: WasmPtr<*>, data: Byte)
@@ -26,6 +27,9 @@ public fun EmbedderMemory.readU8(addr: WasmPtr<*>): UByte = readI8(addr).toUByte
 
 @InternalWasmSqliteHelperApi
 public fun EmbedderMemory.readU32(addr: WasmPtr<*>): UInt = readI32(addr).toUInt()
+
+@InternalWasmSqliteHelperApi
+public fun EmbedderMemory.readU64(addr: WasmPtr<*>): ULong = readI64(addr).toULong()
 
 @Suppress("UNCHECKED_CAST")
 @InternalWasmSqliteHelperApi

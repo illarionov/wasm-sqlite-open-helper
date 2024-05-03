@@ -6,21 +6,20 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.func
 
-import com.dylibso.chicory.runtime.HostFunction
+import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.wasm.types.Value
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.ENV_MODULE_NAME
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.emscriptenEnvHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType.WebAssemblyTypes.F64
+import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.EmscriptenHostFunctionHandle
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.EmscriptenGetNowFunctionHandle
+import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
 
-internal fun emscriptenGetNow(
-    moduleName: String = ENV_MODULE_NAME,
-): HostFunction = emscriptenEnvHostFunction(
-    funcName = "emscripten_get_now",
-    paramTypes = listOf(),
-    returnType = F64,
-    moduleName = moduleName,
-) { _, _ ->
-    @Suppress("MagicNumber")
-    val ts = System.nanoTime() / 1_000_000.0
-    Value.fromDouble(ts)
+internal class EmscriptenGetNow(
+    host: SqliteEmbedderHost,
+    @Suppress("UnusedPrivateProperty") private val memory: Memory,
+) : EmscriptenHostFunctionHandle {
+    private val handle = EmscriptenGetNowFunctionHandle(host)
+
+    override fun apply(instance: Instance, vararg args: Value): Value {
+        return Value.fromDouble(handle.execute())
+    }
 }

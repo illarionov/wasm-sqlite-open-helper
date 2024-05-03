@@ -14,11 +14,10 @@ import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.SyscallRmdirFunctionHandle
 
 internal class SyscallRmdir(
     language: WasmLanguage,
@@ -26,6 +25,7 @@ internal class SyscallRmdir(
     host: SqliteEmbedderHost,
     functionName: String = "__syscall_rmdir",
 ) : BaseWasmNode(language, module, host, functionName) {
+    private val handle = SyscallRmdirFunctionHandle(host)
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
         val args: Array<Any> = frame.arguments
         return syscallRmdirat(
@@ -38,14 +38,5 @@ internal class SyscallRmdir(
     private fun syscallRmdirat(
         memory: WasmMemory,
         pathnamePtr: WasmPtr<Byte>,
-    ): Int {
-        val fs = host.fileSystem
-        val path = memory.readString(pathnamePtr.addr, null)
-        return try {
-            fs.rmdir(path)
-            Errno.SUCCESS.code
-        } catch (e: SysException) {
-            -e.errNo.code
-        }
-    }
+    ): Int = handle.execute(memory.toHostMemory(), pathnamePtr)
 }

@@ -14,18 +14,12 @@ import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy.CHANGE_POSITION
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy.DO_NOT_CHANGE_POSITION
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.ext.FdWriteExt.readCiovecs
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.function.FdWriteFdPWriteFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.CioVec
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.CiovecArray
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 
 internal fun fdWrite(
@@ -33,27 +27,27 @@ internal fun fdWrite(
     module: WasmModule,
     host: SqliteEmbedderHost,
     functionName: String = "fd_write",
-): BaseWasmNode = FdWrite(language, module, host, CHANGE_POSITION, functionName)
+): BaseWasmNode = FdWrite(language, module, host, functionName, FdWriteFdPWriteFunctionHandle.fdWrite(host))
 
 internal fun fdPwrite(
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
     functionName: String = "fd_pwrite",
-): BaseWasmNode = FdWrite(language, module, host, DO_NOT_CHANGE_POSITION, functionName)
+): BaseWasmNode = FdWrite(language, module, host, functionName, FdWriteFdPWriteFunctionHandle.fdPwrite(host))
 
 private class FdWrite(
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
-    private val strategy: ReadWriteStrategy,
     functionName: String = "fd_write",
+    private val handle: FdWriteFdPWriteFunctionHandle,
 ) : BaseWasmNode(language, module, host, functionName) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
         val args = frame.arguments
         return fdWrite(
             memory(frame),
-            Fd(args.getArgAsInt(0)),
+            args.getArgAsInt(0),
             args.getArgAsWasmPtr(1),
             args.getArgAsInt(2),
             args.getArgAsWasmPtr(3),
@@ -64,21 +58,9 @@ private class FdWrite(
     @Suppress("MemberNameEqualsClassName")
     private fun fdWrite(
         memory: WasmMemory,
-        fd: Fd,
+        fd: Int,
         pCiov: WasmPtr<CioVec>,
         cIovCnt: Int,
         pNum: WasmPtr<Int>,
-    ): Int {
-        val hostMemory = memory.toHostMemory()
-        val cioVecs: CiovecArray = readCiovecs(hostMemory, pCiov, cIovCnt)
-        return try {
-            val channel = host.fileSystem.getStreamByFd(fd)
-            val writtenBytes = hostMemory.writeToChannel(channel, strategy, cioVecs)
-            hostMemory.writeI32(pNum, writtenBytes.toInt())
-            Errno.SUCCESS
-        } catch (e: SysException) {
-            logger.i(e) { "write() error" }
-            e.errNo
-        }.code
-    }
+    ): Int = handle.execute(memory.toHostMemory(), Fd(fd), pCiov, cIovCnt, pNum).code
 }

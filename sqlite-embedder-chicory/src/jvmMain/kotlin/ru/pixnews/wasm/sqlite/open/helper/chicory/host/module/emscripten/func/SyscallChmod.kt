@@ -6,30 +6,26 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.func
 
-import com.dylibso.chicory.runtime.HostFunction
 import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.wasm.types.Value
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.ENV_MODULE_NAME
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.EmscriptenHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.emscriptenEnvHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType.WebAssemblyTypes.I32
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
+import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.asWasmAddr
+import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.EmscriptenHostFunctionHandle
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.SyscallChmodFunctionHandle
+import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
 
-internal fun syscallChmod(
-    filesystem: FileSystem,
-    moduleName: String = ENV_MODULE_NAME,
-): HostFunction = emscriptenEnvHostFunction(
-    funcName = "__syscall_chmod",
-    paramTypes = listOf(I32, I32),
-    returnType = I32,
-    moduleName = moduleName,
-    handle = SyscallChmod(filesystem),
-)
+internal class SyscallChmod(
+    host: SqliteEmbedderHost,
+    private val memory: Memory,
+) : EmscriptenHostFunctionHandle {
+    private val handle = SyscallChmodFunctionHandle(host)
 
-private class SyscallChmod(
-    private val filesystem: FileSystem,
-) : EmscriptenHostFunction {
     override fun apply(instance: Instance, vararg args: Value): Value? {
-        TODO("Not yet implemented")
+        val result: Int = handle.execute(
+            memory,
+            args[0].asWasmAddr(),
+            args[1].asUInt().toUInt(),
+        )
+        return Value.i32(result.toLong())
     }
 }

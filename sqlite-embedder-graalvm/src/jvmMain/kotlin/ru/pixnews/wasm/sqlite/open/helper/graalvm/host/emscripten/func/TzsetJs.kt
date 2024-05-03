@@ -14,9 +14,10 @@ import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.TzsetJsFunctionHandle
 
 internal class TzsetJs(
     language: WasmLanguage,
@@ -24,6 +25,7 @@ internal class TzsetJs(
     host: SqliteEmbedderHost,
     functionName: String = "_tzset_js",
 ) : BaseWasmNode(language, module, host, functionName) {
+    private val handle = TzsetJsFunctionHandle(host)
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance) {
         val args = frame.arguments
         tzsetJs(
@@ -43,12 +45,5 @@ internal class TzsetJs(
         daylight: WasmPtr<Int>,
         stdName: WasmPtr<Byte>,
         dstName: WasmPtr<Byte>,
-    ) {
-        val tzInfo = host.timeZoneInfo()
-        logger.v { "tzsetJs() TZ info: $tzInfo" }
-        memory.store_i32(this, timezone.addr.toLong(), tzInfo.timeZone.toInt())
-        memory.store_i32(this, daylight.addr.toLong(), tzInfo.daylight)
-        memory.writeString(this, tzInfo.stdName, stdName.addr, 7)
-        memory.writeString(this, tzInfo.dstName, dstName.addr, 7)
-    }
+    ) = handle.execute(memory.toHostMemory(), timezone, daylight, stdName, dstName)
 }

@@ -26,6 +26,7 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.GraalvmWasmHostMem
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.preview1.WasiSnapshotPreview1ModuleBuilder
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.pthread.Pthread
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.SqliteCallbacksModuleBuilder
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
 import java.util.concurrent.atomic.AtomicReference
 
 public object GraalvmSqliteEmbedder : SqliteEmbedder<GraalvmSqliteEmbedderConfig> {

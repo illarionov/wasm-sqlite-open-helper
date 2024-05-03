@@ -14,11 +14,11 @@ import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.AssertionFailedException
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.AssertFailFunctionHandle
 
 internal class AssertFail(
     language: WasmLanguage,
@@ -26,6 +26,8 @@ internal class AssertFail(
     host: SqliteEmbedderHost,
     functionName: String = "__assert_fail",
 ) : BaseWasmNode(language, module, host, functionName) {
+    private val handle = AssertFailFunctionHandle(host)
+
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Nothing {
         val args = frame.arguments
         assertFail(
@@ -46,11 +48,6 @@ internal class AssertFail(
         line: Int,
         func: WasmPtr<Byte>,
     ): Nothing {
-        throw AssertionFailedException(
-            condition = memory.readString(condition.addr, null),
-            filename = memory.readString(filename.addr, null),
-            line = line,
-            func = memory.readString(func.addr, null),
-        )
+        handle.execute(memory.toHostMemory(), condition, filename, line, func)
     }
 }

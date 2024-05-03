@@ -6,31 +6,25 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.func
 
-import com.dylibso.chicory.runtime.HostFunction
 import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.wasm.types.Value
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.ENV_MODULE_NAME
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.EmscriptenHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.emscriptenEnvHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType.WebAssemblyTypes.I32
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
+import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.EmscriptenHostFunctionHandle
+import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.SyscallFtruncate64FunctionHandle
+import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 
-internal fun syscallFtruncate64(
-    filesystem: FileSystem,
-    moduleName: String = ENV_MODULE_NAME,
-): HostFunction = emscriptenEnvHostFunction(
-    funcName = "__syscall_ftruncate64",
-    paramTypes = listOf(I32, I32),
-    returnType = Errno.wasmValueType,
-    moduleName = moduleName,
-    handle = SyscallFtruncate64(filesystem),
-)
+internal class SyscallFtruncate64(
+    host: SqliteEmbedderHost,
+    @Suppress("UNUSED_PARAMETER") memory: Memory,
+) : EmscriptenHostFunctionHandle {
+    private val handle = SyscallFtruncate64FunctionHandle(host)
 
-private class SyscallFtruncate64(
-    private val filesystem: FileSystem,
-) : EmscriptenHostFunction {
-    override fun apply(instance: Instance, vararg args: Value): Value {
-        TODO("Not yet implemented")
+    override fun apply(instance: Instance, vararg args: Value): Value? {
+        val result: Int = handle.execute(
+            Fd(args[0].asInt()),
+            args[1].asLong().toULong(),
+        )
+        return Value.i32(result.toLong())
     }
 }
