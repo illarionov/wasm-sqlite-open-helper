@@ -23,6 +23,7 @@ internal class MunmapJs(
 ) : EmscriptenHostFunctionHandle {
     private val handle = MunapJsFunctionHandle(host)
 
+    @Suppress("MagicNumber")
     override fun apply(instance: Instance, vararg args: Value): Value? {
         val result: Int = handle.execute(
             args[0].asWasmAddr(),
@@ -30,7 +31,7 @@ internal class MunmapJs(
             SysMmanProt(args[2].asUInt().toUInt()),
             SysMmanMapFlags(args[3].asUInt().toUInt()),
             Fd(args[4].asInt()),
-            args[4].asLong().toULong(),
+            args[5].asLong().toULong(),
         )
         return Value.i32(result.toLong())
     }

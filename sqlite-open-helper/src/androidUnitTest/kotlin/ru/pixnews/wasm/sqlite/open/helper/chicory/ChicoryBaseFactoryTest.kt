@@ -7,11 +7,9 @@
 package ru.pixnews.wasm.sqlite.open.helper.chicory
 
 import co.touchlab.kermit.Severity.Verbose
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import ru.pixnews.wasm.sqlite.open.helper.tests.AbstractCommonFactoryTest
 
-@Disabled("Not ready yet")
 class ChicoryBaseFactoryTest : AbstractCommonFactoryTest<ChicorySqliteEmbedderConfig>(
     factoryCreator = ChicoryFactoryCreator,
     dbLoggerSeverity = Verbose,

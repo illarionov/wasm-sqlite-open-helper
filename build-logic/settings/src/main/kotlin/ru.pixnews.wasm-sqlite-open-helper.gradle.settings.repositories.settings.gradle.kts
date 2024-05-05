@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import ru.pixnews.wasm.sqlite.open.helper.gradle.settings.chicoryMavenLocal
 import ru.pixnews.wasm.sqlite.open.helper.gradle.settings.googleFiltered
 import ru.pixnews.wasm.sqlite.open.helper.gradle.settings.icuRepository
 import ru.pixnews.wasm.sqlite.open.helper.gradle.settings.sqliteRepository
@@ -38,6 +39,7 @@ pluginManagement {
 
 dependencyResolutionManagement {
     repositories {
+        chicoryMavenLocal()
         mavenCentral()
         googleFiltered()
         sqliteRepository()

@@ -25,7 +25,7 @@ internal class SyscallUnlinkat(
             memory,
             args[0].asInt(),
             args[1].asWasmAddr(),
-            args[1].asUInt().toUInt(),
+            args[2].asUInt().toUInt(),
         )
         return Value.i32(result.toLong())
     }

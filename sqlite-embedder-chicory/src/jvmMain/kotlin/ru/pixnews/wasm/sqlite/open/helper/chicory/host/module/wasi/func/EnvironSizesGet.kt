@@ -22,6 +22,6 @@ internal class EnvironSizesGet(
     private val handle = EnvironSizesGetFunctionHandle(host)
 
     override fun apply(instance: Instance, vararg args: Value): Errno {
-        return handle.execute(memory, args[0].asWasmAddr(), args[0].asWasmAddr())
+        return handle.execute(memory, args[0].asWasmAddr(), args[1].asWasmAddr())
     }
 }

@@ -26,16 +26,6 @@ icuBuild {
         create("main-datastatic") {
             dataPackaging = ICU_DATA_PACKAGING_STATIC
             usePthreads = false
-            // Optimization set to -O2 to turn off optimizations that are not handled correctly in Chicory
-            icuAdditionalCflags = listOf(
-                    "-O2",
-                    "-flto",
-                    "-DU_HAVE_MMAP=0",
-                    "-DUCONFIG_NO_FILE_IO",
-                    "-DUCONFIG_NO_FORMATTING",
-                    "-DUCONFIG_NO_LEGACY_CONVERSION",
-                    "-DUCONFIG_NO_TRANSLITERATION",
-                )
         }
         createWithArchiveDatapackagingArchive("main-dataarchive-multithread") {
             usePthreads = true

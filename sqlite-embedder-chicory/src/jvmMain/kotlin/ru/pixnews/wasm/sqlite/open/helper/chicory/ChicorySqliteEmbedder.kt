@@ -10,8 +10,8 @@ import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.runtime.Module
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.chicory.bindings.ChicorySqliteBindings
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.EnvModuleBuilder
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.EnvModuleBuilder.EnvModule
+import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.MainModuleBuilder
+import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.MainModuleBuilder.EnvModule
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.EmbedderMemory
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SQLiteEmbedderRuntimeInfo
@@ -51,7 +51,7 @@ public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig
         val sqlite3Module = sqlite3Binary.sqliteUrl.openStream().use {
             Module.builder(it).build()
         }
-        val envModule: EnvModule = EnvModuleBuilder(
+        val envModule: EnvModule = MainModuleBuilder(
             host = host,
             minMemorySize = sqlite3Binary.wasmMinMemorySize,
         ).setupModule()

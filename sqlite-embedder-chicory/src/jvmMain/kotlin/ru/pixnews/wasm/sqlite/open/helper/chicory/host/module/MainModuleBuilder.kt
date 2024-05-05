@@ -23,9 +23,8 @@ import ru.pixnews.wasm.sqlite.open.helper.host.WasmModules.ENV_MODULE_NAME
 import ru.pixnews.wasm.sqlite.open.helper.host.WasmSizes
 import com.dylibso.chicory.runtime.Memory as ChicoryMemory
 
-internal class EnvModuleBuilder(
+internal class MainModuleBuilder(
     private val host: SqliteEmbedderHost,
-    private val moduleName: String = ENV_MODULE_NAME,
     private val minMemorySize: Long = 50_331_648L,
 ) {
     fun setupModule(): EnvModule {
@@ -34,9 +33,9 @@ internal class EnvModuleBuilder(
         val memoryAdapter = ChicoryMemoryAdapter(memory.memory(), host.rootLogger)
 
         val wasiFunctions = WasiSnapshotPreview1Builtins(memoryAdapter, host)
-            .asChicoryHostFunctions(moduleName)
+            .asChicoryHostFunctions()
         val emscriptenFunctions = EmscriptenEnvFunctionsBuilder(memoryAdapter, host)
-            .asChicoryHostFunctions(moduleName)
+            .asChicoryHostFunctions()
 
         return EnvModule(
             hostImports = HostImports(
@@ -53,7 +52,7 @@ internal class EnvModuleBuilder(
     private fun setupMemory(
         minMemorySize: Long,
     ): HostMemory = HostMemory(
-        /* moduleName = */ moduleName,
+        /* moduleName = */ ENV_MODULE_NAME,
         /* fieldName = */ "memory",
         /* memory = */
         ChicoryMemory(
