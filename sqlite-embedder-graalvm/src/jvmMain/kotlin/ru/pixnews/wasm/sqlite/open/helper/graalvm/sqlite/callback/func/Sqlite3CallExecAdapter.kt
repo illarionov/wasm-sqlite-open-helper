@@ -14,8 +14,6 @@ import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr.Companion.WASM_SIZEOF_PTR
-import ru.pixnews.wasm.sqlite.open.helper.common.api.plus
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore.SqliteExecCallbackId
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.function.SqliteExecCallbackFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt

@@ -14,13 +14,11 @@ import com.dylibso.chicory.runtime.HostMemory
 import com.dylibso.chicory.runtime.HostTable
 import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.runtime.Module
-import com.dylibso.chicory.runtime.Module.START_FUNCTION_NAME
 import com.dylibso.chicory.wasm.types.MemoryLimits
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.memory.ChicoryMemoryAdapter
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.EmscriptenEnvFunctionsBuilder
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.sqlitecb.SqliteCallbacksFunctionsBuilder
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.sqlitecb.SqliteCallbacksFunctionsBuilder.Companion.addSqliteCallbacksImportsToWasmModule
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.sqlitecb.SqliteCallbacksFunctionsBuilder.Companion.setupIndirectFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.WasiSnapshotPreview1Builtins
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
@@ -30,6 +28,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.WasmModules.ENV_MODULE_NAME
 import ru.pixnews.wasm.sqlite.open.helper.host.WasmSizes
 import com.dylibso.chicory.runtime.Memory as ChicoryMemory
 
+@Suppress("COMMENTED_OUT_CODE")
 internal class MainInstanceBuilder(
     private val host: SqliteEmbedderHost,
     private val callbackStore: SqliteCallbackStore,
@@ -64,9 +63,12 @@ internal class MainInstanceBuilder(
             Module.builder(it).build()
         }
 
-        val instance = sqlite3Module.instantiate(hostImports, true, false)
+        val instance = sqlite3Module.instantiate(hostImports)
         val indirectFunctionTableIndexes = setupIndirectFunctionIndexes(instance)
-        instance.export(START_FUNCTION_NAME).apply()
+// New version (Choicory 0.0.9+):
+//        val instance = sqlite3Module.instantiate(hostImports, true, false)
+//        val indirectFunctionTableIndexes = setupIndirectFunctionIndexes(instance)
+//        instance.export(START_FUNCTION_NAME).apply()
 
         return ChicoryInstance(
             instance = instance,
@@ -88,7 +90,6 @@ internal class MainInstanceBuilder(
             ),
         ),
     )
-
 
     internal class ChicoryInstance(
         val instance: Instance,

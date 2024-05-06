@@ -60,7 +60,8 @@ public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig
                 override val supportMultithreading: Boolean = false
             }
             override val memory: EmbedderMemory = chicoryInstance.memory
-            override val callbackFunctionIndexes: Sqlite3CallbackFunctionIndexes = chicoryInstance.indirectFunctionIndexes
+            override val callbackFunctionIndexes: Sqlite3CallbackFunctionIndexes =
+                chicoryInstance.indirectFunctionIndexes
         }
     }
 }

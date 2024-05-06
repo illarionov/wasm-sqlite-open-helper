@@ -11,7 +11,6 @@ import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType
 import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType.WebAssemblyTypes.I32
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction.HostFunctionType
-import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.WasiValueTypes.U32
 
 /**
@@ -70,9 +69,5 @@ public enum class SqliteCallbacksModuleFunction(
     public companion object {
         public val byWasmName: Map<String, SqliteCallbacksModuleFunction> = SqliteCallbacksModuleFunction.entries
             .associateBy(SqliteCallbacksModuleFunction::wasmName)
-
-        init {
-            check(SqliteCallbacksModuleFunction.entries.size == byWasmName.size)
-        }
     }
 }

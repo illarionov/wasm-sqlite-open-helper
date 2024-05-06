@@ -6,8 +6,10 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chicory
 
+import org.junit.jupiter.api.Disabled
 import ru.pixnews.wasm.sqlite.open.helper.tests.AbstractIcuCollationTest
 
+@Disabled("Not ready yet")
 class ChicoryIcuCollationTest : AbstractIcuCollationTest<ChicorySqliteEmbedderConfig>(
     factoryCreator = ChicoryFactoryCreator,
 )

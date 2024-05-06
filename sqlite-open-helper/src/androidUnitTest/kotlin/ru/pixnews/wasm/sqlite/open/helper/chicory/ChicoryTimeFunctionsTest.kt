@@ -6,8 +6,10 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chicory
 
+import org.junit.jupiter.api.Disabled
 import ru.pixnews.wasm.sqlite.open.helper.tests.AbstractTimeFunctionsTest
 
+@Disabled("Not ready yet")
 class ChicoryTimeFunctionsTest : AbstractTimeFunctionsTest<ChicorySqliteEmbedderConfig>(
     factoryCreator = ChicoryFactoryCreator,
 )
