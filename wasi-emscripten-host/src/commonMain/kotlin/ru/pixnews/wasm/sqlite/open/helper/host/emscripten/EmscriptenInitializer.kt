@@ -9,7 +9,7 @@ package ru.pixnews.wasm.sqlite.open.helper.host.emscripten
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.EmbedderMemory
-import ru.pixnews.wasm.sqlite.open.helper.host.WasmFunctionBinding
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmFunctionBinding
 
 @InternalWasmSqliteHelperApi
 @Suppress("MagicNumber")

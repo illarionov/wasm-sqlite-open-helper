@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.host
+package ru.pixnews.wasm.sqlite.open.helper.host.base
 
 public object WasmSizes {
     public const val WASM_MEMORY_SQLITE_MAX_PAGES: Long = 32_768L

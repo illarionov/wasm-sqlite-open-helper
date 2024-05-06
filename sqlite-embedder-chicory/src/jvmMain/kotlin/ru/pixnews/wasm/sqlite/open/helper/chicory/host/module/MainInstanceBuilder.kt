@@ -24,8 +24,8 @@ import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.WasiSnapshotP
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.host.WasmModules.ENV_MODULE_NAME
-import ru.pixnews.wasm.sqlite.open.helper.host.WasmSizes
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmModules.ENV_MODULE_NAME
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmSizes
 import com.dylibso.chicory.runtime.Memory as ChicoryMemory
 
 @Suppress("COMMENTED_OUT_CODE")

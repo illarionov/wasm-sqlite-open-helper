@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.host
+package ru.pixnews.wasm.sqlite.open.helper.host.base
 
 import kotlin.jvm.JvmInline
 

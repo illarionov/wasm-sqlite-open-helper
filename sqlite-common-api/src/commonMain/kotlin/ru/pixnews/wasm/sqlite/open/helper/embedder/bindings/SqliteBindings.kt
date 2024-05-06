@@ -9,7 +9,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.embedder.bindings
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
-import ru.pixnews.wasm.sqlite.open.helper.host.WasmFunctionBinding
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmFunctionBinding
 
 @InternalWasmSqliteHelperApi
 public interface SqliteBindings {

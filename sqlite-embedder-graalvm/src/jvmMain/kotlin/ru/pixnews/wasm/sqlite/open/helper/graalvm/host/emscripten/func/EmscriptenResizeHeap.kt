@@ -16,7 +16,7 @@ import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.host.WasmSizes.WASM_MEMORY_PAGE_SIZE
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmSizes.WASM_MEMORY_PAGE_SIZE
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.EmscriptenResizeHeapFunctionHandle.Companion.calculateNewSizePages
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno

@@ -8,11 +8,11 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.wasi
 
-import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType
-import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType.WebAssemblyTypes.I32
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmValueType
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmValueType.WebAssemblyTypes.I32
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction.HostFunctionType
-import ru.pixnews.wasm.sqlite.open.helper.host.pointer
+import ru.pixnews.wasm.sqlite.open.helper.host.base.pointer
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Advice
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.CiovecArray
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.ClockId

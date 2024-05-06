@@ -14,7 +14,7 @@ import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.constants.Sizes
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.NodeFactory
 import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmValueType
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction.HostFunctionType
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.functionTypes

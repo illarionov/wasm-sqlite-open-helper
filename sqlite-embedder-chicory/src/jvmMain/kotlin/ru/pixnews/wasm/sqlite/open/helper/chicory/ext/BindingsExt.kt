@@ -8,7 +8,7 @@ package ru.pixnews.wasm.sqlite.open.helper.chicory.ext
 
 import com.dylibso.chicory.runtime.Instance
 import ru.pixnews.wasm.sqlite.open.helper.chicory.bindings.ChicoryWasmFunctionBinding
-import ru.pixnews.wasm.sqlite.open.helper.host.WasmFunctionBinding
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmFunctionBinding
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
