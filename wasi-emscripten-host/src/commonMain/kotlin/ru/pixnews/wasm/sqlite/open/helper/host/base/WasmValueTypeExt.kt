@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.host
+package ru.pixnews.wasm.sqlite.open.helper.host.base
 
-import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType.WebAssemblyTypes.I32
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmValueType.WebAssemblyTypes.I32
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.WasiTypename
 
 public val POINTER: WasmValueType get() = I32

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.host
+package ru.pixnews.wasm.sqlite.open.helper.host.base
 
 public object WasmModules {
     public const val ENV_MODULE_NAME: String = "env"

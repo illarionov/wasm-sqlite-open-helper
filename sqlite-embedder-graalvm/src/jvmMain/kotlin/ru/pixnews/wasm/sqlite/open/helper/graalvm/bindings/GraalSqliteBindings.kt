@@ -10,7 +10,7 @@ import org.graalvm.polyglot.Value
 import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.SqliteBindings
 import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.SqliteMemoryBindings
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.member
-import ru.pixnews.wasm.sqlite.open.helper.host.WasmFunctionBinding
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmFunctionBinding
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
 
 @Suppress("VariableNaming", "BLANK_LINE_BETWEEN_PROPERTIES")

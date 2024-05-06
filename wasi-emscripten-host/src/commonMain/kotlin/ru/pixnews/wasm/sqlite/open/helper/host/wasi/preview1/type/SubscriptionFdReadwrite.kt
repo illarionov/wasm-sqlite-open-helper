@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type
 
-import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmValueType
 
 /**
  * The contents of a `subscription` when type is type is `eventtype::fd_read` or `eventtype::fd_write`.

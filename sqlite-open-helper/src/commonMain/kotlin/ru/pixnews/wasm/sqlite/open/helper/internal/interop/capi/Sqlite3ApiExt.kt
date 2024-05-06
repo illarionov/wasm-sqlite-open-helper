@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.internal.interop.capi
 
-import ru.pixnews.wasm.sqlite.open.helper.host.WasmFunctionBinding
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmFunctionBinding
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
 
 internal fun WasmFunctionBinding.executeForSqliteResultCode(vararg args: Any?): SqliteResultCode = SqliteResultCode(

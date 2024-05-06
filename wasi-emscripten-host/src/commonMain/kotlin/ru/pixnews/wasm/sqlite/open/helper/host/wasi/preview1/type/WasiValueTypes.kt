@@ -8,7 +8,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type
 
-import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmValueType
 
 /**
  * Type names used by low-level WASI interfaces.

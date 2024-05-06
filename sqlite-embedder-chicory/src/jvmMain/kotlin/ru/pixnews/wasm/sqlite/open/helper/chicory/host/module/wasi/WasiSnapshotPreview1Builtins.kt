@@ -24,7 +24,7 @@ import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.function.FdWr
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.function.SchedYield
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.function.notImplementedWasiHostFunctionHandleFactory
 import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmValueType
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction
 import com.dylibso.chicory.runtime.WasmFunctionHandle as ChicoryWasmFunctionHandle

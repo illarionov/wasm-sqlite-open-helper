@@ -7,7 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.chicory.ext
 
 import com.dylibso.chicory.wasm.types.ValueType
-import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmValueType
 
 internal val WasmValueType.chicory: ValueType
     get() = ValueType.byId(

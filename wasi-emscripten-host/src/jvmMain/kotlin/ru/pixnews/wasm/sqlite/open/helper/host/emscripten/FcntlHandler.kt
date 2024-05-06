@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.host
+package ru.pixnews.wasm.sqlite.open.helper.host.emscripten
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
@@ -14,13 +14,15 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.FdChannel
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.FileLockKey
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.resolvePosition
 import ru.pixnews.wasm.sqlite.open.helper.host.include.Fcntl
-import ru.pixnews.wasm.sqlite.open.helper.host.include.Fcntl.F_RDLCK
-import ru.pixnews.wasm.sqlite.open.helper.host.include.Fcntl.F_UNLCK
-import ru.pixnews.wasm.sqlite.open.helper.host.include.Fcntl.F_WRLCK
 import ru.pixnews.wasm.sqlite.open.helper.host.include.StructFlock
+import ru.pixnews.wasm.sqlite.open.helper.host.include.StructFlock.Companion
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.readPtr
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno.AGAIN
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno.BADF
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno.INVAL
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno.NOLCK
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno.SUCCESS
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 import java.io.IOException
 import java.nio.channels.ClosedChannelException
@@ -30,7 +32,7 @@ import java.nio.channels.NonWritableChannelException
 import java.nio.channels.OverlappingFileLockException
 import kotlin.concurrent.withLock
 
-public class FcntlHandler(
+internal class FcntlHandler(
     private val fileSystem: FileSystem,
     rootLogger: Logger,
 ) {
@@ -45,7 +47,7 @@ public class FcntlHandler(
         operation: UInt,
         thirdArg: Int?,
     ): Int {
-        val handler = handlers[operation] ?: throw SysException(Errno.INVAL, "Fcntl operation $operation not supported")
+        val handler = handlers[operation] ?: throw SysException(INVAL, "Fcntl operation $operation not supported")
         val channel = fileSystem.getStreamByFd(fd)
         return handler.invoke(memory, channel, thirdArg)
     }
@@ -71,9 +73,9 @@ public class FcntlHandler(
 
             logger.v { "F_SETLK(${channel.fd}, $flock)" }
             return when (flock.l_type) {
-                F_RDLCK, F_WRLCK -> lock(channel, flock)
-                F_UNLCK -> unlock(channel, flock)
-                else -> throw SysException(Errno.INVAL, "Unknown flock.l_type `${flock.l_type}`")
+                Fcntl.F_RDLCK, Fcntl.F_WRLCK -> lock(channel, flock)
+                Fcntl.F_UNLCK -> unlock(channel, flock)
+                else -> throw SysException(INVAL, "Unknown flock.l_type `${flock.l_type}`")
             }
         }
 
@@ -82,7 +84,7 @@ public class FcntlHandler(
             channel: FdChannel,
             flock: StructFlock,
         ): Int {
-            val isSharedLock = flock.l_type == F_RDLCK
+            val isSharedLock = flock.l_type == Fcntl.F_RDLCK
             val position = channel.resolvePosition(flock.l_start.toLong(), flock.whence)
             try {
                 // Unlock overlapping locks
@@ -93,7 +95,7 @@ public class FcntlHandler(
                     position,
                     flock.l_len.toLong(),
                     isSharedLock,
-                ) ?: return -Errno.AGAIN.code
+                ) ?: return -AGAIN.code
 
                 val fileLockKey = FileLockKey(position, flock.l_len.toLong())
                 val oldLock = channel.lock.withLock {
@@ -105,20 +107,20 @@ public class FcntlHandler(
                     // ignore
                 }
             } catch (iae: IllegalArgumentException) {
-                throw SysException(Errno.BADF, "Parameter validation failed: ${iae.message}", iae)
+                throw SysException(BADF, "Parameter validation failed: ${iae.message}", iae)
             } catch (cce: ClosedChannelException) {
-                throw SysException(Errno.BADF, "Channel already closed", cce)
+                throw SysException(BADF, "Channel already closed", cce)
             } catch (ofle: OverlappingFileLockException) {
-                throw SysException(Errno.BADF, "Overlapping lock: ${ofle.message}", ofle)
+                throw SysException(BADF, "Overlapping lock: ${ofle.message}", ofle)
             } catch (nrce: NonReadableChannelException) {
-                throw SysException(Errno.BADF, "Channel not open for reading: ${nrce.message}", nrce)
+                throw SysException(BADF, "Channel not open for reading: ${nrce.message}", nrce)
             } catch (nwce: NonWritableChannelException) {
-                throw SysException(Errno.BADF, "Channel not open for writing: ${nwce.message}", nwce)
+                throw SysException(BADF, "Channel not open for writing: ${nwce.message}", nwce)
             } catch (ioe: IOException) {
-                throw SysException(Errno.NOLCK, "IO exception: ${ioe.message}", ioe)
+                throw SysException(NOLCK, "IO exception: ${ioe.message}", ioe)
             }
 
-            return Errno.SUCCESS.code
+            return SUCCESS.code
         }
 
         private fun unlock(
@@ -143,12 +145,12 @@ public class FcntlHandler(
             try {
                 locksToRelease.forEach { it.release() }
             } catch (cce: ClosedChannelException) {
-                throw SysException(Errno.BADF, "Channel already closed", cce)
+                throw SysException(BADF, "Channel already closed", cce)
             } catch (ioe: IOException) {
-                throw SysException(Errno.NOLCK, "IO exception: ${ioe.message}", ioe)
+                throw SysException(NOLCK, "IO exception: ${ioe.message}", ioe)
             }
 
-            return Errno.SUCCESS.code
+            return SUCCESS.code
         }
     }
 }

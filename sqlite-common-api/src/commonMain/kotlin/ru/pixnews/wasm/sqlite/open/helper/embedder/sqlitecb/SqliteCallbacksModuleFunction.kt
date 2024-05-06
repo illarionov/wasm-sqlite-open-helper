@@ -6,9 +6,9 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb
 
-import ru.pixnews.wasm.sqlite.open.helper.host.POINTER
-import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType
-import ru.pixnews.wasm.sqlite.open.helper.host.WasmValueType.WebAssemblyTypes.I32
+import ru.pixnews.wasm.sqlite.open.helper.host.base.POINTER
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmValueType
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmValueType.WebAssemblyTypes.I32
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction.HostFunctionType
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.WasiValueTypes.U32
