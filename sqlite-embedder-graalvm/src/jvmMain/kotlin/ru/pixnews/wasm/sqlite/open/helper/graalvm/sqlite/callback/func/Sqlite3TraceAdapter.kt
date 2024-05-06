@@ -14,30 +14,25 @@ import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
+import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.function.Sqlite3TraceFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsUint
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteStatement
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTrace
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceCallback
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode.Companion.SQLITE_TRACE_CLOSE
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode.Companion.SQLITE_TRACE_PROFILE
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode.Companion.SQLITE_TRACE_ROW
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode.Companion.SQLITE_TRACE_STMT
-import kotlin.time.Duration.Companion.nanoseconds
 
 internal class Sqlite3TraceAdapter(
     language: WasmLanguage,
     module: WasmModule,
-    private val traceCallbackStore: (WasmPtr<SqliteDb>) -> SqliteTraceCallback?,
+    traceCallbackStore: (WasmPtr<SqliteDb>) -> SqliteTraceCallback?,
     host: SqliteEmbedderHost,
     functionName: String,
 ) : BaseWasmNode(language, module, host, functionName) {
+    private val handle = Sqlite3TraceFunctionHandle(host, traceCallbackStore)
+
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {
         val args = frame.arguments
         return invokeTraceCallback(
@@ -56,41 +51,5 @@ internal class Sqlite3TraceAdapter(
         contextPointer: WasmPtr<SqliteDb>,
         arg1: WasmPtr<Nothing>,
         arg2: Long,
-    ): Int {
-        val delegate: (trace: SqliteTrace) -> Unit =
-            traceCallbackStore(contextPointer) ?: error("Callback $contextPointer not registered")
-
-        if (flags.contains(SQLITE_TRACE_STMT)) {
-            val traceInfo = SqliteTrace.TraceStmt(
-                db = contextPointer,
-                statement = arg1 as WasmPtr<SqliteStatement>,
-                unexpandedSql = memory.readString(arg2.toInt(), null),
-            )
-            delegate.invoke(traceInfo)
-        }
-        if (flags.contains(SQLITE_TRACE_PROFILE)) {
-            val timeNs = memory.load_i64(this, arg2)
-            val traceInfo = SqliteTrace.TraceProfile(
-                db = contextPointer,
-                statement = arg1 as WasmPtr<SqliteStatement>,
-                time = timeNs.nanoseconds,
-            )
-            delegate.invoke(traceInfo)
-        }
-        if (flags.contains(SQLITE_TRACE_ROW)) {
-            val traceInfo = SqliteTrace.TraceRow(
-                db = contextPointer,
-                statement = arg1 as WasmPtr<SqliteStatement>,
-            )
-            delegate.invoke(traceInfo)
-        }
-        if (flags.contains(SQLITE_TRACE_CLOSE)) {
-            val traceInfo = SqliteTrace.TraceClose(
-                db = arg1 as WasmPtr<SqliteDb>,
-            )
-            delegate.invoke(traceInfo)
-        }
-
-        return 0
-    }
+    ): Int = handle.execute(memory.toHostMemory(), flags, contextPointer, arg1, arg2)
 }

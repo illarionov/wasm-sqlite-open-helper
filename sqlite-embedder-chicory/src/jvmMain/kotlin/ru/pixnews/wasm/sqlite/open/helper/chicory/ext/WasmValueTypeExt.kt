@@ -15,3 +15,5 @@ internal val WasmValueType.chicory: ValueType
             "Can not convert Wasi type without opcode"
         }.toLong(),
     )
+// New version:
+// get() = ValueType.forId(requireNotNull(opcode) { "Can not convert Wasi type without opcode" }.toInt())

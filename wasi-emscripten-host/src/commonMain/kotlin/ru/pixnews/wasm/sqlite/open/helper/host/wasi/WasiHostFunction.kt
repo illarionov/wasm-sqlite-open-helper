@@ -1227,10 +1227,6 @@ public enum class WasiHostFunction(
     )
 
     public companion object {
-        public val byWasmName: Map<String, HostFunction> = entries.associateBy(WasiHostFunction::wasmName)
-
-        init {
-            check(entries.size == byWasmName.size)
-        }
+        public val byWasmName: Map<String, WasiHostFunction> = entries.associateBy(WasiHostFunction::wasmName)
     }
 }

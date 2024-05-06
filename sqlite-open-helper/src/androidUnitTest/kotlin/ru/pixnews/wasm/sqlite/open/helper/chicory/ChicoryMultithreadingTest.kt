@@ -9,7 +9,7 @@ package ru.pixnews.wasm.sqlite.open.helper.chicory
 import org.junit.jupiter.api.Disabled
 import ru.pixnews.wasm.sqlite.open.helper.tests.AbstractMultithreadingTest
 
-@Disabled("Not ready yet")
+@Disabled("not applicable")
 class ChicoryMultithreadingTest : AbstractMultithreadingTest<ChicorySqliteEmbedderConfig>(
     factoryCreator = ChicoryFactoryCreator,
 )

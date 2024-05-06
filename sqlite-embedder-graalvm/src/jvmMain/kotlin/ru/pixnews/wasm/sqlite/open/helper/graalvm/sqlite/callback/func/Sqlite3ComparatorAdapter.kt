@@ -15,6 +15,7 @@ import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore.SqliteComparatorId
+import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.function.SqliteComparatorFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
@@ -24,10 +25,12 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteComparatorCall
 internal class Sqlite3ComparatorAdapter(
     language: WasmLanguage,
     module: WasmModule,
-    private val comparatorStore: (SqliteComparatorId) -> SqliteComparatorCallback?,
+    comparatorStore: (SqliteComparatorId) -> SqliteComparatorCallback?,
     host: SqliteEmbedderHost,
     functionName: String,
 ) : BaseWasmNode(language, module, host, functionName) {
+    private val handler = SqliteComparatorFunctionHandle(host, comparatorStore)
+
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {
         val args = frame.arguments
         return invokeComparator(
@@ -48,15 +51,5 @@ internal class Sqlite3ComparatorAdapter(
         str1: WasmPtr<Byte>,
         str2Size: Int,
         str2: WasmPtr<Byte>,
-    ): Int {
-        logger.v { "Calling comparator: $comparatorId" }
-        val hostMemory = memory.toHostMemory()
-        val delegate: SqliteComparatorCallback = comparatorStore(SqliteComparatorId(comparatorId))
-            ?: error("Comparator $comparatorId not registered")
-
-        val str1Bytes = hostMemory.readBytes(str1, str1Size)
-        val str2Bytes = hostMemory.readBytes(str2, str2Size)
-
-        return delegate.invoke(String(str1Bytes), String(str2Bytes))
-    }
+    ): Int = handler.execute(memory.toHostMemory(), comparatorId, str1Size, str1, str2Size, str2)
 }
