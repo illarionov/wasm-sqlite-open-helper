@@ -14,6 +14,7 @@ import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.function.Sqlite3LoggingFunctionHandler
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
@@ -23,10 +24,12 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteLogCallback
 internal class Sqlite3LoggingAdapter(
     language: WasmLanguage,
     module: WasmModule,
-    private val logCallbackStore: () -> SqliteLogCallback?,
+    logCallbackStore: () -> SqliteLogCallback?,
     host: SqliteEmbedderHost,
     functionName: String,
 ) : BaseWasmNode(language, module, host, functionName) {
+    private val handle = Sqlite3LoggingFunctionHandler(host, logCallbackStore)
+
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance) {
         val args = frame.arguments
         invokeLoggingCallback(
@@ -42,9 +45,5 @@ internal class Sqlite3LoggingAdapter(
         memory: WasmMemory,
         errCode: Int,
         messagePointer: WasmPtr<Byte>,
-    ) {
-        val delegate = logCallbackStore() ?: return
-        val message = memory.readString(messagePointer.addr, null)
-        delegate.invoke(errCode, message)
-    }
+    ) = handle.execute(memory.toHostMemory(), errCode, messagePointer)
 }

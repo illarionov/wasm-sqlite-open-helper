@@ -255,7 +255,8 @@ public enum class EmscriptenHostFunction(
     )
 
     public companion object {
-        public val byWasmName: Map<String, HostFunction> = entries.associateBy(EmscriptenHostFunction::wasmName)
+        public val byWasmName: Map<String, EmscriptenHostFunction> = entries
+            .associateBy(EmscriptenHostFunction::wasmName)
 
         init {
             check(entries.size == byWasmName.size)

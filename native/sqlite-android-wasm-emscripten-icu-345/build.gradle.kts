@@ -51,7 +51,9 @@ sqlite3Build {
         create("android-icu") {
             sqliteVersion = defaultSqliteVersion
             codeGenerationOptions = SqliteCodeGenerationOptions.codeGenerationOptions
-            emscriptenConfigurationOptions = SqliteCodeGenerationOptions.emscriptenConfigurationOptions
+            emscriptenConfigurationOptions = SqliteCodeGenerationOptions.emscriptenConfigurationOptions -
+                    "-sERROR_ON_UNDEFINED_SYMBOLS" + "-sERROR_ON_UNDEFINED_SYMBOLS=0"
+            additionalSourceFiles.from("../sqlite-android-common/sqlite/wasm/api/callbacks-wasm.c")
             sqliteConfigOptions = SqliteConfigurationOptions.openHelperConfig(
                 enableIcu = true,
                 enableMultithreading = false,

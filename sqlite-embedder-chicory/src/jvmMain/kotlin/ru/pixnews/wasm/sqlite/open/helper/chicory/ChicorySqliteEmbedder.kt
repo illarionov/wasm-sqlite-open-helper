@@ -6,12 +6,10 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chicory
 
-import com.dylibso.chicory.runtime.Instance
-import com.dylibso.chicory.runtime.Module
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.chicory.bindings.ChicorySqliteBindings
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.MainModuleBuilder
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.MainModuleBuilder.EnvModule
+import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.MainInstanceBuilder
+import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.MainInstanceBuilder.ChicoryInstance
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.EmbedderMemory
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SQLiteEmbedderRuntimeInfo
@@ -48,25 +46,21 @@ public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig
                     "Chicory WebAssembly runtime. Use a version of SQLite compiled without thread support."
         }
 
-        val sqlite3Module = sqlite3Binary.sqliteUrl.openStream().use {
-            Module.builder(it).build()
-        }
-        val envModule: EnvModule = MainModuleBuilder(
+        val chicoryInstance: ChicoryInstance = MainInstanceBuilder(
             host = host,
+            callbackStore = callbackStore,
             minMemorySize = sqlite3Binary.wasmMinMemorySize,
-        ).setupModule()
+        ).setupModule(sqlite3Binary)
 
-        val instance: Instance = sqlite3Module.instantiate(envModule.hostImports)
-
-        val bindings = ChicorySqliteBindings(envModule.memory, instance)
+        val bindings = ChicorySqliteBindings(chicoryInstance.memory, chicoryInstance.instance)
 
         return object : SqliteWasmEnvironment {
             override val sqliteBindings: SqliteBindings = bindings
             override val embedderInfo: SQLiteEmbedderRuntimeInfo = object : SQLiteEmbedderRuntimeInfo {
                 override val supportMultithreading: Boolean = false
             }
-            override val memory: EmbedderMemory = envModule.memory
-            override val callbackFunctionIndexes: Sqlite3CallbackFunctionIndexes = envModule.indirectFunctionIndexes
+            override val memory: EmbedderMemory = chicoryInstance.memory
+            override val callbackFunctionIndexes: Sqlite3CallbackFunctionIndexes = chicoryInstance.indirectFunctionIndexes
         }
     }
 }
