@@ -21,11 +21,11 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.bindings.EmscriptenPthreadBindings
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.bindings.GraalSqliteBindings
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.EmscriptenEnvModuleBuilder
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.GraalvmWasmHostMemoryAdapter
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.preview1.WasiSnapshotPreview1ModuleBuilder
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.EmscriptenEnvModuleBuilder
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.SqliteCallbacksModuleBuilder
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.wasi.WasiSnapshotPreview1ModuleBuilder
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.pthread.Pthread
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.SqliteCallbacksModuleBuilder
 import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
 import java.util.concurrent.atomic.AtomicReference
 
@@ -59,7 +59,11 @@ public object GraalvmSqliteEmbedder : SqliteEmbedder<GraalvmSqliteEmbedderConfig
         val ptreadRef: AtomicReference<Pthread> = AtomicReference()
 
         val sqliteCallbacksModuleBuilder = SqliteCallbacksModuleBuilder(graalContext, host, callbackStore)
-        val envModuleInstance = EmscriptenEnvModuleBuilder(graalContext, host, ptreadRef::get).setupModule(
+        val envModuleInstance = EmscriptenEnvModuleBuilder(
+            graalContext,
+            host,
+            ptreadRef::get,
+        ).setupModule(
             minMemorySize = sqlite3Binary.wasmMinMemorySize,
             sharedMemory = sqlite3Binary.requireSharedMemory,
             useUnsafeMemory = useSharedMemory,
