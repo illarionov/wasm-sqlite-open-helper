@@ -7,6 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.host.include.sys
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.SqliteUintBitMask
+import kotlin.jvm.JvmInline
 
 /**
  * Mmap flags

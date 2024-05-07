@@ -11,12 +11,14 @@ import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WasiMemoryReader
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WasiMemoryWriter
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.FdChannel
-import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
-import ru.pixnews.wasm.sqlite.open.helper.host.memory.WasiMemoryReader
-import ru.pixnews.wasm.sqlite.open.helper.host.memory.WasiMemoryWriter
+import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.JvmFileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.CiovecArray
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.IovecArray
 import java.io.ByteArrayOutputStream
 
@@ -26,19 +28,30 @@ import java.io.ByteArrayOutputStream
 internal class GraalvmWasmHostMemoryAdapter(
     private val memoryProvider: () -> WasmMemory,
     internal val node: Node?,
+    fileSystem: FileSystem<*>,
     logger: Logger,
 ) : Memory {
     internal val wasmMemory: WasmMemory get() = memoryProvider.invoke()
-    private val memoryReader: WasiMemoryReader = GraalInputStreamWasiMemoryReader(this, logger)
-    private val memoryWriter: WasiMemoryWriter = GraalOutputStreamWasiMemoryWriter(this, logger)
+    private val memoryReader: WasiMemoryReader = GraalInputStreamWasiMemoryReader(
+        this,
+        fileSystem as? JvmFileSystem ?: error("JvmFileSystem expected"),
+        logger,
+    )
+    private val memoryWriter: WasiMemoryWriter = GraalOutputStreamWasiMemoryWriter(
+        this,
+        fileSystem as? JvmFileSystem ?: error("JvmFileSystem expected"),
+        logger,
+    )
 
     constructor(
         memoryModuleInstance: WasmInstance,
         node: Node?,
+        fileSystem: FileSystem<*>,
         logger: Logger,
     ) : this(
         { memoryModuleInstance.memory(0) },
         node,
+        fileSystem,
         logger,
     )
 
@@ -77,18 +90,14 @@ internal class GraalvmWasmHostMemoryAdapter(
     }
 
     override fun readFromChannel(
-        channel: FdChannel,
+        fd: Fd,
         strategy: ReadWriteStrategy,
         iovecs: IovecArray,
-    ): ULong = memoryReader.read(channel, strategy, iovecs)
+    ): ULong = memoryReader.read(fd, strategy, iovecs)
 
     override fun writeToChannel(
-        channel: FdChannel,
+        fd: Fd,
         strategy: ReadWriteStrategy,
         cioVecs: CiovecArray,
-    ): ULong = memoryWriter.write(channel, strategy, cioVecs)
-
-    fun readNullTerminatedString(
-        offset: WasmPtr<Byte>,
-    ): String = wasmMemory.readString(offset.addr, null)
+    ): ULong = memoryWriter.write(fd, strategy, cioVecs)
 }

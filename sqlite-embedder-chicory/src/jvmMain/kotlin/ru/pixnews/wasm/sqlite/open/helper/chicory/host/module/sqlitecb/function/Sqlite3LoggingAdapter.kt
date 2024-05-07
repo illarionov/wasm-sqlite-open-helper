@@ -12,7 +12,7 @@ import com.dylibso.chicory.wasm.types.Value
 import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.asWasmAddr
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.function.Sqlite3LoggingFunctionHandler
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteLogCallback
 
 internal class Sqlite3LoggingAdapter(

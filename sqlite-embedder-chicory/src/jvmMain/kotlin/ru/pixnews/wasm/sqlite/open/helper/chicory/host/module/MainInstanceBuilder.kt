@@ -39,7 +39,7 @@ internal class MainInstanceBuilder(
     ): ChicoryInstance {
         val memory = setupMemory(minMemorySize)
 
-        val memoryAdapter = ChicoryMemoryAdapter(memory.memory(), host.rootLogger)
+        val memoryAdapter = ChicoryMemoryAdapter(memory.memory(), host.fileSystem, host.rootLogger)
         val sqliteCallbackFunctionsBuilder = SqliteCallbacksFunctionsBuilder(
             memoryAdapter,
             host,
@@ -65,7 +65,7 @@ internal class MainInstanceBuilder(
 
         val instance = sqlite3Module.instantiate(hostImports)
         val indirectFunctionTableIndexes = setupIndirectFunctionIndexes(instance)
-// New version (Choicory 0.0.9+):
+// New version (Chicory 0.0.9+):
 //        val instance = sqlite3Module.instantiate(hostImports, true, false)
 //        val indirectFunctionTableIndexes = setupIndirectFunctionIndexes(instance)
 //        instance.export(START_FUNCTION_NAME).apply()

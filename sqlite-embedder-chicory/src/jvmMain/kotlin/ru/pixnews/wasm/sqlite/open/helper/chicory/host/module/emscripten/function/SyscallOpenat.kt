@@ -13,15 +13,15 @@ import com.dylibso.chicory.wasm.types.Value
 import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.asWasmAddr
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.EmscriptenHostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readU32
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.SyscallOpenatFunctionHandle
-import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
-import ru.pixnews.wasm.sqlite.open.helper.host.memory.readU32
 
 internal class SyscallOpenat(
     host: EmbedderHost,
     private val memory: Memory,
 ) : EmscriptenHostFunctionHandle {
-    private val handle = SyscallOpenatFunctionHandle(host)
+    private val handle: SyscallOpenatFunctionHandle = SyscallOpenatFunctionHandle(host)
 
     override fun apply(instance: Instance, vararg args: Value): Value? {
         val mode = if (args.lastIndex == 3) {
