@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func
+package ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.function
 
-import com.oracle.truffle.api.CompilerDirectives
+import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary
 import com.oracle.truffle.api.frame.VirtualFrame
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
@@ -25,12 +25,13 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteExecCallback
 internal class Sqlite3CallExecAdapter(
     language: WasmLanguage,
     module: WasmModule,
-    execCallbackStore: (SqliteExecCallbackId) -> SqliteExecCallback?,
     host: SqliteEmbedderHost,
-    functionName: String,
-) : BaseWasmNode(language, module, host, functionName) {
-    private val handle = SqliteExecCallbackFunctionHandle(host, execCallbackStore)
-
+    execCallbackStore: (SqliteExecCallbackId) -> SqliteExecCallback?,
+) : BaseWasmNode<SqliteExecCallbackFunctionHandle>(
+    language,
+    module,
+    SqliteExecCallbackFunctionHandle(host, execCallbackStore),
+) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
         val args = frame.arguments
         return callDelegate(
@@ -42,7 +43,7 @@ internal class Sqlite3CallExecAdapter(
         )
     }
 
-    @CompilerDirectives.TruffleBoundary
+    @TruffleBoundary
     private fun callDelegate(
         memory: WasmMemory,
         arg1: Int,

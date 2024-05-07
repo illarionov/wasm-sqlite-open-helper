@@ -23,9 +23,7 @@ internal class EnvironGet(
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
-    functionName: String = "environ_get",
-) : BaseWasmNode(language, module, host, functionName) {
-    private val handle = EnvironGetFunctionHandle(host)
+) : BaseWasmNode<EnvironGetFunctionHandle>(language, module, EnvironGetFunctionHandle(host)) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
         val args = frame.arguments
         return environGet(

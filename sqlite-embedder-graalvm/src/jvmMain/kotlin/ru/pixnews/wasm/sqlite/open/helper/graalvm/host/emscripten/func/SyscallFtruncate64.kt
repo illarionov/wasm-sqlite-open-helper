@@ -23,10 +23,7 @@ internal class SyscallFtruncate64(
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
-    functionName: String = "__syscall_ftruncate64",
-) : BaseWasmNode(language, module, host, functionName) {
-    private val handle = SyscallFtruncate64FunctionHandle(host)
-
+) : BaseWasmNode<SyscallFtruncate64FunctionHandle>(language, module, SyscallFtruncate64FunctionHandle(host)) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
         val args: Array<Any> = frame.arguments
         return syscallFtruncate64(

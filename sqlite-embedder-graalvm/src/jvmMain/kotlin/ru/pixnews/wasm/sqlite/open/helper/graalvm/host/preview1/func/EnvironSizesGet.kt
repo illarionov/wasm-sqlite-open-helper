@@ -23,9 +23,7 @@ internal class EnvironSizesGet(
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
-    functionName: String = "environ_sizes_get",
-) : BaseWasmNode(language, module, host, functionName) {
-    private val handle = EnvironSizesGetFunctionHandle(host)
+) : BaseWasmNode<EnvironSizesGetFunctionHandle>(language, module, EnvironSizesGetFunctionHandle(host)) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
         val args = frame.arguments
         return environSizesGet(

@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func
 
-import com.oracle.truffle.api.CompilerDirectives
+import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary
 import com.oracle.truffle.api.frame.VirtualFrame
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
@@ -25,9 +25,7 @@ internal class LocaltimeJs(
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
-    functionName: String = "_localtime_js",
-) : BaseWasmNode(language, module, host, functionName) {
-    private val handle = LocaltimeJsFunctionHandle(host)
+) : BaseWasmNode<LocaltimeJsFunctionHandle>(language, module, LocaltimeJsFunctionHandle(host)) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance) {
         val args = frame.arguments
         localtimeJs(
@@ -37,7 +35,7 @@ internal class LocaltimeJs(
         )
     }
 
-    @CompilerDirectives.TruffleBoundary
+    @TruffleBoundary
     @Suppress("MemberNameEqualsClassName")
     private fun localtimeJs(
         memory: WasmMemory,

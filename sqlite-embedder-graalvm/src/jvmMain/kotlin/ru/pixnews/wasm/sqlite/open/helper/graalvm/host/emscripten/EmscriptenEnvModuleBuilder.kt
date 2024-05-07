@@ -64,20 +64,7 @@ internal class EmscriptenEnvModuleBuilder(
             EmscriptenHostFunction.ASSERT_FAIL -> ::AssertFail
             EmscriptenHostFunction.EMSCRIPTEN_DATE_NOW -> ::EmscriptenDateNow
             EmscriptenHostFunction.EMSCRIPTEN_GET_NOW -> ::EmscriptenGetNow
-            EmscriptenHostFunction.EMSCRIPTEN_GET_NOW_IS_MONOTONIC -> {
-                    language: WasmLanguage,
-                    module: WasmModule,
-                    host: SqliteEmbedderHost,
-                    functionName: String,
-                ->
-                EmscriptenGetNowIsMonotonic(
-                    language = language,
-                    module = module,
-                    host = host,
-                    functionName = functionName,
-                )
-            }
-
+            EmscriptenHostFunction.EMSCRIPTEN_GET_NOW_IS_MONOTONIC -> ::EmscriptenGetNowIsMonotonic
             EmscriptenHostFunction.EMSCRIPTEN_RESIZE_HEAP -> ::EmscriptenResizeHeap
             EmscriptenHostFunction.LOCALTIME_JS -> ::LocaltimeJs
             EmscriptenHostFunction.MMAP_JS -> ::MmapJs
@@ -91,30 +78,28 @@ internal class EmscriptenEnvModuleBuilder(
             EmscriptenHostFunction.SYSCALL_FSTAT64 -> ::SyscallFstat64
             EmscriptenHostFunction.SYSCALL_FTRUNCATE64 -> ::SyscallFtruncate64
             EmscriptenHostFunction.SYSCALL_GETCWD -> ::SyscallGetcwd
-            EmscriptenHostFunction.SYSCALL_IOCTL -> notImplementedFunctionNodeFactory
+            EmscriptenHostFunction.SYSCALL_IOCTL -> notImplementedFunctionNodeFactory(this)
             EmscriptenHostFunction.SYSCALL_MKDIRAT -> ::SyscallMkdirat
-            EmscriptenHostFunction.SYSCALL_NEWFSTATAT -> notImplementedFunctionNodeFactory
+            EmscriptenHostFunction.SYSCALL_NEWFSTATAT -> notImplementedFunctionNodeFactory(this)
             EmscriptenHostFunction.SYSCALL_OPENAT -> ::SyscallOpenat
-            EmscriptenHostFunction.SYSCALL_READLINKAT -> notImplementedFunctionNodeFactory
+            EmscriptenHostFunction.SYSCALL_READLINKAT -> notImplementedFunctionNodeFactory(this)
             EmscriptenHostFunction.SYSCALL_RMDIR -> ::SyscallRmdir
             EmscriptenHostFunction.SYSCALL_STAT64 -> ::syscallStat64
             EmscriptenHostFunction.SYSCALL_LSTAT64 -> ::syscallLstat64
             EmscriptenHostFunction.SYSCALL_UNLINKAT -> ::SyscallUnlinkat
             EmscriptenHostFunction.SYSCALL_UTIMENSAT -> ::SyscallUtimensat
             EmscriptenHostFunction.TZSET_JS -> ::TzsetJs
-            EmscriptenHostFunction.EMSCRIPTEN_THREAD_SET_STRONGREF -> notImplementedFunctionNodeFactory
-            EmscriptenHostFunction.EMSCRIPTEN_EXIT_WITH_LIVE_RUNTIME -> notImplementedFunctionNodeFactory
+            EmscriptenHostFunction.EMSCRIPTEN_THREAD_SET_STRONGREF -> notImplementedFunctionNodeFactory(this)
+            EmscriptenHostFunction.EMSCRIPTEN_EXIT_WITH_LIVE_RUNTIME -> notImplementedFunctionNodeFactory(this)
             EmscriptenHostFunction.EMSCRIPTEN_INIT_MAIN_THREAD_JS -> {
                     language: WasmLanguage,
                     module: WasmModule,
                     host: SqliteEmbedderHost,
-                    functionName: String,
                 ->
                 EmscriptenInitMainThreadJs(
                     language = language,
                     module = module,
                     host = host,
-                    functionName = functionName,
                     posixThreadRef = pthreadRef,
                 )
             }
@@ -123,23 +108,21 @@ internal class EmscriptenEnvModuleBuilder(
                     language: WasmLanguage,
                     module: WasmModule,
                     host: SqliteEmbedderHost,
-                    functionName: String,
                 ->
                 EmscriptenThreadMailboxAwait(
                     language = language,
                     module = module,
                     host = host,
-                    functionName = functionName,
                     posixThreadRef = pthreadRef,
                 )
             }
 
-            EmscriptenHostFunction.EMSCRIPTEN_RECEIVE_ON_MAIN_THREAD_JS -> notImplementedFunctionNodeFactory
-            EmscriptenHostFunction.EMSCRIPTEN_CHECK_BLOCKING_ALLOWED -> notImplementedFunctionNodeFactory
-            EmscriptenHostFunction.PTHREAD_CREATE_JS -> notImplementedFunctionNodeFactory
-            EmscriptenHostFunction.EXIT -> notImplementedFunctionNodeFactory
-            EmscriptenHostFunction.EMSCRIPTEN_THREAD_CLEANUP -> notImplementedFunctionNodeFactory
-            EmscriptenHostFunction.EMSCRIPTEN_NOTIFY_MAILBOX_POSTMESSAGE -> notImplementedFunctionNodeFactory
+            EmscriptenHostFunction.EMSCRIPTEN_RECEIVE_ON_MAIN_THREAD_JS -> notImplementedFunctionNodeFactory(this)
+            EmscriptenHostFunction.EMSCRIPTEN_CHECK_BLOCKING_ALLOWED -> notImplementedFunctionNodeFactory(this)
+            EmscriptenHostFunction.PTHREAD_CREATE_JS -> notImplementedFunctionNodeFactory(this)
+            EmscriptenHostFunction.EXIT -> notImplementedFunctionNodeFactory(this)
+            EmscriptenHostFunction.EMSCRIPTEN_THREAD_CLEANUP -> notImplementedFunctionNodeFactory(this)
+            EmscriptenHostFunction.EMSCRIPTEN_NOTIFY_MAILBOX_POSTMESSAGE -> notImplementedFunctionNodeFactory(this)
         }
 
     fun setupModule(

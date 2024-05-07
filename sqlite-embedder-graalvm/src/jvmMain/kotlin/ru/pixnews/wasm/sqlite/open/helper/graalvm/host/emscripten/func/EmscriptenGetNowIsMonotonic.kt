@@ -19,10 +19,11 @@ internal class EmscriptenGetNowIsMonotonic(
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
-    functionName: String = "_emscripten_get_now_is_monotonic",
-) : BaseWasmNode(language, module, host, functionName) {
-    private val handle = EmscriptenGetNowIsMonotonicFunctionHandle(host)
-
+) : BaseWasmNode<EmscriptenGetNowIsMonotonicFunctionHandle>(
+    language,
+    module,
+    EmscriptenGetNowIsMonotonicFunctionHandle(host),
+) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
         return handle.execute()
     }

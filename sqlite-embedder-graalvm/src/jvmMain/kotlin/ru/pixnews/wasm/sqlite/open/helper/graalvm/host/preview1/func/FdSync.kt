@@ -18,34 +18,35 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.function.FdSyncSyscallFdatasyncFunctionHandle
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.function.FdSyncSyscallFdatasyncFunctionHandle.Companion.fdSync
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.function.FdSyncSyscallFdatasyncFunctionHandle.Companion.syscallFdatasync
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 
 internal fun FdSync(
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
-    functionName: String = "fd_sync",
-): BaseWasmNode = FdSync(language, module, host, functionName, fdSync(host))
+): BaseWasmNode<FdSyncSyscallFdatasyncFunctionHandle> = FdSync(
+    language,
+    module,
+    FdSyncSyscallFdatasyncFunctionHandle.fdSync(host),
+)
 
 internal fun SyscallFdatasync(
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
-    functionName: String = "__syscall_fdatasync",
-): BaseWasmNode = FdSync(language, module, host, functionName, syscallFdatasync(host))
+): BaseWasmNode<FdSyncSyscallFdatasyncFunctionHandle> = FdSync(
+    language,
+    module,
+    FdSyncSyscallFdatasyncFunctionHandle.syscallFdatasync(host),
+)
 
 private class FdSync(
     language: WasmLanguage,
     module: WasmModule,
-    host: SqliteEmbedderHost,
-    functionName: String = "fd_sync",
-    private val handle: FdSyncSyscallFdatasyncFunctionHandle,
-) : BaseWasmNode(language, module, host, functionName) {
+    handle: FdSyncSyscallFdatasyncFunctionHandle,
+) : BaseWasmNode<FdSyncSyscallFdatasyncFunctionHandle>(language, module, handle) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {
-        val args = frame.arguments
-        return fdSync(args.getArgAsInt(0))
+        return fdSync(frame.arguments.getArgAsInt(0))
     }
 
     @TruffleBoundary

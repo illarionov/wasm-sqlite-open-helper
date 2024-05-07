@@ -6,36 +6,48 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func
 
+import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary
 import com.oracle.truffle.api.frame.VirtualFrame
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
+import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func.EmscriptenInitMainThreadJs.InitMainThreadJsHandle
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.pthread.Pthread
 import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
-
-private const val DEFAULT_STACK_SIZE = 524288
+import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
 
 internal class EmscriptenInitMainThreadJs(
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
-    functionName: String = "_emscripten_init_main_thread_js",
-    private val posixThreadRef: () -> Pthread,
-) : BaseWasmNode(language, module, host, functionName) {
+    posixThreadRef: () -> Pthread,
+) : BaseWasmNode<InitMainThreadJsHandle>(language, module, InitMainThreadJsHandle(host, posixThreadRef)) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance) {
         val args = frame.arguments
-        val pthread = posixThreadRef()
-        pthread.emscriptenThreadInit(
-            args.getArgAsWasmPtr<Unit>(0),
-            pthread.isMainThread(),
-            true,
-            true,
-            DEFAULT_STACK_SIZE,
-            false,
-        )
-        pthread.emscriptenThreadLocalStorageInit()
+        handle.execute(args.getArgAsWasmPtr(0))
+    }
+
+    class InitMainThreadJsHandle(
+        host: SqliteEmbedderHost,
+        private val posixThreadRef: () -> Pthread,
+    ) : HostFunctionHandle(EmscriptenHostFunction.EMSCRIPTEN_INIT_MAIN_THREAD_JS, host) {
+        @TruffleBoundary
+        fun execute(ptr: WasmPtr<Unit>) {
+            val pthread = posixThreadRef()
+            pthread.emscriptenThreadInit(
+                ptr,
+                pthread.isMainThread(),
+                true,
+                true,
+                Pthread.DEFAULT_THREAD_STACK_SIZE,
+                false,
+            )
+            pthread.emscriptenThreadLocalStorageInit()
+        }
     }
 }

@@ -25,9 +25,7 @@ internal class SyscallFaccessat(
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
-    functionName: String = "__syscall_faccessat",
-) : BaseWasmNode(language, module, host, functionName) {
-    private val handle = SyscallFaccessatFunctionHandle(host)
+) : BaseWasmNode<SyscallFaccessatFunctionHandle>(language, module, SyscallFaccessatFunctionHandle(host)) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
         val args = frame.arguments
         val memory = memory(frame)

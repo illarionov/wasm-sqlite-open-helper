@@ -31,7 +31,7 @@ internal fun setupWasmModuleFunctions(
     val moduleInstance: WasmInstance = context.readInstance(module)
 
     functions.forEach { (fn, factory) ->
-        val node = factory(context.language(), module, host, fn.wasmName)
+        val node = factory(context.language(), module, host)
         val exportedIndex = exportedFunctions.getValue(fn.wasmName).index()
         moduleInstance.setTarget(exportedIndex, node.callTarget)
     }

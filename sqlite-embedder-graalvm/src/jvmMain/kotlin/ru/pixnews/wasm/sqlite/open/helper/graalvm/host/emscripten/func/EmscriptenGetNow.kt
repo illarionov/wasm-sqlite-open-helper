@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.host.emscripten.func
 
-import com.oracle.truffle.api.CompilerDirectives
+import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary
 import com.oracle.truffle.api.frame.VirtualFrame
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
@@ -20,15 +20,12 @@ internal class EmscriptenGetNow(
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
-    functionName: String = "emscripten_get_now",
-) : BaseWasmNode(language, module, host, functionName) {
-    private val handle = EmscriptenGetNowFunctionHandle(host)
-
+) : BaseWasmNode<EmscriptenGetNowFunctionHandle>(language, module, EmscriptenGetNowFunctionHandle(host)) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
         return emscriptenGetNow()
     }
 
-    @CompilerDirectives.TruffleBoundary
+    @TruffleBoundary
     @Suppress("MemberNameEqualsClassName")
     private fun emscriptenGetNow(): Double = handle.execute()
 }

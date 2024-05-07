@@ -20,10 +20,7 @@ internal class EmscriptenDateNow(
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
-    functionName: String = "emscripten_date_now",
-) : BaseWasmNode(language, module, host, functionName) {
-    private val handle = EmscriptenDateNowFunctionHandle(host)
-
+) : BaseWasmNode<EmscriptenDateNowFunctionHandle>(language, module, EmscriptenDateNowFunctionHandle(host)) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
         return emscriptenDateNow()
     }

@@ -12,18 +12,29 @@ import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction
+import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 
-internal val notImplementedFunctionNodeFactory: NodeFactory = { language, module, host, name ->
-    NotImplementedBaseWasmNode(language, module, host, name)
+internal fun notImplementedFunctionNodeFactory(function: HostFunction): NodeFactory = { language, module, host ->
+    NotImplementedBaseWasmNode(language, module, host, function)
 }
 
 private class NotImplementedBaseWasmNode(
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
-    private val name: String,
-) : BaseWasmNode(language, module, host, name) {
-    override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
-        error("`$name`not implemented")
+    hostFunction: HostFunction,
+) : BaseWasmNode<NotImplementedFunctionHandle>(language, module, NotImplementedFunctionHandle(host, hostFunction)) {
+    override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance) {
+        handle.execute()
+    }
+}
+
+internal class NotImplementedFunctionHandle(
+    host: SqliteEmbedderHost,
+    private val hostFunction: HostFunction,
+) : HostFunctionHandle(hostFunction, host) {
+    fun execute() {
+        error("`${hostFunction.wasmName}`not implemented")
     }
 }

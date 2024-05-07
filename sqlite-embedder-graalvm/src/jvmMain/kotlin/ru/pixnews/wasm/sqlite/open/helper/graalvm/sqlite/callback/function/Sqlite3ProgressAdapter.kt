@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func
+package ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.function
 
-import com.oracle.truffle.api.CompilerDirectives
+import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary
 import com.oracle.truffle.api.frame.VirtualFrame
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
@@ -23,18 +23,17 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteProgressCallba
 internal class Sqlite3ProgressAdapter(
     language: WasmLanguage,
     module: WasmModule,
-    progressCallbackStore: (WasmPtr<SqliteDb>) -> SqliteProgressCallback?,
     host: SqliteEmbedderHost,
-    functionName: String,
-) : BaseWasmNode(language, module, host, functionName) {
-    private val handle = Sqlite3ProgressFunctionHandle(host, progressCallbackStore)
+    progressCallbackStore: (WasmPtr<SqliteDb>) -> SqliteProgressCallback?,
+) : BaseWasmNode<Sqlite3ProgressFunctionHandle>(
+    language,
+    module,
+    Sqlite3ProgressFunctionHandle(host, progressCallbackStore),
+) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {
-        val args = frame.arguments
-        return invokeProgressCallback(
-            args.getArgAsWasmPtr(0),
-        )
+        return invokeProgressCallback(frame.arguments.getArgAsWasmPtr(0))
     }
 
-    @CompilerDirectives.TruffleBoundary
+    @TruffleBoundary
     private fun invokeProgressCallback(contextPointer: WasmPtr<SqliteDb>): Int = handle.execute(contextPointer)
 }

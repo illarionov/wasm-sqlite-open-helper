@@ -25,9 +25,7 @@ internal class SyscallUnlinkat(
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
-    functionName: String = "__syscall_unlinkat",
-) : BaseWasmNode(language, module, host, functionName) {
-    private val handle = SyscallUnlinkatFunctionHandle(host)
+) : BaseWasmNode<SyscallUnlinkatFunctionHandle>(language, module, SyscallUnlinkatFunctionHandle(host)) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {
         val args = frame.arguments
         return syscallUnlinkat(

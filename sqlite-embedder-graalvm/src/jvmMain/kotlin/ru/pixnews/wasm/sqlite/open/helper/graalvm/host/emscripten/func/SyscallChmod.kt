@@ -24,10 +24,7 @@ internal class SyscallChmod(
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
-    functionName: String = "__syscall_chmod",
-) : BaseWasmNode(language, module, host, functionName) {
-    private val handle = SyscallChmodFunctionHandle(host)
-
+) : BaseWasmNode<SyscallChmodFunctionHandle>(language, module, SyscallChmodFunctionHandle(host)) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Int {
         val args = frame.arguments
         return syscallChmod(

@@ -22,9 +22,7 @@ internal class SyscallFchown32(
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
-    functionName: String = "__syscall_fchown32",
-) : BaseWasmNode(language, module, host, functionName) {
-    private val handle = SyscallFchown32FunctionHandle(host)
+) : BaseWasmNode<SyscallFchown32FunctionHandle>(language, module, SyscallFchown32FunctionHandle(host)) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Int {
         val args = frame.arguments
         return syscallFchown32(

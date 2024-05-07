@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func
+package ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.function
 
 import com.oracle.truffle.api.CompilerDirectives
 import com.oracle.truffle.api.frame.VirtualFrame
@@ -24,11 +24,13 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteComparatorCall
 internal class Sqlite3DestroyComparatorAdapter(
     language: WasmLanguage,
     module: WasmModule,
-    comparatorStore: SqliteCallbackStore.SqliteCallbackIdMap<SqliteComparatorId, SqliteComparatorCallback>,
     host: SqliteEmbedderHost,
-    functionName: String,
-) : BaseWasmNode(language, module, host, functionName) {
-    private val handle = SqliteDestroyComparatorFunctionHandle(host, comparatorStore)
+    comparatorStore: SqliteCallbackStore.SqliteCallbackIdMap<SqliteComparatorId, SqliteComparatorCallback>,
+) : BaseWasmNode<SqliteDestroyComparatorFunctionHandle>(
+    language,
+    module,
+    SqliteDestroyComparatorFunctionHandle(host, comparatorStore),
+) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance) {
         val args = frame.arguments
         destroyComparator(args.getArgAsInt(0))

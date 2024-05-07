@@ -25,9 +25,7 @@ internal class SyscallUtimensat(
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
-    functionName: String = "__syscall_utimensat",
-) : BaseWasmNode(language, module, host, functionName) {
-    private val handle = SyscallUtimensatFunctionHandle(host)
+) : BaseWasmNode<SyscallUtimensatFunctionHandle>(language, module, SyscallUtimensatFunctionHandle(host)) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
         val args: Array<Any> = frame.arguments
         return syscallUtimensat(

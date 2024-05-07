@@ -14,5 +14,4 @@ internal typealias NodeFactory = (
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
-    functionName: String,
-) -> BaseWasmNode
+) -> BaseWasmNode<*>

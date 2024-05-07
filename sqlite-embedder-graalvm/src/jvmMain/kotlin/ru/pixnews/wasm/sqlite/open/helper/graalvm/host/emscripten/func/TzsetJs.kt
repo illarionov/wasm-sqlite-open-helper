@@ -23,9 +23,7 @@ internal class TzsetJs(
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
-    functionName: String = "_tzset_js",
-) : BaseWasmNode(language, module, host, functionName) {
-    private val handle = TzsetJsFunctionHandle(host)
+) : BaseWasmNode<TzsetJsFunctionHandle>(language, module, TzsetJsFunctionHandle(host)) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance) {
         val args = frame.arguments
         tzsetJs(

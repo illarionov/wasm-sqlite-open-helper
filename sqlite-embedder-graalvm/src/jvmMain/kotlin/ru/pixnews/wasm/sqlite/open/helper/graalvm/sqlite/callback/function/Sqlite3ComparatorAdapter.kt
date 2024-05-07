@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func
+package ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.function
 
 import com.oracle.truffle.api.CompilerDirectives
 import com.oracle.truffle.api.frame.VirtualFrame
@@ -14,42 +14,43 @@ import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.function.Sqlite3TraceFunctionHandle
+import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore.SqliteComparatorId
+import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.function.SqliteComparatorFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsUint
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceCallback
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteComparatorCallback
 
-internal class Sqlite3TraceAdapter(
+internal class Sqlite3ComparatorAdapter(
     language: WasmLanguage,
     module: WasmModule,
-    traceCallbackStore: (WasmPtr<SqliteDb>) -> SqliteTraceCallback?,
     host: SqliteEmbedderHost,
-    functionName: String,
-) : BaseWasmNode(language, module, host, functionName) {
-    private val handle = Sqlite3TraceFunctionHandle(host, traceCallbackStore)
-
+    comparatorStore: (SqliteComparatorId) -> SqliteComparatorCallback?,
+) : BaseWasmNode<SqliteComparatorFunctionHandle>(
+    language,
+    module,
+    SqliteComparatorFunctionHandle(host, comparatorStore),
+) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {
         val args = frame.arguments
-        return invokeTraceCallback(
+        return invokeComparator(
             memory(frame),
-            SqliteTraceEventCode(args.getArgAsUint(0)),
-            args.getArgAsWasmPtr(1),
+            args.getArgAsInt(0),
+            args.getArgAsInt(1),
             args.getArgAsWasmPtr(2),
-            (args.getArgAsInt(3)).toLong(),
+            args.getArgAsInt(3),
+            args.getArgAsWasmPtr(4),
         )
     }
 
     @CompilerDirectives.TruffleBoundary
-    private fun invokeTraceCallback(
+    private fun invokeComparator(
         memory: WasmMemory,
-        flags: SqliteTraceEventCode,
-        contextPointer: WasmPtr<SqliteDb>,
-        arg1: WasmPtr<Nothing>,
-        arg2: Long,
-    ): Int = handle.execute(memory.toHostMemory(), flags, contextPointer, arg1, arg2)
+        comparatorId: Int,
+        str1Size: Int,
+        str1: WasmPtr<Byte>,
+        str2Size: Int,
+        str2: WasmPtr<Byte>,
+    ): Int = handle.execute(memory.toHostMemory(), comparatorId, str1Size, str1, str2Size, str2)
 }
