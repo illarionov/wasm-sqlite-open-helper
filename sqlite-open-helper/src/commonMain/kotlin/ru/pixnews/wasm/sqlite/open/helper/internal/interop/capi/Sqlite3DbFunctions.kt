@@ -11,7 +11,7 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.EmbedderMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.readPtr
 import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.SqliteBindings
-import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.allocZeroTerminatedString
+import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.allocNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.sqliteFreeSilent
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
@@ -52,9 +52,9 @@ internal class Sqlite3DbFunctions(
         var pVfsName: WasmPtr<Byte> = WasmPtr.sqlite3Null()
         try {
             ppDb = memoryBindings.sqliteAllocOrThrow(WasmPtr.WASM_SIZEOF_PTR)
-            pFileName = memoryBindings.allocZeroTerminatedString(memory, filename)
+            pFileName = memoryBindings.allocNullTerminatedString(memory, filename)
             if (vfsName != null) {
-                pVfsName = memoryBindings.allocZeroTerminatedString(memory, vfsName)
+                pVfsName = memoryBindings.allocNullTerminatedString(memory, vfsName)
             }
 
             val resultCode = sqliteBindings.sqlite3_open_v2.executeForSqliteResultCode(
@@ -99,7 +99,7 @@ internal class Sqlite3DbFunctions(
         dbName: String?,
     ): SqliteDbReadonlyResult {
         val pDbName = if (dbName != null) {
-            memoryBindings.allocZeroTerminatedString(memory, dbName)
+            memoryBindings.allocNullTerminatedString(memory, dbName)
         } else {
             WasmPtr.sqlite3Null()
         }
@@ -174,7 +174,7 @@ internal class Sqlite3DbFunctions(
     ): Sqlite3Result<Unit> {
         var pNewLocale: WasmPtr<Byte> = WasmPtr.sqlite3Null()
         try {
-            pNewLocale = memoryBindings.allocZeroTerminatedString(memory, newLocale)
+            pNewLocale = memoryBindings.allocNullTerminatedString(memory, newLocale)
             val errCode = sqliteBindings.register_localized_collators.executeForSqliteResultCode(
                 sqliteDb.addr,
                 pNewLocale.addr,

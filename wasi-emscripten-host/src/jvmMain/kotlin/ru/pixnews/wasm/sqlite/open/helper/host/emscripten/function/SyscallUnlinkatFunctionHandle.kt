@@ -7,7 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.common.embedder.readZeroTerminatedString
+import ru.pixnews.wasm.sqlite.open.helper.common.embedder.readNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
@@ -26,7 +26,7 @@ public class SyscallUnlinkatFunctionHandle(
         flags: UInt,
     ): Int {
         val errNo = try {
-            val path = memory.readZeroTerminatedString(pathnamePtr)
+            val path = memory.readNullTerminatedString(pathnamePtr)
             host.fileSystem.unlinkAt(DirFd(rawDirfd), path, flags)
             Errno.SUCCESS
         } catch (e: SysException) {

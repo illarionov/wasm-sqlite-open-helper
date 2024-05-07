@@ -7,7 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.common.embedder.readZeroTerminatedString
+import ru.pixnews.wasm.sqlite.open.helper.common.embedder.readNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
@@ -30,7 +30,7 @@ public class SyscallStatLstat64FunctionHandle private constructor(
     ): Int {
         var path = ""
         try {
-            path = memory.readZeroTerminatedString(pathnamePtr)
+            path = memory.readNullTerminatedString(pathnamePtr)
             val stat = host.fileSystem.stat(
                 path = path,
                 followSymlinks = followSymlinks,

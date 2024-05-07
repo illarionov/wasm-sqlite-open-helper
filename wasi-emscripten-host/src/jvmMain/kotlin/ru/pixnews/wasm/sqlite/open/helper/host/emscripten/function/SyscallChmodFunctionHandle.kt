@@ -7,7 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.common.embedder.readZeroTerminatedString
+import ru.pixnews.wasm.sqlite.open.helper.common.embedder.readNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
@@ -25,7 +25,7 @@ public class SyscallChmodFunctionHandle(
         mode: UInt,
     ): Int {
         val fileMode = FileMode(mode)
-        val path = memory.readZeroTerminatedString(pathnamePtr)
+        val path = memory.readNullTerminatedString(pathnamePtr)
         return try {
             host.fileSystem.chmod(path, fileMode)
             Errno.SUCCESS.code

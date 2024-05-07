@@ -8,7 +8,7 @@ package ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.function
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.api.plus
-import ru.pixnews.wasm.sqlite.open.helper.common.embedder.writeZeroTerminatedString
+import ru.pixnews.wasm.sqlite.open.helper.common.embedder.writeNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
@@ -32,7 +32,7 @@ public class EnvironGetFunctionHandle(
             .forEach { envString ->
                 memory.writeI32(pp, bufP.addr)
                 pp += 4
-                bufP += memory.writeZeroTerminatedString(bufP, envString)
+                bufP += memory.writeNullTerminatedString(bufP, envString)
             }
         return Errno.SUCCESS
     }

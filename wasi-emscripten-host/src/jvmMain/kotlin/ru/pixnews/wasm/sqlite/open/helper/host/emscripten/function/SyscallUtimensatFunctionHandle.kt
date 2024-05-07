@@ -9,7 +9,7 @@ package ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.api.isSqlite3Null
 import ru.pixnews.wasm.sqlite.open.helper.common.api.plus
-import ru.pixnews.wasm.sqlite.open.helper.common.embedder.readZeroTerminatedString
+import ru.pixnews.wasm.sqlite.open.helper.common.embedder.readNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
@@ -36,7 +36,7 @@ public class SyscallUtimensatFunctionHandle(
     ): Int {
         val dirFd = DirFd(rawDirFd)
         val noFolowSymlinks: Boolean = (flags and Fcntl.AT_SYMLINK_NOFOLLOW) != 0U
-        val path = memory.readZeroTerminatedString(pathnamePtr)
+        val path = memory.readNullTerminatedString(pathnamePtr)
         var atime: Duration?
         val mtime: Duration?
         @Suppress("MagicNumber")

@@ -9,9 +9,8 @@ package ru.pixnews.wasm.sqlite.open.helper.internal.interop.capi
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.api.isSqlite3Null
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.EmbedderMemory
-import ru.pixnews.wasm.sqlite.open.helper.common.embedder.readNullableZeroTerminatedString
+import ru.pixnews.wasm.sqlite.open.helper.common.embedder.readNullableNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.SqliteBindings
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.capi.Sqlite3ErrorFunctions.Companion.readSqliteErrorInfo
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrorInfo
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
@@ -40,7 +39,7 @@ internal class Sqlite3ErrorFunctions(
         sqliteDb: WasmPtr<SqliteDb>,
     ): String? {
         val errorAddr: WasmPtr<Byte> = sqliteBindings.sqlite3_errmsg.executeForPtr(sqliteDb.addr)
-        return memory.readNullableZeroTerminatedString(errorAddr)
+        return memory.readNullableNullTerminatedString(errorAddr)
     }
 
     companion object {

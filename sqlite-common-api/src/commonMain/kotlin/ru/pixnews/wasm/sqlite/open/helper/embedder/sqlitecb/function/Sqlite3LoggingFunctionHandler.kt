@@ -7,7 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.function
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.common.embedder.readZeroTerminatedString
+import ru.pixnews.wasm.sqlite.open.helper.common.embedder.readNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
@@ -24,7 +24,7 @@ public class Sqlite3LoggingFunctionHandler(
         messagePointer: WasmPtr<Byte>,
     ) {
         val delegate = logCallbackStore() ?: return
-        val message = memory.readZeroTerminatedString(messagePointer)
+        val message = memory.readNullTerminatedString(messagePointer)
         delegate.invoke(errCode, message)
     }
 }

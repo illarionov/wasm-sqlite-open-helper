@@ -9,15 +9,15 @@ package ru.pixnews.wasm.sqlite.open.helper.embedder.bindings
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.EmbedderMemory
-import ru.pixnews.wasm.sqlite.open.helper.common.embedder.writeZeroTerminatedString
+import ru.pixnews.wasm.sqlite.open.helper.common.embedder.writeNullTerminatedString
 
 @InternalWasmSqliteHelperApi
-public fun SqliteMemoryBindings.allocZeroTerminatedString(
+public fun SqliteMemoryBindings.allocNullTerminatedString(
     memory: EmbedderMemory,
     string: String,
 ): WasmPtr<Byte> {
     val bytes = string.encodeToByteArray()
     val mem: WasmPtr<Byte> = sqliteAllocOrThrow(bytes.size.toUInt() + 1U)
-    memory.writeZeroTerminatedString(mem, string)
+    memory.writeNullTerminatedString(mem, string)
     return mem
 }
