@@ -9,12 +9,12 @@ package ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.function
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore.SqliteComparatorId
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteComparatorCallback
 
 public class SqliteDestroyComparatorFunctionHandle(
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
     private val comparatorStore: SqliteCallbackStore.SqliteCallbackIdMap<SqliteComparatorId, SqliteComparatorCallback>,
 ) : HostFunctionHandle(SqliteCallbacksModuleFunction.SQLITE3_DESTROY_COMPARATOR_FUNCTION, host) {
     public fun execute(comparatorId: Int) {

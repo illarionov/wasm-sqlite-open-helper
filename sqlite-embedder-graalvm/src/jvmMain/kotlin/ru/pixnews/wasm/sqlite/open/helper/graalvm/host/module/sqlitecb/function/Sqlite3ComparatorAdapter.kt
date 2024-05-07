@@ -19,13 +19,13 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.function.SqliteCompa
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteComparatorCallback
 
 internal class Sqlite3ComparatorAdapter(
     language: WasmLanguage,
     module: WasmModule,
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
     comparatorStore: (SqliteComparatorId) -> SqliteComparatorCallback?,
 ) : BaseWasmNode<SqliteComparatorFunctionHandle>(
     language,

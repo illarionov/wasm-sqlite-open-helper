@@ -13,13 +13,13 @@ import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.EmscriptenDateNowFunctionHandle
 
 internal class EmscriptenDateNow(
     language: WasmLanguage,
     module: WasmModule,
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
 ) : BaseWasmNode<EmscriptenDateNowFunctionHandle>(language, module, EmscriptenDateNowFunctionHandle(host)) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
         return emscriptenDateNow()

@@ -17,13 +17,13 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.SyscallGetcwdFunctionHandle
 
 internal class SyscallGetcwd(
     language: WasmLanguage,
     module: WasmModule,
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
 ) : BaseWasmNode<SyscallGetcwdFunctionHandle>(language, module, SyscallGetcwdFunctionHandle(host)) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {
         val args = frame.arguments

@@ -9,13 +9,13 @@ package ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.function
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.readZeroTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteLogCallback
 
 public class Sqlite3LoggingFunctionHandler(
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
     private val logCallbackStore: () -> SqliteLogCallback?,
 ) : HostFunctionHandle(SqliteCallbacksModuleFunction.SQLITE3_LOGGING_CALLBACK, host) {
     public fun execute(

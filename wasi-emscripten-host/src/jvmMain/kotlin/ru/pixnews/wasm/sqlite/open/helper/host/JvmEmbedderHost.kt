@@ -14,7 +14,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.nanoseconds
 
-public class JvmSqliteEmbedderHost(
+public class JvmEmbedderHost(
     public override val rootLogger: Logger = Logger,
     public override val systemEnvProvider: () -> Map<String, String> = System::getenv,
     public override val commandArgsProvider: () -> List<String> = ::emptyList,
@@ -23,4 +23,4 @@ public class JvmSqliteEmbedderHost(
     public override val monotonicClock: () -> Duration = { System.nanoTime().nanoseconds },
     public override val localTimeFormatter: (Duration) -> StructTm = JvmLocalTimeFormatter(),
     public override val timeZoneInfo: () -> TimeZoneInfo = JvmTimeZoneInfoProvider(),
-) : SqliteEmbedderHost
+) : EmbedderHost

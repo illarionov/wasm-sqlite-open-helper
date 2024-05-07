@@ -9,13 +9,13 @@ package ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.function
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore.SqliteComparatorId
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteComparatorCallback
 
 public class SqliteComparatorFunctionHandle(
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
     private val comparatorStore: (SqliteComparatorId) -> SqliteComparatorCallback?,
 ) : HostFunctionHandle(SqliteCallbacksModuleFunction.SQLITE3_COMPARATOR_CALL_CALLBACK, host) {
     public fun execute(

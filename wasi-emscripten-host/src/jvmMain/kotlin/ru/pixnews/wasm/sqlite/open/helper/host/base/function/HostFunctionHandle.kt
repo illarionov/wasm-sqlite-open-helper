@@ -7,11 +7,11 @@
 package ru.pixnews.wasm.sqlite.open.helper.host.base.function
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 
 public open class HostFunctionHandle(
     public val function: HostFunction,
-    public val host: SqliteEmbedderHost,
+    public val host: EmbedderHost,
 ) {
     protected val logger: Logger = host.rootLogger.withTag("wasm-func:$${function.wasmName}")
 }

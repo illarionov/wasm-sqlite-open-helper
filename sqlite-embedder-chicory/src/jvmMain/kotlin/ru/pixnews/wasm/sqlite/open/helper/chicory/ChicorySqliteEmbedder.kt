@@ -19,7 +19,7 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
 import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.SqliteBindings
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 
 public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig> {
     @InternalWasmSqliteHelperApi
@@ -37,7 +37,7 @@ public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig
     }
 
     private fun createChicorySqliteWasmEnvironment(
-        host: SqliteEmbedderHost,
+        host: EmbedderHost,
         @Suppress("UnusedParameter") callbackStore: SqliteCallbackStore,
         sqlite3Binary: WasmSqliteConfiguration,
     ): SqliteWasmEnvironment {

@@ -12,17 +12,17 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.plus
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.readZeroTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore.SqliteExecCallbackId
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.readPtr
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteExecCallback
 
 public class SqliteExecCallbackFunctionHandle(
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
     private val execCallbackStore: (SqliteExecCallbackId) -> SqliteExecCallback?,
 
-) : HostFunctionHandle(SqliteCallbacksModuleFunction.SQLITE3_EXEC_CALLBACK, host) {
+    ) : HostFunctionHandle(SqliteCallbacksModuleFunction.SQLITE3_EXEC_CALLBACK, host) {
     public fun execute(
         memory: Memory,
         arg1: Int,

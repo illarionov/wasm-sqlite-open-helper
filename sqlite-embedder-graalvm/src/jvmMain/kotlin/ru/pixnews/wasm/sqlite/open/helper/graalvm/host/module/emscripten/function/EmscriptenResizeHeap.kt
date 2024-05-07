@@ -16,7 +16,7 @@ import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.EmscriptenResizeHeap.ResizeHeapHandle
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmSizes.WASM_MEMORY_PAGE_SIZE
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
@@ -27,7 +27,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 internal class EmscriptenResizeHeap(
     language: WasmLanguage,
     module: WasmModule,
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
 ) : BaseWasmNode<ResizeHeapHandle>(language, module, ResizeHeapHandle(host)) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
         return handle.execute(
@@ -37,7 +37,7 @@ internal class EmscriptenResizeHeap(
     }
 
     internal class ResizeHeapHandle(
-        host: SqliteEmbedderHost,
+        host: EmbedderHost,
     ) : HostFunctionHandle(EmscriptenHostFunction.EMSCRIPTEN_RESIZE_HEAP, host) {
         @TruffleBoundary
         fun execute(

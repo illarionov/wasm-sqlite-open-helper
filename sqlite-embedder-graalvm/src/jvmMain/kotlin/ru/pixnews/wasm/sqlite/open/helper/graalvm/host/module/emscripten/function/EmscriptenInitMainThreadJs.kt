@@ -17,14 +17,14 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.EmscriptenInitMainThreadJs.InitMainThreadJsHandle
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.pthread.Pthread
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
 
 internal class EmscriptenInitMainThreadJs(
     language: WasmLanguage,
     module: WasmModule,
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
     posixThreadRef: () -> Pthread,
 ) : BaseWasmNode<InitMainThreadJsHandle>(language, module, InitMainThreadJsHandle(host, posixThreadRef)) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance) {
@@ -33,7 +33,7 @@ internal class EmscriptenInitMainThreadJs(
     }
 
     class InitMainThreadJsHandle(
-        host: SqliteEmbedderHost,
+        host: EmbedderHost,
         private val posixThreadRef: () -> Pthread,
     ) : HostFunctionHandle(EmscriptenHostFunction.EMSCRIPTEN_INIT_MAIN_THREAD_JS, host) {
         @TruffleBoundary

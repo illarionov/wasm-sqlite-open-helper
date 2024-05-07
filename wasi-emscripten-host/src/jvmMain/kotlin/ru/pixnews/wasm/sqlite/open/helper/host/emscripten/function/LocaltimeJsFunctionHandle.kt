@@ -7,7 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.include.StructTm
@@ -17,7 +17,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.memory.write
 import kotlin.time.Duration.Companion.seconds
 
 public class LocaltimeJsFunctionHandle(
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
 ) : HostFunctionHandle(EmscriptenHostFunction.LOCALTIME_JS, host) {
     public fun execute(
         memory: Memory,

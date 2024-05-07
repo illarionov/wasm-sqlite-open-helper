@@ -19,7 +19,7 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsUint
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceCallback
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode
@@ -27,7 +27,7 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode
 internal class Sqlite3TraceAdapter(
     language: WasmLanguage,
     module: WasmModule,
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
     traceCallbackStore: (WasmPtr<SqliteDb>) -> SqliteTraceCallback?,
 ) : BaseWasmNode<Sqlite3TraceFunctionHandle>(language, module, Sqlite3TraceFunctionHandle(host, traceCallbackStore)) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {

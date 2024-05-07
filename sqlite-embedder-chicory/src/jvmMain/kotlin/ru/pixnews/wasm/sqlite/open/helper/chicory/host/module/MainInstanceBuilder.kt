@@ -23,14 +23,14 @@ import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.sqlitecb.SqliteCal
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.WasiSnapshotPreview1Builtins
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmModules.ENV_MODULE_NAME
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmSizes
 import com.dylibso.chicory.runtime.Memory as ChicoryMemory
 
 @Suppress("COMMENTED_OUT_CODE")
 internal class MainInstanceBuilder(
-    private val host: SqliteEmbedderHost,
+    private val host: EmbedderHost,
     private val callbackStore: SqliteCallbackStore,
     private val minMemorySize: Long = 50_331_648L,
 ) {

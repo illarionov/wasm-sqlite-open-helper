@@ -39,7 +39,7 @@ import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.functio
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.function.notImplementedEmscriptenHostFunction
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.function.syscallLstat64
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.function.syscallStat64
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmValueType
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
@@ -47,7 +47,7 @@ import com.dylibso.chicory.runtime.HostFunction as ChicoryHostFunction
 
 internal class EmscriptenEnvFunctionsBuilder(
     private val memory: Memory,
-    private val host: SqliteEmbedderHost,
+    private val host: EmbedderHost,
 ) {
     fun asChicoryHostFunctions(
         moduleName: String = ENV_MODULE_NAME,

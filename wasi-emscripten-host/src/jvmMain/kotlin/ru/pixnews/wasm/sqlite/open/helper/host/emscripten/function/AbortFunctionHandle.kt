@@ -6,12 +6,12 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function
 
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
 
 public class AbortFunctionHandle(
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
 ) : HostFunctionHandle(EmscriptenHostFunction.ABORT, host) {
     public fun execute(): Nothing {
         error("native code called abort()")

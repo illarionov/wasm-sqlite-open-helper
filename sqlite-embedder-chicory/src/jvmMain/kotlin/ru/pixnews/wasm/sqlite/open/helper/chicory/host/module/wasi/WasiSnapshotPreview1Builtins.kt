@@ -23,7 +23,7 @@ import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.function.FdWr
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.function.FdWriteFdPwrite.Companion.fdWrite
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.function.SchedYield
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.function.notImplementedWasiHostFunctionHandleFactory
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmValueType
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction
@@ -32,7 +32,7 @@ import com.dylibso.chicory.runtime.WasmFunctionHandle as ChicoryWasmFunctionHand
 // https://github.com/WebAssembly/WASI/tree/main
 internal class WasiSnapshotPreview1Builtins(
     private val memory: Memory,
-    private val host: SqliteEmbedderHost,
+    private val host: EmbedderHost,
 ) {
     fun asChicoryHostFunctions(
         moduleName: String = WASI_SNAPSHOT_PREVIEW1_MODULE_NAME,

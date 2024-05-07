@@ -15,14 +15,14 @@ import org.graalvm.wasm.WasmModule
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsUlong
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.SyscallFtruncate64FunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 
 internal class SyscallFtruncate64(
     language: WasmLanguage,
     module: WasmModule,
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
 ) : BaseWasmNode<SyscallFtruncate64FunctionHandle>(language, module, SyscallFtruncate64FunctionHandle(host)) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
         val args: Array<Any> = frame.arguments

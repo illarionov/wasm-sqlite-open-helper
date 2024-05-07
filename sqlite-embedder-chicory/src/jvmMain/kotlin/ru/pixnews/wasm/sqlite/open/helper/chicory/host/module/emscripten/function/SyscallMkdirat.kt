@@ -10,12 +10,12 @@ import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.wasm.types.Value
 import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.asWasmAddr
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.EmscriptenHostFunctionHandle
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.SyscallMkdiratFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
 
 internal class SyscallMkdirat(
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
     private val memory: Memory,
 ) : EmscriptenHostFunctionHandle {
     private val handle = SyscallMkdiratFunctionHandle(host)

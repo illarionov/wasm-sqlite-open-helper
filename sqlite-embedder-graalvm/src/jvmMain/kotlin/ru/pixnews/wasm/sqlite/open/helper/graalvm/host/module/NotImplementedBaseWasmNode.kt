@@ -11,7 +11,7 @@ import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 
@@ -22,7 +22,7 @@ internal fun notImplementedFunctionNodeFactory(function: HostFunction): NodeFact
 private class NotImplementedBaseWasmNode(
     language: WasmLanguage,
     module: WasmModule,
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
     hostFunction: HostFunction,
 ) : BaseWasmNode<NotImplementedFunctionHandle>(language, module, NotImplementedFunctionHandle(host, hostFunction)) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance) {
@@ -31,7 +31,7 @@ private class NotImplementedBaseWasmNode(
 }
 
 internal class NotImplementedFunctionHandle(
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
     private val hostFunction: HostFunction,
 ) : HostFunctionHandle(hostFunction, host) {
     fun execute() {

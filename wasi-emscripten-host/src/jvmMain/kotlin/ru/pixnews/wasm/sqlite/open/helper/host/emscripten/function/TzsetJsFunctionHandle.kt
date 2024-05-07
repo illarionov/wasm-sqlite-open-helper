@@ -8,14 +8,14 @@ package ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.encodeToNullTerminatedByteArray
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.write
 
 public class TzsetJsFunctionHandle(
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
 ) : HostFunctionHandle(EmscriptenHostFunction.TZSET_JS, host) {
     public fun execute(
         memory: Memory,

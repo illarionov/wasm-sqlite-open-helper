@@ -25,20 +25,20 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.function.
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.function.Sqlite3LoggingAdapter
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.function.Sqlite3ProgressAdapter
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.function.Sqlite3TraceAdapter
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 
 internal const val SQLITE3_CALLBACK_MANAGER_MODULE_NAME = "sqlite3-callback-manager"
 
 internal class SqliteCallbacksModuleBuilder(
     private val graalContext: Context,
-    private val host: SqliteEmbedderHost,
+    private val host: EmbedderHost,
     private val callbackStore: SqliteCallbackStore,
 ) {
     private val sqliteCallbackHostFunctions: Map<out SqliteCallbacksModuleFunction, NodeFactory> = mapOf(
         SqliteCallbacksModuleFunction.SQLITE3_EXEC_CALLBACK to {
                 language: WasmLanguage,
                 module: WasmModule,
-                host: SqliteEmbedderHost,
+                host: EmbedderHost,
             ->
             Sqlite3CallExecAdapter(language, module, host, callbackStore.sqlite3ExecCallbacks::get)
         },

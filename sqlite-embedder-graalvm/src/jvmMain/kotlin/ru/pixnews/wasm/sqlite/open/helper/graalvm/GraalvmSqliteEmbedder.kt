@@ -26,7 +26,7 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.Emscrip
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.SqliteCallbacksModuleBuilder
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.wasi.WasiSnapshotPreview1ModuleBuilder
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.pthread.Pthread
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import java.util.concurrent.atomic.AtomicReference
 
 public object GraalvmSqliteEmbedder : SqliteEmbedder<GraalvmSqliteEmbedderConfig> {
@@ -49,7 +49,7 @@ public object GraalvmSqliteEmbedder : SqliteEmbedder<GraalvmSqliteEmbedderConfig
 
     private fun createGraalvmSqliteWasmEnvironment(
         graalvmEngine: Engine,
-        host: SqliteEmbedderHost,
+        host: EmbedderHost,
         callbackStore: SqliteCallbackStore,
         sqlite3Binary: WasmSqliteConfiguration,
     ): SqliteWasmEnvironment {

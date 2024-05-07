@@ -8,13 +8,13 @@ package ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.function
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteProgressCallback
 
 public class Sqlite3ProgressFunctionHandle(
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
     private val progressCallbackStore: (WasmPtr<SqliteDb>) -> SqliteProgressCallback?,
 ) : HostFunctionHandle(SqliteCallbacksModuleFunction.SQLITE3_LOGGING_CALLBACK, host) {
     public fun execute(

@@ -17,7 +17,7 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.function.FdWriteFdPWriteFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.CioVec
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
@@ -25,13 +25,13 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 internal fun fdWrite(
     language: WasmLanguage,
     module: WasmModule,
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
 ): BaseWasmNode<FdWriteFdPWriteFunctionHandle> = FdWrite(language, module, FdWriteFdPWriteFunctionHandle.fdWrite(host))
 
 internal fun fdPwrite(
     language: WasmLanguage,
     module: WasmModule,
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
 ): BaseWasmNode<FdWriteFdPWriteFunctionHandle> = FdWrite(language, module, FdWriteFdPWriteFunctionHandle.fdPwrite(host))
 
 private class FdWrite(

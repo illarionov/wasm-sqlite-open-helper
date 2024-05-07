@@ -8,7 +8,7 @@ package ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.function
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.api.plus
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy
@@ -23,7 +23,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.IovecArray
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Size
 
 public class FdReadFdPreadFunctionHandle private constructor(
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
     function: HostFunction,
     private val strategy: ReadWriteStrategy,
 ) : HostFunctionHandle(function, host) {
@@ -48,7 +48,7 @@ public class FdReadFdPreadFunctionHandle private constructor(
 
     public companion object {
         public fun fdRead(
-            host: SqliteEmbedderHost,
+            host: EmbedderHost,
         ): FdReadFdPreadFunctionHandle = FdReadFdPreadFunctionHandle(
             host,
             WasiHostFunction.FD_READ,
@@ -56,7 +56,7 @@ public class FdReadFdPreadFunctionHandle private constructor(
         )
 
         public fun fdPread(
-            host: SqliteEmbedderHost,
+            host: EmbedderHost,
         ): FdReadFdPreadFunctionHandle = FdReadFdPreadFunctionHandle(
             host,
             WasiHostFunction.FD_PREAD,

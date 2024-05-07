@@ -17,7 +17,7 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.function.FdReadFdPreadFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Iovec
@@ -25,7 +25,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Iovec
 internal fun fdRead(
     language: WasmLanguage,
     module: WasmModule,
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
 ): BaseWasmNode<FdReadFdPreadFunctionHandle> = FdRead(
     language,
     module,
@@ -35,7 +35,7 @@ internal fun fdRead(
 internal fun fdPread(
     language: WasmLanguage,
     module: WasmModule,
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
 ): BaseWasmNode<FdReadFdPreadFunctionHandle> = FdRead(
     language,
     module,

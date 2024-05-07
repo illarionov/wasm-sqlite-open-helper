@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.function
 
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
@@ -16,7 +16,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 
 public class FdSyncSyscallFdatasyncFunctionHandle private constructor(
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
     function: HostFunction,
     private val syncMetadata: Boolean,
 ) : HostFunctionHandle(function, host) {
@@ -34,7 +34,7 @@ public class FdSyncSyscallFdatasyncFunctionHandle private constructor(
 
     public companion object {
         public fun fdSync(
-            host: SqliteEmbedderHost,
+            host: EmbedderHost,
         ): FdSyncSyscallFdatasyncFunctionHandle = FdSyncSyscallFdatasyncFunctionHandle(
             host = host,
             function = WasiHostFunction.FD_SYNC,
@@ -42,7 +42,7 @@ public class FdSyncSyscallFdatasyncFunctionHandle private constructor(
         )
 
         public fun syscallFdatasync(
-            host: SqliteEmbedderHost,
+            host: EmbedderHost,
         ): FdSyncSyscallFdatasyncFunctionHandle = FdSyncSyscallFdatasyncFunctionHandle(
             host = host,
             function = EmscriptenHostFunction.SYSCALL_FDATASYNC,

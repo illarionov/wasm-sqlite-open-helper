@@ -18,7 +18,7 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsLong
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsUint
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.MmapJsFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.SysMmanMapFlags
 import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.SysMmanProt
@@ -27,7 +27,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 internal class MmapJs(
     language: WasmLanguage,
     module: WasmModule,
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
 ) : BaseWasmNode<MmapJsFunctionHandle>(language, module, MmapJsFunctionHandle(host)) {
     @Suppress("MagicNumber")
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Int {
