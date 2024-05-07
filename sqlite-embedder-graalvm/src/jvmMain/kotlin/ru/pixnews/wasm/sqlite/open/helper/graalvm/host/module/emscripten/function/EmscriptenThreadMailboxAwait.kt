@@ -16,14 +16,14 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.EmscriptenThreadMailboxAwait.EmscriptenThreadMailboxAwaitHandle
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.pthread.Pthread
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
 
 internal class EmscriptenThreadMailboxAwait(
     language: WasmLanguage,
     module: WasmModule,
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
     @Suppress("UnusedPrivateProperty")
     private val posixThreadRef: () -> Pthread,
 ) : BaseWasmNode<EmscriptenThreadMailboxAwaitHandle>(language, module, EmscriptenThreadMailboxAwaitHandle(host)) {
@@ -32,7 +32,7 @@ internal class EmscriptenThreadMailboxAwait(
     }
 
     class EmscriptenThreadMailboxAwaitHandle(
-        host: SqliteEmbedderHost,
+        host: EmbedderHost,
     ) : HostFunctionHandle(EmscriptenHostFunction.EMSCRIPTEN_INIT_MAIN_THREAD_JS, host) {
         @TruffleBoundary
         fun execute(threadPtr: Int) {

@@ -16,14 +16,14 @@ import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.SyscallStatLstat64FunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.StructStat
 
 internal fun syscallLstat64(
     language: WasmLanguage,
     module: WasmModule,
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
 ): BaseWasmNode<SyscallStatLstat64FunctionHandle> = SyscallStat64(
     language = language,
     module = module,
@@ -33,7 +33,7 @@ internal fun syscallLstat64(
 internal fun syscallStat64(
     language: WasmLanguage,
     module: WasmModule,
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
 ): BaseWasmNode<SyscallStatLstat64FunctionHandle> = SyscallStat64(
     language = language,
     module = module,

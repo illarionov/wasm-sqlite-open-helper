@@ -6,10 +6,10 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi
 
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
 
 internal typealias WasiHostFunctionHandleFactory = (
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
     memory: Memory,
 ) -> WasiHostFunctionHandle

@@ -12,12 +12,12 @@ import com.dylibso.chicory.wasm.types.Value
 import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.asWasmAddr
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.function.Sqlite3ProgressFunctionHandle
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteProgressCallback
 
 internal class Sqlite3ProgressAdapter(
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
     progressCallbackStore: (WasmPtr<SqliteDb>) -> SqliteProgressCallback?,
 ) : WasmFunctionHandle {
     private val handle = Sqlite3ProgressFunctionHandle(host, progressCallbackStore)

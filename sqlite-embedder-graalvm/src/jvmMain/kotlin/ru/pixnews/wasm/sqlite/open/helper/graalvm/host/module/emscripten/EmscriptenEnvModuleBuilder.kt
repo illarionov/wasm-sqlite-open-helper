@@ -47,14 +47,14 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.functio
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.notImplementedFunctionNodeFactory
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.wasi.function.SyscallFdatasync
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.pthread.Pthread
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmModules.ENV_MODULE_NAME
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmSizes
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
 
 internal class EmscriptenEnvModuleBuilder(
     private val graalContext: Context,
-    private val host: SqliteEmbedderHost,
+    private val host: EmbedderHost,
     private val pthreadRef: () -> Pthread,
     private val moduleName: String = ENV_MODULE_NAME,
 ) {
@@ -94,7 +94,7 @@ internal class EmscriptenEnvModuleBuilder(
             EmscriptenHostFunction.EMSCRIPTEN_INIT_MAIN_THREAD_JS -> {
                     language: WasmLanguage,
                     module: WasmModule,
-                    host: SqliteEmbedderHost,
+                    host: EmbedderHost,
                 ->
                 EmscriptenInitMainThreadJs(
                     language = language,
@@ -107,7 +107,7 @@ internal class EmscriptenEnvModuleBuilder(
             EmscriptenHostFunction.EMSCRIPTEN_THREAD_MAILBOX_AWAIT -> {
                     language: WasmLanguage,
                     module: WasmModule,
-                    host: SqliteEmbedderHost,
+                    host: EmbedderHost,
                 ->
                 EmscriptenThreadMailboxAwait(
                     language = language,

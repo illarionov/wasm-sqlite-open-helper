@@ -12,7 +12,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.include.StructTm
 import ru.pixnews.wasm.sqlite.open.helper.host.include.TimeZoneInfo
 import kotlin.time.Duration
 
-public interface SqliteEmbedderHost {
+public interface EmbedderHost {
     public val rootLogger: Logger
     public val systemEnvProvider: () -> Map<String, String>
     public val commandArgsProvider: () -> List<String>

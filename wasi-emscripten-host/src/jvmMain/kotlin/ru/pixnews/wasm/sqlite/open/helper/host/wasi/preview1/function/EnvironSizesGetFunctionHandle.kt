@@ -8,7 +8,7 @@ package ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.function
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.encodedNullTerminatedStringLength
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction
@@ -17,7 +17,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno.SUCCESS
 
 public class EnvironSizesGetFunctionHandle(
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
 ) : HostFunctionHandle(WasiHostFunction.ENVIRON_SIZES_GET, host) {
     public fun execute(
         memory: Memory,

@@ -11,7 +11,7 @@ import com.dylibso.chicory.wasm.types.Value
 import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.asWasmAddr
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.WasiHostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.function.FdWriteFdPWriteFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.CioVec
@@ -32,12 +32,12 @@ internal class FdWriteFdPwrite private constructor(
 
     companion object {
         fun fdWrite(
-            host: SqliteEmbedderHost,
+            host: EmbedderHost,
             memory: Memory,
         ): WasiHostFunctionHandle = FdWriteFdPwrite(memory, FdWriteFdPWriteFunctionHandle.fdWrite(host))
 
         fun fdPwrite(
-            host: SqliteEmbedderHost,
+            host: EmbedderHost,
             memory: Memory,
         ): WasiHostFunctionHandle = FdWriteFdPwrite(memory, FdWriteFdPWriteFunctionHandle.fdPwrite(host))
     }

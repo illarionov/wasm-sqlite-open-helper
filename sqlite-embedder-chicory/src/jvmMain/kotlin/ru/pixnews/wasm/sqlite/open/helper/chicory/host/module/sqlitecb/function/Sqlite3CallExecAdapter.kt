@@ -12,12 +12,12 @@ import com.dylibso.chicory.wasm.types.Value
 import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.asWasmAddr
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore.SqliteExecCallbackId
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.function.SqliteExecCallbackFunctionHandle
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteExecCallback
 
 internal class Sqlite3CallExecAdapter(
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
     private val memory: Memory,
     execCallbackStore: (SqliteExecCallbackId) -> SqliteExecCallback?,
 ) : WasmFunctionHandle {

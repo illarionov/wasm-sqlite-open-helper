@@ -8,7 +8,7 @@ package ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.readZeroTerminatedString
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
@@ -19,7 +19,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.write
 
 public class SyscallStatLstat64FunctionHandle private constructor(
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
     private val followSymlinks: Boolean = false,
     function: HostFunction,
 ) : HostFunctionHandle(function, host) {
@@ -48,7 +48,7 @@ public class SyscallStatLstat64FunctionHandle private constructor(
 
     public companion object {
         public fun syscallLstat64(
-            host: SqliteEmbedderHost,
+            host: EmbedderHost,
         ): SyscallStatLstat64FunctionHandle = SyscallStatLstat64FunctionHandle(
             host,
             false,
@@ -56,7 +56,7 @@ public class SyscallStatLstat64FunctionHandle private constructor(
         )
 
         public fun syscallStat64(
-            host: SqliteEmbedderHost,
+            host: EmbedderHost,
         ): SyscallStatLstat64FunctionHandle = SyscallStatLstat64FunctionHandle(
             host,
             true,

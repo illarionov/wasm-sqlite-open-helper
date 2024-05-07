@@ -12,11 +12,11 @@ import com.dylibso.chicory.wasm.types.Value
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore.SqliteComparatorId
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.function.SqliteDestroyComparatorFunctionHandle
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteComparatorCallback
 
 internal class Sqlite3DestroyComparatorAdapter(
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
     comparatorStore: SqliteCallbackStore.SqliteCallbackIdMap<SqliteComparatorId, SqliteComparatorCallback>,
 ) : WasmFunctionHandle {
     private val handle = SqliteDestroyComparatorFunctionHandle(host, comparatorStore)

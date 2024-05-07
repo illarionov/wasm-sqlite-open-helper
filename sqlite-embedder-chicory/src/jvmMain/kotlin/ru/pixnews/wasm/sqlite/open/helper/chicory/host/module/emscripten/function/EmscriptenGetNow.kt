@@ -9,12 +9,12 @@ package ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.functi
 import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.wasm.types.Value
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.EmscriptenHostFunctionHandle
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.EmscriptenGetNowFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
 
 internal class EmscriptenGetNow(
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
     @Suppress("UnusedPrivateProperty") private val memory: Memory,
 ) : EmscriptenHostFunctionHandle {
     private val handle = EmscriptenGetNowFunctionHandle(host)

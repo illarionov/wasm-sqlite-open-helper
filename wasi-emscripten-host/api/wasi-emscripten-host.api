@@ -1,13 +1,15 @@
-public final class ru/pixnews/wasm/sqlite/open/helper/host/JvmLocalTimeFormatter : kotlin/jvm/functions/Function1 {
-	public fun <init> ()V
-	public fun <init> (Lkotlin/jvm/functions/Function0;)V
-	public synthetic fun <init> (Lkotlin/jvm/functions/Function0;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun getLocalTimeZoneProvider ()Lkotlin/jvm/functions/Function0;
-	public synthetic fun invoke (Ljava/lang/Object;)Ljava/lang/Object;
-	public fun invoke-LRDsOJo (J)Lru/pixnews/wasm/sqlite/open/helper/host/include/StructTm;
+public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost {
+	public abstract fun getClock ()Lkotlin/jvm/functions/Function0;
+	public abstract fun getCommandArgsProvider ()Lkotlin/jvm/functions/Function0;
+	public abstract fun getFileSystem ()Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/FileSystem;
+	public abstract fun getLocalTimeFormatter ()Lkotlin/jvm/functions/Function1;
+	public abstract fun getMonotonicClock ()Lkotlin/jvm/functions/Function0;
+	public abstract fun getRootLogger ()Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;
+	public abstract fun getSystemEnvProvider ()Lkotlin/jvm/functions/Function0;
+	public abstract fun getTimeZoneInfo ()Lkotlin/jvm/functions/Function0;
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/host/JvmSqliteEmbedderHost : ru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost {
+public final class ru/pixnews/wasm/sqlite/open/helper/host/JvmEmbedderHost : ru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost {
 	public fun <init> ()V
 	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/FileSystem;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;)V
 	public synthetic fun <init> (Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/FileSystem;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -21,23 +23,21 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/JvmSqliteEmbedderHost
 	public fun getTimeZoneInfo ()Lkotlin/jvm/functions/Function0;
 }
 
+public final class ru/pixnews/wasm/sqlite/open/helper/host/JvmLocalTimeFormatter : kotlin/jvm/functions/Function1 {
+	public fun <init> ()V
+	public fun <init> (Lkotlin/jvm/functions/Function0;)V
+	public synthetic fun <init> (Lkotlin/jvm/functions/Function0;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getLocalTimeZoneProvider ()Lkotlin/jvm/functions/Function0;
+	public synthetic fun invoke (Ljava/lang/Object;)Ljava/lang/Object;
+	public fun invoke-LRDsOJo (J)Lru/pixnews/wasm/sqlite/open/helper/host/include/StructTm;
+}
+
 public final class ru/pixnews/wasm/sqlite/open/helper/host/JvmTimeZoneInfoProvider : kotlin/jvm/functions/Function0 {
 	public fun <init> ()V
 	public fun <init> (Ljava/time/Clock;)V
 	public synthetic fun <init> (Ljava/time/Clock;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun invoke ()Ljava/lang/Object;
 	public fun invoke ()Lru/pixnews/wasm/sqlite/open/helper/host/include/TimeZoneInfo;
-}
-
-public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost {
-	public abstract fun getClock ()Lkotlin/jvm/functions/Function0;
-	public abstract fun getCommandArgsProvider ()Lkotlin/jvm/functions/Function0;
-	public abstract fun getFileSystem ()Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/FileSystem;
-	public abstract fun getLocalTimeFormatter ()Lkotlin/jvm/functions/Function1;
-	public abstract fun getMonotonicClock ()Lkotlin/jvm/functions/Function0;
-	public abstract fun getRootLogger ()Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;
-	public abstract fun getSystemEnvProvider ()Lkotlin/jvm/functions/Function0;
-	public abstract fun getTimeZoneInfo ()Lkotlin/jvm/functions/Function0;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/base/WasmModules {
@@ -107,9 +107,9 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFun
 }
 
 public class ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunction;Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;)V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunction;Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
 	public final fun getFunction ()Lru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunction;
-	public final fun getHost ()Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;
+	public final fun getHost ()Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;
 	protected final fun getLogger ()Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;
 }
 
@@ -170,33 +170,33 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/Emscripten
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/AbortFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;)V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
 	public final fun execute ()Ljava/lang/Void;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/AssertFailFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;)V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
 	public final fun execute-7gOlN2Y (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;IIII)Ljava/lang/Void;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/EmscriptenDateNowFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;)V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
 	public final fun execute ()D
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/EmscriptenGetNowFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;)V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
 	public final fun execute ()D
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/EmscriptenGetNowIsMonotonicFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;)V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
 	public final fun execute ()I
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/EmscriptenResizeHeapFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
 	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/EmscriptenResizeHeapFunctionHandle$Companion;
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;)V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/EmscriptenResizeHeapFunctionHandle$Companion {
@@ -204,98 +204,98 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/E
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/LocaltimeJsFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;)V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
 	public final fun execute-8CWcXrs (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;JI)V
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/MmapJsFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;)V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
 	public final fun execute-prGfwCs (IIIIJII)I
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/MunapJsFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;)V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
 	public final fun execute-ykjIGDI (IIIIIJ)I
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/SyscallChmodFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;)V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
 	public final fun execute-LDtFnYU (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;II)I
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/SyscallFaccessatFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;)V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
 	public final fun execute-3D0ynXU (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;IIII)I
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/SyscallFchmodFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;)V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
 	public final fun execute-KKvLbP4 (II)I
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/SyscallFchown32FunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;)V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
 	public final fun execute-z4h_Sj0 (III)I
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/SyscallFcntl64FunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;)V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
 	public final fun execute-tdD0SJw (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;III)I
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/SyscallFstat64FunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;)V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
 	public final fun execute-_9l9xa0 (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;II)I
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/SyscallFtruncate64FunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;)V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
 	public final fun execute-tVmRj-E (IJ)I
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/SyscallGetcwdFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;)V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
 	public final fun execute--6ori6s (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;II)I
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/SyscallMkdiratFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;)V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
 	public final fun execute-28iZWMA (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;III)I
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/SyscallOpenatFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;)V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
 	public final fun execute-3D0ynXU (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;IIII)I
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/SyscallRmdirFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;)V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
 	public final fun execute-wTLQxr0 (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;I)I
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/SyscallStatLstat64FunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
 	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/SyscallStatLstat64FunctionHandle$Companion;
-	public synthetic fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;ZLru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunction;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;ZLru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunction;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun execute-0BaN380 (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;II)I
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/SyscallStatLstat64FunctionHandle$Companion {
-	public final fun syscallLstat64 (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;)Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/SyscallStatLstat64FunctionHandle;
-	public final fun syscallStat64 (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;)Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/SyscallStatLstat64FunctionHandle;
+	public final fun syscallLstat64 (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/SyscallStatLstat64FunctionHandle;
+	public final fun syscallStat64 (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/SyscallStatLstat64FunctionHandle;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/SyscallUnlinkatFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;)V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
 	public final fun execute-28iZWMA (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;III)I
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/SyscallUtimensatFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;)V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
 	public final fun execute-DF9OkaU (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;IIII)I
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/TzsetJsFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;)V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
 	public final fun execute-5E9gB2A (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;IIII)V
 }
 
@@ -854,60 +854,60 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/ext/Was
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/function/EnvironGetFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;)V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
 	public final fun execute-0BaN380 (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;II)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/function/EnvironSizesGetFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;)V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
 	public final fun execute-0BaN380 (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;II)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/function/FdCloseFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;)V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
 	public final fun execute-l5Tu65g (I)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/function/FdReadFdPreadFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
 	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/function/FdReadFdPreadFunctionHandle$Companion;
-	public synthetic fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;Lru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunction;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/ReadWriteStrategy;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;Lru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunction;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/ReadWriteStrategy;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun execute-ocFNuEo (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;IIII)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/function/FdReadFdPreadFunctionHandle$Companion {
-	public final fun fdPread (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/function/FdReadFdPreadFunctionHandle;
-	public final fun fdRead (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/function/FdReadFdPreadFunctionHandle;
+	public final fun fdPread (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/function/FdReadFdPreadFunctionHandle;
+	public final fun fdRead (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/function/FdReadFdPreadFunctionHandle;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/function/FdSeekFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;)V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
 	public final fun execute-C9NlyLM (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;IJII)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/function/FdSyncSyscallFdatasyncFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
 	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/function/FdSyncSyscallFdatasyncFunctionHandle$Companion;
-	public synthetic fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;Lru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunction;ZLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;Lru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunction;ZLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun execute-l5Tu65g (I)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/function/FdSyncSyscallFdatasyncFunctionHandle$Companion {
-	public final fun fdSync (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/function/FdSyncSyscallFdatasyncFunctionHandle;
-	public final fun syscallFdatasync (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/function/FdSyncSyscallFdatasyncFunctionHandle;
+	public final fun fdSync (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/function/FdSyncSyscallFdatasyncFunctionHandle;
+	public final fun syscallFdatasync (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/function/FdSyncSyscallFdatasyncFunctionHandle;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/function/FdWriteFdPWriteFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
 	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/function/FdWriteFdPWriteFunctionHandle$Companion;
-	public synthetic fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;Lru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunction;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/ReadWriteStrategy;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;Lru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunction;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/ReadWriteStrategy;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun execute-ocFNuEo (Lru/pixnews/wasm/sqlite/open/helper/host/memory/Memory;IIII)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/function/FdWriteFdPWriteFunctionHandle$Companion {
-	public final fun fdPwrite (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/function/FdWriteFdPWriteFunctionHandle;
-	public final fun fdWrite (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/function/FdWriteFdPWriteFunctionHandle;
+	public final fun fdPwrite (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/function/FdWriteFdPWriteFunctionHandle;
+	public final fun fdWrite (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/function/FdWriteFdPWriteFunctionHandle;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/function/SchedYieldFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/SqliteEmbedderHost;)V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
 	public final fun execute ()Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
 }
 

@@ -13,7 +13,7 @@ import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.constants.Sizes
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.NodeFactory
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmValueType
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction.HostFunctionType
@@ -21,7 +21,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.function.functionTypes
 
 internal fun setupWasmModuleFunctions(
     context: WasmContext,
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
     module: WasmModule,
     functions: Map<out HostFunction, NodeFactory>,
 ): WasmInstance {

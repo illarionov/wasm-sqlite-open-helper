@@ -12,17 +12,17 @@ import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.wasm.types.Value
 import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.asWasmAddr
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.EmscriptenHostFunctionHandle
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.SyscallStatLstat64FunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
 
 internal fun syscallStat64(
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
     memory: Memory,
 ): EmscriptenHostFunctionHandle = SyscallStat64Lstat64(memory, SyscallStatLstat64FunctionHandle.syscallStat64(host))
 
 internal fun syscallLstat64(
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
     memory: Memory,
 ): EmscriptenHostFunctionHandle = SyscallStat64Lstat64(memory, SyscallStatLstat64FunctionHandle.syscallLstat64(host))
 

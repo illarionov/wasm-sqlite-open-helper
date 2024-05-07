@@ -8,10 +8,10 @@ package ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module
 
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 
 internal typealias NodeFactory = (
     language: WasmLanguage,
     module: WasmModule,
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
 ) -> BaseWasmNode<*>

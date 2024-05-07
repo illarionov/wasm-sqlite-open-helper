@@ -24,12 +24,12 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.wasi.function.fdPr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.wasi.function.fdPwrite
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.wasi.function.fdRead
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.wasi.function.fdWrite
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction
 
 internal class WasiSnapshotPreview1ModuleBuilder(
     private val graalContext: Context,
-    private val host: SqliteEmbedderHost,
+    private val host: EmbedderHost,
     private val moduleName: String = WASI_SNAPSHOT_PREVIEW1,
 ) {
     fun setupModule(

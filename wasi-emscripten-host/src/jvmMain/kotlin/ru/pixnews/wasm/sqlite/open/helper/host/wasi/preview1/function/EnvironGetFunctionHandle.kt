@@ -9,7 +9,7 @@ package ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.function
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.api.plus
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.writeZeroTerminatedString
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction
@@ -17,7 +17,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.ext.WasiEnvironment
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 
 public class EnvironGetFunctionHandle(
-    host: SqliteEmbedderHost,
+    host: EmbedderHost,
 ) : HostFunctionHandle(WasiHostFunction.ENVIRON_GET, host) {
     public fun execute(
         memory: Memory,
