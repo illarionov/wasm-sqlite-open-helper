@@ -26,9 +26,7 @@ internal class SyscallOpenat(
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
-    functionName: String = "__syscall_openat",
-) : BaseWasmNode(language, module, host, functionName) {
-    private val handle = SyscallOpenatFunctionHandle(host)
+) : BaseWasmNode<SyscallOpenatFunctionHandle>(language, module, SyscallOpenatFunctionHandle(host)) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
         val args = frame.arguments
         val memory = memory(frame)

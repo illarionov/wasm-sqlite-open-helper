@@ -23,15 +23,9 @@ internal class SyscallRmdir(
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
-    functionName: String = "__syscall_rmdir",
-) : BaseWasmNode(language, module, host, functionName) {
-    private val handle = SyscallRmdirFunctionHandle(host)
+) : BaseWasmNode<SyscallRmdirFunctionHandle>(language, module, SyscallRmdirFunctionHandle(host)) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
-        val args: Array<Any> = frame.arguments
-        return syscallRmdirat(
-            memory(frame),
-            args.getArgAsWasmPtr(0),
-        )
+        return syscallRmdirat(memory(frame), frame.arguments.getArgAsWasmPtr(0))
     }
 
     @TruffleBoundary

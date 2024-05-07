@@ -25,8 +25,9 @@ internal class Sqlite3LoggingAdapter(
     override fun apply(instance: Instance, vararg args: Value): Array<Value> {
         handle.execute(
             memory,
-            args[0].asInt(),
-            args[1].asWasmAddr(),
+            // unused context pointer args.getArgAsWasmPtr(0),
+            args[1].asInt(),
+            args[2].asWasmAddr(),
         )
         return emptyArray()
     }

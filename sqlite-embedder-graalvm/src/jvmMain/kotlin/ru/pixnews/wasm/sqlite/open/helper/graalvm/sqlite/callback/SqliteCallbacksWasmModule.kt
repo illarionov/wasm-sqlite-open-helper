@@ -19,12 +19,12 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.setupImportedEnvMemory
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.setupWasmModuleFunctions
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.withWasmContext
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.NodeFactory
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func.Sqlite3CallExecAdapter
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func.Sqlite3ComparatorAdapter
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func.Sqlite3DestroyComparatorAdapter
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func.Sqlite3LoggingAdapter
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func.Sqlite3ProgressAdapter
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func.Sqlite3TraceAdapter
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.function.Sqlite3CallExecAdapter
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.function.Sqlite3ComparatorAdapter
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.function.Sqlite3DestroyComparatorAdapter
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.function.Sqlite3LoggingAdapter
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.function.Sqlite3ProgressAdapter
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.function.Sqlite3TraceAdapter
 import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
 
 internal const val SQLITE3_CALLBACK_MANAGER_MODULE_NAME = "sqlite3-callback-manager"
@@ -39,85 +39,23 @@ internal class SqliteCallbacksModuleBuilder(
                 language: WasmLanguage,
                 module: WasmModule,
                 host: SqliteEmbedderHost,
-                functionName: String,
             ->
-            Sqlite3CallExecAdapter(
-                language = language,
-                module = module,
-                execCallbackStore = callbackStore.sqlite3ExecCallbacks::get,
-                host = host,
-                functionName = functionName,
-            )
+            Sqlite3CallExecAdapter(language, module, host, callbackStore.sqlite3ExecCallbacks::get)
         },
-        SqliteCallbacksModuleFunction.SQLITE3_TRACE_CALLBACK to {
-                language: WasmLanguage,
-                module: WasmModule,
-                host: SqliteEmbedderHost,
-                functionName: String,
-            ->
-            Sqlite3TraceAdapter(
-                language = language,
-                module = module,
-                traceCallbackStore = callbackStore.sqlite3TraceCallbacks::get,
-                host = host,
-                functionName = functionName,
-            )
+        SqliteCallbacksModuleFunction.SQLITE3_TRACE_CALLBACK to { language, module, host ->
+            Sqlite3TraceAdapter(language, module, host, callbackStore.sqlite3TraceCallbacks::get)
         },
-        SqliteCallbacksModuleFunction.SQLITE3_PROGRESS_CALLBACK to {
-                language: WasmLanguage,
-                module: WasmModule,
-                host: SqliteEmbedderHost,
-                functionName: String,
-            ->
-            Sqlite3ProgressAdapter(
-                language = language,
-                module = module,
-                progressCallbackStore = callbackStore.sqlite3ProgressCallbacks::get,
-                host = host,
-                functionName = functionName,
-            )
+        SqliteCallbacksModuleFunction.SQLITE3_PROGRESS_CALLBACK to { language, module, host ->
+            Sqlite3ProgressAdapter(language, module, host, callbackStore.sqlite3ProgressCallbacks::get)
         },
-        SqliteCallbacksModuleFunction.SQLITE3_COMPARATOR_CALL_CALLBACK to {
-                language: WasmLanguage,
-                module: WasmModule,
-                host: SqliteEmbedderHost,
-                functionName: String,
-            ->
-            Sqlite3ComparatorAdapter(
-                language = language,
-                module = module,
-                comparatorStore = callbackStore.sqlite3Comparators::get,
-                host = host,
-                functionName = functionName,
-            )
+        SqliteCallbacksModuleFunction.SQLITE3_COMPARATOR_CALL_CALLBACK to { language, module, host ->
+            Sqlite3ComparatorAdapter(language, module, host, callbackStore.sqlite3Comparators::get)
         },
-        SqliteCallbacksModuleFunction.SQLITE3_DESTROY_COMPARATOR_FUNCTION to {
-                language: WasmLanguage,
-                module: WasmModule,
-                host: SqliteEmbedderHost,
-                functionName: String,
-            ->
-            Sqlite3DestroyComparatorAdapter(
-                language = language,
-                module = module,
-                comparatorStore = callbackStore.sqlite3Comparators,
-                host = host,
-                functionName = functionName,
-            )
+        SqliteCallbacksModuleFunction.SQLITE3_DESTROY_COMPARATOR_FUNCTION to { language, module, host ->
+            Sqlite3DestroyComparatorAdapter(language, module, host, callbackStore.sqlite3Comparators)
         },
-        SqliteCallbacksModuleFunction.SQLITE3_LOGGING_CALLBACK to {
-                language: WasmLanguage,
-                module: WasmModule,
-                host: SqliteEmbedderHost,
-                functionName: String,
-            ->
-            Sqlite3LoggingAdapter(
-                language = language,
-                module = module,
-                logCallbackStore = callbackStore::sqlite3LogCallback,
-                host = host,
-                functionName = functionName,
-            )
+        SqliteCallbacksModuleFunction.SQLITE3_LOGGING_CALLBACK to { language, module, host ->
+            Sqlite3LoggingAdapter(language, module, host, callbackStore::sqlite3LogCallback)
         },
     ).also {
         check(it.size == SqliteCallbacksModuleFunction.entries.size)

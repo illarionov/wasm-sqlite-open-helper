@@ -54,52 +54,53 @@ internal class WasiSnapshotPreview1ModuleBuilder(
         internal const val WASI_SNAPSHOT_PREVIEW1 = "wasi_snapshot_preview1"
         private val WasiHostFunction.nodeFactory: NodeFactory
             get() = when (this) {
-                WasiHostFunction.ARGS_GET -> notImplementedFunctionNodeFactory
-                WasiHostFunction.ARGS_SIZES_GET -> notImplementedFunctionNodeFactory
-                WasiHostFunction.CLOCK_RES_GET -> notImplementedFunctionNodeFactory
-                WasiHostFunction.CLOCK_TIME_GET -> notImplementedFunctionNodeFactory
                 WasiHostFunction.ENVIRON_GET -> ::EnvironGet
                 WasiHostFunction.ENVIRON_SIZES_GET -> ::EnvironSizesGet
-                WasiHostFunction.FD_ADVISE -> notImplementedFunctionNodeFactory
-                WasiHostFunction.FD_ALLOCATE -> notImplementedFunctionNodeFactory
                 WasiHostFunction.FD_CLOSE -> ::FdClose
-                WasiHostFunction.FD_DATASYNC -> notImplementedFunctionNodeFactory
-                WasiHostFunction.FD_FDSTAT_GET -> notImplementedFunctionNodeFactory
-                WasiHostFunction.FD_FDSTAT_SET_FLAGS -> notImplementedFunctionNodeFactory
-                WasiHostFunction.FD_FDSTAT_SET_RIGHTS -> notImplementedFunctionNodeFactory
-                WasiHostFunction.FD_FILESTAT_GET -> notImplementedFunctionNodeFactory
-                WasiHostFunction.FD_FILESTAT_SET_SIZE -> notImplementedFunctionNodeFactory
-                WasiHostFunction.FD_FILESTAT_SET_TIMES -> notImplementedFunctionNodeFactory
                 WasiHostFunction.FD_PREAD -> ::fdPread
-                WasiHostFunction.FD_PRESTAT_DIR_NAME -> notImplementedFunctionNodeFactory
-                WasiHostFunction.FD_PRESTAT_GET -> notImplementedFunctionNodeFactory
                 WasiHostFunction.FD_PWRITE -> ::fdPwrite
                 WasiHostFunction.FD_READ -> ::fdRead
-                WasiHostFunction.FD_READDIR -> notImplementedFunctionNodeFactory
-                WasiHostFunction.FD_RENUMBER -> notImplementedFunctionNodeFactory
                 WasiHostFunction.FD_SEEK -> ::FdSeek
                 WasiHostFunction.FD_SYNC -> ::FdSync
-                WasiHostFunction.FD_TELL -> notImplementedFunctionNodeFactory
                 WasiHostFunction.FD_WRITE -> ::fdWrite
-                WasiHostFunction.PATH_CREATE_DIRECTORY -> notImplementedFunctionNodeFactory
-                WasiHostFunction.PATH_FILESTAT_GET -> notImplementedFunctionNodeFactory
-                WasiHostFunction.PATH_FILESTAT_SET_TIMES -> notImplementedFunctionNodeFactory
-                WasiHostFunction.PATH_LINK -> notImplementedFunctionNodeFactory
-                WasiHostFunction.PATH_OPEN -> notImplementedFunctionNodeFactory
-                WasiHostFunction.PATH_READLINK -> notImplementedFunctionNodeFactory
-                WasiHostFunction.PATH_REMOVE_DIRECTORY -> notImplementedFunctionNodeFactory
-                WasiHostFunction.PATH_RENAME -> notImplementedFunctionNodeFactory
-                WasiHostFunction.PATH_SYMLINK -> notImplementedFunctionNodeFactory
-                WasiHostFunction.PATH_UNLINK_FILE -> notImplementedFunctionNodeFactory
-                WasiHostFunction.POLL_ONEOFF -> notImplementedFunctionNodeFactory
-                WasiHostFunction.PROC_EXIT -> notImplementedFunctionNodeFactory
-                WasiHostFunction.PROC_RAISE -> notImplementedFunctionNodeFactory
-                WasiHostFunction.RANDOM_GET -> notImplementedFunctionNodeFactory
                 WasiHostFunction.SCHED_YIELD -> ::SchedYield
-                WasiHostFunction.SOCK_ACCEPT -> notImplementedFunctionNodeFactory
-                WasiHostFunction.SOCK_RECV -> notImplementedFunctionNodeFactory
-                WasiHostFunction.SOCK_SEND -> notImplementedFunctionNodeFactory
-                WasiHostFunction.SOCK_SHUTDOWN -> notImplementedFunctionNodeFactory
+                WasiHostFunction.ARGS_GET,
+                WasiHostFunction.ARGS_SIZES_GET,
+                WasiHostFunction.CLOCK_RES_GET,
+                WasiHostFunction.CLOCK_TIME_GET,
+                WasiHostFunction.FD_ADVISE,
+                WasiHostFunction.FD_ALLOCATE,
+                WasiHostFunction.FD_DATASYNC,
+                WasiHostFunction.FD_FDSTAT_GET,
+                WasiHostFunction.FD_FDSTAT_SET_FLAGS,
+                WasiHostFunction.FD_FDSTAT_SET_RIGHTS,
+                WasiHostFunction.FD_FILESTAT_GET,
+                WasiHostFunction.FD_FILESTAT_SET_SIZE,
+                WasiHostFunction.FD_FILESTAT_SET_TIMES,
+                WasiHostFunction.FD_PRESTAT_DIR_NAME,
+                WasiHostFunction.FD_PRESTAT_GET,
+                WasiHostFunction.FD_READDIR,
+                WasiHostFunction.FD_RENUMBER,
+                WasiHostFunction.FD_TELL,
+                WasiHostFunction.PATH_CREATE_DIRECTORY,
+                WasiHostFunction.PATH_FILESTAT_GET,
+                WasiHostFunction.PATH_FILESTAT_SET_TIMES,
+                WasiHostFunction.PATH_LINK,
+                WasiHostFunction.PATH_OPEN,
+                WasiHostFunction.PATH_READLINK,
+                WasiHostFunction.PATH_REMOVE_DIRECTORY,
+                WasiHostFunction.PATH_RENAME,
+                WasiHostFunction.PATH_SYMLINK,
+                WasiHostFunction.PATH_UNLINK_FILE,
+                WasiHostFunction.POLL_ONEOFF,
+                WasiHostFunction.PROC_EXIT,
+                WasiHostFunction.PROC_RAISE,
+                WasiHostFunction.RANDOM_GET,
+                WasiHostFunction.SOCK_ACCEPT,
+                WasiHostFunction.SOCK_RECV,
+                WasiHostFunction.SOCK_SEND,
+                WasiHostFunction.SOCK_SHUTDOWN,
+                -> notImplementedFunctionNodeFactory(this)
             }
     }
 }

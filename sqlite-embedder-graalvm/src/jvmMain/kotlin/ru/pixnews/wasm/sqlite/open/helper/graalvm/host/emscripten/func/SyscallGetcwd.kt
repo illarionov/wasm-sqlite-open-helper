@@ -24,10 +24,7 @@ internal class SyscallGetcwd(
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
-    functionName: String = "__syscall_getcwd",
-) : BaseWasmNode(language, module, host, functionName) {
-    private val handle = SyscallGetcwdFunctionHandle(host)
-
+) : BaseWasmNode<SyscallGetcwdFunctionHandle>(language, module, SyscallGetcwdFunctionHandle(host)) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {
         val args = frame.arguments
         return syscallGetcwd(

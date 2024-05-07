@@ -55,4 +55,8 @@ internal class Pthread(
         @Suppress("DEPRECATION")
         return Thread.currentThread().id == mainThreadId
     }
+
+     internal companion object {
+         internal const val DEFAULT_THREAD_STACK_SIZE = 524288
+     }
 }

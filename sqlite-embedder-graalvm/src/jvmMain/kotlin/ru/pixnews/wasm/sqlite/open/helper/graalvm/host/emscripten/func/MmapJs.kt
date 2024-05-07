@@ -28,10 +28,7 @@ internal class MmapJs(
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
-    functionName: String = "__mmap_js",
-) : BaseWasmNode(language, module, host, functionName) {
-    private val handle = MmapJsFunctionHandle(host)
-
+) : BaseWasmNode<MmapJsFunctionHandle>(language, module, MmapJsFunctionHandle(host)) {
     @Suppress("MagicNumber")
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Int {
         val args = frame.arguments

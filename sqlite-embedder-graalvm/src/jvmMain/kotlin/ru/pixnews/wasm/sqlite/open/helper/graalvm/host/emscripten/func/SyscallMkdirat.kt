@@ -25,9 +25,7 @@ internal class SyscallMkdirat(
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
-    functionName: String = "__syscall_mkdirat",
-) : BaseWasmNode(language, module, host, functionName) {
-    private val handle = SyscallMkdiratFunctionHandle(host)
+) : BaseWasmNode<SyscallMkdiratFunctionHandle>(language, module, SyscallMkdiratFunctionHandle(host)) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
         val args: Array<Any> = frame.arguments
         return syscallMkdirat(

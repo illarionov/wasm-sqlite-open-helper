@@ -28,10 +28,7 @@ internal class MunapJs(
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
-    functionName: String = "__munmap_js",
-) : BaseWasmNode(language, module, host, functionName) {
-    private val handle = MunapJsFunctionHandle(host)
-
+) : BaseWasmNode<MunapJsFunctionHandle>(language, module, MunapJsFunctionHandle(host)) {
     @Suppress("MagicNumber")
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Int {
         val args = frame.arguments

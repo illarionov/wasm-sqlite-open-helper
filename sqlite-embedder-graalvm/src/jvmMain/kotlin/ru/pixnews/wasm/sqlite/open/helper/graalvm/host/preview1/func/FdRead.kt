@@ -26,12 +26,9 @@ internal fun fdRead(
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
-    functionName: String = "fd_read",
-): BaseWasmNode = FdRead(
+): BaseWasmNode<FdReadFdPreadFunctionHandle> = FdRead(
     language,
     module,
-    host,
-    functionName,
     FdReadFdPreadFunctionHandle.fdRead(host),
 )
 
@@ -39,22 +36,17 @@ internal fun fdPread(
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
-    functionName: String = "fd_pread",
-): BaseWasmNode = FdRead(
+): BaseWasmNode<FdReadFdPreadFunctionHandle> = FdRead(
     language,
     module,
-    host,
-    functionName,
     FdReadFdPreadFunctionHandle.fdPread(host),
 )
 
 private class FdRead(
     language: WasmLanguage,
     module: WasmModule,
-    host: SqliteEmbedderHost,
-    functionName: String = "fd_read",
-    private val handle: FdReadFdPreadFunctionHandle,
-) : BaseWasmNode(language, module, host, functionName) {
+    handle: FdReadFdPreadFunctionHandle,
+) : BaseWasmNode<FdReadFdPreadFunctionHandle>(language, module, handle) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {
         val args = frame.arguments
         return fdRead(

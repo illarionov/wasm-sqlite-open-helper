@@ -19,10 +19,7 @@ internal class Abort(
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
-    functionName: String = "abort",
-) : BaseWasmNode(language, module, host, functionName) {
-    private val handle = AbortFunctionHandle(host)
-
+) : BaseWasmNode<AbortFunctionHandle>(language, module, AbortFunctionHandle(host)) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
         handle.execute()
     }

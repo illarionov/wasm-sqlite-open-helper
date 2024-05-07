@@ -10,25 +10,21 @@ import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.memory.WasmMemory
 import org.graalvm.wasm.nodes.WasmRootNode
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.GraalvmWasmHostMemoryAdapter
-import ru.pixnews.wasm.sqlite.open.helper.host.SqliteEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 
-internal open class BaseWasmNode(
+internal open class BaseWasmNode<H : HostFunctionHandle>(
     language: WasmLanguage,
     private val module: WasmModule,
-    protected val host: SqliteEmbedderHost,
-    val functionName: String,
+    val handle: H,
 ) : WasmRootNode(language, null, null) {
-    protected val logger: Logger = host.rootLogger.withTag("wasm-func:$functionName")
-
-    override fun getName(): String = "wasm-function:$functionName"
+    override fun getName(): String = "wasm-function:${handle.function.wasmName}"
 
     override fun module(): WasmModule = module
 
     fun WasmMemory.toHostMemory() = GraalvmWasmHostMemoryAdapter(
         { this },
         this@BaseWasmNode,
-        host.rootLogger,
+        handle.host.rootLogger,
     )
 }

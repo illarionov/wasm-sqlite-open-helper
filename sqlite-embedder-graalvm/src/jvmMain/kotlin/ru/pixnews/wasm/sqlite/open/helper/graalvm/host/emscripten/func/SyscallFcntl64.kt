@@ -23,10 +23,7 @@ internal class SyscallFcntl64(
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
-    functionName: String = "__syscall_fcntl64",
-) : BaseWasmNode(language, module, host, functionName) {
-    private val handle = SyscallFcntl64FunctionHandle(host)
-
+) : BaseWasmNode<SyscallFcntl64FunctionHandle>(language, module, SyscallFcntl64FunctionHandle(host)) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {
         val args = frame.arguments
         return syscallFcntl64(

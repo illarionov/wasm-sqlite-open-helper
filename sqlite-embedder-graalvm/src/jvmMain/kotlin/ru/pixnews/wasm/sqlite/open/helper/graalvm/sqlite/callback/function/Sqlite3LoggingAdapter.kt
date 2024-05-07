@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.func
+package ru.pixnews.wasm.sqlite.open.helper.graalvm.sqlite.callback.function
 
-import com.oracle.truffle.api.CompilerDirectives
+import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary
 import com.oracle.truffle.api.frame.VirtualFrame
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
@@ -24,12 +24,13 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteLogCallback
 internal class Sqlite3LoggingAdapter(
     language: WasmLanguage,
     module: WasmModule,
-    logCallbackStore: () -> SqliteLogCallback?,
     host: SqliteEmbedderHost,
-    functionName: String,
-) : BaseWasmNode(language, module, host, functionName) {
-    private val handle = Sqlite3LoggingFunctionHandler(host, logCallbackStore)
-
+    logCallbackStore: () -> SqliteLogCallback?,
+) : BaseWasmNode<Sqlite3LoggingFunctionHandler>(
+    language,
+    module,
+    Sqlite3LoggingFunctionHandler(host, logCallbackStore),
+) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance) {
         val args = frame.arguments
         invokeLoggingCallback(
@@ -40,7 +41,7 @@ internal class Sqlite3LoggingAdapter(
         )
     }
 
-    @CompilerDirectives.TruffleBoundary
+    @TruffleBoundary
     private fun invokeLoggingCallback(
         memory: WasmMemory,
         errCode: Int,

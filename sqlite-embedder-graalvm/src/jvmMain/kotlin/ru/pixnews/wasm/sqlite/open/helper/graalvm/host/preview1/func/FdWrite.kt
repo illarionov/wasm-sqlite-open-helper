@@ -26,23 +26,19 @@ internal fun fdWrite(
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
-    functionName: String = "fd_write",
-): BaseWasmNode = FdWrite(language, module, host, functionName, FdWriteFdPWriteFunctionHandle.fdWrite(host))
+): BaseWasmNode<FdWriteFdPWriteFunctionHandle> = FdWrite(language, module, FdWriteFdPWriteFunctionHandle.fdWrite(host))
 
 internal fun fdPwrite(
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
-    functionName: String = "fd_pwrite",
-): BaseWasmNode = FdWrite(language, module, host, functionName, FdWriteFdPWriteFunctionHandle.fdPwrite(host))
+): BaseWasmNode<FdWriteFdPWriteFunctionHandle> = FdWrite(language, module, FdWriteFdPWriteFunctionHandle.fdPwrite(host))
 
 private class FdWrite(
     language: WasmLanguage,
     module: WasmModule,
-    host: SqliteEmbedderHost,
-    functionName: String = "fd_write",
-    private val handle: FdWriteFdPWriteFunctionHandle,
-) : BaseWasmNode(language, module, host, functionName) {
+    handle: FdWriteFdPWriteFunctionHandle,
+) : BaseWasmNode<FdWriteFdPWriteFunctionHandle>(language, module, handle) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Any {
         val args = frame.arguments
         return fdWrite(

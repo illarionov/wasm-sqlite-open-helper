@@ -24,12 +24,9 @@ internal fun syscallLstat64(
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
-    functionName: String = "__syscall_lstat64",
-): BaseWasmNode = SyscallStat64(
+): BaseWasmNode<SyscallStatLstat64FunctionHandle> = SyscallStat64(
     language = language,
     module = module,
-    functionName = functionName,
-    host = host,
     handle = SyscallStatLstat64FunctionHandle.syscallLstat64(host),
 )
 
@@ -37,27 +34,17 @@ internal fun syscallStat64(
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
-    functionName: String = "__syscall_stat64",
-): BaseWasmNode = SyscallStat64(
+): BaseWasmNode<SyscallStatLstat64FunctionHandle> = SyscallStat64(
     language = language,
     module = module,
-    functionName = functionName,
-    host = host,
     handle = SyscallStatLstat64FunctionHandle.syscallStat64(host),
 )
 
 private class SyscallStat64(
     language: WasmLanguage,
     module: WasmModule,
-    functionName: String,
-    host: SqliteEmbedderHost,
-    private val handle: SyscallStatLstat64FunctionHandle,
-) : BaseWasmNode(
-    language = language,
-    module = module,
-    functionName = functionName,
-    host = host,
-) {
+    handle: SyscallStatLstat64FunctionHandle,
+) : BaseWasmNode<SyscallStatLstat64FunctionHandle>(language, module, handle) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance): Int {
         val args = frame.arguments
         return stat64(

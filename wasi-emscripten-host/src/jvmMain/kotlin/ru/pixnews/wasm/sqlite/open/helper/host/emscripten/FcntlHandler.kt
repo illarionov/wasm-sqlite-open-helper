@@ -15,7 +15,6 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.FileLockKey
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.resolvePosition
 import ru.pixnews.wasm.sqlite.open.helper.host.include.Fcntl
 import ru.pixnews.wasm.sqlite.open.helper.host.include.StructFlock
-import ru.pixnews.wasm.sqlite.open.helper.host.include.StructFlock.Companion
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.memory.readPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno.AGAIN

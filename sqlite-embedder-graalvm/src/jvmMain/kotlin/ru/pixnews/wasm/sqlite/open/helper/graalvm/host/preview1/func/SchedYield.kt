@@ -21,9 +21,7 @@ internal class SchedYield(
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
-    functionName: String = "sched_yield",
-) : BaseWasmNode(language, module, host, functionName) {
-    private val handle = SchedYieldFunctionHandle(host)
+) : BaseWasmNode<SchedYieldFunctionHandle>(language, module, SchedYieldFunctionHandle(host)) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {
         return schedYield()
     }

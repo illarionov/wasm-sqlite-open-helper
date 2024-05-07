@@ -24,10 +24,7 @@ internal class AssertFail(
     language: WasmLanguage,
     module: WasmModule,
     host: SqliteEmbedderHost,
-    functionName: String = "__assert_fail",
-) : BaseWasmNode(language, module, host, functionName) {
-    private val handle = AssertFailFunctionHandle(host)
-
+) : BaseWasmNode<AssertFailFunctionHandle>(language, module, AssertFailFunctionHandle(host)) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Nothing {
         val args = frame.arguments
         assertFail(
