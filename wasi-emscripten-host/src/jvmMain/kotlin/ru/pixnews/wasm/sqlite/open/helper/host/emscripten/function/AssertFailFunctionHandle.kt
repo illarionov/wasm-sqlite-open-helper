@@ -7,7 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.common.embedder.readZeroTerminatedString
+import ru.pixnews.wasm.sqlite.open.helper.common.embedder.readNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.AssertionFailedException
@@ -25,10 +25,10 @@ public class AssertFailFunctionHandle(
         func: WasmPtr<Byte>,
     ): Nothing {
         throw AssertionFailedException(
-            condition = memory.readZeroTerminatedString(condition),
-            filename = memory.readZeroTerminatedString(filename),
+            condition = memory.readNullTerminatedString(condition),
+            filename = memory.readNullTerminatedString(filename),
             line = line,
-            func = memory.readZeroTerminatedString(func),
+            func = memory.readNullTerminatedString(func),
         )
     }
 }

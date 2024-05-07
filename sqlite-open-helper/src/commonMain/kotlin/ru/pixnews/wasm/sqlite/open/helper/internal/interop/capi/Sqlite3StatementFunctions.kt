@@ -9,7 +9,7 @@ package ru.pixnews.wasm.sqlite.open.helper.internal.interop.capi
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.api.plus
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.EmbedderMemory
-import ru.pixnews.wasm.sqlite.open.helper.common.embedder.readNullableZeroTerminatedString
+import ru.pixnews.wasm.sqlite.open.helper.common.embedder.readNullableNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.readPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.write
 import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.SqliteBindings
@@ -181,7 +181,7 @@ internal class Sqlite3StatementFunctions(
         index: Int,
     ): String? {
         val ptr: WasmPtr<Byte> = sqliteBindings.sqlite3_column_name.executeForPtr(statement.addr, index)
-        return memory.readNullableZeroTerminatedString(ptr)
+        return memory.readNullableNullTerminatedString(ptr)
     }
 
     fun sqlite3StmtReadonly(statement: WasmPtr<SqliteStatement>): Boolean {
@@ -206,7 +206,7 @@ internal class Sqlite3StatementFunctions(
 
     fun sqlite3ExpandedSql(statement: WasmPtr<SqliteStatement>): String? {
         val ptr: WasmPtr<Byte> = sqliteBindings.sqlite3_expanded_sql.executeForPtr(statement.addr)
-        return memory.readNullableZeroTerminatedString(ptr)
+        return memory.readNullableNullTerminatedString(ptr)
     }
 
     fun sqlite3ColumnText(
@@ -214,7 +214,7 @@ internal class Sqlite3StatementFunctions(
         columnIndex: Int,
     ): String? {
         val ptr: WasmPtr<Byte> = sqliteBindings.sqlite3_column_text.executeForPtr(statement.addr, columnIndex)
-        return memory.readNullableZeroTerminatedString(ptr)
+        return memory.readNullableNullTerminatedString(ptr)
     }
 
     fun sqlite3ColumnInt64(

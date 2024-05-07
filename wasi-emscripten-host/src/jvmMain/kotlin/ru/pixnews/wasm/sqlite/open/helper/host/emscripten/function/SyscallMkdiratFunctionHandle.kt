@@ -7,7 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.common.embedder.readZeroTerminatedString
+import ru.pixnews.wasm.sqlite.open.helper.common.embedder.readNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
@@ -29,7 +29,7 @@ public class SyscallMkdiratFunctionHandle(
         val fs = host.fileSystem
         val dirFd = DirFd(rawDirFd)
         val mode = FileMode(rawMode)
-        val path = memory.readZeroTerminatedString(pathnamePtr)
+        val path = memory.readNullTerminatedString(pathnamePtr)
         return try {
             fs.mkdirAt(dirFd, path, mode)
             Errno.SUCCESS.code

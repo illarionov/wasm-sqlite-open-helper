@@ -8,7 +8,7 @@ package ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.function
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
-import ru.pixnews.wasm.sqlite.open.helper.common.embedder.readZeroTerminatedString
+import ru.pixnews.wasm.sqlite.open.helper.common.embedder.readNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
@@ -42,7 +42,7 @@ public class Sqlite3TraceFunctionHandle(
             val traceInfo = SqliteTrace.TraceStmt(
                 db = contextPointer,
                 statement = arg1 as WasmPtr<SqliteStatement>,
-                unexpandedSql = memory.readZeroTerminatedString(WasmPtr(arg2.toInt())),
+                unexpandedSql = memory.readNullTerminatedString(WasmPtr(arg2.toInt())),
             )
             delegate.invoke(traceInfo)
         }

@@ -9,7 +9,7 @@ package ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.function
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr.Companion.WASM_SIZEOF_PTR
 import ru.pixnews.wasm.sqlite.open.helper.common.api.plus
-import ru.pixnews.wasm.sqlite.open.helper.common.embedder.readZeroTerminatedString
+import ru.pixnews.wasm.sqlite.open.helper.common.embedder.readNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore.SqliteExecCallbackId
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
@@ -36,12 +36,12 @@ public class SqliteExecCallbackFunctionHandle(
 
         val columnNames = (0 until columns).map { columnNo ->
             val ptr: WasmPtr<Byte> = memory.readPtr(pColumnNames + (columnNo * WASM_SIZEOF_PTR.toInt()))
-            memory.readZeroTerminatedString(ptr)
+            memory.readNullTerminatedString(ptr)
         }
 
         val results = (0 until columns).map { columnNo ->
             val ptr: WasmPtr<Byte> = memory.readPtr(pResults + (columnNo * WASM_SIZEOF_PTR.toInt()))
-            memory.readZeroTerminatedString(ptr)
+            memory.readNullTerminatedString(ptr)
         }
         return delegate(columnNames, results)
     }
