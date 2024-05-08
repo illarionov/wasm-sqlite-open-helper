@@ -41,8 +41,8 @@ import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.functio
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.function.syscallStat64
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmValueType
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
 import com.dylibso.chicory.runtime.HostFunction as ChicoryHostFunction
 
 internal class EmscriptenEnvFunctionsBuilder(

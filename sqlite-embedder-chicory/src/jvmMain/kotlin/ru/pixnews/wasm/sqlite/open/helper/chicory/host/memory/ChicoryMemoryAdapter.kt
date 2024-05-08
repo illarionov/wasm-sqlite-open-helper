@@ -8,33 +8,35 @@ package ru.pixnews.wasm.sqlite.open.helper.chicory.host.memory
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.DefaultWasiMemoryReader
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.DefaultWasiMemoryWriter
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WasiMemoryReader
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WasiMemoryWriter
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.FdChannel
-import ru.pixnews.wasm.sqlite.open.helper.host.memory.DefaultWasiMemoryReader
-import ru.pixnews.wasm.sqlite.open.helper.host.memory.DefaultWasiMemoryWriter
-import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
-import ru.pixnews.wasm.sqlite.open.helper.host.memory.WasiMemoryReader
-import ru.pixnews.wasm.sqlite.open.helper.host.memory.WasiMemoryWriter
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.CiovecArray
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.IovecArray
 import com.dylibso.chicory.runtime.Memory as ChicoryMemory
 
 @Suppress("BLANK_LINE_BETWEEN_PROPERTIES")
 internal class ChicoryMemoryAdapter(
     private val wasmMemory: ChicoryMemory,
+    fileSystem: FileSystem<*>,
     logger: Logger,
 ) : Memory {
     private val memoryReader: WasiMemoryReader = if (isJvmOrAndroidMinApi34()) {
-        ChicoryWasiMemoryReader.create(wasmMemory)
+        ChicoryWasiMemoryReader.create(wasmMemory, fileSystem)
     } else {
         null
-    } ?: DefaultWasiMemoryReader(this, logger)
+    } ?: DefaultWasiMemoryReader(this, fileSystem, logger)
 
     private val memoryWriter: WasiMemoryWriter = if (isJvmOrAndroidMinApi34()) {
-        ChicoryWasiMemoryWriter.create(wasmMemory)
+        ChicoryWasiMemoryWriter.create(wasmMemory, fileSystem)
     } else {
         null
-    } ?: DefaultWasiMemoryWriter(this, logger)
+    } ?: DefaultWasiMemoryWriter(this, fileSystem, logger)
 
     override fun readI8(addr: WasmPtr<*>): Byte {
         return wasmMemory.read(addr.addr)
@@ -69,16 +71,16 @@ internal class ChicoryMemoryAdapter(
     }
 
     override fun readFromChannel(
-        channel: FdChannel,
+        fd: Fd,
         strategy: ReadWriteStrategy,
         iovecs: IovecArray,
-    ): ULong = memoryReader.read(channel, strategy, iovecs)
+    ): ULong = memoryReader.read(fd, strategy, iovecs)
 
     override fun writeToChannel(
-        channel: FdChannel,
+        fd: Fd,
         strategy: ReadWriteStrategy,
         cioVecs: CiovecArray,
-    ): ULong = memoryWriter.write(channel, strategy, cioVecs)
+    ): ULong = memoryWriter.write(fd, strategy, cioVecs)
 
     private companion object {
         @Suppress("PrivateApi", "MagicNumber", "TooGenericExceptionCaught", "SwallowedException")

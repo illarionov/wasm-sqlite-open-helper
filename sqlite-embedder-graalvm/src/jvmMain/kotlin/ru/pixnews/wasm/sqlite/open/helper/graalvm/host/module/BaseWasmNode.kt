@@ -25,6 +25,7 @@ internal open class BaseWasmNode<H : HostFunctionHandle>(
     fun WasmMemory.toHostMemory() = GraalvmWasmHostMemoryAdapter(
         { this },
         this@BaseWasmNode,
+        handle.host.fileSystem,
         handle.host.rootLogger,
     )
 }

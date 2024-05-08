@@ -28,7 +28,7 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModul
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction.SQLITE3_TRACE_CALLBACK
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmValueType
-import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 
 internal class SqliteCallbacksFunctionsBuilder(
     private val memory: Memory,

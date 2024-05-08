@@ -12,7 +12,7 @@ import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.host.JvmEmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.jvm.JvmEmbedderHost
 
 /**
  * Configuration if the GraalVM engine

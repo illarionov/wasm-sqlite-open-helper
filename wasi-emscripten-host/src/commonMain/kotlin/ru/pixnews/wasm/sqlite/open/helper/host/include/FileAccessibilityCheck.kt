@@ -8,6 +8,7 @@ package ru.pixnews.wasm.sqlite.open.helper.host.include
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.SqliteUintBitMask
 import ru.pixnews.wasm.sqlite.open.helper.common.api.or
+import kotlin.jvm.JvmInline
 
 /**
  * File accessibility check(s) (F_OK, R_OK, W_OK, X_OK)

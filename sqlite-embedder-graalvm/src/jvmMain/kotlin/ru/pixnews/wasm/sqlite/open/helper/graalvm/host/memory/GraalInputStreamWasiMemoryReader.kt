@@ -7,13 +7,14 @@
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.DefaultWasiMemoryReader
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WasiMemoryReader
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy.CHANGE_POSITION
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.FdChannel
-import ru.pixnews.wasm.sqlite.open.helper.host.memory.DefaultWasiMemoryReader
-import ru.pixnews.wasm.sqlite.open.helper.host.memory.WasiMemoryReader
+import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.JvmFileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.IovecArray
 import java.io.IOException
 import java.nio.channels.AsynchronousCloseException
@@ -25,26 +26,27 @@ import kotlin.time.measureTimedValue
 
 internal class GraalInputStreamWasiMemoryReader(
     private val memory: GraalvmWasmHostMemoryAdapter,
+    private val fileSystem: JvmFileSystem,
     logger: Logger,
 ) : WasiMemoryReader {
     private val logger: Logger = logger.withTag("GraalInputStreamWasiMemoryReader")
     private val wasmMemory get() = memory.wasmMemory
-    private val defaultMemoryReader = DefaultWasiMemoryReader(memory, logger)
+    private val defaultMemoryReader = DefaultWasiMemoryReader(memory, fileSystem, logger)
 
     override fun read(
-        channel: FdChannel,
+        fd: Fd,
         strategy: ReadWriteStrategy,
         iovecs: IovecArray,
     ): ULong {
         val bytesRead = measureTimedValue {
             if (strategy == CHANGE_POSITION) {
-                read(channel, iovecs)
+                read(fd, iovecs)
             } else {
-                defaultMemoryReader.read(channel, strategy, iovecs)
+                defaultMemoryReader.read(fd, strategy, iovecs)
             }
         }
         logger.v {
-            "read(${channel.fd}, $strategy, ${iovecs.iovecList.map { it.bufLen.value }}): " +
+            "read($fd, $strategy, ${iovecs.iovecList.map { it.bufLen.value }}): " +
                     "${bytesRead.value} in ${bytesRead.duration}"
         }
         return bytesRead.value
@@ -52,12 +54,13 @@ internal class GraalInputStreamWasiMemoryReader(
 
     @Suppress("ThrowsCount")
     private fun read(
-        channel: FdChannel,
+        fd: Fd,
         iovecs: IovecArray,
     ): ULong {
         var totalBytesRead: ULong = 0U
         try {
-            val inputStream = Channels.newInputStream(channel.channel).buffered()
+            val channel = fileSystem.getNioFileChannelByFd(fd)
+            val inputStream = Channels.newInputStream(channel).buffered()
             for (vec in iovecs.iovecList) {
                 val limit = vec.bufLen.value.toInt()
                 val bytesRead = wasmMemory.copyFromStream(memory.node, inputStream, vec.buf.addr, limit)

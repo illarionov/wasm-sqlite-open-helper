@@ -15,8 +15,8 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.api.isSqlite3Null
 import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.SqliteMemoryBindings
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmFunctionBinding
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenInitializer
-import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
 
 internal class ChicorySqliteMemoryBindings(
     mainBindings: Instance,

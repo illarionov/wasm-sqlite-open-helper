@@ -97,7 +97,7 @@ public object GraalvmSqliteEmbedder : SqliteEmbedder<GraalvmSqliteEmbedderConfig
             ),
         )
 
-        val memory = GraalvmWasmHostMemoryAdapter(envModuleInstance, null, host.rootLogger)
+        val memory = GraalvmWasmHostMemoryAdapter(envModuleInstance, null, host.fileSystem, host.rootLogger)
 
         val bindings = GraalSqliteBindings(
             sqliteBindings = mainBindings,

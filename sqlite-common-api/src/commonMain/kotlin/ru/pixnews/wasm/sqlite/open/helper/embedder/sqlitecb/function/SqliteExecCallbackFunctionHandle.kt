@@ -14,8 +14,8 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore.
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
-import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
-import ru.pixnews.wasm.sqlite.open.helper.host.memory.readPtr
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readPtr
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteExecCallback
 
 public class SqliteExecCallbackFunctionHandle(

@@ -12,8 +12,8 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.isSqlite3Null
 import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.SqliteMemoryBindings
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.member
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmFunctionBinding
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenInitializer
-import ru.pixnews.wasm.sqlite.open.helper.host.memory.Memory
 
 @Suppress("VariableNaming", "MagicNumber", "UnusedPrivateProperty", "BLANK_LINE_BETWEEN_PROPERTIES")
 internal class GraalSqliteMemoryBindings(
