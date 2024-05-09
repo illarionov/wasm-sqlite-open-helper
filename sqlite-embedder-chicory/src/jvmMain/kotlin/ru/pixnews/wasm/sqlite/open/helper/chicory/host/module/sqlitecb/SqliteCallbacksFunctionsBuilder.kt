@@ -27,6 +27,7 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModul
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction.SQLITE3_PROGRESS_CALLBACK
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction.SQLITE3_TRACE_CALLBACK
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmModules.SQLITE3_CALLBACK_MANAGER_MODULE_NAME
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmValueType
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 
@@ -66,7 +67,6 @@ internal class SqliteCallbacksFunctionsBuilder(
     }
 
     internal companion object {
-        private const val SQLITE3_CALLBACK_MANAGER_MODULE_NAME = "sqlite3-callback-manager"
         private fun SqliteCallbacksModuleFunction.createFunctionHandle(
             host: EmbedderHost,
             memory: Memory,

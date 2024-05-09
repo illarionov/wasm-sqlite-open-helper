@@ -25,12 +25,13 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.wasi.function.fdPw
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.wasi.function.fdRead
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.wasi.function.fdWrite
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmModules.WASI_SNAPSHOT_PREVIEW1_MODULE_NAME
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction
 
 internal class WasiSnapshotPreview1ModuleBuilder(
     private val graalContext: Context,
     private val host: EmbedderHost,
-    private val moduleName: String = WASI_SNAPSHOT_PREVIEW1,
+    private val moduleName: String = WASI_SNAPSHOT_PREVIEW1_MODULE_NAME,
 ) {
     fun setupModule(
         sharedMemory: Boolean = false,
@@ -51,7 +52,6 @@ internal class WasiSnapshotPreview1ModuleBuilder(
     }
 
     companion object {
-        internal const val WASI_SNAPSHOT_PREVIEW1 = "wasi_snapshot_preview1"
         private val WasiHostFunction.nodeFactory: NodeFactory
             get() = when (this) {
                 WasiHostFunction.ENVIRON_GET -> ::EnvironGet

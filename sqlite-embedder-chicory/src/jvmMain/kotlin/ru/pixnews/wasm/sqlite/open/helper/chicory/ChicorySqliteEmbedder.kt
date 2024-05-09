@@ -38,7 +38,7 @@ public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig
 
     private fun createChicorySqliteWasmEnvironment(
         host: EmbedderHost,
-        @Suppress("UnusedParameter") callbackStore: SqliteCallbackStore,
+        callbackStore: SqliteCallbackStore,
         sqlite3Binary: WasmSqliteConfiguration,
     ): SqliteWasmEnvironment {
         require(!sqlite3Binary.requireThreads) {

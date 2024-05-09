@@ -20,7 +20,7 @@ import ru.pixnews.wasm.sqlite.open.helper.chicory.host.memory.ChicoryMemoryAdapt
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.EmscriptenEnvFunctionsBuilder
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.sqlitecb.SqliteCallbacksFunctionsBuilder
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.sqlitecb.SqliteCallbacksFunctionsBuilder.Companion.setupIndirectFunctionIndexes
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.WasiSnapshotPreview1Builtins
+import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.WasiSnapshotPreview1ModuleBuilder
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
@@ -46,7 +46,7 @@ internal class MainInstanceBuilder(
             callbackStore,
         )
 
-        val wasiFunctions = WasiSnapshotPreview1Builtins(memoryAdapter, host)
+        val wasiFunctions = WasiSnapshotPreview1ModuleBuilder(memoryAdapter, host)
             .asChicoryHostFunctions()
         val emscriptenFunctions = EmscriptenEnvFunctionsBuilder(memoryAdapter, host)
             .asChicoryHostFunctions()

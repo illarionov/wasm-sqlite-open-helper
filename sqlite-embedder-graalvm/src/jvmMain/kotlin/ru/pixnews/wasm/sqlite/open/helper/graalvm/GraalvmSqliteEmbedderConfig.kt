@@ -16,7 +16,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.jvm.JvmEmbedderHost
 
 /**
- * Configuration if the GraalVM engine
+ * Configuration of the GraalVM engine
  */
 @WasmSqliteOpenHelperDsl
 public class GraalvmSqliteEmbedderConfig internal constructor(

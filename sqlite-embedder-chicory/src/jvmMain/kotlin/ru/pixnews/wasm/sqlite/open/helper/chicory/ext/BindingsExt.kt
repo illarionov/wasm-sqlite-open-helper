@@ -17,8 +17,3 @@ internal fun Instance.member(): ReadOnlyProperty<Any?, WasmFunctionBinding> {
         ChicoryWasmFunctionBinding(this@member.export(prop.name) ?: error("No member ${prop.name}"))
     }
 }
-
-internal fun Boolean.toInt(
-    trueValue: Int = 1,
-    falseValue: Int = 0,
-) = if (this) trueValue else falseValue

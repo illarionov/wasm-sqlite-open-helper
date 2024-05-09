@@ -24,13 +24,14 @@ import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.function.FdWr
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.function.SchedYield
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.function.notImplementedWasiHostFunctionHandleFactory
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmModules.WASI_SNAPSHOT_PREVIEW1_MODULE_NAME
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmValueType
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction
 import com.dylibso.chicory.runtime.WasmFunctionHandle as ChicoryWasmFunctionHandle
 
 // https://github.com/WebAssembly/WASI/tree/main
-internal class WasiSnapshotPreview1Builtins(
+internal class WasiSnapshotPreview1ModuleBuilder(
     private val memory: Memory,
     private val host: EmbedderHost,
 ) {
@@ -58,8 +59,6 @@ internal class WasiSnapshotPreview1Builtins(
     }
 
     private companion object {
-        const val WASI_SNAPSHOT_PREVIEW1_MODULE_NAME = "wasi_snapshot_preview1"
-
         val WasiHostFunction.functionFactory: WasiHostFunctionHandleFactory
             get() = when (this) {
                 WasiHostFunction.ARGS_GET -> notImplementedWasiHostFunctionHandleFactory

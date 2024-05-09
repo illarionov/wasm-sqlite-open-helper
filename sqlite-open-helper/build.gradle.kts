@@ -83,6 +83,7 @@ kotlin {
             implementation(libs.junit.jupiter.params)
 
             implementation(projects.sqliteEmbedderGraalvm)
+            implementation(projects.sqliteEmbedderChasm)
             implementation(projects.sqliteEmbedderChicory)
             implementation(projects.native.sqliteAndroidWasmEmscriptenIcu345)
             implementation(projects.native.sqliteAndroidWasmEmscriptenIcuMtPthread345)

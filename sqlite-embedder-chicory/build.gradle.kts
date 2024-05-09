@@ -22,11 +22,9 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(projects.sqliteCommonApi)
+            api(libs.chicory)
             implementation(projects.wasiEmscriptenHost)
             implementation(projects.native.sqliteAndroidWasmEmscriptenIcu345)
-        }
-        jvmMain.dependencies {
-            api(libs.chicory)
         }
     }
 }
