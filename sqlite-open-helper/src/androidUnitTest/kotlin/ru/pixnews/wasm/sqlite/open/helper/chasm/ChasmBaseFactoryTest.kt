@@ -6,14 +6,8 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chasm
 
-import org.junit.jupiter.api.Test
 import ru.pixnews.wasm.sqlite.open.helper.tests.AbstractCommonFactoryTest
 
 class ChasmBaseFactoryTest : AbstractCommonFactoryTest<ChasmSqliteEmbedderConfig>(
     factoryCreator = ChasmFactoryCreator,
-) {
-    @Test
-    override fun `Factory initialization should work`() {
-       super.`Factory initialization should work`()
-    }
-}
+)

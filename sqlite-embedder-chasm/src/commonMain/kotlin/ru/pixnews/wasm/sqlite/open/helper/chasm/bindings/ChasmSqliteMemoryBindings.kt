@@ -9,6 +9,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.chasm.bindings
 
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.member
+import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.memberIfExists
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.ChasmInstanceBuilder.ChasmInstance
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.api.isSqlite3Null
@@ -28,7 +29,7 @@ internal class ChasmSqliteMemoryBindings(
     val stackAlloc by instance.member()
 
     private val emscripten_builtin_memalign by instance.member()
-    private val emscripten_stack_init by instance.member()
+    private val emscripten_stack_init by instance.memberIfExists()
     private val emscripten_stack_get_free by instance.member()
     private val emscripten_stack_get_base by instance.member()
     private val emscripten_stack_get_end by instance.member()
@@ -42,8 +43,9 @@ internal class ChasmSqliteMemoryBindings(
 
     // https://github.com/emscripten-core/emscripten/blob/main/system/lib/README.md
     fun init(memory: Memory) {
-        // TODO: check method exists
-        EmscriptenInitializer(memory, emscripten_stack_init, emscripten_stack_get_end).init()
+        emscripten_stack_init?.let {
+            EmscriptenInitializer(memory, it, emscripten_stack_get_end).init()
+        }
     }
 
     override fun <P : Any?> sqliteAllocOrThrow(len: UInt): WasmPtr<P> {

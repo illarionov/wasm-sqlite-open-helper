@@ -6,18 +6,27 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chasm.host
 
+import com.github.michaelbull.result.getOrThrow
 import io.github.charlietap.chasm.ast.type.Limits
 import io.github.charlietap.chasm.ast.type.MemoryType
 import io.github.charlietap.chasm.embedding.instance
 import io.github.charlietap.chasm.embedding.memory
 import io.github.charlietap.chasm.embedding.module
 import io.github.charlietap.chasm.embedding.store
+import io.github.charlietap.chasm.executor.runtime.ext.grow
+import io.github.charlietap.chasm.executor.runtime.ext.table
+import io.github.charlietap.chasm.executor.runtime.ext.tableAddress
+import io.github.charlietap.chasm.executor.runtime.instance.ExternalValue
 import io.github.charlietap.chasm.executor.runtime.instance.ExternalValue.Memory
 import io.github.charlietap.chasm.executor.runtime.instance.ModuleInstance
+import io.github.charlietap.chasm.executor.runtime.instance.TableInstance
+import io.github.charlietap.chasm.executor.runtime.store.Address
 import io.github.charlietap.chasm.executor.runtime.store.Store
+import io.github.charlietap.chasm.executor.runtime.value.ReferenceValue
 import io.github.charlietap.chasm.import.Import
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.orThrow
+import ru.pixnews.wasm.sqlite.open.helper.chasm.host.exception.ChasmModuleRuntimeErrorException
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.memory.ChasmMemoryAdapter
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.getEmscriptenHostFunctions
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.ChasmSqlite3CallbackFunctionIndexes
@@ -50,11 +59,13 @@ internal class ChasmInstanceBuilder(
             host.rootLogger,
         )
 
+        val sqliteCallbacksHostFunctions = getSqliteCallbacksHostFunctions(store, memory, host, callbackStore)
+
         val hostImports = buildList {
             add(memoryImport)
             addAll(getEmscriptenHostFunctions(store, memory, host))
             addAll(getWasiPreview1HostFunctions(store, memory, host))
-            addAll(getSqliteCallbacksHostFunctions(store, memory, host, callbackStore))
+            addAll(sqliteCallbacksHostFunctions)
         }
 
         val sqliteBinaryBytes = sqlite3Binary.sqliteUrl.readBytes()
@@ -63,7 +74,7 @@ internal class ChasmInstanceBuilder(
         val instance: ModuleInstance = instance(store, sqliteModule, hostImports)
             .orThrow { "Can not instantiate $sqlite3Binary" }
 
-        val indirectFunctionTableIndexes = setupIndirectFunctionIndexes(instance)
+        val indirectFunctionTableIndexes = setupIndirectFunctionIndexes(store, instance, sqliteCallbacksHostFunctions)
 
         return ChasmInstance(store, instance, memory, indirectFunctionTableIndexes)
     }
@@ -86,10 +97,30 @@ internal class ChasmInstanceBuilder(
     }
 
     private fun setupIndirectFunctionIndexes(
-        @Suppress("UnusedParameter") instance: ModuleInstance,
+        store: Store,
+        instance: ModuleInstance,
+        callbackHostFunctions: List<Import>,
     ): Sqlite3CallbackFunctionIndexes {
-        // TODO
-        val indirectIndexes: Map<SqliteCallbacksModuleFunction, IndirectFunctionTableIndex> = emptyMap()
+        val tableAddress = instance.tableAddress(0)
+        val table: TableInstance = store.table(tableAddress.value).getOrThrow {
+            ChasmModuleRuntimeErrorException(it)
+        }
+        val oldSize = table.elements.size
+        val newTable = table.grow(callbackHostFunctions.size, ReferenceValue.Function(Address.Function(0))).getOrThrow {
+            ChasmModuleRuntimeErrorException(it)
+        }
+
+        val indirectIndexes: Map<SqliteCallbacksModuleFunction, IndirectFunctionTableIndex> =
+            callbackHostFunctions.mapIndexed { index, import ->
+                val hostFunction = SqliteCallbacksModuleFunction.byWasmName.getValue(import.entityName)
+                val indirectIndex = oldSize + index
+                val functionAddress = (import.value as ExternalValue.Function).address
+                newTable.elements[indirectIndex] = ReferenceValue.Function(functionAddress)
+                hostFunction to IndirectFunctionTableIndex(indirectIndex)
+            }.toMap()
+
+        store.tables[tableAddress.value.address] = newTable
+
         return ChasmSqlite3CallbackFunctionIndexes(indirectIndexes)
     }
 

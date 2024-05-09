@@ -28,6 +28,9 @@ internal fun PatternFilterable.excludeNonLintedDirectories() {
     exclude {
         it.isDirectory && it.relativePath.startsWith("config/copyright")
     }
+    exclude {
+        it.isDirectory && it.relativePath.startsWith("vendor")
+    }
     exclude("**/api/**/*.api")
 }
 

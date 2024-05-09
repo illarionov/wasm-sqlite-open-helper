@@ -45,6 +45,11 @@ internal class Sqlite3ConfigFunctions(
     }
 
     fun sqlite3SoftHeapLimit(limit: Long): SqliteResultCode {
-        return sqliteBindings.sqlite3_soft_heap_limit64.executeForSqliteResultCode(limit)
+        val oldLimit = sqliteBindings.sqlite3_soft_heap_limit64.executeForLong(limit)
+        return if (oldLimit < 0) {
+            SqliteResultCode.SQLITE_ERROR
+        } else {
+            SqliteResultCode.SQLITE_OK
+        }
     }
 }

@@ -13,6 +13,18 @@ import kotlin.reflect.KProperty
 
 internal fun ChasmInstance.member(): ReadOnlyProperty<Any?, ChasmFunctionBinding> {
     return ReadOnlyProperty { _, prop: KProperty<*> ->
+        instance.exports.find { it.name.name == prop.name } ?: error("Property ${prop.name} not found")
         ChasmFunctionBinding(store, instance, prop.name)
+    }
+}
+
+internal fun ChasmInstance.memberIfExists(): ReadOnlyProperty<Any?, ChasmFunctionBinding?> {
+    return ReadOnlyProperty { _, prop: KProperty<*> ->
+        val export = instance.exports.find { it.name.name == prop.name }
+        if (export != null) {
+            ChasmFunctionBinding(store, instance, prop.name)
+        } else {
+            null
+        }
     }
 }
