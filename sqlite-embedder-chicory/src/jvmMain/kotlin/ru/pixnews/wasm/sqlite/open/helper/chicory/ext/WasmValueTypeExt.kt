@@ -10,10 +10,4 @@ import com.dylibso.chicory.wasm.types.ValueType
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmValueType
 
 internal val WasmValueType.chicory: ValueType
-    get() = ValueType.byId(
-        requireNotNull(opcode) {
-            "Can not convert Wasi type without opcode"
-        }.toLong(),
-    )
-// New version:
-// get() = ValueType.forId(requireNotNull(opcode) { "Can not convert Wasi type without opcode" }.toInt())
+    get() = ValueType.forId(requireNotNull(opcode) { "Can not convert Wasi type without opcode" }.toInt())

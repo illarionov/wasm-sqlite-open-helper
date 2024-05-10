@@ -14,6 +14,7 @@ import com.dylibso.chicory.runtime.HostMemory
 import com.dylibso.chicory.runtime.HostTable
 import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.runtime.Module
+import com.dylibso.chicory.runtime.Module.START_FUNCTION_NAME
 import com.dylibso.chicory.wasm.types.MemoryLimits
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.memory.ChicoryMemoryAdapter
@@ -63,12 +64,13 @@ internal class MainInstanceBuilder(
             Module.builder(it).build()
         }
 
-        val instance = sqlite3Module.instantiate(hostImports)
+        val instance = sqlite3Module
+            .withHostImports(hostImports)
+            .withInitialize(true)
+            .withStart(false)
+            .instantiate()
         val indirectFunctionTableIndexes = setupIndirectFunctionIndexes(instance)
-// New version (Chicory 0.0.9+):
-//        val instance = sqlite3Module.instantiate(hostImports, true, false)
-//        val indirectFunctionTableIndexes = setupIndirectFunctionIndexes(instance)
-//        instance.export(START_FUNCTION_NAME).apply()
+        instance.export(START_FUNCTION_NAME).apply()
 
         return ChicoryInstance(
             instance = instance,
