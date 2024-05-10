@@ -1,0 +1,3 @@
+[submodule "vendor/chasm"]
+	path = vendor/chasm
+	url = https://github.com/illarionov/chasm.git
