@@ -83,7 +83,7 @@ db.close()
 
 To run WebAssembly code on the JVM, we use an embedder implemented on the [GraalWasm](#GraalWasm-embedder) WebAssembly
 Engine.
-Alternatively, there are two other embedders: one based on [Chicory WebAssembly Runtime](#Chicory embedder) and
+Alternatively, there are two other embedders: one based on [Chicory](#Chicory-embedder) WebAssembly Runtime and
 another based on the [Chasm](#Chasm-embedder) library.
 
 ### GraalWasm embedder
