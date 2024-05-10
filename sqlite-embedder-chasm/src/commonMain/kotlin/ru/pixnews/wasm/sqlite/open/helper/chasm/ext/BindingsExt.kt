@@ -8,23 +8,53 @@ package ru.pixnews.wasm.sqlite.open.helper.chasm.ext
 
 import ru.pixnews.wasm.sqlite.open.helper.chasm.bindings.ChasmFunctionBinding
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.ChasmInstanceBuilder.ChasmInstance
+import ru.pixnews.wasm.sqlite.open.helper.host.base.BINDING_NOT_INITIALIZED
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmFunctionBinding
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
-internal fun ChasmInstance.member(): ReadOnlyProperty<Any?, ChasmFunctionBinding> {
-    return ReadOnlyProperty { _, prop: KProperty<*> ->
-        instance.exports.find { it.name.name == prop.name } ?: error("Property ${prop.name} not found")
-        ChasmFunctionBinding(store, instance, prop.name)
+internal fun ChasmInstance.member(): ReadOnlyProperty<Any?, WasmFunctionBinding> {
+    return object : ReadOnlyProperty<Any?, WasmFunctionBinding> {
+        @Volatile
+        private var binding: WasmFunctionBinding = BINDING_NOT_INITIALIZED
+
+        override fun getValue(thisRef: Any?, property: KProperty<*>): WasmFunctionBinding {
+            return binding.let { cachedInstance ->
+                if (cachedInstance != BINDING_NOT_INITIALIZED) {
+                    cachedInstance
+                } else {
+                    instance.exports.find { it.name.name == property.name }
+                        ?: error("Property ${property.name} not found")
+                    ChasmFunctionBinding(store, instance, property.name).also {
+                        this.binding = it
+                    }
+                }
+            }
+        }
     }
 }
 
-internal fun ChasmInstance.memberIfExists(): ReadOnlyProperty<Any?, ChasmFunctionBinding?> {
-    return ReadOnlyProperty { _, prop: KProperty<*> ->
-        val export = instance.exports.find { it.name.name == prop.name }
-        if (export != null) {
-            ChasmFunctionBinding(store, instance, prop.name)
-        } else {
-            null
+internal fun ChasmInstance.memberIfExists(): ReadOnlyProperty<Any?, WasmFunctionBinding?> {
+    return object : ReadOnlyProperty<Any?, WasmFunctionBinding?> {
+        @Volatile
+        private var binding: WasmFunctionBinding? = BINDING_NOT_INITIALIZED
+
+        override fun getValue(thisRef: Any?, property: KProperty<*>): WasmFunctionBinding? {
+            return binding.let { cachedInstance ->
+                if (cachedInstance != BINDING_NOT_INITIALIZED) {
+                    cachedInstance
+                } else {
+                    val export = instance.exports.find { it.name.name == property.name }
+                    val newValue = if (export != null) {
+                        ChasmFunctionBinding(store, instance, property.name)
+                    } else {
+                        null
+                    }
+                    newValue.also {
+                        this.binding = it
+                    }
+                }
+            }
         }
     }
 }

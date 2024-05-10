@@ -32,8 +32,6 @@ kotlin {
             implementation(projects.wasiEmscriptenHost)
             implementation(projects.native.sqliteAndroidWasmEmscriptenIcu345)
         }
-        jvmMain.dependencies {
-        }
     }
 }
 

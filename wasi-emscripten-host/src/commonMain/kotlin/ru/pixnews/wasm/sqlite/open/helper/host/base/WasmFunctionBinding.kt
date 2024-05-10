@@ -24,3 +24,13 @@ public fun WasmFunctionBinding.executeForUInt(vararg args: Any?): UInt = execute
 
 @InternalWasmSqliteHelperApi
 public fun WasmFunctionBinding.executeForULong(vararg args: Any?): ULong = executeForLong(args).toULong()
+
+@InternalWasmSqliteHelperApi
+public val BINDING_NOT_INITIALIZED: WasmFunctionBinding = object : WasmFunctionBinding {
+    override fun executeVoid(vararg args: Any?) = error("Not initialized")
+    override fun executeForInt(vararg args: Any?): Int = error("Not initialized")
+    override fun executeForLong(vararg args: Any?): Long = error("Not initialized")
+    override fun executeForFloat(vararg args: Any?): Float = error("Not initialized")
+    override fun executeForDouble(vararg args: Any?): Double = error("Not initialized")
+    override fun <P> executeForPtr(vararg args: Any?): WasmPtr<P> = error("Not initialized")
+}
