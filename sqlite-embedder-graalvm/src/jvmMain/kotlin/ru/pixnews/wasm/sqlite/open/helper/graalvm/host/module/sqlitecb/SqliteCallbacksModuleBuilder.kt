@@ -26,8 +26,7 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.function.
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.function.Sqlite3ProgressAdapter
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.function.Sqlite3TraceAdapter
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
-
-internal const val SQLITE3_CALLBACK_MANAGER_MODULE_NAME = "sqlite3-callback-manager"
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmModules.SQLITE3_CALLBACK_MANAGER_MODULE_NAME
 
 internal class SqliteCallbacksModuleBuilder(
     private val graalContext: Context,

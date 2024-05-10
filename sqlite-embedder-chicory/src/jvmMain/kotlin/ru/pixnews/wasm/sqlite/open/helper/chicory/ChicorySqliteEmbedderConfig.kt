@@ -15,7 +15,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.jvm.JvmEmbedderHost
 
 /**
- * Configuration if the GraalVM engine
+ * Configuration of the Chicory engine
  */
 @WasmSqliteOpenHelperDsl
 public class ChicorySqliteEmbedderConfig internal constructor(

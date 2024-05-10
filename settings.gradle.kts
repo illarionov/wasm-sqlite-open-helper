@@ -28,6 +28,7 @@ rootProject.name = "wasm-sqlite-open-helper"
 include("common-api")
 include("sqlite-common-api")
 include("sqlite-embedder-graalvm")
+include("sqlite-embedder-chasm")
 include("sqlite-embedder-chicory")
 include("sqlite-open-helper")
 include("native:icu-wasm")

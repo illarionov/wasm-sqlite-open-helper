@@ -8,12 +8,29 @@ package ru.pixnews.wasm.sqlite.open.helper.graalvm.ext
 
 import org.graalvm.polyglot.Value
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.bindings.GraalWasmFunctionBinding
+import ru.pixnews.wasm.sqlite.open.helper.host.base.BINDING_NOT_INITIALIZED
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmFunctionBinding
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
-internal fun Value.member(): ReadOnlyProperty<Any?, WasmFunctionBinding> = ReadOnlyProperty { _, prop: KProperty<*> ->
-    GraalWasmFunctionBinding(this@member.getMember(prop.name) ?: error("No member ${prop.name}"))
+internal fun Value.member(): ReadOnlyProperty<Any?, WasmFunctionBinding> {
+    return object : ReadOnlyProperty<Any?, WasmFunctionBinding> {
+        @Volatile
+        private var binding: WasmFunctionBinding = BINDING_NOT_INITIALIZED
+
+        override fun getValue(thisRef: Any?, property: KProperty<*>): WasmFunctionBinding {
+            return binding.let { cachedInstance ->
+                if (cachedInstance != BINDING_NOT_INITIALIZED) {
+                    cachedInstance
+                } else {
+                    val export = this@member.getMember(property.name) ?: error("No member ${property.name}")
+                    GraalWasmFunctionBinding(export).also {
+                        this.binding = it
+                    }
+                }
+            }
+        }
+    }
 }
 
 internal fun Boolean.toInt(

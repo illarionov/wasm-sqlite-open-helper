@@ -16,6 +16,8 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/EmbedderHostKt {
 public final class ru/pixnews/wasm/sqlite/open/helper/host/base/WasmModules {
 	public static final field ENV_MODULE_NAME Ljava/lang/String;
 	public static final field INSTANCE Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmModules;
+	public static final field SQLITE3_CALLBACK_MANAGER_MODULE_NAME Ljava/lang/String;
+	public static final field WASI_SNAPSHOT_PREVIEW1_MODULE_NAME Ljava/lang/String;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/base/WasmSizes {

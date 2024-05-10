@@ -24,6 +24,7 @@ internal class ChicoryWasiMemoryReader(
     override fun read(fd: Fd, strategy: ReadWriteStrategy, iovecs: IovecArray): ULong {
         val memoryByteBuffer = bufferField.get(memory) as? ByteBuffer
             ?: error("Can not get memory byte buffer")
+        check(memoryByteBuffer.hasArray()) { "MemoryBuffer without array" }
         val bbufs = iovecs.toByteBuffers(memoryByteBuffer)
         return fileSystem.read(fd, bbufs, strategy)
     }
@@ -32,7 +33,6 @@ internal class ChicoryWasiMemoryReader(
         memoryBuffer: ByteBuffer,
     ): List<FileSystemByteBuffer> = List(iovecList.size) { iovecNo ->
         val ioVec = iovecList[iovecNo]
-        check(memoryBuffer.hasArray()) { "MemoryBuffer without array" }
         FileSystemByteBuffer(
             memoryBuffer.array(),
             memoryBuffer.arrayOffset() + ioVec.buf.addr,
