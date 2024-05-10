@@ -6,8 +6,10 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chasm
 
+import org.junit.jupiter.api.Disabled
 import ru.pixnews.wasm.sqlite.open.helper.tests.AbstractTimeFunctionsTest
 
+@Disabled("Not working yet, waiting for a new version of chasm")
 class ChasmTimeFunctionsTest : AbstractTimeFunctionsTest<ChasmSqliteEmbedderConfig>(
     factoryCreator = ChasmFactoryCreator,
 )
