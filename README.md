@@ -104,7 +104,7 @@ Installation:
 dependencies {
     testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-graalvm:0.1-alpha02")
 
-	// Sqlite WebAssembly binary with multithreading enabled 
+    // Sqlite WebAssembly binary with multithreading enabled 
     testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-mt-pthread-345:0.1-alpha03")
 }
 ```
@@ -154,7 +154,7 @@ This can be tricky to set up with Gradle. Additionally, the GraalVM version used
 later to run GraalVM Compiler. For an example of how to enable the GraalVM compiler in Android unit tests, take a look
 at [this gist](https://gist.github.com/illarionov/9ce560f95366649876133c1634a03b88).
 
-You can reuse a single instance of the GraalVM Engine between tests to speed up initialization. To do this, specify
+You can reuse a single instance of the GraalVM Engine between tests to speed up initialization. Specify
 the instance using the `graalvmEngine` parameter in the `embedder` block when creating the factory.
 Check this link for more information: https://www.graalvm.org/latest/reference-manual/embed-languages/#managing-the-code-cache
 
@@ -212,7 +212,7 @@ Installation:
 dependencies {
     testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-chasm:0.1-alpha03")
 
-	// Sqlite WebAssembly binary
+    // Sqlite WebAssembly binary
     testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-345:0.1-alpha03")
 }
 ```
@@ -236,7 +236,7 @@ The Build configuration is similar to AOSP's, with multithreading and the Androi
 The ICU library is statically compiled, resulting in a SQLite binary size of about 30 megabytes.
 This binary is loaded into RAM during execution, so the RAM requirements are quite high.
 
-You can check the SQLite build configuration in the implementation of the [native/] modules.
+You can check the SQLite build configuration in the implementation of the [native/](native/) modules.
 
 Now there are two modules with different build configurations are available:
 
