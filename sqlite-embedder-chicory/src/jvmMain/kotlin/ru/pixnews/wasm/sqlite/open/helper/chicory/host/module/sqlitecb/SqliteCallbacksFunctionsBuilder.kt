@@ -115,11 +115,11 @@ internal class SqliteCallbacksFunctionsBuilder(
             )
 
             val funcTable = instance.table(0)
-            val indirectIndexBase = funcTable.grow(sqliteFunctionIndexes.size, 0)
+            val indirectIndexBase = funcTable.grow(sqliteFunctionIndexes.size, 0, instance)
             val indirectIndexes: Map<SqliteCallbacksModuleFunction, IndirectFunctionTableIndex> =
                 sqliteFunctionIndexes.mapIndexed { index, (function, hostImportFuncId) ->
                     val indirectIndex = IndirectFunctionTableIndex(indirectIndexBase + index)
-                    funcTable.setRef(indirectIndex.funcId, hostImportFuncId)
+                    funcTable.setRef(indirectIndex.funcId, hostImportFuncId, instance)
                     function to indirectIndex
                 }.toMap()
             return ChicorySqlite3CallbackFunctionIndexes(indirectIndexes)
