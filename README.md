@@ -30,7 +30,7 @@ pluginManagement {
 }
 ```
 
-You can also download a snapshot of the repository from the [Releases section](/releases) 
+You can also download a snapshot of the repository from the [Releases section](https://github.com/illarionov/wasm-sqlite-open-helper/releases) 
 
 Add the dependencies:
 
