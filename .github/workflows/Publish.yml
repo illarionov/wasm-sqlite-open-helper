@@ -77,7 +77,7 @@ jobs:
           ./gradlew --scan -Pkotlin.daemon.jvmargs="${{ env.KOTLIN_DAEMON_JVMARGS }}"
           --no-configuration-cache
           build
-          ${{ inputs.create_github_release && 'publishAllPublicationsToDownloadableReleaseRepository' || '' }}
+          ${{ inputs.create_github_release && 'packageMavenDistribution' || '' }}
           ${{ inputs.upload_to_s3 && 'publishAllPublicationsToPixnewsS3Repository' || '' }}
           --stacktrace
 
