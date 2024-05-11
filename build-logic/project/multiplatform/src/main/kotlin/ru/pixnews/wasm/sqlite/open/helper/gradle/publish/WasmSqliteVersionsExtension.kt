@@ -32,7 +32,7 @@ open class WasmSqliteVersionsExtension @Inject constructor(
     private val propertiesProvider: Provider<Map<String, String>> = providers.of(PropertiesValueSource::class.java) {
         parameters.configFilePath.set(propertiesFile)
     }.orElse(providers.provider { error("File $propertiesFile not found") })
-    private val rootVersion: Provider<String> = providers.gradleProperty("version")
+    val rootVersion: Provider<String> = providers.gradleProperty("version")
         .orElse(providers.environmentVariable("WSOH_VERSION"))
         .orElse(
             propertiesProvider.map { props ->
