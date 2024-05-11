@@ -36,7 +36,6 @@ public interface SqliteBindings {
     public val sqlite3_stmt_readonly: WasmFunctionBinding
     public val sqlite3_expanded_sql: WasmFunctionBinding
     public val sqlite3_errmsg: WasmFunctionBinding
-    public val sqlite3_exec: WasmFunctionBinding
     public val sqlite3_libversion: WasmFunctionBinding
     public val sqlite3_libversion_number: WasmFunctionBinding
     public val sqlite3_last_insert_rowid: WasmFunctionBinding
@@ -50,7 +49,6 @@ public interface SqliteBindings {
     public val sqlite3_extended_errcode: WasmFunctionBinding
     public val sqlite3_open: WasmFunctionBinding
     public val sqlite3_open_v2: WasmFunctionBinding
-    public val sqlite3_create_collation_v2: WasmFunctionBinding
     public val sqlite3_db_readonly: WasmFunctionBinding
     public val sqlite3_sourceid: WasmFunctionBinding
     public val sqlite3__wasm_enum_json: WasmFunctionBinding

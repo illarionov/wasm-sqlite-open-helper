@@ -46,7 +46,6 @@ internal class GraalSqliteBindings(
     override val sqlite3_stmt_readonly by sqliteBindings.member()
     override val sqlite3_expanded_sql by sqliteBindings.member()
     override val sqlite3_errmsg by sqliteBindings.member()
-    override val sqlite3_exec by sqliteBindings.member()
     override val sqlite3_libversion by sqliteBindings.member()
     override val sqlite3_libversion_number by sqliteBindings.member()
     override val sqlite3_last_insert_rowid by sqliteBindings.member()
@@ -60,7 +59,6 @@ internal class GraalSqliteBindings(
     override val sqlite3_extended_errcode by sqliteBindings.member()
     override val sqlite3_open by sqliteBindings.member()
     override val sqlite3_open_v2 by sqliteBindings.member()
-    override val sqlite3_create_collation_v2 by sqliteBindings.member()
     override val sqlite3_db_readonly by sqliteBindings.member()
 
     override val sqlite3_sourceid by sqliteBindings.member()

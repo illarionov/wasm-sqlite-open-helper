@@ -35,9 +35,3 @@ public final class ru/pixnews/wasm/sqlite/open/helper/chasm/host/module/emscript
 	public fun invoke (Ljava/util/List;)Ljava/util/List;
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/chasm/host/module/sqlitecb/function/Sqlite3ComparatorAdapter : ru/pixnews/wasm/sqlite/open/helper/chasm/host/module/emscripten/EmscriptenHostFunctionHandle {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory;Lkotlin/jvm/functions/Function1;)V
-	public synthetic fun invoke (Ljava/lang/Object;)Ljava/lang/Object;
-	public fun invoke (Ljava/util/List;)Ljava/util/List;
-}
-

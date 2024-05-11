@@ -9,8 +9,3 @@ public final class ru/pixnews/wasm/sqlite/open/helper/chicory/ChicorySqliteEmbed
 	public final fun setSqlite3Binary (Lru/pixnews/wasm/sqlite/open/helper/WasmSqliteConfiguration;)V
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/chicory/host/module/sqlitecb/function/Sqlite3ComparatorAdapter : com/dylibso/chicory/runtime/WasmFunctionHandle {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory;Lkotlin/jvm/functions/Function1;)V
-	public fun apply (Lcom/dylibso/chicory/runtime/Instance;[Lcom/dylibso/chicory/wasm/types/Value;)[Lcom/dylibso/chicory/wasm/types/Value;
-}
-

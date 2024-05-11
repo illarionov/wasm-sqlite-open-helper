@@ -7,10 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable
 
 public interface Sqlite3CallbackFunctionIndexes {
-    public val execCallbackFunction: IndirectFunctionTableIndex
     public val traceFunction: IndirectFunctionTableIndex
     public val progressFunction: IndirectFunctionTableIndex
-    public val comparatorFunction: IndirectFunctionTableIndex
-    public val destroyComparatorFunction: IndirectFunctionTableIndex
     public val loggingCallbackFunction: IndirectFunctionTableIndex
 }

@@ -13,18 +13,10 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModul
 internal class ChasmSqlite3CallbackFunctionIndexes(
     functionMap: Map<SqliteCallbacksModuleFunction, IndirectFunctionTableIndex>,
 ) : Sqlite3CallbackFunctionIndexes {
-    override val execCallbackFunction: IndirectFunctionTableIndex =
-        functionMap.getValue(SqliteCallbacksModuleFunction.SQLITE3_EXEC_CALLBACK)
     override val traceFunction: IndirectFunctionTableIndex =
         functionMap.getValue(SqliteCallbacksModuleFunction.SQLITE3_TRACE_CALLBACK)
     override val progressFunction: IndirectFunctionTableIndex =
         functionMap.getValue(SqliteCallbacksModuleFunction.SQLITE3_PROGRESS_CALLBACK)
-    override val comparatorFunction: IndirectFunctionTableIndex = functionMap.getValue(
-        SqliteCallbacksModuleFunction.SQLITE3_COMPARATOR_CALL_CALLBACK,
-    )
-    override val destroyComparatorFunction: IndirectFunctionTableIndex = functionMap.getValue(
-        SqliteCallbacksModuleFunction.SQLITE3_DESTROY_COMPARATOR_FUNCTION,
-    )
     override val loggingCallbackFunction: IndirectFunctionTableIndex =
         functionMap.getValue(SqliteCallbacksModuleFunction.SQLITE3_LOGGING_CALLBACK)
 }
