@@ -2,6 +2,15 @@ name: publish
 
 on:
   workflow_dispatch:
+    inputs:
+      upload_to_s3:
+        description: 'Publish to maven.pixnews.ru'
+        type: boolean
+        default: true
+      create_github_release:
+        description: 'Create release on Github'
+        type: boolean
+        default: true
 
 env:
   CI: true
@@ -59,13 +68,16 @@ jobs:
         env:
           YANDEX_S3_ACCESS_KEY_ID: ${{ secrets.YANDEX_S3_ACCESS_KEY_ID }}
           YANDEX_S3_SECRET_ACCESS_KEY: ${{ secrets.YANDEX_S3_SECRET_ACCESS_KEY }}
-          ORG_GRADLE_PROJECT_signingInMemoryKey:  ${{ secrets.SIGNING_IN_MEMORY_KEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_IN_MEMORY_KEY }}
           ORG_GRADLE_PROJECT_signingInMemoryKeyId: FCF62075
           ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_IN_MEMORY_KEY_PASSWORD }}
         run: >
           ./gradlew --scan -Pkotlin.daemon.jvmargs="${{ env.KOTLIN_DAEMON_JVMARGS }}"
           --no-configuration-cache
-          build publishAllPublicationsToPixnewsS3Repository --stacktrace
+          build
+          ${{ inputs.create_github_release && 'publishAllPublicationsToDownloadableReleaseRepository' || '' }}
+          ${{ inputs.upload_to_s3 && 'publishAllPublicationsToPixnewsS3Repository' || '' }}
+          --stacktrace
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -73,3 +85,15 @@ jobs:
         with:
           name: build-outputs
           path: '**/build/outputs'
+
+      - name: Create release on Github
+        uses: softprops/action-gh-release@v2
+        if: ${{ inputs.create_github_release }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: build/distribution/maven-wasm-sqlite-open-helper-*.zip
+          tag_name: build-${{ github.run_number }}
+          name: Build №${{ github.run_number }}
+          draft: false
+          prerelease: true

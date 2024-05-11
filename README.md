@@ -30,6 +30,8 @@ pluginManagement {
 }
 ```
 
+You can also download a snapshot of the repository from the [Releases section](/releases) 
+
 Add the dependencies:
 
 ```kotlin

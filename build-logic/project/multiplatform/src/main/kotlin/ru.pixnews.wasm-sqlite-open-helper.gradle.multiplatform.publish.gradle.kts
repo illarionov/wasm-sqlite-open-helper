@@ -18,19 +18,30 @@ plugins {
     id("org.jetbrains.dokka")
 }
 
-createWasmSqliteVersionsExtension()
+private val wasmVersions = createWasmSqliteVersionsExtension()
 
 tasks.withType<AbstractArchiveTask>().configureEach {
     isPreserveFileTimestamps = false
     isReproducibleFileOrder = true
 }
 
+private val publishedMavenLocalRoot = project.rootProject.layout.buildDirectory.dir("localMaven")
+private val downloadableReleaseDirName = wasmVersions.rootVersion.map { "maven-wasm-sqlite-open-helper-$it" }
+private val downloadableReleaseRoot = publishedMavenLocalRoot.zip(downloadableReleaseDirName) { root, subdir ->
+    root.dir(subdir)
+}
+private val distributionDir = project.rootProject.layout.buildDirectory.dir("distribution")
+
 mavenPublishing {
     publishing {
         repositories {
             maven {
                 name = "test"
-                setUrl(project.rootProject.layout.buildDirectory.dir("localMaven"))
+                setUrl(publishedMavenLocalRoot.map { it.dir("test") })
+            }
+            maven {
+                name = "downloadableRelease"
+                setUrl(downloadableReleaseRoot)
             }
             maven {
                 name = "PixnewsS3"
@@ -81,4 +92,17 @@ tasks.withType<DokkaTask> {
     dokkaSourceSets.configureEach {
         skipDeprecated.set(true)
     }
+}
+
+tasks.register<Zip>("packageMavenDistribution") {
+    archiveBaseName = "maven-wasm-sqlite-open-helper"
+    destinationDirectory = distributionDir
+
+    from(downloadableReleaseRoot)
+    into(downloadableReleaseDirName)
+
+    isReproducibleFileOrder = true
+    isPreserveFileTimestamps = false
+
+    dependsOn(tasks.named("publishAllPublicationsToDownloadableReleaseRepository"))
 }
