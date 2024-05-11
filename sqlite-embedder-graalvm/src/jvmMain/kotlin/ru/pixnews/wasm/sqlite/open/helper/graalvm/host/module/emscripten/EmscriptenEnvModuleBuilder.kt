@@ -49,7 +49,10 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.wasi.function.Sysc
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.pthread.Pthread
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmModules.ENV_MODULE_NAME
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmSizes
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Pages
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WASM_MEMORY_64_MAX_PAGES
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WASM_MEMORY_PAGE_SIZE
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WASM_MEMORY_SQLITE_MAX_PAGES
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
 
 internal class EmscriptenEnvModuleBuilder(
@@ -148,20 +151,20 @@ internal class EmscriptenEnvModuleBuilder(
         sharedMemory: Boolean = false,
         useUnsafeMemory: Boolean = false,
     ) {
-        val minSize = minMemorySize / WasmSizes.WASM_MEMORY_PAGE_SIZE
-        val maxSize: Long
+        val minSize = Pages(minMemorySize / WASM_MEMORY_PAGE_SIZE)
+        val maxSize: Pages
         val is64Bit: Boolean
         if (context.contextOptions.supportMemory64()) {
-            maxSize = WasmSizes.WASM_MEMORY_64_MAX_PAGES
+            maxSize = WASM_MEMORY_64_MAX_PAGES
             is64Bit = true
         } else {
-            maxSize = WasmSizes.WASM_MEMORY_SQLITE_MAX_PAGES
+            maxSize = WASM_MEMORY_SQLITE_MAX_PAGES
             is64Bit = false
         }
 
         envModule.symbolTable().apply {
             val memoryIndex = memoryCount()
-            allocateMemory(memoryIndex, minSize, maxSize, is64Bit, sharedMemory, false, useUnsafeMemory)
+            allocateMemory(memoryIndex, minSize.count, maxSize.count, is64Bit, sharedMemory, false, useUnsafeMemory)
             exportMemory(memoryIndex, "memory")
         }
         val memoryWaiters = SharedMemoryWaiterListStore()
