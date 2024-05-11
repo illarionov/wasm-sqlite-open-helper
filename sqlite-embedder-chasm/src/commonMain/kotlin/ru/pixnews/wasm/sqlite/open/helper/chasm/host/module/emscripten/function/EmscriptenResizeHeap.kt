@@ -13,8 +13,8 @@ import ru.pixnews.wasm.sqlite.open.helper.chasm.host.memory.ChasmMemoryAdapter
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.EmscriptenHostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmSizes.WASM_MEMORY_32_MAX_PAGES
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmSizes.WASM_MEMORY_PAGE_SIZE
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Pages
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WASM_MEMORY_32_MAX_PAGES
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.EmscriptenResizeHeapFunctionHandle.Companion.calculateNewSizePages
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno.NOMEM
 
@@ -27,16 +27,17 @@ internal class EmscriptenResizeHeap(
     override fun invoke(args: List<ExecutionValue>): List<ExecutionValue> {
         val requestedSize = args[0].asInt().toLong()
 
-        val oldPages = memory.memoryInstance.data.min.amount.toLong()
-        val maxPages = memory.memoryInstance.data.max?.amount?.toLong() ?: WASM_MEMORY_32_MAX_PAGES
+        val chasmMemoryLimits = memory.memoryInstance.data
+        val oldPages = Pages(chasmMemoryLimits.min.amount.toLong())
+        val maxPages = chasmMemoryLimits.max?.amount?.toLong()?.let(::Pages) ?: WASM_MEMORY_32_MAX_PAGES
         val newSizePages = calculateNewSizePages(requestedSize, oldPages, maxPages)
 
         logger.v {
             "emscripten_resize_heap($requestedSize). " +
-                    "Requested: ${newSizePages * WASM_MEMORY_PAGE_SIZE} bytes ($newSizePages pages)"
+                    "Requested: ${newSizePages.inBytes} bytes ($newSizePages pages)"
         }
 
-        val prevPages = memory.grow((newSizePages - oldPages).toInt())
+        val prevPages = memory.grow((newSizePages.count - oldPages.count).toInt())
         if (prevPages < 0) {
             logger.e {
                 "Cannot enlarge memory, requested $newSizePages pages, but the limit is " +

@@ -20,14 +20,6 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/base/WasmModules {
 	public static final field WASI_SNAPSHOT_PREVIEW1_MODULE_NAME Ljava/lang/String;
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/host/base/WasmSizes {
-	public static final field INSTANCE Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmSizes;
-	public static final field WASM_MEMORY_32_MAX_PAGES J
-	public static final field WASM_MEMORY_64_MAX_PAGES J
-	public static final field WASM_MEMORY_PAGE_SIZE J
-	public static final field WASM_MEMORY_SQLITE_MAX_PAGES J
-}
-
 public final class ru/pixnews/wasm/sqlite/open/helper/host/base/WasmValueType {
 	public static final field WebAssemblyTypes Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmValueType$WebAssemblyTypes;
 	public static final synthetic fun box-impl (Ljava/lang/Byte;)Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmValueType;
@@ -109,6 +101,28 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/base/memory/MemoryKt 
 	public static final fun readU8-wTLQxr0 (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory;I)B
 	public static final fun write--6ori6s (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory;I[B)V
 	public static final fun writePtr-0BaN380 (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory;II)V
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/base/memory/Pages {
+	public static final synthetic fun box-impl (J)Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Pages;
+	public static fun constructor-impl (J)J
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (JLjava/lang/Object;)Z
+	public static final fun equals-impl0 (JJ)Z
+	public final fun getCount ()J
+	public static final fun getInBytes-impl (J)J
+	public fun hashCode ()I
+	public static fun hashCode-impl (J)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (J)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()J
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/base/memory/PagesKt {
+	public static final field WASM_MEMORY_PAGE_SIZE J
+	public static final fun getWASM_MEMORY_32_MAX_PAGES ()J
+	public static final fun getWASM_MEMORY_64_MAX_PAGES ()J
+	public static final fun getWASM_MEMORY_SQLITE_MAX_PAGES ()J
 }
 
 public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/base/memory/WasiMemoryReader {
@@ -206,7 +220,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/E
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/EmscriptenResizeHeapFunctionHandle$Companion {
-	public final fun calculateNewSizePages (JJJ)J
+	public final fun calculateNewSizePages--3KitA8 (JJJ)J
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/LocaltimeJsFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {

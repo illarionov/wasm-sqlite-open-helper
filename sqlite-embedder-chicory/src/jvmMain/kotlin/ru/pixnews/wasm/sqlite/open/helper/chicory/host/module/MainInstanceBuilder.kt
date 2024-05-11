@@ -26,7 +26,8 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmModules.ENV_MODULE_NAME
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmSizes
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WASM_MEMORY_PAGE_SIZE
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WASM_MEMORY_SQLITE_MAX_PAGES
 import com.dylibso.chicory.runtime.Memory as ChicoryMemory
 
 @Suppress("COMMENTED_OUT_CODE")
@@ -87,8 +88,8 @@ internal class MainInstanceBuilder(
         /* memory = */
         ChicoryMemory(
             MemoryLimits(
-                (minMemorySize / WasmSizes.WASM_MEMORY_PAGE_SIZE).toInt(),
-                WasmSizes.WASM_MEMORY_SQLITE_MAX_PAGES.toInt(),
+                (minMemorySize / WASM_MEMORY_PAGE_SIZE).toInt(),
+                WASM_MEMORY_SQLITE_MAX_PAGES.count.toInt(),
             ),
         ),
     )

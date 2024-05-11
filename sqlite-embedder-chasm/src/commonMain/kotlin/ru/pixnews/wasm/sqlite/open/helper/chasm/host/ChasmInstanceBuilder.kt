@@ -38,8 +38,8 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3Callback
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmModules.ENV_MODULE_NAME
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmSizes
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmSizes.WASM_MEMORY_PAGE_SIZE
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WASM_MEMORY_PAGE_SIZE
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WASM_MEMORY_SQLITE_MAX_PAGES
 
 internal class ChasmInstanceBuilder(
     private val host: EmbedderHost,
@@ -88,7 +88,7 @@ internal class ChasmInstanceBuilder(
             MemoryType(
                 Limits(
                     min = (minMemorySize / WASM_MEMORY_PAGE_SIZE).toUInt(),
-                    max = WasmSizes.WASM_MEMORY_SQLITE_MAX_PAGES.toUInt(),
+                    max = WASM_MEMORY_SQLITE_MAX_PAGES.count.toUInt(),
                 ),
             ),
         )

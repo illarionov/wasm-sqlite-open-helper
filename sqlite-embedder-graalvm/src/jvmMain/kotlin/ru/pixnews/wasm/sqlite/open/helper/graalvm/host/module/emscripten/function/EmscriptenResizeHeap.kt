@@ -17,8 +17,8 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.EmscriptenResizeHeap.ResizeHeapHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmSizes.WASM_MEMORY_PAGE_SIZE
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Pages
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.EmscriptenResizeHeapFunctionHandle.Companion.calculateNewSizePages
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
@@ -44,16 +44,16 @@ internal class EmscriptenResizeHeap(
             memory: WasmMemory,
             requestedSize: Long,
         ): Int = try {
-            val currentPages = memory.size()
-            val declaredMaxPages = memory.declaredMaxSize()
+            val currentPages = Pages(memory.size())
+            val declaredMaxPages = Pages(memory.declaredMaxSize())
             val newSizePages = calculateNewSizePages(requestedSize, currentPages, declaredMaxPages)
 
             logger.v {
                 "emscripten_resize_heap($requestedSize). " +
-                        "Requested: ${newSizePages * WASM_MEMORY_PAGE_SIZE} bytes ($newSizePages pages)"
+                        "Requested: ${newSizePages.inBytes} bytes ($newSizePages pages)"
             }
 
-            val memoryAdded = memory.grow(newSizePages - currentPages)
+            val memoryAdded = memory.grow(newSizePages.count - currentPages.count)
             if (!memoryAdded) {
                 throw SysException(
                     Errno.NOMEM,
