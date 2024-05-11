@@ -97,5 +97,5 @@ jobs:
           files: build/distribution/maven-wasm-sqlite-open-helper-*.zip
           tag_name: build-${{ github.run_number }}
           name: Build №${{ github.run_number }}
-          draft: false
+          draft: true
           prerelease: true

@@ -36,10 +36,10 @@ Add the dependencies:
 
 ```kotlin
 dependencies {
-    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-open-helper:0.1-alpha02")
+    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-open-helper:0.1-alpha03")
 
     // Runtime environment for executing SQLite Wasm code based on GraalVM (Sqlite Embedder)
-    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-graalvm:0.1-alpha02")
+    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-graalvm:0.1-alpha03")
 
     // Optional: implementation of the runtime environment based on the Chicory library. 
     // It can be used to execute webassembly code instead of the GraalVM embedder
@@ -47,9 +47,6 @@ dependencies {
 
     // Sqlite WebAssembly binary
     testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-mt-pthread-345:0.1-alpha03")
-
-    // Sqlite WebAssembly binary (old)
-    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-wasm:0.1-alpha02")
 }
 ```
 
@@ -104,7 +101,7 @@ Installation:
 
 ```kotlin
 dependencies {
-    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-graalvm:0.1-alpha02")
+    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-graalvm:0.1-alpha03")
 
     // Sqlite WebAssembly binary with multithreading enabled 
     testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-mt-pthread-345:0.1-alpha03")
@@ -294,7 +291,7 @@ val factory = WasmSqliteOpenHelperFactory(GraalvmSqliteEmbedder) {
         graalvmEngine = Engine.create("wasm")
 
         // Sets used Sqlite WebAssembly binary file
-        sqlite3Binary = Sqlite3Wasm.Emscripten.sqlite3_345_android_icu_mt_pthread
+        sqlite3Binary = SqliteAndroidWasmEmscriptenIcuMtPthread345
     }
 
     // Sets the debugging options
@@ -392,8 +389,8 @@ emsdkRoot=/opt/emsdk
 Install and activate the SDK version used in the project (not the latest one):
 
 ```shell
-./emsdk install 3.1.57
-./emsdk activate 3.1.57
+./emsdk install 3.1.58
+./emsdk activate 3.1.58
 source ./emsdk_env.sh
 ```
 
