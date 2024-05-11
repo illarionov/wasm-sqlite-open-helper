@@ -19,9 +19,6 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.setupImportedEnvMemory
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.setupWasmModuleFunctions
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.withWasmContext
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.NodeFactory
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.function.Sqlite3CallExecAdapter
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.function.Sqlite3ComparatorAdapter
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.function.Sqlite3DestroyComparatorAdapter
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.function.Sqlite3LoggingAdapter
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.function.Sqlite3ProgressAdapter
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.function.Sqlite3TraceAdapter
@@ -34,24 +31,15 @@ internal class SqliteCallbacksModuleBuilder(
     private val callbackStore: SqliteCallbackStore,
 ) {
     private val sqliteCallbackHostFunctions: Map<out SqliteCallbacksModuleFunction, NodeFactory> = mapOf(
-        SqliteCallbacksModuleFunction.SQLITE3_EXEC_CALLBACK to {
+        SqliteCallbacksModuleFunction.SQLITE3_TRACE_CALLBACK to {
                 language: WasmLanguage,
                 module: WasmModule,
                 host: EmbedderHost,
             ->
-            Sqlite3CallExecAdapter(language, module, host, callbackStore.sqlite3ExecCallbacks::get)
-        },
-        SqliteCallbacksModuleFunction.SQLITE3_TRACE_CALLBACK to { language, module, host ->
             Sqlite3TraceAdapter(language, module, host, callbackStore.sqlite3TraceCallbacks::get)
         },
         SqliteCallbacksModuleFunction.SQLITE3_PROGRESS_CALLBACK to { language, module, host ->
             Sqlite3ProgressAdapter(language, module, host, callbackStore.sqlite3ProgressCallbacks::get)
-        },
-        SqliteCallbacksModuleFunction.SQLITE3_COMPARATOR_CALL_CALLBACK to { language, module, host ->
-            Sqlite3ComparatorAdapter(language, module, host, callbackStore.sqlite3Comparators::get)
-        },
-        SqliteCallbacksModuleFunction.SQLITE3_DESTROY_COMPARATOR_FUNCTION to { language, module, host ->
-            Sqlite3DestroyComparatorAdapter(language, module, host, callbackStore.sqlite3Comparators)
         },
         SqliteCallbacksModuleFunction.SQLITE3_LOGGING_CALLBACK to { language, module, host ->
             Sqlite3LoggingAdapter(language, module, host, callbackStore::sqlite3LogCallback)

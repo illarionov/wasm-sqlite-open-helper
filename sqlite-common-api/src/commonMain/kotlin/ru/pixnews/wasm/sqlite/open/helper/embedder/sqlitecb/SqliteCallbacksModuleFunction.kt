@@ -21,10 +21,6 @@ public enum class SqliteCallbacksModuleFunction(
     public override val wasmName: String,
     public override val type: HostFunctionType,
 ) : HostFunction {
-    SQLITE3_EXEC_CALLBACK(
-        wasmName = "ext_sqlite3_exec_cb",
-        paramTypes = listOf(I32, I32, POINTER, POINTER),
-    ),
     SQLITE3_TRACE_CALLBACK(
         wasmName = "ext_sqlite3_trace_cb",
         paramTypes = listOf(U32, POINTER, POINTER, I32),
@@ -34,15 +30,6 @@ public enum class SqliteCallbacksModuleFunction(
         wasmName = "ext_sqlite3_progress_cb",
         paramTypes = listOf(POINTER),
         retType = I32,
-    ),
-    SQLITE3_COMPARATOR_CALL_CALLBACK(
-        wasmName = "ext_sqlite3_comparator_call_cb",
-        paramTypes = listOf(I32, I32, POINTER, I32, POINTER),
-        retType = I32,
-    ),
-    SQLITE3_DESTROY_COMPARATOR_FUNCTION(
-        wasmName = "ext_sqlite3_comparator_destroy",
-        paramTypes = listOf(I32),
     ),
     SQLITE3_LOGGING_CALLBACK(
         wasmName = "ext_sqlite3_logging_cb",

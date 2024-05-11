@@ -26,12 +26,10 @@ public object SqliteExportedFunctions {
         "_sqlite3_column_name",
         "_sqlite3_column_text",
         "_sqlite3_column_type",
-        "_sqlite3_create_collation_v2",
         "_sqlite3_db_readonly",
         "_sqlite3_db_status",
         "_sqlite3_errcode",
         "_sqlite3_errmsg",
-        "_sqlite3_exec", // optional
         "_sqlite3_expanded_sql",
         "_sqlite3_extended_errcode",
         "_sqlite3_finalize",

@@ -46,7 +46,6 @@ internal class ChicorySqliteBindings(
     override val sqlite3_stmt_readonly by instance.member()
     override val sqlite3_expanded_sql by instance.member()
     override val sqlite3_errmsg by instance.member()
-    override val sqlite3_exec by instance.member()
     override val sqlite3_libversion by instance.member()
     override val sqlite3_libversion_number by instance.member()
     override val sqlite3_last_insert_rowid by instance.member()
@@ -60,7 +59,6 @@ internal class ChicorySqliteBindings(
     override val sqlite3_extended_errcode by instance.member()
     override val sqlite3_open by instance.member()
     override val sqlite3_open_v2 by instance.member()
-    override val sqlite3_create_collation_v2 by instance.member()
     override val sqlite3_db_readonly by instance.member()
 
     override val sqlite3_sourceid by instance.member()

@@ -12,17 +12,11 @@ import io.github.charlietap.chasm.import.Import
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.toChasmFunctionTypes
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.memory.ChasmMemoryAdapter
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.EmscriptenHostFunctionHandle
-import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.function.Sqlite3CallExecAdapter
-import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.function.Sqlite3ComparatorAdapter
-import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.function.Sqlite3DestroyComparatorAdapter
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.function.Sqlite3LoggingAdapter
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.function.Sqlite3ProgressAdapter
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.function.Sqlite3TraceAdapter
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
-import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction.SQLITE3_COMPARATOR_CALL_CALLBACK
-import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction.SQLITE3_DESTROY_COMPARATOR_FUNCTION
-import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction.SQLITE3_EXEC_CALLBACK
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction.SQLITE3_LOGGING_CALLBACK
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction.SQLITE3_PROGRESS_CALLBACK
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction.SQLITE3_TRACE_CALLBACK
@@ -58,12 +52,6 @@ private fun SqliteCallbacksModuleFunction.createChasmHostFunction(
     memory: Memory,
     callbackStore: SqliteCallbackStore,
 ): EmscriptenHostFunctionHandle = when (this) {
-    SQLITE3_EXEC_CALLBACK -> Sqlite3CallExecAdapter(
-        host,
-        memory,
-        callbackStore.sqlite3ExecCallbacks::get,
-    )
-
     SQLITE3_TRACE_CALLBACK -> Sqlite3TraceAdapter(
         host,
         memory,
@@ -73,17 +61,6 @@ private fun SqliteCallbacksModuleFunction.createChasmHostFunction(
     SQLITE3_PROGRESS_CALLBACK -> Sqlite3ProgressAdapter(
         host,
         callbackStore.sqlite3ProgressCallbacks::get,
-    )
-
-    SQLITE3_COMPARATOR_CALL_CALLBACK -> Sqlite3ComparatorAdapter(
-        host,
-        memory,
-        callbackStore.sqlite3Comparators::get,
-    )
-
-    SQLITE3_DESTROY_COMPARATOR_FUNCTION -> Sqlite3DestroyComparatorAdapter(
-        host,
-        callbackStore.sqlite3Comparators,
     )
 
     SQLITE3_LOGGING_CALLBACK -> Sqlite3LoggingAdapter(
