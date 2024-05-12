@@ -10,19 +10,16 @@ import org.gradle.api.Project
 import org.gradle.api.file.FileSystemLocation
 import org.gradle.kotlin.dsl.get
 import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.SqliteWasmBuildSpec
+import java.io.File
 
 public fun SqliteWasmBuildSpec.setupIcu(
     project: Project,
     initialMemory: Int = 50_331_648,
 ) {
-    this.codeGenerationOptions.addAll(
-        "-licuuc",
-        "-licui18n",
-        "-licudata",
-    )
-    codeGenerationOptions.addAll(
+    additionalLibs.from(
         project.configurations["wasmStaticLibrariesClasspath"].elements.map { locations: Set<FileSystemLocation> ->
-            locations.map { fileSystemLocation -> "-L${fileSystemLocation.asFile.absolutePath}" }
+            val libsDir = locations.first().asFile
+            listOf("icuuc", "icui18n", "icudata").map { File(libsDir, "$it.a") }
         },
     )
     additionalIncludes.from(

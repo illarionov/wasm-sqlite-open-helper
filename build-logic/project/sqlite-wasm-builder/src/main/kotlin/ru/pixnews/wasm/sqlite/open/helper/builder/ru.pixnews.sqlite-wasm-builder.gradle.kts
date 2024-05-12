@@ -142,6 +142,7 @@ private fun setupTasksForBuild(buildSpec: SqliteWasmBuildSpec) {
             sqlite3cFile.map { it.parentFile },
             buildSpec.additionalIncludes,
         )
+        libs.setFrom(buildSpec.additionalLibs)
 
         val additionalArgsProvider = SqliteAdditionalArgumentProvider(
             sqlite3cFile,

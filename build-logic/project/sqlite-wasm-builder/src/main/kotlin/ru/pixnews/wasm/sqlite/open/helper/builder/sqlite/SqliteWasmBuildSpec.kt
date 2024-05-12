@@ -41,6 +41,8 @@ public open class SqliteWasmBuildSpec @Inject internal constructor(
         this.from(sqliteWasmFilesSrdDir.dir("wasm/api"))
     }
 
+    public val additionalLibs: ConfigurableFileCollection = objects.fileCollection()
+
     public val wasmBaseFileName: Property<String> = objects.property(String::class.java)
         .convention("sqlite3")
 

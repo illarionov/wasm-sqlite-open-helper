@@ -15,6 +15,7 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.IgnoreEmptyDirectories
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
@@ -30,13 +31,12 @@ import org.gradle.kotlin.dsl.listProperty
 import org.gradle.kotlin.dsl.newInstance
 import org.gradle.process.CommandLineArgumentProvider
 import org.gradle.process.ExecOperations
-import org.gradle.work.DisableCachingByDefault
 import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.internal.BuildDirPath.COMPILE_WORK_DIR
 import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.internal.BuildDirPath.compileUnstrippedResultDir
 import java.io.File
 import javax.inject.Inject
 
-@DisableCachingByDefault(because = "Caching is temporarily disabled due to suspected malfunction")
+@CacheableTask
 public abstract class EmscriptenBuildTask @Inject constructor(
     private val execOperations: ExecOperations,
     objects: ObjectFactory,
@@ -70,6 +70,11 @@ public abstract class EmscriptenBuildTask @Inject constructor(
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:Optional
     public val includes: ConfigurableFileCollection = objects.fileCollection()
+
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.NONE)
+    @get:Optional
+    public val libs: ConfigurableFileCollection = objects.fileCollection()
 
     @get:Internal
     public val outputFile: RegularFileProperty = objects.fileProperty().convention(
@@ -106,6 +111,8 @@ public abstract class EmscriptenBuildTask @Inject constructor(
             add("-I$relativePath")
         }
 
+        addAll(getLinkerCommandLineArguments())
+
         additionalArgumentProviders.get().forEach { argumentProvider ->
             addAll(argumentProvider.asArguments())
         }
@@ -113,6 +120,26 @@ public abstract class EmscriptenBuildTask @Inject constructor(
         sourceFiles.forEach { sourcePath ->
             val relativePath = sourcePath.relativeToOrSelf(workDir)
             add(relativePath.toString())
+        }
+    }
+
+    private fun getLinkerCommandLineArguments(): List<String> {
+        val libs = libs.files
+
+        val libraryNames = libs.map {
+            it.name.substringBeforeLast(".a")
+        }
+        require(libraryNames.toSet().size == libs.size) {
+            "Library names not unique: `$libs`"
+        }
+
+        val libraryPaths = libs.mapTo(mutableSetOf()) {
+            it.parentFile.absolutePath
+        }
+
+        return buildList {
+            libraryNames.mapTo(this) { "-l$it" }
+            libraryPaths.mapTo(this) { "-L$it" }
         }
     }
 }
