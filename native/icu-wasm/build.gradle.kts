@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import ru.pixnews.wasm.sqlite.open.helper.builder.attribute.ICU_DATA_PACKAGING_ARCHIVE
-import ru.pixnews.wasm.sqlite.open.helper.builder.attribute.ICU_DATA_PACKAGING_STATIC
-import ru.pixnews.wasm.sqlite.open.helper.builder.icu.IcuWasmBuildSpec
+import ru.pixnews.wasm.builder.base.icu.ICU_DATA_PACKAGING_ARCHIVE
+import ru.pixnews.wasm.builder.base.icu.ICU_DATA_PACKAGING_STATIC
+import ru.pixnews.wasm.builder.icu.IcuWasmBuildSpec
 
 plugins {
-    id("ru.pixnews.icu-wasm-builder")
+    id("ru.pixnews.wasm.builder.icu.plugin")
 }
 
 group = "ru.pixnews.icu-wasm"

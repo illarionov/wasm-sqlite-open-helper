@@ -6,14 +6,14 @@
 
 @file:Suppress("GENERIC_VARIABLE_WRONG_DECLARATION", "UnstableApiUsage")
 
-import ru.pixnews.wasm.sqlite.open.helper.builder.attribute.EMSCRIPTEN_USE_PTHREADS_ATTRIBUTE
-import ru.pixnews.wasm.sqlite.open.helper.builder.attribute.ICU_DATA_PACKAGING_ATTRIBUTE
-import ru.pixnews.wasm.sqlite.open.helper.builder.attribute.ICU_DATA_PACKAGING_STATIC
-import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.SqliteCodeGenerationOptions
-import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.SqliteConfigurationOptions
-import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.SqliteExportedFunctions
-import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.preset.setupAndroidExtensions
-import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.preset.setupIcu
+import ru.pixnews.wasm.builder.base.emscripten.EMSCRIPTEN_USE_PTHREADS_ATTRIBUTE
+import ru.pixnews.wasm.builder.base.icu.ICU_DATA_PACKAGING_ATTRIBUTE
+import ru.pixnews.wasm.builder.base.icu.ICU_DATA_PACKAGING_STATIC
+import ru.pixnews.wasm.builder.sqlite.SqliteCodeGenerationOptions
+import ru.pixnews.wasm.builder.sqlite.SqliteConfigurationOptions
+import ru.pixnews.wasm.builder.sqlite.SqliteExportedFunctions
+import ru.pixnews.wasm.builder.sqlite.preset.setupAndroidExtensions
+import ru.pixnews.wasm.builder.sqlite.preset.setupIcu
 
 /*
  * SQLite WebAssembly Build with Emscripten
@@ -24,7 +24,7 @@ import ru.pixnews.wasm.sqlite.open.helper.builder.sqlite.preset.setupIcu
  *  * No multithreading support
  */
 plugins {
-    id("ru.pixnews.sqlite-wasm-builder")
+    id("ru.pixnews.wasm.builder.sqlite.plugin")
     id("ru.pixnews.wasm-sqlite-open-helper.gradle.multiplatform.kotlin")
     id("ru.pixnews.wasm-sqlite-open-helper.gradle.multiplatform.publish")
 }

@@ -22,6 +22,7 @@ pluginManagement {
     // Get our own convention plugins from 'gradle/plugin/project'
     listOf(
         "project" to "sqlite-helper-gradle-project-plugins",
+        "wasm-builder" to "sqlite-helper-gradle-wasm-builder-plugins",
     ).forEach { (path, gradleProjectsPluginName) ->
         if (File(rootDir, "build-logic/$path").exists()) {
             includeBuild("build-logic/$path") {
