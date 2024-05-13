@@ -4,17 +4,17 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.gradle.settings
+package ru.pixnews.wasm.sqlite.open.helper.gradle.settings.repository
 
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import java.net.URI
 
-public fun RepositoryHandler.sqliteRepository(): Unit = exclusiveContent {
+public fun RepositoryHandler.icuRepository(): Unit = exclusiveContent {
     forRepository {
         ivy {
-            url = URI("https://www.sqlite.org/")
+            url = URI("https://github.com/unicode-org/icu/releases/download")
             patternLayout {
-                artifact("2024/sqlite-amalgamation-[revision].[ext]")
+                artifact("release-74-2/icu4c-74_2-src.[ext]")
             }
             metadataSources {
                 artifact()
@@ -22,6 +22,6 @@ public fun RepositoryHandler.sqliteRepository(): Unit = exclusiveContent {
         }
     }
     filter {
-        includeModule("sqlite", "amalgamation")
+        includeModule("icu", "sources")
     }
 }

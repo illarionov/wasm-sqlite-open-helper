@@ -4,12 +4,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+package ru.pixnews.wasm.sqlite.open.helper.gradle.lint
+
 import com.android.build.api.dsl.CommonExtension
 import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.DynamicFeaturePlugin
 import com.android.build.gradle.LibraryPlugin
 import com.android.build.gradle.TestPlugin
-import ru.pixnews.wasm.sqlite.open.helper.gradle.lint.configureCommonAndroidLint
 
 /*
  * Convention plugin that configures Android Lint in projects with the Android Gradle plugin

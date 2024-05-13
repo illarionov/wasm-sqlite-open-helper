@@ -9,7 +9,7 @@ pluginManagement {
 }
 
 plugins {
-    id("ru.pixnews.wasm-sqlite-open-helper.gradle.settings.root")
+    id("ru.pixnews.wasm.sqlite.open.helper.gradle.settings.root")
 }
 
 dependencyResolutionManagement {

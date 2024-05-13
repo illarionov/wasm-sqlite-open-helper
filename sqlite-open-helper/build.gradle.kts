@@ -11,11 +11,11 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_ERROR
 import org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_OUT
 
 plugins {
-    id("ru.pixnews.wasm-sqlite-open-helper.gradle.lint.binary.compatibility.validator")
-    id("ru.pixnews.wasm-sqlite-open-helper.gradle.multiplatform.android")
-    id("ru.pixnews.wasm-sqlite-open-helper.gradle.multiplatform.kotlin")
-    id("ru.pixnews.wasm-sqlite-open-helper.gradle.multiplatform.publish")
-    id("ru.pixnews.wasm-sqlite-open-helper.gradle.room.ksp")
+    id("ru.pixnews.wasm.sqlite.open.helper.gradle.lint.binary-compatibility-validator")
+    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.android")
+    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.kotlin")
+    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.publish")
+    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.room.ksp")
 }
 
 group = "ru.pixnews.wasm-sqlite-open-helper"

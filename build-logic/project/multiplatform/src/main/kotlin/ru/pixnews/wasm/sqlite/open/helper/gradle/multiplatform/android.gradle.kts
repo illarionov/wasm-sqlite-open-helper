@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+package ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform
+
 import com.android.build.api.dsl.LibraryExtension
 
 /*
@@ -11,8 +13,8 @@ import com.android.build.api.dsl.LibraryExtension
  */
 plugins {
     id("org.jetbrains.kotlin.multiplatform")
-    id("ru.pixnews.wasm-sqlite-open-helper.gradle.multiplatform.kotlin")
-    id("ru.pixnews.wasm-sqlite-open-helper.gradle.lint.android-lint")
+    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.kotlin")
+    id("ru.pixnews.wasm.sqlite.open.helper.gradle.lint.android-lint")
     id("com.android.library")
 }
 
