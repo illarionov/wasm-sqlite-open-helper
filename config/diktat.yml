@@ -1,7 +1,7 @@
 # https://github.com/saveourtool/diktat/blob/master/diktat-rules/src/main/resources/diktat-analysis.yml
 - name: DIKTAT_COMMON
   configuration:
-    domainName: ru.pixnews.wasm.sqlite.open.helper
+    domainName: ru.pixnews.wasm
     testDirs: test
     disabledChapters: ""
     kotlinVersion: 1.9

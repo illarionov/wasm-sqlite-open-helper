@@ -12,18 +12,6 @@ plugins {
     id("ru.pixnews.wasm-sqlite-open-helper.gradle.settings.root")
 }
 
-// Workaround for https://github.com/gradle/gradle/issues/26020
-buildscript {
-    repositories {
-        mavenCentral()
-        gradlePluginPortal()
-        google()
-    }
-    dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$embeddedKotlinVersion")
-    }
-}
-
 dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
@@ -32,7 +20,8 @@ dependencyResolutionManagement {
     }
 }
 
-include("lint")
-include("multiplatform")
+rootProject.name = "sqlite-helper-gradle-wasm-builder-plugins"
 
-rootProject.name = "sqlite-helper-gradle-project-plugins"
+include("base")
+include("icu")
+include("sqlite")
