@@ -4,8 +4,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import ru.pixnews.wasm.sqlite.open.helper.gradle.graalvm.GraalvmCompilerJvmArgumentsProvider
-import ru.pixnews.wasm.sqlite.open.helper.gradle.graalvm.isRunningOnGraalVm
+package ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform
+
+import org.gradle.kotlin.dsl.withType
+import ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.graalvm.GraalvmCompilerJvmArgumentsProvider
+import ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.graalvm.isRunningOnGraalVm
 
 configurations {
     dependencyScope("graalvmCompiler") {

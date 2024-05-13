@@ -4,10 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import ru.pixnews.wasm.sqlite.open.helper.gradle.settings.chicoryMavenLocal
-import ru.pixnews.wasm.sqlite.open.helper.gradle.settings.googleFiltered
-import ru.pixnews.wasm.sqlite.open.helper.gradle.settings.icuRepository
-import ru.pixnews.wasm.sqlite.open.helper.gradle.settings.sqliteRepository
+package ru.pixnews.wasm.sqlite.open.helper.gradle.settings
+
+import ru.pixnews.wasm.sqlite.open.helper.gradle.settings.repository.chicoryMavenLocal
+import ru.pixnews.wasm.sqlite.open.helper.gradle.settings.repository.googleFiltered
+import ru.pixnews.wasm.sqlite.open.helper.gradle.settings.repository.icuRepository
+import ru.pixnews.wasm.sqlite.open.helper.gradle.settings.repository.sqliteRepository
 
 /*
  * Settings convention plugin that configures repositories used in the application

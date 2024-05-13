@@ -4,6 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+package ru.pixnews.wasm.sqlite.open.helper.gradle.settings
+
+import org.gradle.kotlin.dsl.gradleEnterprise
+
 /*
  * Settings convention plugin with the Gradle Enterprise configuration
  */

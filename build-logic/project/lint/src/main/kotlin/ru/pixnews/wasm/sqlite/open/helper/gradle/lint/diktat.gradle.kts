@@ -4,8 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import ru.pixnews.wasm.sqlite.open.helper.gradle.lint.configRootDir
-import ru.pixnews.wasm.sqlite.open.helper.gradle.lint.excludeNonLintedDirectories
+package ru.pixnews.wasm.sqlite.open.helper.gradle.lint
 
 /*
  * Convention plugin that configures Diktat

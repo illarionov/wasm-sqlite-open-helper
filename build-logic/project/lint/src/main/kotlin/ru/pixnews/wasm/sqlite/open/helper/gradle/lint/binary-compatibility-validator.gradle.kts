@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+package ru.pixnews.wasm.sqlite.open.helper.gradle.lint
+
 /*
  * Convention plugin that configures Kotlinx Binary Compatibility Validator
  */

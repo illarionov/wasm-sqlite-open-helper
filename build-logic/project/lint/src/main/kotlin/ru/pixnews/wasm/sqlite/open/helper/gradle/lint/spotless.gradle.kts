@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import ru.pixnews.wasm.sqlite.open.helper.gradle.lint.lintedFileTree
+package ru.pixnews.wasm.sqlite.open.helper.gradle.lint
 
 /*
  * Convention plugin that configures Spotless

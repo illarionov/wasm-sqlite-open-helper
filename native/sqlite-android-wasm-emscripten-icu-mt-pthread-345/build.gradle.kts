@@ -25,8 +25,8 @@ import ru.pixnews.wasm.builder.sqlite.preset.setupIcu
  */
 plugins {
     id("ru.pixnews.wasm.builder.sqlite.plugin")
-    id("ru.pixnews.wasm-sqlite-open-helper.gradle.multiplatform.kotlin")
-    id("ru.pixnews.wasm-sqlite-open-helper.gradle.multiplatform.publish")
+    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.kotlin")
+    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.publish")
 }
 
 group = "ru.pixnews.wasm-sqlite-open-helper"
