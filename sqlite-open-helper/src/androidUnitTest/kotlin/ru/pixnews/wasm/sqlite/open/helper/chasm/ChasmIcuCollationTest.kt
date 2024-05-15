@@ -6,10 +6,8 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chasm
 
-import org.junit.jupiter.api.Disabled
 import ru.pixnews.wasm.sqlite.open.helper.tests.AbstractIcuCollationTest
 
-@Disabled("Not working yet, waiting for a new version of chasm")
 class ChasmIcuCollationTest : AbstractIcuCollationTest<ChasmSqliteEmbedderConfig>(
     factoryCreator = ChasmFactoryCreator,
 )
