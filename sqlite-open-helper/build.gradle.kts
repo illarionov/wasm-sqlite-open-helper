@@ -46,7 +46,7 @@ android {
             isIncludeAndroidResources = true
             all { testTask ->
                 testTask.useJUnitPlatform()
-                testTask.maxHeapSize = "1G"
+                testTask.maxHeapSize = "2G"
                 testTask.testLogging {
                     events = setOf(FAILED, PASSED, SKIPPED, STANDARD_ERROR, STANDARD_OUT)
                 }
