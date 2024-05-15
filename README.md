@@ -202,9 +202,6 @@ Key Features:
 - Kotlin Multiplatform solution.
 - Single threaded only.
 
-The embedder implemented using the Chasm is even more experimental and doesn't work with the latest released
-version.
-
 Installation:
 
 ```kotlin
