@@ -20,10 +20,7 @@ import androidx.sqlite.db.SupportSQLiteOpenHelper
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.OPEN_READONLY
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.SqlOpenHelperNativeBindings
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3ConnectionPtr
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
-import ru.pixnews.wasm.sqlite.open.helper.path.DatabasePathResolver
+import ru.pixnews.wasm.sqlite.open.helper.dsl.path.DatabasePathResolver
 import java.nio.file.FileSystems
 import java.nio.file.attribute.PosixFilePermissions
 import kotlin.io.path.setPosixFilePermissions
@@ -32,7 +29,7 @@ import kotlin.io.path.setPosixFilePermissions
  * A helper class to manage database creation and version management.
  *
  */
-internal class WasmSqliteOpenHelper<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr>(
+internal class WasmSqliteOpenHelper(
     private val pathResolver: DatabasePathResolver,
     private val defaultLocale: Locale,
     private val debugConfig: SQLiteDebug,
@@ -40,14 +37,14 @@ internal class WasmSqliteOpenHelper<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
     private val openParamsBuilder: SQLiteDatabaseOpenParams.Builder,
     rootLogger: Logger,
     override val databaseName: String?,
-    private val bindings: SqlOpenHelperNativeBindings<CP, SP>,
+    private val bindings: OpenHelperNativeBindings,
 ) : SupportSQLiteOpenHelper {
     private val logger: Logger = rootLogger.withTag("WasmSqliteOpenHelper")
     private val version: Int get() = callback.version
 
     private var isInitializing = false
     private var sqliteInitialized: Boolean = false
-    private var database: SQLiteDatabase<CP, SP>? = null
+    private var database: SQLiteDatabase? = null
 
     init {
         require(version >= 1) { "Version must be >= 1, was $version" }
@@ -74,7 +71,7 @@ internal class WasmSqliteOpenHelper<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
      * @return a read/write database object valid until [.close] is called
      * @throws SQLiteException if the database cannot be opened for writing
      */
-    override val writableDatabase: SQLiteDatabase<CP, SP>
+    override val writableDatabase: SQLiteDatabase
         get() = synchronized(this) {
             getDatabaseLocked(true)
         }
@@ -98,7 +95,7 @@ internal class WasmSqliteOpenHelper<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
      * @throws SQLiteException if the database cannot be opened
      * or [.close] is called.
      */
-    override val readableDatabase: SQLiteDatabase<CP, SP>
+    override val readableDatabase: SQLiteDatabase
         get() = synchronized(this) {
             getDatabaseLocked(false)
         }
@@ -131,7 +128,7 @@ internal class WasmSqliteOpenHelper<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
     }
 
     @Suppress("CyclomaticComplexMethod", "LongMethod", "NestedBlockDepth")
-    private fun getDatabaseLocked(writable: Boolean): SQLiteDatabase<CP, SP> {
+    private fun getDatabaseLocked(writable: Boolean): SQLiteDatabase {
         database?.let { db ->
             if (!db.isOpen) {
                 // Darn!  The user closed the database by calling mDatabase.close().
@@ -166,7 +163,7 @@ internal class WasmSqliteOpenHelper<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
                 )
             } else {
                 try {
-                    val path = pathResolver.getDatabasePath(databaseName.toString()).path
+                    val path = pathResolver.getDatabasePath(databaseName.toString())
                     val openParams = openParamsBuilder.build()
                     db = SQLiteDatabase.openDatabase(
                         path = path,
@@ -183,7 +180,7 @@ internal class WasmSqliteOpenHelper<CP : Sqlite3ConnectionPtr, SP : Sqlite3State
                         throw ex
                     }
                     logger.e(ex) { "Couldn't open $databaseName for writing (will try read-only):" }
-                    val path = pathResolver.getDatabasePath(databaseName.toString()).path
+                    val path = pathResolver.getDatabasePath(databaseName.toString())
                     val openParams = openParamsBuilder.build().toBuilder().apply {
                         addOpenFlags(OPEN_READONLY)
                     }.build()

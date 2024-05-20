@@ -6,9 +6,10 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.internal.connection
 
+import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.Companion.ExtendedStatementType
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_SELECT
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteStatement
 
 /**
  * Holder type for a prepared statement.
@@ -33,9 +34,9 @@ import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
  * @property seqNum The database schema ID at the time this statement was created.  The ID is left zero for
  *   statements that are not cached.  This value is meaningful only if inCache is true.
  */
-internal data class PreparedStatement<SP : Sqlite3StatementPtr>(
+internal data class PreparedStatement(
     val sql: String,
-    val statementPtr: SP,
+    val statementPtr: WasmPtr<SqliteStatement>,
     val numParameters: Int = 0,
     val type: ExtendedStatementType = ExtendedStatementType.PublicType(STATEMENT_SELECT),
     val readOnly: Boolean = false,

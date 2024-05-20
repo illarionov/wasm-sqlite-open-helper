@@ -13,7 +13,7 @@ group = "ru.pixnews.wasm-sqlite-open-helper.gradle.multiplatform"
 dependencies {
     implementation(project(":lint"))
     implementation(libs.agp.plugin.api)
-    implementation(libs.androidx.room.plugin)
+    implementation(libs.atomicfu.plugin)
     implementation(libs.ksp.plugin)
     implementation(libs.dokka.plugin)
     implementation(libs.gradle.maven.publish.plugin)

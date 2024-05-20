@@ -7,12 +7,12 @@
 package ru.pixnews.wasm.sqlite.open.helper.dsl
 
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags
-import ru.pixnews.wasm.sqlite.open.helper.SQLiteDatabaseJournalMode
-import ru.pixnews.wasm.sqlite.open.helper.SQLiteDatabaseSyncMode
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale
 import ru.pixnews.wasm.sqlite.open.helper.common.api.clear
 import ru.pixnews.wasm.sqlite.open.helper.common.api.or
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDatabaseJournalMode
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDatabaseSyncMode
 
 /**
  * Parameters used when opening the database
@@ -57,7 +57,7 @@ public class OpenParamsBlock {
      *
      * See: [https://sqlite.org/pragma.html#pragma_journal_mode](https://sqlite.org/pragma.html#pragma_journal_mode)
      */
-    public var journalMode: SQLiteDatabaseJournalMode? = null
+    public var journalMode: SqliteDatabaseJournalMode? = null
 
     /**
      * Sets the filesystem sync mode.
@@ -66,7 +66,7 @@ public class OpenParamsBlock {
      *
      * See: [https://sqlite.org/pragma.html#pragma_synchronous](https://sqlite.org/pragma.html#pragma_synchronous)
      */
-    public var syncMode: SQLiteDatabaseSyncMode? = null
+    public var syncMode: SqliteDatabaseSyncMode? = null
 
     /**
      * Configures [lookaside memory allocator](https://sqlite.org/malloc.html#lookaside)

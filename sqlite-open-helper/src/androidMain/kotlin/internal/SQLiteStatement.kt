@@ -26,7 +26,7 @@ import androidx.sqlite.db.SupportSQLiteStatement
  *
  */
 internal class SQLiteStatement(
-    db: SQLiteDatabase<*, *>,
+    db: SQLiteDatabase,
     sql: String,
     bindArgs: List<Any?> = emptyList<Unit>(),
 ) : SQLiteProgram(db, sql, bindArgs, null), SupportSQLiteStatement {

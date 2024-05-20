@@ -19,14 +19,14 @@ import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.Fie
  * set the number of columns before adding any rows to the cursor.
  *
  * @param name The name of the cursor window, or null if none.
- * @param windowSizeBytes Maximym size of cursor window in bytes.
+ * @param windowSizeBytes Maximum size of cursor window in bytes.
  * @throws IllegalArgumentException if {@code windowSizeBytes} is less than 0
  * @throws AssertionError if created window pointer is 0
  */
 internal class CursorWindow(
     name: String?,
     rootLogger: Logger,
-    val windowSizeBytes: Int = WINDOW_SIZE_KB * 1024,
+    private val windowSizeBytes: Int = WINDOW_SIZE_KB * 1024,
 ) {
     private val logger = rootLogger.withTag("CursorWindow")
 
@@ -198,7 +198,7 @@ internal class CursorWindow(
 
     override fun toString(): String = "$name {$window}"
 
-    companion object {
+    internal companion object {
         private const val WINDOW_SIZE_KB = 2048
     }
 }

@@ -9,9 +9,12 @@ androidCompileSdk = "34"
 agp = "8.2.2"
 androidx-collection = "1.4.0"
 androidx-core = "1.13.1"
-androidx-sqlite = "2.4.0"
-androidx-room = "2.6.1"
+androidx-sqlite = "2.5.0-alpha02"
+androidx-room = "2.7.0-alpha02"
+androidx-sqlite24 = "2.4.0"
+androidx-room26 = "2.6.1"
 androidx-test = "1.6.0-alpha06"
+atomicfu = "0.24.0"
 assertk = "0.28.1"
 chasm = "0.6.1"
 chicory = "0.0.10"
@@ -32,11 +35,17 @@ spotless = "6.25.0"
 [libraries]
 androidx-collection = { group = "androidx.collection", name = "collection", version.ref = "androidx-collection" }
 androidx-core = { group = "androidx.core", name = "core", version.ref = "androidx-core" }
-androidx-room = { group = "androidx.room", name = "room-ktx", version.ref = "androidx-room" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "androidx-room" }
+androidx-room-compiler26 = { group = "androidx.room", name = "room-compiler", version.ref = "androidx-room26" }
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "androidx-room" }
+androidx-room-runtime26 = { group = "androidx.room", name = "room-runtime", version.ref = "androidx-room26" }
 androidx-room-testing = { group = "androidx.room", name = "room-testing", version.ref = "androidx-room" }
+androidx-room-testing26 = { group = "androidx.room", name = "room-testing", version.ref = "androidx-room26" }
+androidx-room26 = { group = "androidx.room", name = "room-ktx", version.ref = "androidx-room26" }
 androidx-sqlite-sqlite = { group = "androidx.sqlite", name = "sqlite", version.ref = "androidx-sqlite" }
+androidx-sqlite-framework = { group = "androidx.sqlite", name = "sqlite-framework", version.ref = "androidx-sqlite" }
+androidx-sqlite-bundled = { group = "androidx.sqlite", name = "sqlite-bundled", version.ref = "androidx-sqlite" }
+androidx-sqlite-sqlite24 = { group = "androidx.sqlite", name = "sqlite", version.ref = "androidx-sqlite24" }
 androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidx-test" }
 assertk = { group = "com.willowtreeapps.assertk", name = "assertk", version.ref = "assertk" }
 chasm = { group = "io.github.charlietap.chasm", name = "chasm", version.ref = "chasm" }
@@ -69,6 +78,7 @@ okio-okio = { group = "com.squareup.okio", name = "okio", version.ref = "okio" }
 agp-plugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 agp-plugin-api = { module = "com.android.tools.build:gradle-api", version.ref = "agp" }
 androidx-room-plugin = { group = "androidx.room", name = "androidx.room.gradle.plugin", version.ref = "androidx-room" }
+atomicfu-plugin = { group = "org.jetbrains.kotlinx", name = "atomicfu-gradle-plugin", version.ref = "atomicfu" }
 detekt-formatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "detekt" }
 detekt-plugin = { group = "io.gitlab.arturbosch.detekt", name = "detekt-gradle-plugin", version.ref = "detekt" }
 diktat-plugin = { group = "com.saveourtool.diktat", name = "diktat-gradle-plugin", version.ref = "diktat" }

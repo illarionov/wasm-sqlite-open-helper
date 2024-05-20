@@ -1,0 +1,101 @@
+public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidCursorWindowAllocationException : java/lang/RuntimeException {
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidOperationCanceledException : java/lang/RuntimeException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqlException : java/lang/RuntimeException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+}
+
+public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteAbortException : ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteAccessPermException : ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteBindOrColumnIndexOutOfRangeException : ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteBlobTooBigException : ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteCantOpenDatabaseException : ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteConstraintException : ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteDatabaseCorruptException : ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteDatabaseLockedException : ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteDatatypeMismatchException : ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteDiskIoException : ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteDoneException : ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteException : ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqlException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+}
+
+public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteFullException : ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteMisuseException : ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteOutOfMemoryException : ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteReadOnlyDatabaseException : ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteTableLockedException : ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+}
+

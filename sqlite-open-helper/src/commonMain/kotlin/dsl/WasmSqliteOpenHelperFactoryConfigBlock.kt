@@ -8,8 +8,8 @@ package ru.pixnews.wasm.sqlite.open.helper.dsl
 
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
+import ru.pixnews.wasm.sqlite.open.helper.dsl.path.DatabasePathResolver
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
-import ru.pixnews.wasm.sqlite.open.helper.path.DatabasePathResolver
 
 @WasmSqliteOpenHelperDsl
 public class WasmSqliteOpenHelperFactoryConfigBlock<E : SqliteEmbedderConfig>(

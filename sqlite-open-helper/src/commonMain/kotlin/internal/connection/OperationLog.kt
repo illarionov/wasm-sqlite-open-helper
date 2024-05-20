@@ -8,7 +8,8 @@ package ru.pixnews.wasm.sqlite.open.helper.internal.connection
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDebug
-import ru.pixnews.wasm.sqlite.open.helper.internal.platform.synchronized
+import ru.pixnews.wasm.sqlite.open.helper.io.lock.SynchronizedObject
+import ru.pixnews.wasm.sqlite.open.helper.io.lock.synchronized
 
 internal class OperationLog(
     private val debugConfig: SQLiteDebug,
@@ -20,6 +21,7 @@ internal class OperationLog(
     private val onStatementExecuted: (elapsedTime: Long) -> Unit,
 ) {
     private val logger = rootLogger.withTag("OperationLog")
+    private val operationsLock = SynchronizedObject()
     private val operations: Array<Operation?> = arrayOfNulls(MAX_RECENT_OPERATIONS)
     private var index: Int = 0
     private var generation: Int = 0
@@ -34,7 +36,7 @@ internal class OperationLog(
         resultLong = Long.MIN_VALUE
         resultString = null
 
-        synchronized(operations) {
+        synchronized(operationsLock) {
             val index = (index + 1) % MAX_RECENT_OPERATIONS
             var operation = operations[index]
             if (operation == null) {
@@ -73,24 +75,24 @@ internal class OperationLog(
         resultString = stringResult
     }
 
-    fun failOperation(cookie: Int, ex: Exception?) = synchronized(operations) {
+    fun failOperation(cookie: Int, ex: Exception?) = synchronized(operationsLock) {
         val operation = getOperationLocked(cookie)
         if (operation != null) {
             operation.exception = ex
         }
     }
 
-    fun endOperation(cookie: Int) = synchronized(operations) {
+    fun endOperation(cookie: Int) = synchronized(operationsLock) {
         if (endOperationDeferLogLocked(cookie)) {
             logOperationLocked(cookie, null)
         }
     }
 
-    fun endOperationDeferLog(cookie: Int): Boolean = synchronized(operations) {
+    fun endOperationDeferLog(cookie: Int): Boolean = synchronized(operationsLock) {
         return endOperationDeferLogLocked(cookie)
     }
 
-    fun logOperation(cookie: Int, detail: String?) = synchronized(operations) {
+    fun logOperation(cookie: Int, detail: String?) = synchronized(operationsLock) {
         logOperationLocked(cookie, detail)
     }
 
@@ -132,7 +134,7 @@ internal class OperationLog(
         return if (operation!!.cookie == cookie) operation else null
     }
 
-    fun describeCurrentOperation(): String? = synchronized(operations) {
+    fun describeCurrentOperation(): String? = synchronized(operationsLock) {
         val operation = operations[index]
         if (operation != null && !operation.finished) {
             val msg = StringBuilder()
@@ -159,7 +161,7 @@ internal class OperationLog(
         }
     }
 
-    fun dump(): String = synchronized(operations) {
+    fun dump(): String = synchronized(operationsLock) {
         buildString {
             appendLine("  Most recently executed operations:")
             var index = index

@@ -6,8 +6,8 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.internal
 
-import ru.pixnews.wasm.sqlite.open.helper.SQLiteDatabaseJournalMode
-import ru.pixnews.wasm.sqlite.open.helper.SQLiteDatabaseSyncMode
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDatabaseJournalMode
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDatabaseSyncMode
 
 /**
  * Provides access to SQLite functions that affect all database connection,
@@ -62,15 +62,15 @@ internal object SQLiteGlobal {
     /**
      * Gets the default journal mode when WAL is not in use.
      */
-    val DEFAULT_JOURNAL_MODE: SQLiteDatabaseJournalMode = SQLiteDatabaseJournalMode.TRUNCATE
+    val DEFAULT_JOURNAL_MODE: SqliteDatabaseJournalMode = SqliteDatabaseJournalMode.TRUNCATE
 
     /**
      * Gets the default database synchronization mode when WAL is not in use.
      */
-    val DEFAULT_SYNC_MODE: SQLiteDatabaseSyncMode = SQLiteDatabaseSyncMode.FULL
+    val DEFAULT_SYNC_MODE: SqliteDatabaseSyncMode = SqliteDatabaseSyncMode.FULL
 
     /**
      * Gets the database synchronization mode when in WAL mode.
      */
-    val WAL_SYNC_MODE: SQLiteDatabaseSyncMode = SQLiteDatabaseSyncMode.NORMAL
+    val WAL_SYNC_MODE: SqliteDatabaseSyncMode = SqliteDatabaseSyncMode.NORMAL
 }

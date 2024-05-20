@@ -28,7 +28,7 @@ import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.CursorWindow
  *
  */
 internal class SQLiteQuery(
-    db: SQLiteDatabase<*, *>,
+    db: SQLiteDatabase,
     query: String,
     bindArgs: List<Any?>,
     private val cancellationSignal: CancellationSignal?,

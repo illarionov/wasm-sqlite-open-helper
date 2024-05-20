@@ -7,17 +7,19 @@
 package ru.pixnews.wasm.sqlite.open.helper.internal.connection
 
 import androidx.collection.LruCache
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.SqlOpenHelperNativeBindings
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3ConnectionPtr
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
-import ru.pixnews.wasm.sqlite.open.helper.internal.platform.synchronized
+import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.internal.OpenHelperNativeBindings
+import ru.pixnews.wasm.sqlite.open.helper.io.lock.SynchronizedObject
+import ru.pixnews.wasm.sqlite.open.helper.io.lock.synchronized
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteStatement
 
-internal class PreparedStatementCache<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr>(
-    private val connectionPtr: CP,
-    private val bindings: SqlOpenHelperNativeBindings<CP, SP>,
+internal class PreparedStatementCache(
+    private val connectionPtr: WasmPtr<SqliteDb>,
+    private val bindings: OpenHelperNativeBindings,
     size: Int,
-) : LruCache<String, PreparedStatement<SP>>(size) {
-    private val lock = Any()
+) : LruCache<String, PreparedStatement>(size) {
+    private val lock = SynchronizedObject()
 
     // The database sequence number.  This changes every time the database schema changes.
     var databaseSeqNum: Long = 0
@@ -33,7 +35,7 @@ internal class PreparedStatementCache<CP : Sqlite3ConnectionPtr, SP : Sqlite3Sta
         get(sql)
     }
 
-    fun createStatement(sql: String): SP = synchronized(lock) {
+    fun createStatement(sql: String): WasmPtr<SqliteStatement> = synchronized(lock) {
         lastSeqNum = databaseSeqNum
         bindings.nativePrepareStatement(connectionPtr, sql)
     }
@@ -41,8 +43,8 @@ internal class PreparedStatementCache<CP : Sqlite3ConnectionPtr, SP : Sqlite3Sta
     override fun entryRemoved(
         evicted: Boolean,
         key: String,
-        oldValue: PreparedStatement<SP>,
-        newValue: PreparedStatement<SP>?,
+        oldValue: PreparedStatement,
+        newValue: PreparedStatement?,
     ) {
         oldValue.inCache = false
         if (!oldValue.inUse) {

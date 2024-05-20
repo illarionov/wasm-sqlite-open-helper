@@ -8,4 +8,4 @@ package ru.pixnews.wasm.sqlite.open.helper.internal.platform
 
 internal expect fun getSystemProp(name: String, defaultValue: String): String
 
-internal expect fun yieldSleepAroundMSec(): Unit
+internal expect fun yieldSleepAroundMSec()

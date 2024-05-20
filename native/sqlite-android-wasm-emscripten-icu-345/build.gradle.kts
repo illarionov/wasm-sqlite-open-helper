@@ -83,7 +83,7 @@ kotlin {
         named("jvmMain") {
             resources.srcDir(files(wasmResourcesDir).builtBy(copyResourcesTask))
             dependencies {
-                api(projects.sqliteCommonApi)
+                api(projects.sqliteCommon)
             }
         }
     }

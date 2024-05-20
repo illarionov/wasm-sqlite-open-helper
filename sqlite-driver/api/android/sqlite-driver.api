@@ -1,0 +1,52 @@
+public final class ru/pixnews/wasm/sqlite/driver/WasmSqliteDriverDriverBuilderKt {
+	public static final fun WasmSQLiteDriver (Lru/pixnews/wasm/sqlite/open/helper/embedder/SqliteEmbedder;Lkotlin/jvm/functions/Function1;)Landroidx/sqlite/SQLiteDriver;
+}
+
+public final class ru/pixnews/wasm/sqlite/driver/dsl/DebugConfigBlock {
+	public fun <init> ()V
+	public final fun getLogSlowQueries ()Z
+	public final fun getSlowQueryThresholdProvider ()Lkotlin/jvm/functions/Function0;
+	public final fun getSqlLog ()Z
+	public final fun getSqlStatements ()Z
+	public final fun getSqlTime ()Z
+	public final fun setLogSlowQueries (Z)V
+	public final fun setSlowQueryThresholdProvider (Lkotlin/jvm/functions/Function0;)V
+	public final fun setSqlLog (Z)V
+	public final fun setSqlStatements (Z)V
+	public final fun setSqlTime (Z)V
+}
+
+public final class ru/pixnews/wasm/sqlite/driver/dsl/OpenFlags : java/lang/Enum {
+	public static final field ANDROID_FUNCTIONS Lru/pixnews/wasm/sqlite/driver/dsl/OpenFlags;
+	public static final field LOCALIZED_COLLATORS Lru/pixnews/wasm/sqlite/driver/dsl/OpenFlags;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/driver/dsl/OpenFlags;
+	public static fun values ()[Lru/pixnews/wasm/sqlite/driver/dsl/OpenFlags;
+}
+
+public final class ru/pixnews/wasm/sqlite/driver/dsl/OpenParamsBlock {
+	public fun <init> ()V
+	public final fun getJournalMode ()Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteDatabaseJournalMode;
+	public final fun getLocale-i7jP64M ()Ljava/lang/String;
+	public final fun getLookasideSlotCount ()I
+	public final fun getLookasideSlotSize ()I
+	public final fun getOpenFlags ()Ljava/util/Set;
+	public final fun getSyncMode ()Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteDatabaseSyncMode;
+	public final fun setJournalMode (Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteDatabaseJournalMode;)V
+	public final fun setLocale-CdkJ4j0 (Ljava/lang/String;)V
+	public final fun setLookasideConfig (II)Lru/pixnews/wasm/sqlite/driver/dsl/OpenParamsBlock;
+	public final fun setOpenFlags (Ljava/util/Set;)V
+	public final fun setSyncMode (Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteDatabaseSyncMode;)V
+}
+
+public final class ru/pixnews/wasm/sqlite/driver/dsl/WasmSqliteDriverConfigBlock {
+	public fun <init> ()V
+	public final fun debug (Lkotlin/jvm/functions/Function1;)V
+	public final fun embedder (Lkotlin/jvm/functions/Function1;)V
+	public final fun getLogger ()Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;
+	public final fun getPathResolver ()Lru/pixnews/wasm/sqlite/open/helper/dsl/path/DatabasePathResolver;
+	public final fun openParams (Lkotlin/jvm/functions/Function1;)V
+	public final fun setLogger (Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;)V
+	public final fun setPathResolver (Lru/pixnews/wasm/sqlite/open/helper/dsl/path/DatabasePathResolver;)V
+}
+

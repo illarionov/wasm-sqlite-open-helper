@@ -61,7 +61,7 @@ internal class SQLiteCursor(
     private val closeGuard: CloseGuard = CloseGuard.get().apply {
         open("AbstractCursor.close")
     }
-    private val closeGuardCleaner = WasmSqliteCleaner.register(this, CloseGuardFinalizeAction(closeGuard))
+    private val closeGuardCleaner = wasmSqliteCleaner.register(this, CloseGuardFinalizeAction(closeGuard))
 
     /**
      * The cursor window owned by this cursor.

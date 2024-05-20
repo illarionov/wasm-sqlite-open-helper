@@ -21,7 +21,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            api(projects.sqliteCommonApi)
+            api(projects.sqliteCommon)
             implementation(libs.chicory)
             implementation(projects.wasiEmscriptenHost)
             implementation(projects.native.sqliteAndroidWasmEmscriptenIcu345)

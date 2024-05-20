@@ -12,9 +12,9 @@ import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperFactory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.dsl.WasmSqliteOpenHelperFactoryConfigBlock
+import ru.pixnews.wasm.sqlite.open.helper.dsl.path.DatabasePathResolver
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedder
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
-import ru.pixnews.wasm.sqlite.open.helper.path.DatabasePathResolver
 import java.io.File
 
 abstract class TestOpenHelperFactoryCreator<C : SqliteEmbedderConfig>(
@@ -29,7 +29,7 @@ abstract class TestOpenHelperFactoryCreator<C : SqliteEmbedderConfig>(
         extraConfig: WasmSqliteOpenHelperFactoryConfigBlock<C>.() -> Unit = {},
     ): Factory {
         return WasmSqliteOpenHelperFactory(embedder) {
-            pathResolver = DatabasePathResolver { name -> File(dstDir, name) }
+            pathResolver = DatabasePathResolver { name -> File(dstDir, name).path }
             logger = dbLogger
             embedder {
                 defaultEmbedderConfig(sqlite3Binary)

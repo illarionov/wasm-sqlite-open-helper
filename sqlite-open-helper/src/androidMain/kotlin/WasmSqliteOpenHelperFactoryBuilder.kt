@@ -14,16 +14,16 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.dsl.DebugConfigBlock
 import ru.pixnews.wasm.sqlite.open.helper.dsl.OpenParamsBlock
 import ru.pixnews.wasm.sqlite.open.helper.dsl.WasmSqliteOpenHelperFactoryConfigBlock
+import ru.pixnews.wasm.sqlite.open.helper.dsl.path.AndroidDatabasePathResolver
+import ru.pixnews.wasm.sqlite.open.helper.dsl.path.DatabasePathResolver
+import ru.pixnews.wasm.sqlite.open.helper.dsl.path.JvmDatabasePathResolver
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedder
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteWasmEnvironment
 import ru.pixnews.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
+import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard
 import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard.Reporter
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.JvmSqliteCallbackStore
-import ru.pixnews.wasm.sqlite.open.helper.path.AndroidDatabasePathResolver
-import ru.pixnews.wasm.sqlite.open.helper.path.DatabasePathResolver
-import ru.pixnews.wasm.sqlite.open.helper.path.JvmDatabasePathResolver
 
 /**
  * Creates a [SupportSQLiteOpenHelper.Factory] with the specified [block] configuration.
@@ -70,7 +70,7 @@ internal fun <E : SqliteEmbedderConfig> WasmSqliteOpenHelperFactory(
 
     setupCloseGuard(config.logger)
 
-    val callbackStore = JvmSqliteCallbackStore()
+    val callbackStore = SqliteCallbackStore()
     val embedderEnv: SqliteWasmEnvironment = embedder.createSqliteWasmEnvironment(
         commonConfig = commonConfig,
         callbackStore = callbackStore,
