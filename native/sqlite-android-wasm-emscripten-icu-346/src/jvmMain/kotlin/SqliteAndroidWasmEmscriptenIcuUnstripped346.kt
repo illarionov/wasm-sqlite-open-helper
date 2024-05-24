@@ -8,11 +8,12 @@ package ru.pixnews.wasm.sqlite.open.helper
 
 import java.net.URL
 
-public object SqliteAndroidWasmEmscriptenIcu345 : WasmSqliteConfiguration {
+//  Temporary build with unstripped symbols for debugging
+public object SqliteAndroidWasmEmscriptenIcuUnstripped346 : WasmSqliteConfiguration {
     override val sqliteUrl: URL
         get() = requireNotNull(
-            SqliteAndroidWasmEmscriptenIcu345::class.java.getResource(
-                "sqlite3-android-icu-3450300.wasm",
+            SqliteAndroidWasmEmscriptenIcu346::class.java.getResource(
+                "sqlite3-android-icu-3460000-unstripped.wasm",
             ),
         )
     override val wasmMinMemorySize: Long = 50_331_648L

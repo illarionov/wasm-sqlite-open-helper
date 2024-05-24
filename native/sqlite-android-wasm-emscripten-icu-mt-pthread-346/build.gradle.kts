@@ -16,12 +16,12 @@ import ru.pixnews.wasm.builder.sqlite.preset.setupAndroidExtensions
 import ru.pixnews.wasm.builder.sqlite.preset.setupIcu
 
 /*
- * SQLite WebAssembly Build with Emscripten
- *  * Based on the AOSP SQLite configuration
+ * SQLite WebAssemblry Build with Emscripten
+ *  * Configuration similar to AOSP
  *  * Android-specific patches applied
  *  * Android-specific Localized collators
+ *  * Multithreading using pthread
  *  * ICU statically compiled
- *  * No multithreading support
  */
 plugins {
     id("ru.pixnews.wasm.builder.sqlite.plugin")
@@ -31,14 +31,14 @@ plugins {
 
 group = "ru.pixnews.wasm-sqlite-open-helper"
 version = wasmSqliteVersions.getSubmoduleVersionProvider(
-    propertiesFileKey = "wsoh_sqlite_wasm_sqlite_android_wasm_emscripten_icu_345_version",
-    envVariableName = "WSOH_SQLITE_WASM_SQLITE_ANDROID_WASM_EMSCRIPTEN_ICU_345_VERSION",
+    propertiesFileKey = "wsoh_sqlite_wasm_sqlite_android_wasm_emscripten_icu_mt_pthread_346_version",
+    envVariableName = "WSOH_SQLITE_WASM_SQLITE_ANDROID_WASM_EMSCRIPTEN_ICU_MT_PTHREAD_346_VERSION",
 ).get()
 
 dependencies {
     "wasmLibraries"(projects.native.icuWasm) {
         attributes {
-            attribute(EMSCRIPTEN_USE_PTHREADS_ATTRIBUTE, false)
+            attribute(EMSCRIPTEN_USE_PTHREADS_ATTRIBUTE, true)
             attribute(ICU_DATA_PACKAGING_ATTRIBUTE, ICU_DATA_PACKAGING_STATIC)
         }
     }
@@ -48,15 +48,13 @@ sqlite3Build {
     val defaultSqliteVersion = versionCatalogs.named("libs").findVersion("sqlite").get().toString()
 
     builds {
-        create("android-icu") {
+        create("android-icu-mt-pthread") {
             sqliteVersion = defaultSqliteVersion
-            codeGenerationOptions = SqliteCodeGenerationOptions.codeGenerationOptions
-            emscriptenConfigurationOptions = SqliteCodeGenerationOptions.emscriptenConfigurationOptions -
-                    "-sERROR_ON_UNDEFINED_SYMBOLS" + "-sERROR_ON_UNDEFINED_SYMBOLS=0"
-            additionalSourceFiles.from("../sqlite-android-common/sqlite/wasm/api/callbacks-wasm.c")
+            codeGenerationOptions = SqliteCodeGenerationOptions.codeGenerationOptionsMultithread
+            emscriptenConfigurationOptions = SqliteCodeGenerationOptions.emscriptenConfigurationOptionMultithread
             sqliteConfigOptions = SqliteConfigurationOptions.openHelperConfig(
                 enableIcu = true,
-                enableMultithreading = false,
+                enableMultithreading = true,
             )
             exportedFunctions = SqliteExportedFunctions.openHelperExportedFunctions
             setupIcu(project)
@@ -68,11 +66,6 @@ sqlite3Build {
 val wasmResourcesDir = layout.buildDirectory.dir("wasmLibraries")
 val copyResourcesTask = tasks.register<Copy>("copyWasmLibrariesToResources") {
     from(configurations.named("wasmSqliteReleaseElements").get().artifacts.files)
-
-    // Temporary build with unstripped symbols for debugging. Remove in the future or move to a separate
-    // build type
-    from(configurations.named("wasmSqliteDebugElements").get().artifacts.files)
-
     into(wasmResourcesDir.map { it.dir("ru/pixnews/wasm/sqlite/open/helper") })
     include("*.wasm")
 }

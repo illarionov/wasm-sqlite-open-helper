@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chicory
 
-import ru.pixnews.wasm.sqlite.open.helper.SqliteAndroidWasmEmscriptenIcu345
+import ru.pixnews.wasm.sqlite.open.helper.SqliteAndroidWasmEmscriptenIcu346
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
@@ -24,7 +24,7 @@ public class ChicorySqliteEmbedderConfig internal constructor(
     /**
      * Sets used Sqlite WebAssembly binary file
      */
-    public var sqlite3Binary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcu345
+    public var sqlite3Binary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcu346
 
     /**
      * Implementation of a host object that provides access from the WebAssembly to external host resources.

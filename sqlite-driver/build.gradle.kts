@@ -76,8 +76,8 @@ kotlin {
             implementation(projects.sqliteEmbedderGraalvm)
             implementation(projects.sqliteEmbedderChasm)
             implementation(projects.sqliteEmbedderChicory)
-            implementation(projects.native.sqliteAndroidWasmEmscriptenIcu345)
-            implementation(projects.native.sqliteAndroidWasmEmscriptenIcuMtPthread345)
+            implementation(projects.native.sqliteAndroidWasmEmscriptenIcu346)
+            implementation(projects.native.sqliteAndroidWasmEmscriptenIcuMtPthread346)
 
             runtimeOnly(libs.junit.jupiter.engine)
         }

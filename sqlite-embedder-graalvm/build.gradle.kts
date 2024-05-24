@@ -26,7 +26,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(projects.sqliteCommon)
-            implementation(projects.native.sqliteAndroidWasmEmscriptenIcuMtPthread345)
+            implementation(projects.native.sqliteAndroidWasmEmscriptenIcuMtPthread346)
             implementation(projects.wasiEmscriptenHost)
         }
         jvmMain.dependencies {

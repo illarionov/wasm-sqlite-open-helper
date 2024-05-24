@@ -7,7 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.graalvm
 
 import org.graalvm.polyglot.Engine
-import ru.pixnews.wasm.sqlite.open.helper.SqliteAndroidWasmEmscriptenIcuMtPthread345
+import ru.pixnews.wasm.sqlite.open.helper.SqliteAndroidWasmEmscriptenIcuMtPthread346
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
@@ -35,7 +35,7 @@ public class GraalvmSqliteEmbedderConfig internal constructor(
     /**
      * Sets used Sqlite WebAssembly binary file
      */
-    public var sqlite3Binary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcuMtPthread345
+    public var sqlite3Binary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcuMtPthread346
 
     /**
      * Implementation of a host object that provides access from the WebAssembly to external host resources.
