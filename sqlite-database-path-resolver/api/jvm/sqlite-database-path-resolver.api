@@ -1,0 +1,11 @@
+public abstract interface class ru/pixnews/wasm/sqlite/open/helper/dsl/path/DatabasePathResolver {
+	public abstract fun getDatabasePath (Ljava/lang/String;)Ljava/lang/String;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/dsl/path/JvmDatabasePathResolver : ru/pixnews/wasm/sqlite/open/helper/dsl/path/DatabasePathResolver {
+	public fun <init> ()V
+	public fun <init> (Ljava/io/File;)V
+	public synthetic fun <init> (Ljava/io/File;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun getDatabasePath (Ljava/lang/String;)Ljava/lang/String;
+}
+

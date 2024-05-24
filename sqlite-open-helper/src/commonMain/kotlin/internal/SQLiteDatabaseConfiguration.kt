@@ -7,10 +7,10 @@
 package ru.pixnews.wasm.sqlite.open.helper.internal
 
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags
-import ru.pixnews.wasm.sqlite.open.helper.SQLiteDatabaseJournalMode
-import ru.pixnews.wasm.sqlite.open.helper.SQLiteDatabaseSyncMode
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale
 import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDatabaseJournalMode
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDatabaseSyncMode
 import kotlin.LazyThreadSafetyMode.NONE
 
 /**
@@ -59,8 +59,8 @@ internal class SQLiteDatabaseConfiguration internal constructor(
     val perConnectionSql: MutableList<Pair<String, List<Any?>>> = mutableListOf(),
     var lookasideSlotSize: Int = -1,
     var lookasideSlotCount: Int = -1,
-    var journalMode: SQLiteDatabaseJournalMode? = null,
-    var syncMode: SQLiteDatabaseSyncMode? = null,
+    var journalMode: SqliteDatabaseJournalMode? = null,
+    var syncMode: SqliteDatabaseSyncMode? = null,
     var shouldTruncateWalFile: Boolean = false,
 ) {
     /**
@@ -142,17 +142,17 @@ internal class SQLiteDatabaseConfiguration internal constructor(
          * @return Resolved journal mode that should be used for this database connection or null
          * if no journal mode should be set.
          */
-        fun SQLiteDatabaseConfiguration.resolveJournalMode(): SQLiteDatabaseJournalMode? {
+        fun SQLiteDatabaseConfiguration.resolveJournalMode(): SqliteDatabaseJournalMode? {
             if (isReadOnlyDatabase) {
                 // No need to specify a journal mode when only reading.
                 return null
             }
 
             if (isInMemoryDb) {
-                return if (journalMode == SQLiteDatabaseJournalMode.OFF) {
-                    SQLiteDatabaseJournalMode.OFF
+                return if (journalMode == SqliteDatabaseJournalMode.OFF) {
+                    SqliteDatabaseJournalMode.OFF
                 } else {
-                    SQLiteDatabaseJournalMode.MEMORY
+                    SqliteDatabaseJournalMode.MEMORY
                 }
             }
 
@@ -160,7 +160,7 @@ internal class SQLiteDatabaseConfiguration internal constructor(
 
             return if (isWalEnabledInternal()) {
                 shouldTruncateWalFile = true
-                SQLiteDatabaseJournalMode.WAL
+                SqliteDatabaseJournalMode.WAL
             } else {
                 // WAL is not explicitly set so use requested journal mode or platform default
                 this.journalMode ?: SQLiteGlobal.DEFAULT_JOURNAL_MODE
@@ -176,7 +176,7 @@ internal class SQLiteDatabaseConfiguration internal constructor(
          * if no journal mode should be set.
          */
         @Suppress("ReturnCount")
-        fun SQLiteDatabaseConfiguration.resolveSyncMode(): SQLiteDatabaseSyncMode? {
+        fun SQLiteDatabaseConfiguration.resolveSyncMode(): SqliteDatabaseSyncMode? {
             if (isReadOnlyDatabase) {
                 // No sync mode will be used since database will be only used for reading.
                 return null
@@ -200,7 +200,7 @@ internal class SQLiteDatabaseConfiguration internal constructor(
 
         private fun SQLiteDatabaseConfiguration.isWalEnabledInternal(): Boolean {
             val walEnabled = openFlags.contains(OpenFlags.ENABLE_WRITE_AHEAD_LOGGING)
-            return walEnabled || (journalMode == SQLiteDatabaseJournalMode.WAL)
+            return walEnabled || (journalMode == SqliteDatabaseJournalMode.WAL)
         }
     }
 }

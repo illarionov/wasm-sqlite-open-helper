@@ -8,14 +8,13 @@ package ru.pixnews.wasm.sqlite.open.helper.internal
 
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.ENABLE_WRITE_AHEAD_LOGGING
-import ru.pixnews.wasm.sqlite.open.helper.SQLiteDatabaseJournalMode
-import ru.pixnews.wasm.sqlite.open.helper.SQLiteDatabaseSyncMode
-import ru.pixnews.wasm.sqlite.open.helper.base.DatabaseErrorHandler
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale
 import ru.pixnews.wasm.sqlite.open.helper.common.api.clear
 import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
 import ru.pixnews.wasm.sqlite.open.helper.common.api.or
 import ru.pixnews.wasm.sqlite.open.helper.dsl.OpenParamsBlock
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDatabaseJournalMode
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDatabaseSyncMode
 
 /**
  * Wrapper for configuration parameters that are used for opening [SQLiteDatabase]
@@ -34,8 +33,8 @@ internal class SQLiteDatabaseOpenParams private constructor(
     val errorHandler: DatabaseErrorHandler?,
     val lookasideSlotSize: Int,
     val lookasideSlotCount: Int,
-    val journalMode: SQLiteDatabaseJournalMode?,
-    val synchronousMode: SQLiteDatabaseSyncMode?,
+    val journalMode: SqliteDatabaseJournalMode?,
+    val synchronousMode: SqliteDatabaseSyncMode?,
 ) {
     /**
      * Returns maximum number of milliseconds that SQLite connection is allowed to be idle
@@ -68,8 +67,8 @@ internal class SQLiteDatabaseOpenParams private constructor(
         var openFlags: OpenFlags = OpenFlags.EMPTY
         var locale: Locale = Locale.EN_US
         var errorHandler: DatabaseErrorHandler? = null
-        var journalMode: SQLiteDatabaseJournalMode? = null
-        var syncMode: SQLiteDatabaseSyncMode? = null
+        var journalMode: SqliteDatabaseJournalMode? = null
+        var syncMode: SqliteDatabaseSyncMode? = null
 
         @Suppress("NO_CORRESPONDING_PROPERTY")
         var isWriteAheadLoggingEnabled: Boolean

@@ -28,7 +28,7 @@ kotlin {
             compileOnly(libs.chasm.memory)
             compileOnly(libs.chasm.runtime)
             compileOnly(libs.chasm.validator)
-            api(projects.sqliteCommonApi)
+            api(projects.sqliteCommon)
             implementation(projects.wasiEmscriptenHost)
             implementation(projects.native.sqliteAndroidWasmEmscriptenIcu345)
         }

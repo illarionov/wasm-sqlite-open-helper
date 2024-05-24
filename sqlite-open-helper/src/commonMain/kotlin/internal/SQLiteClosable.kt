@@ -13,7 +13,8 @@ package ru.pixnews.wasm.sqlite.open.helper.internal
  * Licensed under the Apache License, Version 2.0 (the "License")
  */
 
-import ru.pixnews.wasm.sqlite.open.helper.internal.platform.synchronized
+import ru.pixnews.wasm.sqlite.open.helper.io.lock.SynchronizedObject
+import ru.pixnews.wasm.sqlite.open.helper.io.lock.synchronized
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -24,6 +25,7 @@ import kotlin.contracts.contract
  * This class implements a primitive reference counting scheme for database objects.
  */
 internal abstract class SQLiteClosable internal constructor() {
+    private val lock = SynchronizedObject()
     private var referenceCount = 1
 
     /**
@@ -38,7 +40,7 @@ internal abstract class SQLiteClosable internal constructor() {
      * @throws IllegalStateException if the last reference to the object has already
      * been released.
      */
-    fun acquireReference(): Unit = synchronized(this) {
+    fun acquireReference(): Unit = synchronized(lock) {
         check(referenceCount > 0) { "attempt to re-open an already-closed object: $this" }
         referenceCount++
     }
@@ -51,7 +53,7 @@ internal abstract class SQLiteClosable internal constructor() {
      */
     fun releaseReference() {
         var refCountIsZero = false
-        synchronized(this) {
+        synchronized(lock) {
             refCountIsZero = --referenceCount == 0
         }
         if (refCountIsZero) {

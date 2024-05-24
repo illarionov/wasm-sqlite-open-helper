@@ -7,13 +7,13 @@
 package ru.pixnews.wasm.sqlite.open.helper.internal.cursor
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
+import ru.pixnews.wasm.sqlite.open.helper.common.embedder.encodedNullTerminatedStringLength
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.CursorFieldType.BLOB
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.CursorFieldType.FLOAT
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.CursorFieldType.INTEGER
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.CursorFieldType.NULL
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.CursorFieldType.STRING
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.Field.Null
-import ru.pixnews.wasm.sqlite.open.helper.internal.ext.encodedNullTerminatedStringLength
 import kotlin.LazyThreadSafetyMode.NONE
 
 internal class NativeCursorWindow(
@@ -124,21 +124,21 @@ internal class NativeCursorWindow(
 
         data object Null : Field(NULL)
 
-        class IntegerField(val value: Long) : Field(INTEGER)
+        class IntegerField(public val value: Long) : Field(INTEGER)
 
-        class FloatField(val value: Double) : Field(FLOAT)
+        class FloatField(public val value: Double) : Field(FLOAT)
 
-        class StringField(val value: String) : Field(STRING) {
+        class StringField(public val value: String) : Field(STRING) {
             override val payloadSize: Int by lazy(NONE) {
                 value.encodedNullTerminatedStringLength()
             }
         }
-        class BlobField(val value: ByteArray) : Field(BLOB) {
+        class BlobField(public val value: ByteArray) : Field(BLOB) {
             override val payloadSize: Int = value.size
         }
     }
 
-    enum class CursorFieldType(val id: Int) {
+    enum class CursorFieldType(public val id: Int) {
         NULL(0),
         INTEGER(1),
         FLOAT(2),

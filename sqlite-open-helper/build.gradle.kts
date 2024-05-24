@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+@file:Suppress("UnstableApiUsage")
+
 import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
@@ -14,8 +16,8 @@ plugins {
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.lint.binary-compatibility-validator")
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.android")
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.kotlin")
+    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.room26.ksp")
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.publish")
-    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.room.ksp")
 }
 
 group = "ru.pixnews.wasm-sqlite-open-helper"
@@ -56,11 +58,31 @@ android {
 }
 
 dependencies {
-    annotationProcessor(libs.androidx.room.compiler)
-    kspAndroid(libs.androidx.room.compiler)
-    kspAndroidTest(libs.androidx.room.compiler)
-    testImplementation(libs.androidx.room.testing)
+    annotationProcessor(libs.androidx.room.compiler26)
+    kspAndroid(libs.androidx.room.compiler26)
+    kspAndroidTest(libs.androidx.room.compiler26)
+    testImplementation(libs.androidx.room.testing26)
     testImplementation(libs.androidx.test.core)
+}
+
+configurations.all {
+    resolutionStrategy.componentSelection {
+        all {
+            if (candidate.group == "androidx.room" && candidate.module == "room-runtime") {
+                val versionSplit = candidate.version.split(".")
+                if (versionSplit.size >= 2) {
+                    val isNeverThan27 = versionSplit[0].toInt() > 2 ||
+                            (versionSplit[0].toInt() == 2 && versionSplit[1].toInt() >= 7)
+                    if (isNeverThan27) {
+                        logger.error(
+                            "The module is intended to work with earlier versions (2.6.1), rejecting $candidate",
+                        )
+                        reject("The module is intended to work with earlier versions (2.6.1)")
+                    }
+                }
+            }
+        }
+    }
 }
 
 kotlin {
@@ -71,12 +93,12 @@ kotlin {
 
     sourceSets {
         androidMain.dependencies {
-            api(libs.androidx.sqlite.sqlite)
+            api(libs.androidx.sqlite.sqlite24)
             implementation(libs.androidx.core)
         }
         androidUnitTest.dependencies {
-            implementation(libs.androidx.room.runtime)
-            implementation(libs.androidx.room.testing)
+            implementation(libs.androidx.room.runtime26)
+            implementation(libs.androidx.room.testing26)
             implementation(libs.androidx.test.core)
             implementation(libs.kermit.jvm)
             implementation(libs.junit.jupiter.api)
@@ -93,7 +115,11 @@ kotlin {
 
         commonMain.dependencies {
             api(projects.commonApi)
-            api(projects.sqliteCommonApi)
+            api(projects.sqliteCommon)
+            api(projects.sqliteDatabasePathResolver)
+            api(projects.sqliteException)
+            implementation(projects.commonCleaner)
+            implementation(projects.commonLock)
             implementation(projects.wasiEmscriptenHost)
             api(libs.androidx.collection)
         }

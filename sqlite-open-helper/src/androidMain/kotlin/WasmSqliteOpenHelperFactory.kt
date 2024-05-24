@@ -14,21 +14,20 @@ package ru.pixnews.wasm.sqlite.open.helper
  */
 
 import androidx.sqlite.db.SupportSQLiteOpenHelper
-import ru.pixnews.wasm.sqlite.open.helper.base.DatabaseErrorHandler
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.EmbedderMemory
 import ru.pixnews.wasm.sqlite.open.helper.dsl.OpenParamsBlock
+import ru.pixnews.wasm.sqlite.open.helper.dsl.path.DatabasePathResolver
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SQLiteEmbedderRuntimeInfo
 import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.SqliteBindings
+import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
+import ru.pixnews.wasm.sqlite.open.helper.internal.DatabaseErrorHandler
+import ru.pixnews.wasm.sqlite.open.helper.internal.OpenHelperNativeBindings
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDatabaseOpenParams
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDebug
 import ru.pixnews.wasm.sqlite.open.helper.internal.WasmSqliteOpenHelper
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.JvmSqlOpenHelperNativeBindings
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.JvmSqliteCallbackStore
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.JvmSqliteDatabaseResourcesRegistry
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.capi.Sqlite3CApi
-import ru.pixnews.wasm.sqlite.open.helper.path.DatabasePathResolver
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3CApi
 
 /**
  * Implements [SupportSQLiteOpenHelper.Factory] using the SQLite implementation shipped in
@@ -41,7 +40,7 @@ internal class WasmSqliteOpenHelperFactory(
     private val sqliteBindings: SqliteBindings,
     private val embedderInfo: SQLiteEmbedderRuntimeInfo,
     private val memory: EmbedderMemory,
-    private val callbackStore: JvmSqliteCallbackStore,
+    private val callbackStore: SqliteCallbackStore,
     private val callbackFunctionIndexes: Sqlite3CallbackFunctionIndexes,
     rootLogger: Logger,
 ) : SupportSQLiteOpenHelper.Factory {
@@ -54,11 +53,10 @@ internal class WasmSqliteOpenHelperFactory(
             memory = memory,
             callbackStore = callbackStore,
             callbackFunctionIndexes = callbackFunctionIndexes,
-            databaseResourcesRegistry = JvmSqliteDatabaseResourcesRegistry(callbackStore, logger),
             rootLogger = logger,
         )
 
-        val bindings = JvmSqlOpenHelperNativeBindings(cApi, logger)
+        val bindings = OpenHelperNativeBindings(cApi, logger)
 
         val openParamsBuilder: SQLiteDatabaseOpenParams.Builder = SQLiteDatabaseOpenParams.Builder().apply {
             errorHandler = DatabaseErrorHandler { dbObj -> configuration.callback.onCorruption(dbObj) }

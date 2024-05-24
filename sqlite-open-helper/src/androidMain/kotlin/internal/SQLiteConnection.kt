@@ -22,6 +22,7 @@ import ru.pixnews.wasm.sqlite.open.helper.OpenFlags
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.CREATE_IF_NECESSARY
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.NO_LOCALIZED_COLLATORS
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
+import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
 import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteCantOpenDatabaseException
 import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard.CloseGuardFinalizeAction
@@ -40,9 +41,7 @@ import ru.pixnews.wasm.sqlite.open.helper.internal.connection.OperationLog.Compa
 import ru.pixnews.wasm.sqlite.open.helper.internal.connection.PreparedStatement
 import ru.pixnews.wasm.sqlite.open.helper.internal.connection.PreparedStatementCache
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.CursorWindow
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.SqlOpenHelperNativeBindings
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3ConnectionPtr
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
+import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
 import ru.pixnews.wasm.sqlite.open.helper.toSqliteOpenFlags
 import java.io.File
 import java.nio.file.FileSystems
@@ -96,13 +95,13 @@ import kotlin.io.path.isReadable
  * triggers may call custom SQLite functions that perform additional queries.
  *
  */
-internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> private constructor(
-    private val connectionPtrResource: ConnectionPtrClosable<CP>,
+internal class SQLiteConnection private constructor(
+    private val connectionPtrResource: ConnectionPtrClosable,
     onConnectionLeaked: () -> Unit,
     private val onPreparedStatementAcquired: () -> Unit,
     private val onPrepareStatementCacheMiss: () -> Unit,
     configuration: SQLiteDatabaseConfiguration,
-    private val bindings: SqlOpenHelperNativeBindings<CP, SP>,
+    private val bindings: OpenHelperNativeBindings,
     private val connectionId: Int,
     internal val isPrimaryConnection: Boolean,
     private val recentOperations: OperationLog,
@@ -114,7 +113,7 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
     private val connectionPtrResourceCleanable: WasmSqliteCleanable
     private val configuration = SQLiteDatabaseConfiguration(configuration)
     private val preparedStatementCache = PreparedStatementCache(connectionPtr, bindings, configuration.maxSqlCacheSize)
-    private val connectionPtr: CP get() = connectionPtrResource.nativePtr
+    private val connectionPtr: WasmPtr<SqliteDb> get() = connectionPtrResource.nativePtr
     internal val databaseLabel: String get() = configuration.label
     private var onlyAllowReadOnlyOperations = false
 
@@ -134,8 +133,8 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
 
     init {
         closeGuard.open("SQLiteConnection.close")
-        closeGuardCleanable = WasmSqliteCleaner.register(this, CloseGuardFinalizeAction(closeGuard))
-        connectionPtrResourceCleanable = WasmSqliteCleaner.register(
+        closeGuardCleanable = wasmSqliteCleaner.register(this, CloseGuardFinalizeAction(closeGuard))
+        connectionPtrResourceCleanable = wasmSqliteCleaner.register(
             this,
             ConnectionPtrClosableCleanAction(
                 ptr = connectionPtrResource,
@@ -243,12 +242,12 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
         recentOperations.useOperation("prepare", sql) { _ ->
             val statement = acquirePreparedStatement(sql)
             try {
-                val columnCount = bindings.nativeGetColumnCount(connectionPtr, statement.statementPtr)
+                val columnCount = bindings.nativeGetColumnCount(statement.statementPtr)
                 return SQLiteStatementInfo(
                     numParameters = statement.numParameters,
                     readOnly = statement.readOnly,
                     columnNames = List(columnCount) { columnNo ->
-                        checkNotNull(bindings.nativeGetColumnName(connectionPtr, statement.statementPtr, columnNo)) {
+                        checkNotNull(bindings.nativeGetColumnName(statement.statementPtr, columnNo)) {
                             "Column $columnNo not found"
                         }
                     },
@@ -578,7 +577,7 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
         sql: String,
         bindArgs: List<Any?>,
         cancellationSignal: CancellationSignal?,
-        block: (statement: PreparedStatement<SP>, operationCookie: Int) -> R,
+        block: (statement: PreparedStatement, operationCookie: Int) -> R,
     ): R {
         return recentOperations.useOperation(operationKind, sql, bindArgs) { operationCookie ->
             executeWithPreparedStatement(sql, bindArgs, cancellationSignal) { statement ->
@@ -591,7 +590,7 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
         sql: String,
         bindArgs: List<Any?>,
         cancellationSignal: CancellationSignal?,
-        block: (statement: PreparedStatement<SP>) -> R,
+        block: (statement: PreparedStatement) -> R,
     ): R {
         val statement = acquirePreparedStatement(sql)
         try {
@@ -608,9 +607,9 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
         }
     }
 
-    private fun acquirePreparedStatement(sql: String): PreparedStatement<SP> = acquirePreparedStatementLi(sql)
+    private fun acquirePreparedStatement(sql: String): PreparedStatement = acquirePreparedStatementLi(sql)
 
-    private fun acquirePreparedStatementLi(sql: String): PreparedStatement<SP> {
+    private fun acquirePreparedStatementLi(sql: String): PreparedStatement {
         onPreparedStatementAcquired()
         var statement = preparedStatementCache[sql]
         var seqNum = preparedStatementCache.lastSeqNum
@@ -645,9 +644,9 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
             statement = PreparedStatement(
                 sql = sql,
                 statementPtr = statementPtr,
-                numParameters = bindings.nativeGetParameterCount(connectionPtr, statementPtr),
+                numParameters = bindings.nativeGetParameterCount(statementPtr),
                 type = statementType,
-                readOnly = bindings.nativeIsReadOnly(connectionPtr, statementPtr),
+                readOnly = bindings.nativeIsReadOnly(statementPtr),
                 seqNum = seqNum,
             )
             if (putInCache) {
@@ -666,13 +665,14 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
         return statement
     }
 
-    private fun releasePreparedStatement(statement: PreparedStatement<SP>) = releasePreparedStatementLi(statement)
+    private fun releasePreparedStatement(statement: PreparedStatement) = releasePreparedStatementLi(statement)
 
-    private fun releasePreparedStatementLi(statement: PreparedStatement<SP>) {
+    private fun releasePreparedStatementLi(statement: PreparedStatement) {
         statement.inUse = false
         if (statement.inCache) {
             try {
-                bindings.nativeResetStatementAndClearBindings(connectionPtr, statement.statementPtr)
+                bindings.nativeResetStatement(connectionPtr, statement.statementPtr)
+                bindings.nativeClearBindings(connectionPtr, statement.statementPtr)
             } catch (ex: SQLiteException) {
                 // The statement could not be reset due to an error.  Remove it from the cache.
                 // When remove() is called, the cache will invoke its entryRemoved() callback,
@@ -726,7 +726,7 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
     }
 
     @Suppress("LongMethod")
-    private fun bindArguments(statement: PreparedStatement<SP>, bindArgs: List<Any?>) {
+    private fun bindArguments(statement: PreparedStatement, bindArgs: List<Any?>) {
         if (bindArgs.size != statement.numParameters) {
             throw SQLiteBindOrColumnIndexOutOfRangeException(
                 "Expected ${statement.numParameters} bind arguments but ${bindArgs.size} were provided.",
@@ -808,7 +808,7 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
      * @throws SQLiteException if the statement could update the database inside a read-only
      * transaction.
      */
-    private fun throwIfStatementForbidden(statement: PreparedStatement<*>) {
+    private fun throwIfStatementForbidden(statement: PreparedStatement) {
         if (onlyAllowReadOnlyOperations && !statement.readOnly) {
             throw SQLiteException(
                 "Cannot execute this statement because it might modify the database but the connection is read-only.",
@@ -834,17 +834,17 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
 
     override fun toString(): String = "SQLiteConnection: ${configuration.path} ($connectionId)"
 
-    private class ConnectionPtrClosable<CP : Sqlite3ConnectionPtr>(
-        val nativePtr: CP,
+    private class ConnectionPtrClosable(
+        val nativePtr: WasmPtr<SqliteDb>,
         val isClosed: AtomicBoolean = AtomicBoolean(false),
     )
 
-    private class ConnectionPtrClosableCleanAction<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr>(
-        val ptr: ConnectionPtrClosable<CP>,
+    private class ConnectionPtrClosableCleanAction(
+        val ptr: ConnectionPtrClosable,
         val onConnectionLeaked: () -> Unit,
-        val bindings: SqlOpenHelperNativeBindings<CP, SP>,
+        val bindings: OpenHelperNativeBindings,
         val operationLog: OperationLog,
-        val preparedStatementCache: PreparedStatementCache<CP, SP>,
+        val preparedStatementCache: PreparedStatementCache,
     ) : () -> Unit {
         override fun invoke() {
             val alreadyClosed = ptr.isClosed.getAndSet(true)
@@ -858,16 +858,16 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
 
     companion object {
         // Called by SQLiteConnectionPool only.
-        fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> open(
-            pool: SQLiteConnectionPool<CP, SP>,
+        fun open(
+            pool: SQLiteConnectionPool,
             configuration: SQLiteDatabaseConfiguration,
-            bindings: SqlOpenHelperNativeBindings<CP, SP>,
+            bindings: OpenHelperNativeBindings,
             connectionId: Int,
             primaryConnection: Boolean,
             debugConfig: SQLiteDebug,
             rootLogger: Logger,
             onStatementExecuted: (Long) -> Unit,
-        ): SQLiteConnection<CP, SP> {
+        ): SQLiteConnection {
             // The recent operations log.
             val recentOperations = OperationLog(
                 debugConfig = debugConfig,
@@ -885,7 +885,6 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
                     bindings.nativeOpen(
                         path = file,
                         openFlags = configuration.openFlags.toSqliteOpenFlags(),
-                        label = configuration.label,
                         enableTrace = debugConfig.sqlStatements,
                         enableProfile = debugConfig.sqlTime,
                         lookasideSlotSize = configuration.lookasideSlotSize,
@@ -960,11 +959,11 @@ internal class SQLiteConnection<CP : Sqlite3ConnectionPtr, SP : Sqlite3Statement
             }
         }
 
-        internal fun <CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr> closeNativeConnection(
-            bindings: SqlOpenHelperNativeBindings<CP, SP>,
+        internal fun closeNativeConnection(
+            bindings: OpenHelperNativeBindings,
             recentOperations: OperationLog,
-            preparedStatementCache: PreparedStatementCache<CP, SP>,
-            nativePtr: CP,
+            preparedStatementCache: PreparedStatementCache,
+            nativePtr: WasmPtr<SqliteDb>,
         ) {
             val cookie = recentOperations.beginOperation("close", null)
             try {

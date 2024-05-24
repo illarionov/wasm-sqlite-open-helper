@@ -16,8 +16,6 @@ package ru.pixnews.wasm.sqlite.open.helper.internal
 import android.database.sqlite.SQLiteTransactionListener
 import androidx.core.os.CancellationSignal
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.CursorWindow
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3ConnectionPtr
-import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
 
 /**
  * Provides a single client the ability to use a database.
@@ -152,10 +150,10 @@ import ru.pixnews.wasm.sqlite.open.helper.internal.interop.Sqlite3StatementPtr
  * triggers may call custom SQLite functions that perform additional queries.
  *
  */
-internal class SQLiteSession<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr>(
-    private val connectionPool: SQLiteConnectionPool<CP, SP>,
+internal class SQLiteSession(
+    private val connectionPool: SQLiteConnectionPool,
 ) {
-    private var connection: SQLiteConnection<CP, SP>? = null
+    private var connection: SQLiteConnection? = null
     private var connectionFlags = 0
     private var connectionUseCount = 0
     private var transactionStack: Transaction? = null
@@ -758,7 +756,7 @@ internal class SQLiteSession<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr
         sql: String?,
         connectionFlags: Int,
         cancellationSignal: CancellationSignal?,
-    ): SQLiteConnection<CP, SP> {
+    ): SQLiteConnection {
         val connection = connection ?: run {
             assert(connectionUseCount == 0)
             val newConnection = connectionPool.acquireConnection(sql, connectionFlags, cancellationSignal)
@@ -786,7 +784,7 @@ internal class SQLiteSession<CP : Sqlite3ConnectionPtr, SP : Sqlite3StatementPtr
         sql: String?,
         connectionFlags: Int,
         cancellationSignal: CancellationSignal?,
-        block: SQLiteConnection<CP, SP>.() -> R,
+        block: SQLiteConnection.() -> R,
     ): R {
         val connection = acquireConnection(sql, connectionFlags, cancellationSignal) // might throw
         return try {

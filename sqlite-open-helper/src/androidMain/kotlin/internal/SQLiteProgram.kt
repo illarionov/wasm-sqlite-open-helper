@@ -28,7 +28,7 @@ import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT
  *
  */
 internal abstract class SQLiteProgram internal constructor(
-    val database: SQLiteDatabase<*, *>,
+    val database: SQLiteDatabase,
     sql: String,
     bindArgs: List<Any?>,
     cancellationSignalForPrepare: CancellationSignal?,
@@ -40,7 +40,7 @@ internal abstract class SQLiteProgram internal constructor(
     private val _bindArgs: MutableList<Any?>
     val bindArgs: List<Any?> get() = _bindArgs
 
-    protected val session: SQLiteSession<*, *>
+    protected val session: SQLiteSession
         get() = database.threadSession
 
     protected val connectionFlags: Int
