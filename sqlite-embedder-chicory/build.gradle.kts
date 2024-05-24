@@ -24,7 +24,7 @@ kotlin {
             api(projects.sqliteCommon)
             implementation(libs.chicory)
             implementation(projects.wasiEmscriptenHost)
-            implementation(projects.native.sqliteAndroidWasmEmscriptenIcu345)
+            implementation(projects.native.sqliteAndroidWasmEmscriptenIcu346)
         }
     }
 }

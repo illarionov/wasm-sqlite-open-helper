@@ -6,12 +6,12 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chasm
 
-import ru.pixnews.wasm.sqlite.open.helper.SqliteAndroidWasmEmscriptenIcu345
+import ru.pixnews.wasm.sqlite.open.helper.SqliteAndroidWasmEmscriptenIcu346
 import ru.pixnews.wasm.sqlite.open.helper.base.TestOpenHelperFactoryCreator
 
 object ChasmFactoryCreator : TestOpenHelperFactoryCreator<ChasmSqliteEmbedderConfig>(
     embedder = ChasmSqliteEmbedder,
-    defaultSqliteBinary = SqliteAndroidWasmEmscriptenIcu345,
+    defaultSqliteBinary = SqliteAndroidWasmEmscriptenIcu346,
     defaultEmbedderConfig = { sqlite3Binary ->
         this.sqlite3Binary = sqlite3Binary
     },

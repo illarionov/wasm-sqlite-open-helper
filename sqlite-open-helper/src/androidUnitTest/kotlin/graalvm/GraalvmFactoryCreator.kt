@@ -7,14 +7,14 @@
 package ru.pixnews.wasm.sqlite.open.helper.graalvm
 
 import org.graalvm.polyglot.Engine
-import ru.pixnews.wasm.sqlite.open.helper.SqliteAndroidWasmEmscriptenIcuMtPthread345
+import ru.pixnews.wasm.sqlite.open.helper.SqliteAndroidWasmEmscriptenIcuMtPthread346
 import ru.pixnews.wasm.sqlite.open.helper.base.TestOpenHelperFactoryCreator
 
 internal class GraalvmFactoryCreator(
     initialGraalvmEngine: Engine? = WASM_GRAALVM_ENGINE,
 ) : TestOpenHelperFactoryCreator<GraalvmSqliteEmbedderConfig>(
     embedder = GraalvmSqliteEmbedder,
-    defaultSqliteBinary = SqliteAndroidWasmEmscriptenIcuMtPthread345,
+    defaultSqliteBinary = SqliteAndroidWasmEmscriptenIcuMtPthread346,
     defaultEmbedderConfig = { sqlite3Binary ->
         this.sqlite3Binary = sqlite3Binary
         if (initialGraalvmEngine != null) {
