@@ -40,6 +40,31 @@ public object SqliteConfigurationOptions {
     )
 
     /**
+     * Build configurations from androidx.sqlite:sqlite-bundled for reference
+     *
+     * https://github.com/androidx/androidx/blob/07076aa00829f374a559c3cd9dd07e1aeb8cabd0/sqlite/sqlite-bundled/build.gradle
+     *
+     * ce79d6f71d1e706f11e34c6ea7ceb424813ada1b (20224-05-15)
+     */
+    public val androidSqliteDriverBundledConfig: List<String> = listOf(
+        "-DHAVE_USLEEP=1",
+        "-DSQLITE_DEFAULT_MEMSTATUS=0",
+        "-DSQLITE_ENABLE_COLUMN_METADATA=1",
+        "-DSQLITE_ENABLE_FTS3=1",
+        "-DSQLITE_ENABLE_FTS3_PARENTHESIS=1",
+        "-DSQLITE_ENABLE_FTS4=1",
+        "-DSQLITE_ENABLE_FTS5=1",
+        "-DSQLITE_ENABLE_JSON1=1",
+        "-DSQLITE_ENABLE_LOAD_EXTENSION=1",
+        "-DSQLITE_ENABLE_NORMALIZE=1",
+        "-DSQLITE_ENABLE_RBU=1",
+        "-DSQLITE_ENABLE_RTREE=1",
+        "-DSQLITE_ENABLE_STAT4=1",
+        "-DSQLITE_OMIT_PROGRESS_CALLBACK=0",
+        "-DSQLITE_THREADSAFE=2",
+    )
+
+    /**
      * Build configurations from Android port of SQLite (The Android Open Source Project)
      * https://android.googlesource.com/platform/external/sqlite
      * 3cfcc6cc2e54ab58ed8114194d54da5ac1ab16b2 (2024-03-25)
@@ -110,7 +135,7 @@ public object SqliteConfigurationOptions {
         // Do not create threads from Sqlite native code
         add("-DSQLITE_MAX_WORKER_THREADS=0")
 
-        // Mmap is not implemented
+        // Mmap is not implemented in the WASM embedders
         add("-DSQLITE_MAX_MMAP_SIZE=0")
 
         // Default file system
@@ -124,6 +149,20 @@ public object SqliteConfigurationOptions {
                 "-DSQLITE_ENABLE_JSON1",
                 "-DSQLITE_ENABLE_RTREE",
                 "-DSQLITE_ENABLE_STMTVTAB",
+            ),
+        )
+
+        // Some additional features from the `androidx.sqlite:sqlite-bundled` configuration
+        addAll(
+            listOf(
+                "-DSQLITE_DEFAULT_MEMSTATUS=0",
+                "-DSQLITE_ENABLE_RBU",
+                "-DSQLITE_ENABLE_STAT4",
+                // The following parameters are not added since they are not used:
+                // -DSQLITE_ENABLE_COLUMN_METADATA,
+                // -DSQLITE_ENABLE_LOAD_EXTENSION,
+                // -DSQLITE_ENABLE_NORMALIZE,
+                // -DSQLITE_OMIT_PROGRESS_CALLBACK is not added since `sqlite3_progress_handler` is used in open-helper.
             ),
         )
 
