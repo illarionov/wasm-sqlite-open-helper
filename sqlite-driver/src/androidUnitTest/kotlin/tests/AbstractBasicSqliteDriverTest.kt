@@ -6,14 +6,20 @@
 
 package ru.pixnews.wasm.sqlite.driver.tests
 
+import android.content.ContextWrapper
+import androidx.room.Room
+import androidx.room.RoomDatabase.JournalMode.WRITE_AHEAD_LOGGING
 import androidx.sqlite.SQLiteConnection
 import assertk.assertThat
 import assertk.assertions.containsExactly
 import co.touchlab.kermit.Severity
 import co.touchlab.kermit.Severity.Info
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import ru.pixnews.wasm.sqlite.driver.base.AbstractSqliteDriverTest
 import ru.pixnews.wasm.sqlite.driver.base.TestSqliteDriverCreator
+import ru.pixnews.wasm.sqlite.driver.base.room.AppDatabase1
+import ru.pixnews.wasm.sqlite.driver.base.room.User
 import ru.pixnews.wasm.sqlite.driver.base.util.execSQL
 import ru.pixnews.wasm.sqlite.driver.base.util.queryForString
 import ru.pixnews.wasm.sqlite.driver.base.util.queryTable
@@ -32,7 +38,6 @@ abstract class AbstractBasicSqliteDriverTest<E : SqliteEmbedderConfig>(
         val driver = createWasmSQLiteDriver()
         val connection = driver.open("user.db")
         connection.use { db: SQLiteConnection ->
-            logger.i { "Db: $db" }
             val version = db.queryForString("SELECT sqlite_version()")
             logger.i { "Version: $version" }
 
@@ -53,29 +58,36 @@ abstract class AbstractBasicSqliteDriverTest<E : SqliteEmbedderConfig>(
         }
     }
 
-//    @Test
-//    open fun `Test Room`() {
-//        val driver = createWasmSQLiteDriver()
-//        val db: AppDatabase1 = Room.databaseBuilder(AppDatabase1::class.java, "database-name")
-//            .openHelperFactory(helperFactory)
-//            .allowMainThreadQueries()
-//            .build()
-//        val userDao = db.userDao()
-//
-//        val user101 = User(101, "User 101 First Name", "User 101 Last Name")
-//        userDao.insertAll(
-//            User(100, "User 100 First Name", "User 100 Last Name"),
-//            user101,
-//            User(102, "User 102 First Name", "User 102 Last Name"),
-//        )
-//        userDao.delete(user101)
-//
-//        val usersByIds = userDao.loadAllByIds(intArrayOf(101, 102))
-//        val userByName = userDao.findByName("User 102 First Name", "User 102 Last Name")
-//        val users: List<User> = userDao.getAll()
-//
-//        logger.i { "users by ids: $usersByIds; user by name: $userByName; users: $users;" }
-//
-//        db.close()
-//    }
+    @Test
+    open fun `Test Room`() = runTest {
+        val driver = createWasmSQLiteDriver()
+        val mockContext = ContextWrapper(null)
+        val db: AppDatabase1 = Room.databaseBuilder(
+            mockContext,
+            AppDatabase1::class.java,
+            "database-name",
+        )
+            .setJournalMode(WRITE_AHEAD_LOGGING)
+            .setDriver(driver)
+            .allowMainThreadQueries()
+            .setQueryCoroutineContext(this.backgroundScope.coroutineContext)
+            .build()
+        val userDao = db.userDao()
+
+        val user101 = User(101, "User 101 First Name", "User 101 Last Name")
+        userDao.insertAll(
+            User(100, "User 100 First Name", "User 100 Last Name"),
+            user101,
+            User(102, "User 102 First Name", "User 102 Last Name"),
+        )
+        userDao.delete(user101)
+
+        val usersByIds = userDao.loadAllByIds(intArrayOf(101, 102))
+        val userByName = userDao.findByName("User 102 First Name", "User 102 Last Name")
+        val users: List<User> = userDao.getAll()
+
+        logger.i { "users by ids: $usersByIds; user by name: $userByName; users: $users;" }
+
+        db.close()
+    }
 }

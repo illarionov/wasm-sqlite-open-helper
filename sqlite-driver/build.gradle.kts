@@ -97,6 +97,7 @@ kotlin {
             implementation(libs.assertk)
             implementation(libs.androidx.room.runtime)
             implementation(libs.androidx.room.testing)
+            implementation(libs.kotlinx.coroutines.test)
         }
 
         val jvmAndAndroid by creating {
@@ -111,6 +112,7 @@ kotlin {
 }
 
 dependencies {
+    platform(libs.kotlinx.coroutines.bom)
     testAnnotationProcessor(libs.androidx.room.compiler)
     ksp(libs.androidx.room.compiler)
 }

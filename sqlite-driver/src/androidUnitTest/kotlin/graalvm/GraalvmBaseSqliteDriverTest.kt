@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.base.graalvm
+package ru.pixnews.wasm.sqlite.driver.graalvm
 
 import co.touchlab.kermit.Severity
 import ru.pixnews.wasm.sqlite.driver.tests.AbstractBasicSqliteDriverTest
@@ -12,5 +12,5 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmSqliteEmbedderConfig
 
 class GraalvmBaseSqliteDriverTest : AbstractBasicSqliteDriverTest<GraalvmSqliteEmbedderConfig>(
     driverCreator = GraalvmSqliteDriverCreator(),
-    dbLoggerSeverity = Severity.Debug,
+    dbLoggerSeverity = Severity.Info,
 )

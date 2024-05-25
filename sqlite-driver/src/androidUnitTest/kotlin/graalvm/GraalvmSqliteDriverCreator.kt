@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.base.graalvm
+package ru.pixnews.wasm.sqlite.driver.graalvm
 
 import org.graalvm.polyglot.Engine
 import ru.pixnews.wasm.sqlite.driver.base.TestSqliteDriverCreator
