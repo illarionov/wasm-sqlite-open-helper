@@ -129,7 +129,7 @@ internal class WasmSqliteStatement(
         val error = statementApi.sqlite3Step(rawStatementPtr)
         return when (error) {
             SqliteResultCode.SQLITE_ROW -> true
-            SqliteResultCode.SQLITE_DONE -> true
+            SqliteResultCode.SQLITE_DONE -> false
             else -> cApi.readErrorThrowAndroidSqliteException(rawConnectionPtr)
         }
     }
