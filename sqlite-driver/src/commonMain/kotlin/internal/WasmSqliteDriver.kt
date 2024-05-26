@@ -17,6 +17,7 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.or
 import ru.pixnews.wasm.sqlite.open.helper.dsl.path.DatabasePathResolver
 import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteCantOpenDatabaseException
 import ru.pixnews.wasm.sqlite.open.helper.io.lock.SynchronizedObject
+import ru.pixnews.wasm.sqlite.open.helper.io.lock.synchronized
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteConfigParameter
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDbConfigParameter
@@ -43,7 +44,7 @@ internal class WasmSqliteDriver(
     private val lock = SynchronizedObject()
 
     override fun open(fileName: String): SQLiteConnection =
-        ru.pixnews.wasm.sqlite.open.helper.io.lock.synchronized(lock) {
+        synchronized(lock) {
             initIfRequiredLocked()
             val path = pathResolver.getDatabasePath(fileName)
             val connectionPtr: WasmPtr<SqliteDb> = try {
@@ -85,6 +86,8 @@ internal class WasmSqliteDriver(
     private fun initIfRequiredLocked() {
         if (isSqliteInitialized) {
             return
+        } else {
+            isSqliteInitialized = true
         }
 
         if (cApi.embedderInfo.supportMultithreading) {

@@ -26,6 +26,7 @@ gradle-maven-publish-plugin = "0.28.0"
 junit-platform-launcher = "1.10.2"
 junit5 = "5.10.2"
 kotlin = "2.0.0"
+kotlinx-coroutines = "1.8.1"
 kotlinx-binary-compatibility-validator = "0.14.0"
 kermit = "2.0.3"
 ksp = "2.0.0-1.0.21"
@@ -72,6 +73,10 @@ junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform
 kermit = { group = "co.touchlab", name = "kermit", version.ref = "kermit" }
 kermit-jvm = { group = "co.touchlab", name = "kermit-jvm", version.ref = "kermit" }
 kotlin-bom = { group = "org.jetbrains.kotlin", name = "kotlin-bom", version.ref = "kotlin" }
+kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android" }
+kotlinx-coroutines-bom = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-bom", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test" }
 okio-okio = { group = "com.squareup.okio", name = "okio", version.ref = "okio" }
 
 # Dependencies of the included build-logic
