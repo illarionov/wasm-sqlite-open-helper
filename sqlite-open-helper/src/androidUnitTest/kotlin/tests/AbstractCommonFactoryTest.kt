@@ -12,14 +12,14 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import co.touchlab.kermit.Severity
 import co.touchlab.kermit.Severity.Info
 import org.junit.jupiter.api.Test
-import ru.pixnews.wasm.sqlite.open.helper.base.AbstractOpenHelperFactoryTest
-import ru.pixnews.wasm.sqlite.open.helper.base.TestOpenHelperFactoryCreator
-import ru.pixnews.wasm.sqlite.open.helper.base.room.AppDatabase1
-import ru.pixnews.wasm.sqlite.open.helper.base.room.User
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
+import ru.pixnews.wasm.sqlite.open.helper.test.base.AbstractOpenHelperFactoryTest
+import ru.pixnews.wasm.sqlite.open.helper.test.base.TestOpenHelperFactoryCreator
+import ru.pixnews.wasm.sqlite.open.helper.test.base.room.User
+import ru.pixnews.wasm.sqlite.open.helper.test.base.room.UserDatabaseBlocking
 
 abstract class AbstractCommonFactoryTest<E : SqliteEmbedderConfig>(
-    factoryCreator: TestOpenHelperFactoryCreator<E>,
+    factoryCreator: TestOpenHelperFactoryCreator,
     dbLoggerSeverity: Severity = Info,
 ) : AbstractOpenHelperFactoryTest<E>(
     factoryCreator = factoryCreator,
@@ -49,7 +49,11 @@ abstract class AbstractCommonFactoryTest<E : SqliteEmbedderConfig>(
     open fun `Test Room`() {
         val helperFactory = createWasmSQLiteOpenHelperFactory()
         val mockContext = ContextWrapper(null)
-        val db: AppDatabase1 = Room.databaseBuilder(mockContext, AppDatabase1::class.java, "database-name")
+        val db: UserDatabaseBlocking = Room.databaseBuilder(
+            mockContext,
+            UserDatabaseBlocking::class.java,
+            "database-name",
+        )
             .openHelperFactory(helperFactory)
             .allowMainThreadQueries()
             .build()

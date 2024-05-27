@@ -4,18 +4,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.test.base
+package ru.pixnews.wasm.sqlite.open.helper.test.base
 
-import androidx.sqlite.SQLiteDriver
+import androidx.sqlite.db.SupportSQLiteOpenHelper
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import java.io.File
 
-public interface TestSqliteDriverCreator {
+interface TestOpenHelperFactoryCreator {
     public val defaultSqliteBinary: WasmSqliteConfiguration
     public fun create(
         dstDir: File,
         dbLogger: Logger,
         sqlite3Binary: WasmSqliteConfiguration,
-    ): SQLiteDriver
+    ): SupportSQLiteOpenHelper.Factory
 }

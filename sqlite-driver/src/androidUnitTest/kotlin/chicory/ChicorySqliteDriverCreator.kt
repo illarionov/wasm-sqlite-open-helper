@@ -13,11 +13,10 @@ import ru.pixnews.wasm.sqlite.driver.test.base.TestSqliteDriverCreator
 import ru.pixnews.wasm.sqlite.open.helper.SqliteAndroidWasmEmscriptenIcu346
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.chicory.ChicorySqliteEmbedder
-import ru.pixnews.wasm.sqlite.open.helper.chicory.ChicorySqliteEmbedderConfig
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import java.io.File
 
-object ChicorySqliteDriverCreator : TestSqliteDriverCreator<ChicorySqliteEmbedderConfig> {
+object ChicorySqliteDriverCreator : TestSqliteDriverCreator {
     override val defaultSqliteBinary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcu346
 
     override fun create(dstDir: File, dbLogger: Logger, sqlite3Binary: WasmSqliteConfiguration): SQLiteDriver {

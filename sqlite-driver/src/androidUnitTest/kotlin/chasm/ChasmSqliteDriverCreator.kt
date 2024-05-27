@@ -12,12 +12,11 @@ import ru.pixnews.wasm.sqlite.driver.base.defaultTestSqliteDriverConfig
 import ru.pixnews.wasm.sqlite.driver.test.base.TestSqliteDriverCreator
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ChasmSqliteEmbedder
-import ru.pixnews.wasm.sqlite.open.helper.chasm.ChasmSqliteEmbedderConfig
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import java.io.File
 import ru.pixnews.wasm.sqlite.open.helper.SqliteAndroidWasmEmscriptenIcu346 as SqliteAndroidWasmEmscriptenIcu3461
 
-object ChasmSqliteDriverCreator : TestSqliteDriverCreator<ChasmSqliteEmbedderConfig> {
+object ChasmSqliteDriverCreator : TestSqliteDriverCreator {
     override val defaultSqliteBinary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcu3461
     override fun create(
         dstDir: File,

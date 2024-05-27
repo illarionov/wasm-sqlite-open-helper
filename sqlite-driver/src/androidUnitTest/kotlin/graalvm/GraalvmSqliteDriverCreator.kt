@@ -15,13 +15,12 @@ import ru.pixnews.wasm.sqlite.open.helper.SqliteAndroidWasmEmscriptenIcuMtPthrea
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmSqliteEmbedder
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmSqliteEmbedderConfig
 import java.io.File
 
 class GraalvmSqliteDriverCreator(
     private val initialGraalvmEngine: Engine? = WASM_GRAALVM_ENGINE,
     override val defaultSqliteBinary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcuMtPthread346,
-) : TestSqliteDriverCreator<GraalvmSqliteEmbedderConfig> {
+) : TestSqliteDriverCreator {
     override fun create(dstDir: File, dbLogger: Logger, sqlite3Binary: WasmSqliteConfiguration): SQLiteDriver {
         return WasmSQLiteDriver(GraalvmSqliteEmbedder) {
             defaultTestSqliteDriverConfig(dstDir, dbLogger)

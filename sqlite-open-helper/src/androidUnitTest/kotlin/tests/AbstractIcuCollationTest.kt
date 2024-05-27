@@ -15,13 +15,13 @@ import co.touchlab.kermit.Severity.Info
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import ru.pixnews.wasm.sqlite.open.helper.base.AbstractOpenHelperFactoryTest
-import ru.pixnews.wasm.sqlite.open.helper.base.TestOpenHelperFactoryCreator
 import ru.pixnews.wasm.sqlite.open.helper.base.util.readValues
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
+import ru.pixnews.wasm.sqlite.open.helper.test.base.AbstractOpenHelperFactoryTest
+import ru.pixnews.wasm.sqlite.open.helper.test.base.TestOpenHelperFactoryCreator
 
 abstract class AbstractIcuCollationTest<E : SqliteEmbedderConfig>(
-    factoryCreator: TestOpenHelperFactoryCreator<E>,
+    factoryCreator: TestOpenHelperFactoryCreator,
     dbLoggerSeverity: Severity = Info,
 ) : AbstractOpenHelperFactoryTest<E>(
     factoryCreator = factoryCreator,

@@ -6,13 +6,27 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chasm
 
+import androidx.sqlite.db.SupportSQLiteOpenHelper
 import ru.pixnews.wasm.sqlite.open.helper.SqliteAndroidWasmEmscriptenIcu346
-import ru.pixnews.wasm.sqlite.open.helper.base.TestOpenHelperFactoryCreator
+import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteConfiguration
+import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperFactory
+import ru.pixnews.wasm.sqlite.open.helper.base.util.defaultTestHelperConfig
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
+import ru.pixnews.wasm.sqlite.open.helper.test.base.TestOpenHelperFactoryCreator
+import java.io.File
 
-object ChasmFactoryCreator : TestOpenHelperFactoryCreator<ChasmSqliteEmbedderConfig>(
-    embedder = ChasmSqliteEmbedder,
-    defaultSqliteBinary = SqliteAndroidWasmEmscriptenIcu346,
-    defaultEmbedderConfig = { sqlite3Binary ->
-        this.sqlite3Binary = sqlite3Binary
-    },
-)
+object ChasmFactoryCreator : TestOpenHelperFactoryCreator {
+    override val defaultSqliteBinary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcu346
+    override fun create(
+        dstDir: File,
+        dbLogger: Logger,
+        sqlite3Binary: WasmSqliteConfiguration,
+    ): SupportSQLiteOpenHelper.Factory {
+        return WasmSqliteOpenHelperFactory(ChasmSqliteEmbedder) {
+            defaultTestHelperConfig(dstDir, dbLogger)
+            embedder {
+                this.sqlite3Binary = sqlite3Binary
+            }
+        }
+    }
+}

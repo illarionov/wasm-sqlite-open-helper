@@ -16,9 +16,9 @@ import co.touchlab.kermit.Severity.Info
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import ru.pixnews.wasm.sqlite.open.helper.base.AbstractOpenHelperFactoryTest
-import ru.pixnews.wasm.sqlite.open.helper.base.TestOpenHelperFactoryCreator
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
+import ru.pixnews.wasm.sqlite.open.helper.test.base.AbstractOpenHelperFactoryTest
+import ru.pixnews.wasm.sqlite.open.helper.test.base.TestOpenHelperFactoryCreator
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.util.Date
@@ -26,7 +26,7 @@ import java.util.TimeZone
 import kotlin.time.Duration.Companion.minutes
 
 abstract class AbstractTimeFunctionsTest<E : SqliteEmbedderConfig>(
-    factoryCreator: TestOpenHelperFactoryCreator<E>,
+    factoryCreator: TestOpenHelperFactoryCreator,
     dbLoggerSeverity: Severity = Info,
 ) : AbstractOpenHelperFactoryTest<E>(
     factoryCreator = factoryCreator,

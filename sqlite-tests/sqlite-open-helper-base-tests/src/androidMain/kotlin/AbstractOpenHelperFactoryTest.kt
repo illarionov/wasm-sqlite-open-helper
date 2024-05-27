@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.base
+package ru.pixnews.wasm.sqlite.open.helper.test.base
 
 import android.content.ContextWrapper
 import androidx.sqlite.db.SupportSQLiteOpenHelper
@@ -18,7 +18,7 @@ import ru.pixnews.wasm.sqlite.test.utils.KermitLogger
 import java.io.File
 
 abstract class AbstractOpenHelperFactoryTest<E : SqliteEmbedderConfig>(
-    private val factoryCreator: TestOpenHelperFactoryCreator<E>,
+    private val factoryCreator: TestOpenHelperFactoryCreator,
     dbLoggerSeverity: Severity = Info,
 ) {
     protected open val logger = KermitLogger(this::class.java.simpleName)

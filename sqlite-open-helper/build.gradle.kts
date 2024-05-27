@@ -16,7 +16,6 @@ plugins {
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.lint.binary-compatibility-validator")
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.android")
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.kotlin")
-    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.room26.ksp")
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.publish")
 }
 
@@ -57,34 +56,6 @@ android {
     }
 }
 
-dependencies {
-    annotationProcessor(libs.androidx.room.compiler26)
-    kspAndroid(libs.androidx.room.compiler26)
-    kspAndroidTest(libs.androidx.room.compiler26)
-    testImplementation(libs.androidx.room.testing26)
-    testImplementation(libs.androidx.test.core)
-}
-
-configurations.all {
-    resolutionStrategy.componentSelection {
-        all {
-            if (candidate.group == "androidx.room" && candidate.module == "room-runtime") {
-                val versionSplit = candidate.version.split(".")
-                if (versionSplit.size >= 2) {
-                    val isNeverThan27 = versionSplit[0].toInt() > 2 ||
-                            (versionSplit[0].toInt() == 2 && versionSplit[1].toInt() >= 7)
-                    if (isNeverThan27) {
-                        logger.error(
-                            "The module is intended to work with earlier versions (2.6.1), rejecting $candidate",
-                        )
-                        reject("The module is intended to work with earlier versions (2.6.1)")
-                    }
-                }
-            }
-        }
-    }
-}
-
 kotlin {
     androidTarget()
     jvm()
@@ -97,6 +68,7 @@ kotlin {
             implementation(libs.androidx.core)
         }
         androidUnitTest.dependencies {
+            implementation(libs.androidx.test.core)
             implementation(libs.androidx.room.runtime26)
             implementation(libs.androidx.room.testing26)
             implementation(libs.androidx.test.core)
@@ -104,6 +76,7 @@ kotlin {
             implementation(libs.junit.jupiter.api)
             implementation(libs.junit.jupiter.params)
 
+            implementation(projects.sqliteTests.sqliteOpenHelperBaseTests)
             implementation(projects.sqliteEmbedderGraalvm)
             implementation(projects.sqliteEmbedderChasm)
             implementation(projects.sqliteEmbedderChicory)

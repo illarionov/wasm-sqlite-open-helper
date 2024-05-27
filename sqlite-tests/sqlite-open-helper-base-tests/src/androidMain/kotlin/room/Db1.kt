@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.base.room
+package ru.pixnews.wasm.sqlite.open.helper.test.base.room
 
 import androidx.room.ColumnInfo
 import androidx.room.Dao
@@ -45,6 +45,6 @@ interface UserDao {
 }
 
 @Database(entities = [User::class], version = 1)
-abstract class AppDatabase1 : RoomDatabase() {
+abstract class UserDatabaseBlocking : RoomDatabase() {
     abstract fun userDao(): UserDao
 }

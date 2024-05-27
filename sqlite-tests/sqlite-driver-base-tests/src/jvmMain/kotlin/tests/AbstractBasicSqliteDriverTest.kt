@@ -26,7 +26,7 @@ import ru.pixnews.wasm.sqlite.driver.test.base.util.use
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 
 public abstract class AbstractBasicSqliteDriverTest<E : SqliteEmbedderConfig>(
-    driverCreator: TestSqliteDriverCreator<E>,
+    driverCreator: TestSqliteDriverCreator,
     public val databaseFactory: TestScope.(driver: SQLiteDriver) -> UserDatabaseSuspend,
     dbLoggerSeverity: Severity = Severity.Info,
 ) : AbstractSqliteDriverTest<E>(
