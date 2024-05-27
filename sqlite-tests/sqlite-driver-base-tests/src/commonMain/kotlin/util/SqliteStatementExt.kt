@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.base.util
+package ru.pixnews.wasm.sqlite.driver.test.base.util
 
 import androidx.sqlite.SQLiteStatement
 
@@ -24,7 +24,7 @@ internal fun SQLiteStatement.bind(index: Int, arg: Any?) = when (arg) {
     else -> error("Unsupported argument type $arg")
 }
 
-internal fun SQLiteStatement.readResult(): List<Map<String, String?>> {
+public fun SQLiteStatement.readResult(): List<Map<String, String?>> {
     val result: MutableList<Map<String, String?>> = mutableListOf()
     val columnNames = getColumnNames()
     while (step()) {

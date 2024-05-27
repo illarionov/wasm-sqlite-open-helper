@@ -4,21 +4,20 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.tests
+package ru.pixnews.wasm.sqlite.driver.test.base.tests
 
 import androidx.sqlite.use
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isTrue
 import co.touchlab.kermit.Severity
-import co.touchlab.kermit.Severity.Info
 import org.junit.jupiter.api.Test
-import ru.pixnews.wasm.sqlite.driver.base.AbstractSqliteDriverTest
-import ru.pixnews.wasm.sqlite.driver.base.TestSqliteDriverCreator
-import ru.pixnews.wasm.sqlite.driver.base.util.execSQL
-import ru.pixnews.wasm.sqlite.driver.base.util.queryForString
-import ru.pixnews.wasm.sqlite.driver.base.util.readResult
-import ru.pixnews.wasm.sqlite.driver.base.util.use
+import ru.pixnews.wasm.sqlite.driver.test.base.AbstractSqliteDriverTest
+import ru.pixnews.wasm.sqlite.driver.test.base.TestSqliteDriverCreator
+import ru.pixnews.wasm.sqlite.driver.test.base.util.execSQL
+import ru.pixnews.wasm.sqlite.driver.test.base.util.queryForString
+import ru.pixnews.wasm.sqlite.driver.test.base.util.readResult
+import ru.pixnews.wasm.sqlite.driver.test.base.util.use
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
@@ -26,15 +25,15 @@ import kotlin.time.Duration.Companion.seconds
 import kotlin.time.TimedValue
 import kotlin.time.measureTimedValue
 
-abstract class AbstractMultithreadingTest<E : SqliteEmbedderConfig>(
+public abstract class AbstractMultithreadingTest<E : SqliteEmbedderConfig>(
     driverCreator: TestSqliteDriverCreator<E>,
-    dbLoggerSeverity: Severity = Info,
+    dbLoggerSeverity: Severity = Severity.Info,
 ) : AbstractSqliteDriverTest<E>(
     driverCreator = driverCreator,
     dbLoggerSeverity = dbLoggerSeverity,
 ) {
     @Test
-    fun `Factory from multiple threads should work`() {
+    public fun `Factory from multiple threads should work`() {
         val driver = createWasmSQLiteDriver()
 
         driver.open("test.db").use { db ->
@@ -62,7 +61,8 @@ abstract class AbstractMultithreadingTest<E : SqliteEmbedderConfig>(
     }
 
     @Test
-    fun `Factory from multiple threads with active transaction should work`() {
+    @Suppress("MagicNumber")
+    public fun `Factory from multiple threads with active transaction should work`() {
         val driver = createWasmSQLiteDriver()
 
         driver.open("test.db").use { db ->

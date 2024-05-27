@@ -6,11 +6,11 @@
 
 package ru.pixnews.wasm.sqlite.driver.graalvm
 
-import co.touchlab.kermit.Severity
-import ru.pixnews.wasm.sqlite.driver.tests.AbstractBasicSqliteDriverTest
+import ru.pixnews.wasm.sqlite.driver.base.userDatabaseSuspendFactory
+import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractBasicSqliteDriverTest
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmSqliteEmbedderConfig
 
 class GraalvmBaseSqliteDriverTest : AbstractBasicSqliteDriverTest<GraalvmSqliteEmbedderConfig>(
     driverCreator = GraalvmSqliteDriverCreator(),
-    dbLoggerSeverity = Severity.Info,
+    databaseFactory = userDatabaseSuspendFactory,
 )

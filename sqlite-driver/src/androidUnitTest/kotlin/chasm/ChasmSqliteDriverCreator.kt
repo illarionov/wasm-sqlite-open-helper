@@ -6,15 +6,29 @@
 
 package ru.pixnews.wasm.sqlite.driver.chasm
 
-import ru.pixnews.wasm.sqlite.driver.base.TestSqliteDriverCreator
-import ru.pixnews.wasm.sqlite.open.helper.SqliteAndroidWasmEmscriptenIcu346
+import androidx.sqlite.SQLiteDriver
+import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
+import ru.pixnews.wasm.sqlite.driver.base.defaultTestSqliteDriverConfig
+import ru.pixnews.wasm.sqlite.driver.test.base.TestSqliteDriverCreator
+import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ChasmSqliteEmbedder
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ChasmSqliteEmbedderConfig
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
+import java.io.File
+import ru.pixnews.wasm.sqlite.open.helper.SqliteAndroidWasmEmscriptenIcu346 as SqliteAndroidWasmEmscriptenIcu3461
 
-object ChasmSqliteDriverCreator : TestSqliteDriverCreator<ChasmSqliteEmbedderConfig>(
-    embedder = ChasmSqliteEmbedder,
-    defaultSqliteBinary = SqliteAndroidWasmEmscriptenIcu346,
-    defaultEmbedderConfig = { sqlite3Binary ->
-        this.sqlite3Binary = sqlite3Binary
-    },
-)
+object ChasmSqliteDriverCreator : TestSqliteDriverCreator<ChasmSqliteEmbedderConfig> {
+    override val defaultSqliteBinary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcu3461
+    override fun create(
+        dstDir: File,
+        dbLogger: Logger,
+        sqlite3Binary: WasmSqliteConfiguration,
+    ): SQLiteDriver {
+        return WasmSQLiteDriver(ChasmSqliteEmbedder) {
+            defaultTestSqliteDriverConfig(dstDir, dbLogger)
+            embedder {
+                this.sqlite3Binary = sqlite3Binary
+            }
+        }
+    }
+}

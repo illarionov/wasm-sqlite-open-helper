@@ -6,9 +6,11 @@
 
 package ru.pixnews.wasm.sqlite.driver.chicory
 
-import ru.pixnews.wasm.sqlite.driver.tests.AbstractBasicSqliteDriverTest
+import ru.pixnews.wasm.sqlite.driver.base.userDatabaseSuspendFactory
+import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractBasicSqliteDriverTest
 import ru.pixnews.wasm.sqlite.open.helper.chicory.ChicorySqliteEmbedderConfig
 
 class ChicoryBaseSqliteDriverTest : AbstractBasicSqliteDriverTest<ChicorySqliteEmbedderConfig>(
     driverCreator = ChicorySqliteDriverCreator,
+    databaseFactory = userDatabaseSuspendFactory,
 )

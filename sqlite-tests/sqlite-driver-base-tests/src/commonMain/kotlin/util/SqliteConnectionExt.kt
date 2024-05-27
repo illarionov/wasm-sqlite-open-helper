@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.base.util
+package ru.pixnews.wasm.sqlite.driver.test.base.util
 
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.SQLiteStatement
@@ -21,7 +21,7 @@ public inline fun <T : SQLiteConnection, R> T.use(block: (T) -> R): R {
     var exception: Throwable? = null
     try {
         return block(this)
-    } catch (ex: Throwable) {
+    } catch (@Suppress("TooGenericExceptionCaught") ex: Throwable) {
         exception = ex
         throw ex
     } finally {
@@ -35,21 +35,30 @@ internal fun SQLiteConnection.closeFinally(cause: Throwable?): Unit = if (cause 
 } else {
     try {
         close()
-    } catch (closeException: Throwable) {
+    } catch (@Suppress("TooGenericExceptionCaught") closeException: Throwable) {
         cause.addSuppressed(closeException)
     }
 }
 
-internal fun SQLiteConnection.execSQL(sql: String, vararg bindArgs: Any?) = prepare(sql).use { statement ->
+public fun SQLiteConnection.execSQL(
+    sql: String,
+    vararg bindArgs: Any?,
+): Boolean = prepare(sql).use { statement ->
     statement.bindArgs(bindArgs.toList())
     statement.step()
 }
 
-internal fun SQLiteConnection.queryForString(sql: String, vararg bindArgs: Any?): String? {
+public fun SQLiteConnection.queryForString(
+    sql: String,
+    vararg bindArgs: Any?,
+): String? {
     return queryForSingleResult(sql, SQLiteStatement::getText, bindArgs = bindArgs)
 }
 
-internal fun SQLiteConnection.queryForLong(sql: String, vararg bindArgs: Any?): Long? {
+public fun SQLiteConnection.queryForLong(
+    sql: String,
+    vararg bindArgs: Any?,
+): Long? {
     return queryForSingleResult(sql, SQLiteStatement::getLong, bindArgs = bindArgs)
 }
 
@@ -74,7 +83,7 @@ private fun <R : Any> SQLiteConnection.queryForSingleResult(
     }
 }
 
-fun SQLiteConnection.queryTable(
+public fun SQLiteConnection.queryTable(
     sql: String,
     vararg bindArgs: Any?,
 ): List<Map<String, String?>> = prepare(sql).use { statement ->

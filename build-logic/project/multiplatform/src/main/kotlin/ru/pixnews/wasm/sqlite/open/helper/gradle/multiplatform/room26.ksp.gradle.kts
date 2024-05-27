@@ -7,7 +7,6 @@
 package ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform
 
 import com.android.build.api.dsl.CommonExtension
-import org.gradle.kotlin.dsl.configure
 
 /*
  * Convention plugin that configures Room without using the Room Gradle plugin
