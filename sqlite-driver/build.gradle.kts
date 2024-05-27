@@ -68,11 +68,14 @@ kotlin {
         androidMain.dependencies {
         }
         androidUnitTest.dependencies {
+            implementation(projects.sqliteTests.sqliteTestUtils)
             implementation(libs.androidx.test.core)
             implementation(libs.kermit.jvm)
+            implementation(libs.kotlinx.coroutines.test)
             implementation(libs.junit.jupiter.api)
             implementation(libs.junit.jupiter.params)
 
+            implementation(projects.sqliteTests.sqliteDriverBaseTests)
             implementation(projects.sqliteEmbedderGraalvm)
             implementation(projects.sqliteEmbedderChasm)
             implementation(projects.sqliteEmbedderChicory)
@@ -93,11 +96,9 @@ kotlin {
             implementation(projects.wasiEmscriptenHost)
         }
         commonTest.dependencies {
-            implementation(kotlin("test"))
-            implementation(libs.assertk)
+            implementation(projects.sqliteTests.sqliteTestUtils)
             implementation(libs.androidx.room.runtime)
             implementation(libs.androidx.room.testing)
-            implementation(libs.kotlinx.coroutines.test)
         }
 
         val jvmAndAndroid by creating {
@@ -112,7 +113,6 @@ kotlin {
 }
 
 dependencies {
-    platform(libs.kotlinx.coroutines.bom)
     testAnnotationProcessor(libs.androidx.room.compiler)
     ksp(libs.androidx.room.compiler)
 }

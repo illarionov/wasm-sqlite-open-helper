@@ -15,10 +15,10 @@ import co.touchlab.kermit.Severity.Info
 import org.junit.jupiter.api.Test
 import ru.pixnews.wasm.sqlite.driver.base.AbstractSqliteDriverTest
 import ru.pixnews.wasm.sqlite.driver.base.TestSqliteDriverCreator
-import ru.pixnews.wasm.sqlite.driver.base.util.execSQL
-import ru.pixnews.wasm.sqlite.driver.base.util.queryForString
-import ru.pixnews.wasm.sqlite.driver.base.util.readResult
-import ru.pixnews.wasm.sqlite.driver.base.util.use
+import ru.pixnews.wasm.sqlite.driver.test.base.util.execSQL
+import ru.pixnews.wasm.sqlite.driver.test.base.util.queryForString
+import ru.pixnews.wasm.sqlite.driver.test.base.util.readResult
+import ru.pixnews.wasm.sqlite.driver.test.base.util.use
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit

@@ -18,8 +18,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import ru.pixnews.wasm.sqlite.driver.base.AbstractSqliteDriverTest
 import ru.pixnews.wasm.sqlite.driver.base.TestSqliteDriverCreator
-import ru.pixnews.wasm.sqlite.driver.base.util.queryForLong
-import ru.pixnews.wasm.sqlite.driver.base.util.queryForString
+import ru.pixnews.wasm.sqlite.driver.test.base.util.queryForLong
+import ru.pixnews.wasm.sqlite.driver.test.base.util.queryForString
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import java.text.SimpleDateFormat
 import java.time.Instant

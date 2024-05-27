@@ -4,13 +4,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.base.util
+@file:Suppress("IDENTIFIER_LENGTH")
+
+package ru.pixnews.wasm.sqlite.test.utils
 
 import co.touchlab.kermit.Severity
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import co.touchlab.kermit.Logger as KermitLogger
 
-@Suppress("IDENTIFIER_LENGTH")
 public class KermitLogger(
     tag: String = "WSOH",
     private val minSeverity: Severity = Severity.Verbose,

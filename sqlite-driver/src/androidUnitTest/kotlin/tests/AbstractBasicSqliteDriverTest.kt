@@ -18,12 +18,12 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import ru.pixnews.wasm.sqlite.driver.base.AbstractSqliteDriverTest
 import ru.pixnews.wasm.sqlite.driver.base.TestSqliteDriverCreator
-import ru.pixnews.wasm.sqlite.driver.base.room.AppDatabase1
-import ru.pixnews.wasm.sqlite.driver.base.room.User
-import ru.pixnews.wasm.sqlite.driver.base.util.execSQL
-import ru.pixnews.wasm.sqlite.driver.base.util.queryForString
-import ru.pixnews.wasm.sqlite.driver.base.util.queryTable
-import ru.pixnews.wasm.sqlite.driver.base.util.use
+import ru.pixnews.wasm.sqlite.driver.test.base.room.UserDatabaseSuspend
+import ru.pixnews.wasm.sqlite.driver.test.base.room.User
+import ru.pixnews.wasm.sqlite.driver.test.base.util.execSQL
+import ru.pixnews.wasm.sqlite.driver.test.base.util.queryForString
+import ru.pixnews.wasm.sqlite.driver.test.base.util.queryTable
+import ru.pixnews.wasm.sqlite.driver.test.base.util.use
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 
 abstract class AbstractBasicSqliteDriverTest<E : SqliteEmbedderConfig>(
@@ -62,9 +62,9 @@ abstract class AbstractBasicSqliteDriverTest<E : SqliteEmbedderConfig>(
     open fun `Test Room`() = runTest {
         val driver = createWasmSQLiteDriver()
         val mockContext = ContextWrapper(null)
-        val db: AppDatabase1 = Room.databaseBuilder(
+        val db: UserDatabaseSuspend = Room.databaseBuilder(
             mockContext,
-            AppDatabase1::class.java,
+            UserDatabaseSuspend::class.java,
             "database-name",
         )
             .setJournalMode(WRITE_AHEAD_LOGGING)

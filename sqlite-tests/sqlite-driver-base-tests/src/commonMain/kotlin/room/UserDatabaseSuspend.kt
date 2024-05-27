@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.base.room
+package ru.pixnews.wasm.sqlite.driver.test.base.room
 
 import androidx.room.ColumnInfo
 import androidx.room.Dao
@@ -17,34 +17,34 @@ import androidx.room.Query
 import androidx.room.RoomDatabase
 
 @Entity
-data class User(
+public data class User(
     @PrimaryKey val uid: Int,
     @ColumnInfo(name = "first_name") val firstName: String?,
     @ColumnInfo(name = "last_name") val lastName: String?,
 )
 
 @Dao
-interface UserDao {
+public interface UserDao {
     @Query("SELECT * FROM user")
-    suspend fun getAll(): List<User>
+    public suspend fun getAll(): List<User>
 
     @Query("SELECT * FROM user WHERE uid IN (:userIds)")
-    suspend fun loadAllByIds(userIds: IntArray): List<User>
+    public suspend fun loadAllByIds(userIds: IntArray): List<User>
 
     @Query(
         "SELECT * FROM user WHERE first_name LIKE :first AND " +
                 "last_name LIKE :last LIMIT 1",
     )
-    suspend fun findByName(first: String, last: String): User
+    public suspend fun findByName(first: String, last: String): User
 
     @Insert
-    suspend fun insertAll(vararg users: User)
+    public suspend fun insertAll(vararg users: User)
 
     @Delete
-    suspend fun delete(user: User)
+    public suspend fun delete(user: User)
 }
 
 @Database(entities = [User::class], version = 1)
-abstract class AppDatabase1 : RoomDatabase() {
-    abstract fun userDao(): UserDao
+public abstract class UserDatabaseSuspend : RoomDatabase() {
+    public abstract fun userDao(): UserDao
 }
