@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.tests
+package ru.pixnews.wasm.sqlite.open.helper.test.base.tests
 
 import androidx.sqlite.db.SupportSQLiteDatabase
 import assertk.assertThat
@@ -30,7 +30,7 @@ abstract class AbstractMultithreadingTest<E : SqliteEmbedderConfig>(
     dbLoggerSeverity = dbLoggerSeverity,
 ) {
     @Test
-    fun `Factory from multiple threads should work`() {
+    fun Factory_from_multiple_threads_should_work() {
         val helper = createWasmSQLiteOpenHelper()
         helper.writableDatabase.use { db: SupportSQLiteDatabase ->
             logger.i { "db: $db; version: ${db.version}" }
@@ -59,7 +59,7 @@ abstract class AbstractMultithreadingTest<E : SqliteEmbedderConfig>(
     }
 
     @Test
-    fun `Factory from multiple threads with active transaction should work`() {
+    fun Factory_from_multiple_threads_with_active_transaction_should_work() {
         val helper = createWasmSQLiteOpenHelper()
         helper.writableDatabase.use { db: SupportSQLiteDatabase ->
             logger.i { "db: $db; version: ${db.version}" }

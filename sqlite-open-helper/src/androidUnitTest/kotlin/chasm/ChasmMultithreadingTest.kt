@@ -7,7 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.chasm
 
 import org.junit.jupiter.api.Disabled
-import ru.pixnews.wasm.sqlite.open.helper.tests.AbstractMultithreadingTest
+import ru.pixnews.wasm.sqlite.open.helper.test.base.tests.AbstractMultithreadingTest
 
 @Disabled("not applicable")
 class ChasmMultithreadingTest : AbstractMultithreadingTest<ChasmSqliteEmbedderConfig>(

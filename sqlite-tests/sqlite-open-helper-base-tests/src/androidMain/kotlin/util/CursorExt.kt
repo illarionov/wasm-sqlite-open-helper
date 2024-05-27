@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.base.util
+package ru.pixnews.wasm.sqlite.open.helper.test.base.util
 
 import android.database.Cursor
 
-fun Cursor.readValues(): List<Map<String, String?>> = this.use { cursor ->
+public fun Cursor.readValues(): List<Map<String, String?>> = this.use { cursor ->
     val rows: MutableList<Map<String, String?>> = mutableListOf()
     while (cursor.moveToNext()) {
         val row = (0 until cursor.columnCount).associateBy(cursor::getColumnName) { columnIndex ->

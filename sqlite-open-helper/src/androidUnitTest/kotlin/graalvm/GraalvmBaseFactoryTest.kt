@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm
 
-import ru.pixnews.wasm.sqlite.open.helper.tests.AbstractCommonFactoryTest
+import ru.pixnews.wasm.sqlite.open.helper.test.base.tests.AbstractCommonFactoryTest
 
 class GraalvmBaseFactoryTest : AbstractCommonFactoryTest<GraalvmSqliteEmbedderConfig>(
     factoryCreator = GraalvmFactoryCreator(),

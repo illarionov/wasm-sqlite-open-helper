@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.tests
+package ru.pixnews.wasm.sqlite.open.helper.test.base.tests
 
 import androidx.sqlite.db.SupportSQLiteDatabase
 import assertk.assertThat
@@ -46,7 +46,7 @@ abstract class AbstractTimeFunctionsTest<E : SqliteEmbedderConfig>(
     }
 
     @Test
-    fun `date() should work`() {
+    fun date_should_work() {
         val dateString = database.compileStatement("""SELECT date()""").use {
             it.simpleQueryForString()
         }
@@ -58,7 +58,7 @@ abstract class AbstractTimeFunctionsTest<E : SqliteEmbedderConfig>(
     }
 
     @Test
-    fun `unixepoch() should work`() {
+    fun unixepoch_should_work() {
         val timestampNow = Instant.now().epochSecond
         val unixEpoch = database.compileStatement("""SELECT unixepoch()""").use {
             it.simpleQueryForLong()
@@ -67,7 +67,7 @@ abstract class AbstractTimeFunctionsTest<E : SqliteEmbedderConfig>(
     }
 
     @Test
-    fun `localtime modifier should work`() {
+    fun localtime_modifier_should_work() {
         val localtimeString: String = database.compileStatement(
             """SELECT datetime(1092941466, 'unixepoch', 'localtime')""",
         ).use {

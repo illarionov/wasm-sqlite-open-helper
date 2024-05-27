@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.tests
+package ru.pixnews.wasm.sqlite.open.helper.test.base.tests
 
 import androidx.sqlite.db.SupportSQLiteDatabase
 import assertk.assertThat
@@ -15,10 +15,10 @@ import co.touchlab.kermit.Severity.Info
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import ru.pixnews.wasm.sqlite.open.helper.base.util.readValues
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import ru.pixnews.wasm.sqlite.open.helper.test.base.AbstractOpenHelperFactoryTest
 import ru.pixnews.wasm.sqlite.open.helper.test.base.TestOpenHelperFactoryCreator
+import ru.pixnews.wasm.sqlite.open.helper.test.base.util.readValues
 
 abstract class AbstractIcuCollationTest<E : SqliteEmbedderConfig>(
     factoryCreator: TestOpenHelperFactoryCreator,
@@ -41,7 +41,7 @@ abstract class AbstractIcuCollationTest<E : SqliteEmbedderConfig>(
     }
 
     @Test
-    fun `Icu uppercase() should work`() {
+    fun Icu_uppercase_should_work() {
         val upperUser = database.compileStatement("""SELECT upper('пользователь 1', 'ru_RU')""").use {
             it.simpleQueryForString()
         }
@@ -49,7 +49,7 @@ abstract class AbstractIcuCollationTest<E : SqliteEmbedderConfig>(
     }
 
     @Test
-    fun `Icu lowercase() should work`() {
+    fun Icu_lowercase_should_work() {
         val rows: List<String?> = database.query("""SELECT lower('ISPANAK', 'tr_tr')""")
             .readValues()
             .map { row: Map<String, String?> -> row.values.single() }
@@ -58,7 +58,7 @@ abstract class AbstractIcuCollationTest<E : SqliteEmbedderConfig>(
     }
 
     @Test
-    fun `Case-insensitive LIKE should work`() {
+    fun Case_insensitive_LIKE_should_work() {
         val caseInsensitiveLike = database.compileStatement(
             """SELECT 'тамга сезимсиз текст издөө' LIKE '%ЕЗИМС%'""",
         ).use {
@@ -68,7 +68,7 @@ abstract class AbstractIcuCollationTest<E : SqliteEmbedderConfig>(
     }
 
     @Test
-    fun `Icu Collation should work`() {
+    fun Icu_Collation_should_work() {
         database.query("SELECT icu_load_collation('tr_TR', 'turkish')").readValues()
         database.execSQL("""CREATE TABLE Penpal(name TEXT COLLATE turkish)""".trimIndent())
 

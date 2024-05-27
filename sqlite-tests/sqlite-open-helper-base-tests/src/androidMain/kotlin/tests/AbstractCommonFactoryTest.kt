@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.tests
+package ru.pixnews.wasm.sqlite.open.helper.test.base.tests
 
 import android.content.ContextWrapper
 import androidx.room.Room
@@ -26,7 +26,7 @@ abstract class AbstractCommonFactoryTest<E : SqliteEmbedderConfig>(
     dbLoggerSeverity = dbLoggerSeverity,
 ) {
     @Test
-    open fun `Factory initialization should work`() {
+    open fun `Factory_initialization_should_work`() {
         val helper = createWasmSQLiteOpenHelper()
         helper.writableDatabase.use { db: SupportSQLiteDatabase ->
             logger.i { "db: $db; version: ${db.version}" }
@@ -46,7 +46,7 @@ abstract class AbstractCommonFactoryTest<E : SqliteEmbedderConfig>(
     }
 
     @Test
-    open fun `Test Room`() {
+    open fun `Test_Room`() {
         val helperFactory = createWasmSQLiteOpenHelperFactory()
         val mockContext = ContextWrapper(null)
         val db: UserDatabaseBlocking = Room.databaseBuilder(
