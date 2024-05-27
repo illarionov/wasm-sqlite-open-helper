@@ -59,6 +59,7 @@ abstract class AbstractMultithreadingTest<E : SqliteEmbedderConfig>(
     }
 
     @Test
+    @Suppress("MagicNumber")
     fun Factory_from_multiple_threads_with_active_transaction_should_work() {
         val helper = createWasmSQLiteOpenHelper()
         helper.writableDatabase.use { db: SupportSQLiteDatabase ->

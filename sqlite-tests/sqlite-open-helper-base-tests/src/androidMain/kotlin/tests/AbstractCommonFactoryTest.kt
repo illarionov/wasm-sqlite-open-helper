@@ -46,6 +46,7 @@ abstract class AbstractCommonFactoryTest<E : SqliteEmbedderConfig>(
     }
 
     @Test
+    @Suppress("MagicNumber")
     open fun `Test_Room`() {
         val helperFactory = createWasmSQLiteOpenHelperFactory()
         val mockContext = ContextWrapper(null)
