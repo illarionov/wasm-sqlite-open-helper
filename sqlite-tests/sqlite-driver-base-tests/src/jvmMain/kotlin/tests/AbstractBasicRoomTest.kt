@@ -8,7 +8,6 @@ package ru.pixnews.wasm.sqlite.driver.test.base.tests
 
 import androidx.sqlite.SQLiteDriver
 import co.touchlab.kermit.Severity
-import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import ru.pixnews.wasm.sqlite.driver.test.base.AbstractSqliteDriverTest
@@ -16,10 +15,11 @@ import ru.pixnews.wasm.sqlite.driver.test.base.TestSqliteDriverCreator
 import ru.pixnews.wasm.sqlite.driver.test.base.room.User
 import ru.pixnews.wasm.sqlite.driver.test.base.room.UserDatabaseSuspend
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
+import kotlin.coroutines.CoroutineContext
 
 abstract class AbstractBasicRoomTest<E : SqliteEmbedderConfig>(
     driverCreator: TestSqliteDriverCreator,
-    val databaseFactory: TestScope.(driver: SQLiteDriver) -> UserDatabaseSuspend,
+    val databaseFactory: (driver: SQLiteDriver, queryCoroutineContext: CoroutineContext) -> UserDatabaseSuspend,
     dbLoggerSeverity: Severity = Severity.Info,
 ) : AbstractSqliteDriverTest<E>(
     driverCreator = driverCreator,
@@ -29,7 +29,7 @@ abstract class AbstractBasicRoomTest<E : SqliteEmbedderConfig>(
     @Suppress("MagicNumber")
     public open fun `Test Room`() = runTest {
         val driver = createWasmSQLiteDriver()
-        val db = databaseFactory(driver)
+        val db = databaseFactory(driver, this.backgroundScope.coroutineContext)
         val userDao = db.userDao()
 
         val user101 = User(101, "User 101 First Name", "User 101 Last Name")

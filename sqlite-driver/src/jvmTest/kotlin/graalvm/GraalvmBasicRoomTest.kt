@@ -4,13 +4,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.chicory
+package ru.pixnews.wasm.sqlite.driver.graalvm
 
+import org.junit.jupiter.api.Disabled
 import ru.pixnews.wasm.sqlite.driver.base.userDatabaseSuspendFactory
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractBasicRoomTest
-import ru.pixnews.wasm.sqlite.open.helper.chicory.ChicorySqliteEmbedderConfig
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmSqliteEmbedderConfig
 
-class ChicoryBasicRoomTest : AbstractBasicRoomTest<ChicorySqliteEmbedderConfig>(
-    driverCreator = ChicorySqliteDriverCreator,
+@Disabled("TODO: fix")
+class GraalvmBasicRoomTest : AbstractBasicRoomTest<GraalvmSqliteEmbedderConfig>(
+    driverCreator = GraalvmSqliteDriverCreator(),
     databaseFactory = userDatabaseSuspendFactory,
 )

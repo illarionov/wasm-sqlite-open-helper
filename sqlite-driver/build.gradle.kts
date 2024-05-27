@@ -47,13 +47,6 @@ android {
         unitTests {
             isReturnDefaultValues = false
             isIncludeAndroidResources = true
-            all { testTask ->
-                testTask.useJUnitPlatform()
-                testTask.maxHeapSize = "2G"
-                testTask.testLogging {
-                    events = setOf(FAILED, PASSED, SKIPPED, STANDARD_ERROR, STANDARD_OUT)
-                }
-            }
         }
     }
 }
@@ -69,8 +62,6 @@ kotlin {
         }
         androidUnitTest.dependencies {
             implementation(libs.androidx.test.core)
-        }
-        jvmTest.dependencies {
         }
 
         commonMain.dependencies {
@@ -125,4 +116,12 @@ kotlin {
 dependencies {
     testAnnotationProcessor(libs.androidx.room.compiler)
     ksp(libs.androidx.room.compiler)
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+    maxHeapSize = "2G"
+    testLogging {
+        events = setOf(FAILED, PASSED, SKIPPED, STANDARD_ERROR, STANDARD_OUT)
+    }
 }

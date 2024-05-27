@@ -10,10 +10,10 @@ import android.content.ContextWrapper
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.SQLiteDriver
-import kotlinx.coroutines.test.TestScope
 import ru.pixnews.wasm.sqlite.driver.test.base.room.UserDatabaseSuspend
+import kotlin.coroutines.CoroutineContext
 
-val userDatabaseSuspendFactory: TestScope.(driver: SQLiteDriver) -> UserDatabaseSuspend = { driver ->
+val userDatabaseSuspendFactory: (SQLiteDriver, CoroutineContext) -> UserDatabaseSuspend = { driver, queryContext ->
     val mockContext = ContextWrapper(null)
     Room.databaseBuilder(
         mockContext,
@@ -23,6 +23,6 @@ val userDatabaseSuspendFactory: TestScope.(driver: SQLiteDriver) -> UserDatabase
         .setJournalMode(RoomDatabase.JournalMode.WRITE_AHEAD_LOGGING)
         .setDriver(driver)
         .allowMainThreadQueries()
-        .setQueryCoroutineContext(this.backgroundScope.coroutineContext)
+        .setQueryCoroutineContext(queryContext)
         .build()
 }

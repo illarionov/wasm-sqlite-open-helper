@@ -9,17 +9,18 @@ package ru.pixnews.wasm.sqlite.driver.base
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.SQLiteDriver
-import kotlinx.coroutines.test.TestScope
 import ru.pixnews.wasm.sqlite.driver.test.base.room.UserDatabaseSuspend
 import ru.pixnews.wasm.sqlite.driver.test.base.room.UserDatabaseSuspend_Impl
+import kotlin.coroutines.CoroutineContext
 
-val userDatabaseSuspendFactory: TestScope.(driver: SQLiteDriver) -> UserDatabaseSuspend = { driver ->
-    Room.databaseBuilder(
-        "database-name",
-        ::UserDatabaseSuspend_Impl
-    )
-        .setJournalMode(RoomDatabase.JournalMode.WRITE_AHEAD_LOGGING)
-        .setDriver(driver)
-        .setQueryCoroutineContext(this.backgroundScope.coroutineContext)
-        .build()
-}
+val userDatabaseSuspendFactory: (driver: SQLiteDriver, CoroutineContext) -> UserDatabaseSuspend =
+    { driver, queryCoroutineContext ->
+        Room.databaseBuilder(
+            "database-name",
+            ::UserDatabaseSuspend_Impl,
+        )
+            .setJournalMode(RoomDatabase.JournalMode.WRITE_AHEAD_LOGGING)
+            .setDriver(driver)
+            .setQueryCoroutineContext(queryCoroutineContext)
+            .build()
+    }
