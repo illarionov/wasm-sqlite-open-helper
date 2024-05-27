@@ -6,7 +6,6 @@
 
 package ru.pixnews.wasm.sqlite.driver.chasm
 
-import ru.pixnews.wasm.sqlite.driver.base.userDatabaseSuspendFactory
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractBasicSqliteDriverTest
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ChasmSqliteEmbedderConfig
 

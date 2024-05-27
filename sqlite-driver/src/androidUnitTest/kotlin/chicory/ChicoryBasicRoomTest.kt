@@ -4,12 +4,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.chasm
+package ru.pixnews.wasm.sqlite.driver.chicory
 
 import ru.pixnews.wasm.sqlite.driver.base.userDatabaseSuspendFactory
-import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractBasicSqliteDriverTest
+import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractBasicRoomTest
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ChasmSqliteEmbedderConfig
+import ru.pixnews.wasm.sqlite.open.helper.chicory.ChicorySqliteEmbedderConfig
 
-class ChasmBaseSqliteDriverTest : AbstractBasicSqliteDriverTest<ChasmSqliteEmbedderConfig>(
-    driverCreator = ChasmSqliteDriverCreator,
+class ChicoryBasicRoomTest : AbstractBasicRoomTest<ChicorySqliteEmbedderConfig>(
+    driverCreator = ChicorySqliteDriverCreator,
+    databaseFactory = userDatabaseSuspendFactory,
 )

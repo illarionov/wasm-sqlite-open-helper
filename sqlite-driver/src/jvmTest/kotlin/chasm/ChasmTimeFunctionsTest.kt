@@ -6,10 +6,9 @@
 
 package ru.pixnews.wasm.sqlite.driver.chasm
 
-import ru.pixnews.wasm.sqlite.driver.base.userDatabaseSuspendFactory
-import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractBasicSqliteDriverTest
+import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractTimeFunctionsTest
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ChasmSqliteEmbedderConfig
 
-class ChasmBaseSqliteDriverTest : AbstractBasicSqliteDriverTest<ChasmSqliteEmbedderConfig>(
+class ChasmTimeFunctionsTest : AbstractTimeFunctionsTest<ChasmSqliteEmbedderConfig>(
     driverCreator = ChasmSqliteDriverCreator,
 )
