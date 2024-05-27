@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.driver.chicory
 
-import ru.pixnews.wasm.sqlite.driver.tests.AbstractIcuCollationTest
+import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractIcuCollationTest
 import ru.pixnews.wasm.sqlite.open.helper.chicory.ChicorySqliteEmbedderConfig
 
 class ChicoryIcuCollationTest : AbstractIcuCollationTest<ChicorySqliteEmbedderConfig>(

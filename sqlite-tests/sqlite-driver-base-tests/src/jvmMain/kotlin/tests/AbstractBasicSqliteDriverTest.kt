@@ -4,37 +4,37 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.tests
+package ru.pixnews.wasm.sqlite.driver.test.base.tests
 
-import android.content.ContextWrapper
-import androidx.room.Room
-import androidx.room.RoomDatabase.JournalMode.WRITE_AHEAD_LOGGING
 import androidx.sqlite.SQLiteConnection
+import androidx.sqlite.SQLiteDriver
 import assertk.assertThat
 import assertk.assertions.containsExactly
 import co.touchlab.kermit.Severity
-import co.touchlab.kermit.Severity.Info
+import kotlinx.coroutines.test.TestResult
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
-import ru.pixnews.wasm.sqlite.driver.base.AbstractSqliteDriverTest
-import ru.pixnews.wasm.sqlite.driver.base.TestSqliteDriverCreator
-import ru.pixnews.wasm.sqlite.driver.test.base.room.UserDatabaseSuspend
+import ru.pixnews.wasm.sqlite.driver.test.base.AbstractSqliteDriverTest
+import ru.pixnews.wasm.sqlite.driver.test.base.TestSqliteDriverCreator
 import ru.pixnews.wasm.sqlite.driver.test.base.room.User
+import ru.pixnews.wasm.sqlite.driver.test.base.room.UserDatabaseSuspend
 import ru.pixnews.wasm.sqlite.driver.test.base.util.execSQL
 import ru.pixnews.wasm.sqlite.driver.test.base.util.queryForString
 import ru.pixnews.wasm.sqlite.driver.test.base.util.queryTable
 import ru.pixnews.wasm.sqlite.driver.test.base.util.use
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 
-abstract class AbstractBasicSqliteDriverTest<E : SqliteEmbedderConfig>(
+public abstract class AbstractBasicSqliteDriverTest<E : SqliteEmbedderConfig>(
     driverCreator: TestSqliteDriverCreator<E>,
-    dbLoggerSeverity: Severity = Info,
+    public val databaseFactory: TestScope.(driver: SQLiteDriver) -> UserDatabaseSuspend,
+    dbLoggerSeverity: Severity = Severity.Info,
 ) : AbstractSqliteDriverTest<E>(
     driverCreator = driverCreator,
     dbLoggerSeverity = dbLoggerSeverity,
 ) {
     @Test
-    open fun `Driver initialization should work`() {
+    public open fun `Driver initialization should work`() {
         val driver = createWasmSQLiteDriver()
         val connection = driver.open("user.db")
         connection.use { db: SQLiteConnection ->
@@ -59,19 +59,10 @@ abstract class AbstractBasicSqliteDriverTest<E : SqliteEmbedderConfig>(
     }
 
     @Test
-    open fun `Test Room`() = runTest {
+    @Suppress("MagicNumber")
+    public open fun `Test Room`(): TestResult = runTest {
         val driver = createWasmSQLiteDriver()
-        val mockContext = ContextWrapper(null)
-        val db: UserDatabaseSuspend = Room.databaseBuilder(
-            mockContext,
-            UserDatabaseSuspend::class.java,
-            "database-name",
-        )
-            .setJournalMode(WRITE_AHEAD_LOGGING)
-            .setDriver(driver)
-            .allowMainThreadQueries()
-            .setQueryCoroutineContext(this.backgroundScope.coroutineContext)
-            .build()
+        val db = databaseFactory(driver)
         val userDao = db.userDao()
 
         val user101 = User(101, "User 101 First Name", "User 101 Last Name")

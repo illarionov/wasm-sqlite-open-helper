@@ -68,19 +68,19 @@ kotlin {
         androidMain.dependencies {
         }
         androidUnitTest.dependencies {
-            implementation(projects.sqliteTests.sqliteTestUtils)
             implementation(libs.androidx.test.core)
-            implementation(libs.kermit.jvm)
-            implementation(libs.kotlinx.coroutines.test)
             implementation(libs.junit.jupiter.api)
             implementation(libs.junit.jupiter.params)
+            implementation(libs.kermit.jvm)
+            implementation(libs.kotlinx.coroutines.test)
 
-            implementation(projects.sqliteTests.sqliteDriverBaseTests)
-            implementation(projects.sqliteEmbedderGraalvm)
-            implementation(projects.sqliteEmbedderChasm)
-            implementation(projects.sqliteEmbedderChicory)
             implementation(projects.native.sqliteAndroidWasmEmscriptenIcu346)
             implementation(projects.native.sqliteAndroidWasmEmscriptenIcuMtPthread346)
+            implementation(projects.sqliteEmbedderChasm)
+            implementation(projects.sqliteEmbedderChicory)
+            implementation(projects.sqliteEmbedderGraalvm)
+            implementation(projects.sqliteTests.sqliteDriverBaseTests)
+            implementation(projects.sqliteTests.sqliteTestUtils)
 
             runtimeOnly(libs.junit.jupiter.engine)
         }

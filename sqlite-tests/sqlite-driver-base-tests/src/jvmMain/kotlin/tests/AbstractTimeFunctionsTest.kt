@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.tests
+package ru.pixnews.wasm.sqlite.driver.test.base.tests
 
 import androidx.sqlite.SQLiteConnection
 import assertk.assertThat
@@ -12,12 +12,11 @@ import assertk.assertions.isBetween
 import assertk.assertions.isEqualTo
 import assertk.assertions.startsWith
 import co.touchlab.kermit.Severity
-import co.touchlab.kermit.Severity.Info
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import ru.pixnews.wasm.sqlite.driver.base.AbstractSqliteDriverTest
-import ru.pixnews.wasm.sqlite.driver.base.TestSqliteDriverCreator
+import ru.pixnews.wasm.sqlite.driver.test.base.AbstractSqliteDriverTest
+import ru.pixnews.wasm.sqlite.driver.test.base.TestSqliteDriverCreator
 import ru.pixnews.wasm.sqlite.driver.test.base.util.queryForLong
 import ru.pixnews.wasm.sqlite.driver.test.base.util.queryForString
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
@@ -29,7 +28,7 @@ import kotlin.time.Duration.Companion.minutes
 
 abstract class AbstractTimeFunctionsTest<E : SqliteEmbedderConfig>(
     driverCreator: TestSqliteDriverCreator<E>,
-    dbLoggerSeverity: Severity = Info,
+    dbLoggerSeverity: Severity = Severity.Info,
 ) : AbstractSqliteDriverTest<E>(
     driverCreator = driverCreator,
     dbLoggerSeverity = dbLoggerSeverity,

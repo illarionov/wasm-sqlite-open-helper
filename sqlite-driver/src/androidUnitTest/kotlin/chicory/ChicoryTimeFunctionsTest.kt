@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.driver.chicory
 
-import ru.pixnews.wasm.sqlite.driver.tests.AbstractTimeFunctionsTest
+import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractTimeFunctionsTest
 import ru.pixnews.wasm.sqlite.open.helper.chicory.ChicorySqliteEmbedderConfig
 
 class ChicoryTimeFunctionsTest : AbstractTimeFunctionsTest<ChicorySqliteEmbedderConfig>(

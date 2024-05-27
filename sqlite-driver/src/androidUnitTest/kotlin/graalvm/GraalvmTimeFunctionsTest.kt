@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.driver.graalvm
 
-import ru.pixnews.wasm.sqlite.driver.tests.AbstractTimeFunctionsTest
+import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractTimeFunctionsTest
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmSqliteEmbedderConfig
 
 class GraalvmTimeFunctionsTest : AbstractTimeFunctionsTest<GraalvmSqliteEmbedderConfig>(
