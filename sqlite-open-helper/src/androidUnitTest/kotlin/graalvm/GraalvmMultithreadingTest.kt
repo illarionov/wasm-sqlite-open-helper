@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm
 
-import ru.pixnews.wasm.sqlite.open.helper.tests.AbstractMultithreadingTest
+import ru.pixnews.wasm.sqlite.open.helper.test.base.tests.AbstractMultithreadingTest
 
 class GraalvmMultithreadingTest : AbstractMultithreadingTest<GraalvmSqliteEmbedderConfig>(
     factoryCreator = GraalvmFactoryCreator(),

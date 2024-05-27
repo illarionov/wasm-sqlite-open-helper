@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.tests
+package ru.pixnews.wasm.sqlite.open.helper.test.base.tests
 
 import androidx.sqlite.db.SupportSQLiteDatabase
 import assertk.assertThat
@@ -13,9 +13,9 @@ import assertk.assertions.isTrue
 import co.touchlab.kermit.Severity
 import co.touchlab.kermit.Severity.Info
 import org.junit.jupiter.api.Test
-import ru.pixnews.wasm.sqlite.open.helper.base.AbstractOpenHelperFactoryTest
-import ru.pixnews.wasm.sqlite.open.helper.base.TestOpenHelperFactoryCreator
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
+import ru.pixnews.wasm.sqlite.open.helper.test.base.AbstractOpenHelperFactoryTest
+import ru.pixnews.wasm.sqlite.open.helper.test.base.TestOpenHelperFactoryCreator
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import kotlin.time.Duration.Companion.seconds
@@ -23,14 +23,14 @@ import kotlin.time.TimedValue
 import kotlin.time.measureTimedValue
 
 abstract class AbstractMultithreadingTest<E : SqliteEmbedderConfig>(
-    factoryCreator: TestOpenHelperFactoryCreator<E>,
+    factoryCreator: TestOpenHelperFactoryCreator,
     dbLoggerSeverity: Severity = Info,
 ) : AbstractOpenHelperFactoryTest<E>(
     factoryCreator = factoryCreator,
     dbLoggerSeverity = dbLoggerSeverity,
 ) {
     @Test
-    fun `Factory from multiple threads should work`() {
+    fun Factory_from_multiple_threads_should_work() {
         val helper = createWasmSQLiteOpenHelper()
         helper.writableDatabase.use { db: SupportSQLiteDatabase ->
             logger.i { "db: $db; version: ${db.version}" }
@@ -59,7 +59,8 @@ abstract class AbstractMultithreadingTest<E : SqliteEmbedderConfig>(
     }
 
     @Test
-    fun `Factory from multiple threads with active transaction should work`() {
+    @Suppress("MagicNumber")
+    fun Factory_from_multiple_threads_with_active_transaction_should_work() {
         val helper = createWasmSQLiteOpenHelper()
         helper.writableDatabase.use { db: SupportSQLiteDatabase ->
             logger.i { "db: $db; version: ${db.version}" }

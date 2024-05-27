@@ -6,22 +6,36 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm
 
+import androidx.sqlite.db.SupportSQLiteOpenHelper
 import org.graalvm.polyglot.Engine
-import ru.pixnews.wasm.sqlite.open.helper.SqliteAndroidWasmEmscriptenIcuMtPthread346
-import ru.pixnews.wasm.sqlite.open.helper.base.TestOpenHelperFactoryCreator
+import ru.pixnews.wasm.sqlite.open.helper.SqliteAndroidWasmEmscriptenIcu346
+import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteConfiguration
+import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperFactory
+import ru.pixnews.wasm.sqlite.open.helper.base.util.defaultTestHelperConfig
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
+import ru.pixnews.wasm.sqlite.open.helper.test.base.TestOpenHelperFactoryCreator
+import java.io.File
 
 internal class GraalvmFactoryCreator(
-    initialGraalvmEngine: Engine? = WASM_GRAALVM_ENGINE,
-) : TestOpenHelperFactoryCreator<GraalvmSqliteEmbedderConfig>(
-    embedder = GraalvmSqliteEmbedder,
-    defaultSqliteBinary = SqliteAndroidWasmEmscriptenIcuMtPthread346,
-    defaultEmbedderConfig = { sqlite3Binary ->
-        this.sqlite3Binary = sqlite3Binary
-        if (initialGraalvmEngine != null) {
-            this.graalvmEngine = initialGraalvmEngine
+    private val initialGraalvmEngine: Engine? = WASM_GRAALVM_ENGINE,
+    override val defaultSqliteBinary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcu346,
+) : TestOpenHelperFactoryCreator {
+    override fun create(
+        dstDir: File,
+        dbLogger: Logger,
+        sqlite3Binary: WasmSqliteConfiguration,
+    ): SupportSQLiteOpenHelper.Factory {
+        return WasmSqliteOpenHelperFactory(GraalvmSqliteEmbedder) {
+            defaultTestHelperConfig(dstDir, dbLogger)
+            embedder {
+                this.sqlite3Binary = sqlite3Binary
+                if (initialGraalvmEngine != null) {
+                    this.graalvmEngine = initialGraalvmEngine
+                }
+            }
         }
-    },
-) {
+    }
+
     internal companion object {
         internal val WASM_GRAALVM_ENGINE: Engine = Engine.create("wasm")
     }

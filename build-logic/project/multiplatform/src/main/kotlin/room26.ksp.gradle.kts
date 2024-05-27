@@ -27,3 +27,23 @@ extensions.configure(CommonExtension::class.java) {
         }
     }
 }
+
+configurations.all {
+    resolutionStrategy.componentSelection {
+        all {
+            if (candidate.group == "androidx.room" && candidate.module == "room-runtime") {
+                val versionSplit = candidate.version.split(".")
+                if (versionSplit.size >= 2) {
+                    val isNeverThan27 = versionSplit[0].toInt() > 2 ||
+                            (versionSplit[0].toInt() == 2 && versionSplit[1].toInt() >= 7)
+                    if (isNeverThan27) {
+                        logger.error(
+                            "The module is intended to work with earlier versions (2.6.1), rejecting $candidate",
+                        )
+                        reject("The module is intended to work with earlier versions (2.6.1)")
+                    }
+                }
+            }
+        }
+    }
+}

@@ -47,13 +47,6 @@ android {
         unitTests {
             isReturnDefaultValues = false
             isIncludeAndroidResources = true
-            all { testTask ->
-                testTask.useJUnitPlatform()
-                testTask.maxHeapSize = "2G"
-                testTask.testLogging {
-                    events = setOf(FAILED, PASSED, SKIPPED, STANDARD_ERROR, STANDARD_OUT)
-                }
-            }
         }
     }
 }
@@ -69,20 +62,6 @@ kotlin {
         }
         androidUnitTest.dependencies {
             implementation(libs.androidx.test.core)
-            implementation(libs.junit.jupiter.api)
-            implementation(libs.junit.jupiter.params)
-            implementation(libs.kermit.jvm)
-            implementation(libs.kotlinx.coroutines.test)
-
-            implementation(projects.native.sqliteAndroidWasmEmscriptenIcu346)
-            implementation(projects.native.sqliteAndroidWasmEmscriptenIcuMtPthread346)
-            implementation(projects.sqliteEmbedderChasm)
-            implementation(projects.sqliteEmbedderChicory)
-            implementation(projects.sqliteEmbedderGraalvm)
-            implementation(projects.sqliteTests.sqliteDriverBaseTests)
-            implementation(projects.sqliteTests.sqliteTestUtils)
-
-            runtimeOnly(libs.junit.jupiter.engine)
         }
 
         commonMain.dependencies {
@@ -101,18 +80,48 @@ kotlin {
             implementation(libs.androidx.room.testing)
         }
 
-        val jvmAndAndroid by creating {
+        val jvmAndAndroidMain by creating {
             dependsOn(commonMain.get())
             dependencies {
                 implementation(projects.commonLock)
             }
         }
-        androidMain.get().dependsOn(jvmAndAndroid)
-        jvmMain.get().dependsOn(jvmAndAndroid)
+        androidMain.get().dependsOn(jvmAndAndroidMain)
+        jvmMain.get().dependsOn(jvmAndAndroidMain)
+
+        val jvmAndAndroidTest by creating {
+            dependsOn(commonTest.get())
+            dependencies {
+                implementation(libs.junit.jupiter.api)
+                implementation(libs.junit.jupiter.params)
+                implementation(libs.kermit.jvm)
+                implementation(libs.kotlinx.coroutines.test)
+
+                implementation(projects.native.sqliteAndroidWasmEmscriptenIcu346)
+                implementation(projects.native.sqliteAndroidWasmEmscriptenIcuMtPthread346)
+                implementation(projects.sqliteEmbedderChasm)
+                implementation(projects.sqliteEmbedderChicory)
+                implementation(projects.sqliteEmbedderGraalvm)
+                implementation(projects.sqliteTests.sqliteDriverBaseTests)
+                implementation(projects.sqliteTests.sqliteTestUtils)
+
+                runtimeOnly(libs.junit.jupiter.engine)
+            }
+        }
+        androidUnitTest.get().dependsOn(jvmAndAndroidTest)
+        jvmTest.get().dependsOn(jvmAndAndroidTest)
     }
 }
 
 dependencies {
     testAnnotationProcessor(libs.androidx.room.compiler)
     ksp(libs.androidx.room.compiler)
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+    maxHeapSize = "2G"
+    testLogging {
+        events = setOf(FAILED, PASSED, SKIPPED, STANDARD_ERROR, STANDARD_OUT)
+    }
 }

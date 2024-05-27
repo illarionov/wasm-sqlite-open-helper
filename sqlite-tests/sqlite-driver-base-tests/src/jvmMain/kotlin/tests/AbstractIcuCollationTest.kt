@@ -21,7 +21,7 @@ import ru.pixnews.wasm.sqlite.driver.test.base.util.queryForString
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 
 abstract class AbstractIcuCollationTest<E : SqliteEmbedderConfig>(
-    driverCreator: TestSqliteDriverCreator<E>,
+    driverCreator: TestSqliteDriverCreator,
     dbLoggerSeverity: Severity = Severity.Info,
 ) : AbstractSqliteDriverTest<E>(
     driverCreator = driverCreator,

@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chasm
 
-import ru.pixnews.wasm.sqlite.open.helper.tests.AbstractTimeFunctionsTest
+import ru.pixnews.wasm.sqlite.open.helper.test.base.tests.AbstractTimeFunctionsTest
 
 class ChasmTimeFunctionsTest : AbstractTimeFunctionsTest<ChasmSqliteEmbedderConfig>(
     factoryCreator = ChasmFactoryCreator,

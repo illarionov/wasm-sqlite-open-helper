@@ -27,7 +27,7 @@ import java.util.TimeZone
 import kotlin.time.Duration.Companion.minutes
 
 abstract class AbstractTimeFunctionsTest<E : SqliteEmbedderConfig>(
-    driverCreator: TestSqliteDriverCreator<E>,
+    driverCreator: TestSqliteDriverCreator,
     dbLoggerSeverity: Severity = Severity.Info,
 ) : AbstractSqliteDriverTest<E>(
     driverCreator = driverCreator,

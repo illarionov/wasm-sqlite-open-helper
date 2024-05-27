@@ -9,10 +9,9 @@ package ru.pixnews.wasm.sqlite.driver.test.base
 import androidx.sqlite.SQLiteDriver
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import java.io.File
 
-public interface TestSqliteDriverCreator<C : SqliteEmbedderConfig> {
+public interface TestSqliteDriverCreator {
     public val defaultSqliteBinary: WasmSqliteConfiguration
     public fun create(
         dstDir: File,

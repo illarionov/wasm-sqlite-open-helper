@@ -26,7 +26,7 @@ import kotlin.time.TimedValue
 import kotlin.time.measureTimedValue
 
 public abstract class AbstractMultithreadingTest<E : SqliteEmbedderConfig>(
-    driverCreator: TestSqliteDriverCreator<E>,
+    driverCreator: TestSqliteDriverCreator,
     dbLoggerSeverity: Severity = Severity.Info,
 ) : AbstractSqliteDriverTest<E>(
     driverCreator = driverCreator,

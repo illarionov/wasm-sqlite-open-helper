@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.tests
+package ru.pixnews.wasm.sqlite.open.helper.test.base.tests
 
 import android.content.ContextWrapper
 import androidx.room.Room
@@ -12,21 +12,21 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import co.touchlab.kermit.Severity
 import co.touchlab.kermit.Severity.Info
 import org.junit.jupiter.api.Test
-import ru.pixnews.wasm.sqlite.open.helper.base.AbstractOpenHelperFactoryTest
-import ru.pixnews.wasm.sqlite.open.helper.base.TestOpenHelperFactoryCreator
-import ru.pixnews.wasm.sqlite.open.helper.base.room.AppDatabase1
-import ru.pixnews.wasm.sqlite.open.helper.base.room.User
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
+import ru.pixnews.wasm.sqlite.open.helper.test.base.AbstractOpenHelperFactoryTest
+import ru.pixnews.wasm.sqlite.open.helper.test.base.TestOpenHelperFactoryCreator
+import ru.pixnews.wasm.sqlite.open.helper.test.base.room.User
+import ru.pixnews.wasm.sqlite.open.helper.test.base.room.UserDatabaseBlocking
 
 abstract class AbstractCommonFactoryTest<E : SqliteEmbedderConfig>(
-    factoryCreator: TestOpenHelperFactoryCreator<E>,
+    factoryCreator: TestOpenHelperFactoryCreator,
     dbLoggerSeverity: Severity = Info,
 ) : AbstractOpenHelperFactoryTest<E>(
     factoryCreator = factoryCreator,
     dbLoggerSeverity = dbLoggerSeverity,
 ) {
     @Test
-    open fun `Factory initialization should work`() {
+    open fun `Factory_initialization_should_work`() {
         val helper = createWasmSQLiteOpenHelper()
         helper.writableDatabase.use { db: SupportSQLiteDatabase ->
             logger.i { "db: $db; version: ${db.version}" }
@@ -46,10 +46,15 @@ abstract class AbstractCommonFactoryTest<E : SqliteEmbedderConfig>(
     }
 
     @Test
-    open fun `Test Room`() {
+    @Suppress("MagicNumber")
+    open fun `Test_Room`() {
         val helperFactory = createWasmSQLiteOpenHelperFactory()
         val mockContext = ContextWrapper(null)
-        val db: AppDatabase1 = Room.databaseBuilder(mockContext, AppDatabase1::class.java, "database-name")
+        val db: UserDatabaseBlocking = Room.databaseBuilder(
+            mockContext,
+            UserDatabaseBlocking::class.java,
+            "database-name",
+        )
             .openHelperFactory(helperFactory)
             .allowMainThreadQueries()
             .build()

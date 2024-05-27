@@ -16,7 +16,7 @@ import ru.pixnews.wasm.sqlite.test.utils.KermitLogger
 import java.io.File
 
 public abstract class AbstractSqliteDriverTest<E : SqliteEmbedderConfig>(
-    private val driverCreator: TestSqliteDriverCreator<E>,
+    private val driverCreator: TestSqliteDriverCreator,
     dbLoggerSeverity: Severity = Info,
 ) {
     protected open val logger: KermitLogger = KermitLogger(this::class.java.simpleName)
