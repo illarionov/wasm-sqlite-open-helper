@@ -11,16 +11,24 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.SQLiteDriver
 import ru.pixnews.wasm.sqlite.driver.test.base.room.UserDatabaseSuspend
 import ru.pixnews.wasm.sqlite.driver.test.base.room.UserDatabaseSuspend_Impl
+import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractBasicRoomTest.UserDatabaseFactory
 import kotlin.coroutines.CoroutineContext
 
-val userDatabaseSuspendFactory: (driver: SQLiteDriver, CoroutineContext) -> UserDatabaseSuspend =
-    { driver, queryCoroutineContext ->
-        Room.databaseBuilder(
-            "database-name",
-            ::UserDatabaseSuspend_Impl,
-        )
+internal object JvmDatabaseFactory : UserDatabaseFactory {
+    override fun create(
+        driver: SQLiteDriver,
+        databaseName: String?,
+        queryCoroutineContext: CoroutineContext,
+    ): UserDatabaseSuspend {
+        val builder = if (databaseName != null) {
+            Room.databaseBuilder(databaseName, ::UserDatabaseSuspend_Impl)
+        } else {
+            Room.inMemoryDatabaseBuilder(::UserDatabaseSuspend_Impl)
+        }
+        return builder
             .setJournalMode(RoomDatabase.JournalMode.WRITE_AHEAD_LOGGING)
             .setDriver(driver)
             .setQueryCoroutineContext(queryCoroutineContext)
             .build()
     }
+}
