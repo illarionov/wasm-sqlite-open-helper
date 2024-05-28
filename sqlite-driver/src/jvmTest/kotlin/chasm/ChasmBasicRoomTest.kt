@@ -7,12 +7,12 @@
 package ru.pixnews.wasm.sqlite.driver.chasm
 
 import org.junit.jupiter.api.Disabled
-import ru.pixnews.wasm.sqlite.driver.base.userDatabaseSuspendFactory
+import ru.pixnews.wasm.sqlite.driver.base.JvmDatabaseFactory
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractBasicRoomTest
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ChasmSqliteEmbedderConfig
 
 @Disabled("TODO: fix")
 class ChasmBasicRoomTest : AbstractBasicRoomTest<ChasmSqliteEmbedderConfig>(
     driverCreator = ChasmSqliteDriverCreator,
-    databaseFactory = userDatabaseSuspendFactory,
+    databaseFactory = JvmDatabaseFactory,
 )

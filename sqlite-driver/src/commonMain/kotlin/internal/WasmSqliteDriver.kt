@@ -46,7 +46,7 @@ internal class WasmSqliteDriver(
     override fun open(fileName: String): SQLiteConnection =
         synchronized(lock) {
             initIfRequiredLocked()
-            val path = pathResolver.getDatabasePath(fileName)
+            val path = pathResolver.getDatabasePathWithSpecialFilenames(fileName)
             val connectionPtr: WasmPtr<SqliteDb> = try {
                 nativeOpen(
                     path = path,
@@ -194,5 +194,12 @@ internal class WasmSqliteDriver(
          */
         // XXX: copy from SQLiteGlobal
         public const val SOFT_HEAP_LIMIT: Long = 8 * 1024 * 1024
+
+        private fun DatabasePathResolver.getDatabasePathWithSpecialFilenames(
+            databaseName: String,
+        ): String = when {
+            ":memory:".equals(databaseName, ignoreCase = true) -> databaseName
+            else -> getDatabasePath(databaseName)
+        }
     }
 }

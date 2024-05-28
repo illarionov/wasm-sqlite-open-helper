@@ -7,12 +7,12 @@
 package ru.pixnews.wasm.sqlite.driver.chicory
 
 import org.junit.jupiter.api.Disabled
-import ru.pixnews.wasm.sqlite.driver.base.userDatabaseSuspendFactory
+import ru.pixnews.wasm.sqlite.driver.base.JvmDatabaseFactory
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractBasicRoomTest
 import ru.pixnews.wasm.sqlite.open.helper.chicory.ChicorySqliteEmbedderConfig
 
 @Disabled("TODO: fix")
 class ChicoryBasicRoomTest : AbstractBasicRoomTest<ChicorySqliteEmbedderConfig>(
     driverCreator = ChicorySqliteDriverCreator,
-    databaseFactory = userDatabaseSuspendFactory,
+    databaseFactory = JvmDatabaseFactory,
 )

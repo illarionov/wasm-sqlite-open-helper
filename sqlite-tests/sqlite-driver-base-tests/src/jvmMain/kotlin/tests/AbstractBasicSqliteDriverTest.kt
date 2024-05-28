@@ -18,6 +18,7 @@ import ru.pixnews.wasm.sqlite.driver.test.base.util.queryForString
 import ru.pixnews.wasm.sqlite.driver.test.base.util.queryTable
 import ru.pixnews.wasm.sqlite.driver.test.base.util.use
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
+import java.io.File
 
 public abstract class AbstractBasicSqliteDriverTest<E : SqliteEmbedderConfig>(
     driverCreator: TestSqliteDriverCreator,
@@ -27,27 +28,36 @@ public abstract class AbstractBasicSqliteDriverTest<E : SqliteEmbedderConfig>(
     dbLoggerSeverity = dbLoggerSeverity,
 ) {
     @Test
-    public open fun `Driver initialization should work`() {
+    public open fun Driver_initialization_should_work() {
         val driver = createWasmSQLiteDriver()
         val connection = driver.open("user.db")
-        connection.use { db: SQLiteConnection ->
-            val version = db.queryForString("SELECT sqlite_version()")
-            logger.i { "Version: $version" }
+        connection.use(::testDb)
+    }
 
-            db.execSQL("CREATE TABLE IF NOT EXISTS User(id INTEGER PRIMARY KEY, name TEXT)")
-            db.execSQL(
-                "INSERT INTO User(`name`) VALUES (?), (?), (?)",
-                "user 1",
-                "user 2",
-                "user 3",
-            )
-            val users = db.queryTable("SELECT * FROM User")
-            logger.i { "users: $users" }
-            assertThat(users).containsExactly(
-                mapOf("id" to "1", "name" to "user 1"),
-                mapOf("id" to "2", "name" to "user 2"),
-                mapOf("id" to "3", "name" to "user 3"),
-            )
-        }
+    @Test
+    public open fun Driver_initialization_with_in_memory_database_should_work() {
+        val driver = createWasmSQLiteDriver(tempDir = File("/nonexistent"))
+        val connection = driver.open(":memory:")
+        connection.use(::testDb)
+    }
+
+    private fun testDb(db: SQLiteConnection) {
+        val version = db.queryForString("SELECT sqlite_version()")
+        logger.i { "Version: $version" }
+
+        db.execSQL("CREATE TABLE IF NOT EXISTS User(id INTEGER PRIMARY KEY, name TEXT)")
+        db.execSQL(
+            "INSERT INTO User(`name`) VALUES (?), (?), (?)",
+            "user 1",
+            "user 2",
+            "user 3",
+        )
+        val users = db.queryTable("SELECT * FROM User")
+        logger.i { "users: $users" }
+        assertThat(users).containsExactly(
+            mapOf("id" to "1", "name" to "user 1"),
+            mapOf("id" to "2", "name" to "user 2"),
+            mapOf("id" to "3", "name" to "user 3"),
+        )
     }
 }

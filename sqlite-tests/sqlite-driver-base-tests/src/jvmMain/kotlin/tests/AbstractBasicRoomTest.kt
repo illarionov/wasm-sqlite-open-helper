@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+@file:Suppress("MagicNumber")
+
 package ru.pixnews.wasm.sqlite.driver.test.base.tests
 
 import androidx.sqlite.SQLiteDriver
@@ -15,22 +17,41 @@ import ru.pixnews.wasm.sqlite.driver.test.base.TestSqliteDriverCreator
 import ru.pixnews.wasm.sqlite.driver.test.base.room.User
 import ru.pixnews.wasm.sqlite.driver.test.base.room.UserDatabaseSuspend
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
+import java.io.File
 import kotlin.coroutines.CoroutineContext
 
 abstract class AbstractBasicRoomTest<E : SqliteEmbedderConfig>(
     driverCreator: TestSqliteDriverCreator,
-    val databaseFactory: (driver: SQLiteDriver, queryCoroutineContext: CoroutineContext) -> UserDatabaseSuspend,
+    val databaseFactory: UserDatabaseFactory,
     dbLoggerSeverity: Severity = Severity.Info,
 ) : AbstractSqliteDriverTest<E>(
     driverCreator = driverCreator,
     dbLoggerSeverity = dbLoggerSeverity,
 ) {
     @Test
-    @Suppress("MagicNumber")
-    public open fun `Test Room`() = runTest {
+    public open fun `Test_Room`() = runTest {
         val driver = createWasmSQLiteDriver()
-        val db = databaseFactory(driver, this.backgroundScope.coroutineContext)
-        val userDao = db.userDao()
+        val database = databaseFactory.create(driver, "test.db", this.backgroundScope.coroutineContext)
+        try {
+            testRoom(database)
+        } finally {
+            database.close()
+        }
+    }
+
+    @Test
+    public open fun `Test_In_Memory_Room`() = runTest {
+        val driver = createWasmSQLiteDriver(tempDir = File("/nonexistent"))
+        val database = databaseFactory.create(driver, null, this.backgroundScope.coroutineContext)
+        try {
+            testRoom(database)
+        } finally {
+            database.close()
+        }
+    }
+
+    private suspend fun testRoom(database: UserDatabaseSuspend) {
+        val userDao = database.userDao()
 
         val user101 = User(101, "User 101 First Name", "User 101 Last Name")
         userDao.insertAll(
@@ -45,7 +66,13 @@ abstract class AbstractBasicRoomTest<E : SqliteEmbedderConfig>(
         val users: List<User> = userDao.getAll()
 
         logger.i { "users by ids: $usersByIds; user by name: $userByName; users: $users;" }
+    }
 
-        db.close()
+    public fun interface UserDatabaseFactory {
+        fun create(
+            driver: SQLiteDriver,
+            databaseName: String?,
+            queryCoroutineContext: CoroutineContext,
+        ): UserDatabaseSuspend
     }
 }

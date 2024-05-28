@@ -27,5 +27,6 @@ public abstract class AbstractSqliteDriverTest<E : SqliteEmbedderConfig>(
 
     public open fun createWasmSQLiteDriver(
         sqlite3Binary: WasmSqliteConfiguration = driverCreator.defaultSqliteBinary,
+        tempDir: File = this.tempDir,
     ): SQLiteDriver = driverCreator.create(tempDir, dbLogger, sqlite3Binary)
 }
