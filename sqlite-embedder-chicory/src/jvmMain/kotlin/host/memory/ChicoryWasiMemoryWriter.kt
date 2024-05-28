@@ -7,6 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.chicory.host.memory
 
 import com.dylibso.chicory.runtime.Memory
+import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.trySetAccessibleCompat
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WasiMemoryWriter
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystemByteBuffer
@@ -47,7 +48,7 @@ internal class ChicoryWasiMemoryWriter private constructor(
         ): ChicoryWasiMemoryWriter? {
             try {
                 val bufferField = Memory::class.java.getDeclaredField("buffer")
-                if (!bufferField.trySetAccessible()) {
+                if (!bufferField.trySetAccessibleCompat()) {
                     return null
                 }
                 if (bufferField.get(memory) !is ByteBuffer) {

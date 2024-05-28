@@ -13,6 +13,7 @@ import java.io.File
 
 public interface TestSqliteDriverCreator {
     public val defaultSqliteBinary: WasmSqliteConfiguration
+
     public fun create(
         dstDir: File,
         dbLogger: Logger,

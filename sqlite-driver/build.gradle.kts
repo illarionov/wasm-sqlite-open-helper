@@ -49,6 +49,12 @@ android {
             isIncludeAndroidResources = true
         }
     }
+    packaging {
+        resources.excludes += listOf(
+            "META-INF/LICENSE.md",
+            "META-INF/LICENSE-notice.md",
+        )
+    }
 }
 
 kotlin {
@@ -62,6 +68,21 @@ kotlin {
         }
         androidUnitTest.dependencies {
             implementation(libs.androidx.test.core)
+        }
+        androidInstrumentedTest.dependencies {
+            implementation(libs.androidx.room.runtime)
+            implementation(libs.androidx.room.testing)
+            implementation(libs.androidx.test.core)
+            implementation(libs.androidx.test.runner)
+            implementation(libs.androidx.test.rules)
+            implementation(libs.kotlinx.coroutines.test)
+            implementation(projects.native.sqliteAndroidWasmEmscriptenIcu346)
+            implementation(projects.native.sqliteAndroidWasmEmscriptenIcuMtPthread346)
+            implementation(projects.sqliteEmbedderChasm)
+            implementation(projects.sqliteEmbedderChicory)
+            implementation(projects.sqliteEmbedderGraalvm)
+            implementation(projects.sqliteTests.sqliteDriverBaseTests)
+            implementation(projects.sqliteTests.sqliteTestUtils)
         }
 
         commonMain.dependencies {
@@ -111,11 +132,6 @@ kotlin {
         androidUnitTest.get().dependsOn(jvmAndAndroidTest)
         jvmTest.get().dependsOn(jvmAndAndroidTest)
     }
-}
-
-dependencies {
-    testAnnotationProcessor(libs.androidx.room.compiler)
-    ksp(libs.androidx.room.compiler)
 }
 
 tasks.withType<Test> {
