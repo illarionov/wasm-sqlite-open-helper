@@ -10,32 +10,30 @@ import androidx.sqlite.SQLiteConnection
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import co.touchlab.kermit.Severity
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import ru.pixnews.wasm.sqlite.driver.test.base.AbstractSqliteDriverTest
-import ru.pixnews.wasm.sqlite.driver.test.base.TestSqliteDriverCreator
 import ru.pixnews.wasm.sqlite.driver.test.base.util.execSQL
 import ru.pixnews.wasm.sqlite.driver.test.base.util.queryForLong
 import ru.pixnews.wasm.sqlite.driver.test.base.util.queryForString
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 abstract class AbstractIcuCollationTest<E : SqliteEmbedderConfig>(
-    driverCreator: TestSqliteDriverCreator,
+    driverCreator: TestSqliteDriverFactory,
     dbLoggerSeverity: Severity = Severity.Info,
 ) : AbstractSqliteDriverTest<E>(
-    driverCreator = driverCreator,
+    driverFactory = driverCreator,
     dbLoggerSeverity = dbLoggerSeverity,
 ) {
     lateinit var connection: SQLiteConnection
 
-    @BeforeEach
+    @BeforeTest
     fun setup() {
         val driver = createWasmSQLiteDriver()
         connection = driver.open("test.db")
     }
 
-    @AfterEach
+    @AfterTest
     fun destroy() {
         connection.close()
     }

@@ -11,21 +11,18 @@ package ru.pixnews.wasm.sqlite.driver.test.base.tests
 import androidx.sqlite.SQLiteDriver
 import co.touchlab.kermit.Severity
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.Test
-import ru.pixnews.wasm.sqlite.driver.test.base.AbstractSqliteDriverTest
-import ru.pixnews.wasm.sqlite.driver.test.base.TestSqliteDriverCreator
 import ru.pixnews.wasm.sqlite.driver.test.base.room.User
 import ru.pixnews.wasm.sqlite.driver.test.base.room.UserDatabaseSuspend
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
-import java.io.File
 import kotlin.coroutines.CoroutineContext
+import kotlin.test.Test
 
 abstract class AbstractBasicRoomTest<E : SqliteEmbedderConfig>(
-    driverCreator: TestSqliteDriverCreator,
+    driverCreator: TestSqliteDriverFactory,
     val databaseFactory: UserDatabaseFactory,
     dbLoggerSeverity: Severity = Severity.Info,
 ) : AbstractSqliteDriverTest<E>(
-    driverCreator = driverCreator,
+    driverFactory = driverCreator,
     dbLoggerSeverity = dbLoggerSeverity,
 ) {
     @Test
@@ -41,7 +38,7 @@ abstract class AbstractBasicRoomTest<E : SqliteEmbedderConfig>(
 
     @Test
     public open fun Test_In_Memory_Room() = runTest {
-        val driver = createWasmSQLiteDriver(tempDir = File("/nonexistent"))
+        val driver = createWasmSQLiteDriver(tempDir = "/nonexistent")
         val database = databaseFactory.create(driver, null, this.backgroundScope.coroutineContext)
         try {
             testRoom(database)

@@ -12,11 +12,6 @@ import assertk.assertions.isBetween
 import assertk.assertions.isEqualTo
 import assertk.assertions.startsWith
 import co.touchlab.kermit.Severity
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import ru.pixnews.wasm.sqlite.driver.test.base.AbstractSqliteDriverTest
-import ru.pixnews.wasm.sqlite.driver.test.base.TestSqliteDriverCreator
 import ru.pixnews.wasm.sqlite.driver.test.base.util.queryForLong
 import ru.pixnews.wasm.sqlite.driver.test.base.util.queryForString
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
@@ -24,24 +19,27 @@ import java.text.SimpleDateFormat
 import java.time.Instant
 import java.util.Date
 import java.util.TimeZone
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.time.Duration.Companion.minutes
 
 abstract class AbstractTimeFunctionsTest<E : SqliteEmbedderConfig>(
-    driverCreator: TestSqliteDriverCreator,
+    driverCreator: TestSqliteDriverFactory,
     dbLoggerSeverity: Severity = Severity.Info,
 ) : AbstractSqliteDriverTest<E>(
-    driverCreator = driverCreator,
+    driverFactory = driverCreator,
     dbLoggerSeverity = dbLoggerSeverity,
 ) {
     lateinit var connection: SQLiteConnection
 
-    @BeforeEach
+    @BeforeTest
     fun setup() {
         val driver = createWasmSQLiteDriver()
         connection = driver.open("test.db")
     }
 
-    @AfterEach
+    @AfterTest
     fun destroy() {
         connection.close()
     }

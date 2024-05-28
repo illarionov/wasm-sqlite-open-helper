@@ -14,7 +14,7 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import java.io.File
 
 internal fun <E : SqliteEmbedderConfig> WasmSqliteDriverConfigBlock<E>.defaultTestSqliteDriverConfig(
-    dstDir: File,
+    dstDir: String,
     dbLogger: Logger,
 ) {
     pathResolver = DatabasePathResolver { name -> File(dstDir, name).path }

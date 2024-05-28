@@ -4,18 +4,17 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.test.base
+package ru.pixnews.wasm.sqlite.driver.test.base.tests
 
 import androidx.sqlite.SQLiteDriver
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
-import java.io.File
 
-public interface TestSqliteDriverCreator {
+public interface TestSqliteDriverFactory {
     public val defaultSqliteBinary: WasmSqliteConfiguration
 
     public fun create(
-        dstDir: File,
+        dstDir: String,
         dbLogger: Logger,
         sqlite3Binary: WasmSqliteConfiguration,
     ): SQLiteDriver

@@ -11,20 +11,17 @@ import assertk.assertThat
 import assertk.assertions.containsExactly
 import co.touchlab.kermit.Severity
 import org.junit.jupiter.api.Test
-import ru.pixnews.wasm.sqlite.driver.test.base.AbstractSqliteDriverTest
-import ru.pixnews.wasm.sqlite.driver.test.base.TestSqliteDriverCreator
 import ru.pixnews.wasm.sqlite.driver.test.base.util.execSQL
 import ru.pixnews.wasm.sqlite.driver.test.base.util.queryForString
 import ru.pixnews.wasm.sqlite.driver.test.base.util.queryTable
 import ru.pixnews.wasm.sqlite.driver.test.base.util.use
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
-import java.io.File
 
 public abstract class AbstractBasicSqliteDriverTest<E : SqliteEmbedderConfig>(
-    driverCreator: TestSqliteDriverCreator,
+    driverCreator: TestSqliteDriverFactory,
     dbLoggerSeverity: Severity = Severity.Info,
 ) : AbstractSqliteDriverTest<E>(
-    driverCreator = driverCreator,
+    driverFactory = driverCreator,
     dbLoggerSeverity = dbLoggerSeverity,
 ) {
     @Test
@@ -36,7 +33,7 @@ public abstract class AbstractBasicSqliteDriverTest<E : SqliteEmbedderConfig>(
 
     @Test
     public open fun Driver_initialization_with_in_memory_database_should_work() {
-        val driver = createWasmSQLiteDriver(tempDir = File("/nonexistent"))
+        val driver = createWasmSQLiteDriver(tempDir = "/nonexistent")
         val connection = driver.open(":memory:")
         connection.use(::testDb)
     }

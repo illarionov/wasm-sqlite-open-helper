@@ -4,29 +4,24 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.test.base
+package ru.pixnews.wasm.sqlite.driver.test.base.tests
 
 import androidx.sqlite.SQLiteDriver
 import co.touchlab.kermit.Severity
-import co.touchlab.kermit.Severity.Info
-import org.junit.jupiter.api.io.TempDir
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import ru.pixnews.wasm.sqlite.test.utils.KermitLogger
-import java.io.File
 
 public abstract class AbstractSqliteDriverTest<E : SqliteEmbedderConfig>(
-    private val driverCreator: TestSqliteDriverCreator,
-    dbLoggerSeverity: Severity = Info,
+    val driverFactory: TestSqliteDriverFactory,
+    dbLoggerSeverity: Severity = Severity.Info,
 ) {
     protected open val logger: KermitLogger = KermitLogger(this::class.java.simpleName)
     protected open val dbLogger: KermitLogger = KermitLogger(tag = "WasmSQLiteDriver", minSeverity = dbLoggerSeverity)
-
-    @TempDir
-    protected lateinit var tempDir: File
+    abstract val tempDir: String
 
     public open fun createWasmSQLiteDriver(
-        sqlite3Binary: WasmSqliteConfiguration = driverCreator.defaultSqliteBinary,
-        tempDir: File = this.tempDir,
-    ): SQLiteDriver = driverCreator.create(tempDir, dbLogger, sqlite3Binary)
+        sqlite3Binary: WasmSqliteConfiguration = driverFactory.defaultSqliteBinary,
+        tempDir: String = this.tempDir,
+    ): SQLiteDriver = driverFactory.create(tempDir, dbLogger, sqlite3Binary)
 }
