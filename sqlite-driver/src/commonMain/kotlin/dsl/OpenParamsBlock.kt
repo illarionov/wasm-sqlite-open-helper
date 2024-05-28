@@ -10,8 +10,6 @@ import ru.pixnews.wasm.sqlite.driver.dsl.OpenFlags.ANDROID_FUNCTIONS
 import ru.pixnews.wasm.sqlite.driver.dsl.OpenFlags.LOCALIZED_COLLATORS
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDatabaseJournalMode
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDatabaseSyncMode
 
 /**
  * Parameters used when opening the database
@@ -47,25 +45,6 @@ public class OpenParamsBlock {
      */
     public var lookasideSlotCount: Int = -1
         private set
-
-    /**
-     * Sets the journal mode for databases associated with the current database connection
-     * The journalMode for an in-memory database is either MEMORY or OFF.
-     *
-     * Default value: Not set. TRUNCATE mode will be used if WAL is not eanbled.
-     *
-     * See: [https://sqlite.org/pragma.html#pragma_journal_mode](https://sqlite.org/pragma.html#pragma_journal_mode)
-     */
-    public var journalMode: SqliteDatabaseJournalMode? = null
-
-    /**
-     * Sets the filesystem sync mode.
-     *
-     * Default value: not set. Sync mode will be NORMAL if WAL is enabled, and FULL otherwise.
-     *
-     * See: [https://sqlite.org/pragma.html#pragma_synchronous](https://sqlite.org/pragma.html#pragma_synchronous)
-     */
-    public var syncMode: SqliteDatabaseSyncMode? = null
 
     /**
      * Configures [lookaside memory allocator](https://sqlite.org/malloc.html#lookaside)

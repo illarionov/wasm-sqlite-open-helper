@@ -26,17 +26,13 @@ public final class ru/pixnews/wasm/sqlite/driver/dsl/OpenFlags : java/lang/Enum 
 
 public final class ru/pixnews/wasm/sqlite/driver/dsl/OpenParamsBlock {
 	public fun <init> ()V
-	public final fun getJournalMode ()Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteDatabaseJournalMode;
 	public final fun getLocale-i7jP64M ()Ljava/lang/String;
 	public final fun getLookasideSlotCount ()I
 	public final fun getLookasideSlotSize ()I
 	public final fun getOpenFlags ()Ljava/util/Set;
-	public final fun getSyncMode ()Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteDatabaseSyncMode;
-	public final fun setJournalMode (Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteDatabaseJournalMode;)V
 	public final fun setLocale-CdkJ4j0 (Ljava/lang/String;)V
 	public final fun setLookasideConfig (II)Lru/pixnews/wasm/sqlite/driver/dsl/OpenParamsBlock;
 	public final fun setOpenFlags (Ljava/util/Set;)V
-	public final fun setSyncMode (Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteDatabaseSyncMode;)V
 }
 
 public final class ru/pixnews/wasm/sqlite/driver/dsl/WasmSqliteDriverConfigBlock {
