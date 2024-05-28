@@ -11,11 +11,9 @@ import androidx.sqlite.db.SupportSQLiteOpenHelper
 import androidx.sqlite.db.SupportSQLiteOpenHelper.Configuration
 import co.touchlab.kermit.Severity
 import co.touchlab.kermit.Severity.Info
-import org.junit.jupiter.api.io.TempDir
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import ru.pixnews.wasm.sqlite.test.utils.KermitLogger
-import java.io.File
 
 abstract class AbstractOpenHelperFactoryTest<E : SqliteEmbedderConfig>(
     private val factoryCreator: TestOpenHelperFactoryCreator,
@@ -23,9 +21,7 @@ abstract class AbstractOpenHelperFactoryTest<E : SqliteEmbedderConfig>(
 ) {
     protected open val logger = KermitLogger(this::class.java.simpleName)
     protected open val dbLogger = KermitLogger(tag = "WSOH", minSeverity = dbLoggerSeverity)
-
-    @TempDir
-    protected lateinit var tempDir: File
+    abstract val tempDir: String
 
     open fun createWasmSQLiteOpenHelperFactory(
         sqlite3Binary: WasmSqliteConfiguration = factoryCreator.defaultSqliteBinary,

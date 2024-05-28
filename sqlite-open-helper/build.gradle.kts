@@ -46,7 +46,7 @@ android {
             isReturnDefaultValues = false
             isIncludeAndroidResources = true
             all { testTask ->
-                testTask.useJUnitPlatform()
+                testTask.useJUnit()
                 testTask.maxHeapSize = "2G"
                 testTask.testLogging {
                     events = setOf(FAILED, PASSED, SKIPPED, STANDARD_ERROR, STANDARD_OUT)
@@ -68,13 +68,12 @@ kotlin {
             implementation(libs.androidx.core)
         }
         androidUnitTest.dependencies {
+            implementation(kotlin("test-junit"))
             implementation(libs.androidx.test.core)
             implementation(libs.androidx.room.runtime26)
             implementation(libs.androidx.room.testing26)
             implementation(libs.androidx.test.core)
             implementation(libs.kermit.jvm)
-            implementation(libs.junit.jupiter.api)
-            implementation(libs.junit.jupiter.params)
 
             implementation(projects.sqliteTests.sqliteOpenHelperBaseTests)
             implementation(projects.sqliteEmbedderGraalvm)
@@ -82,8 +81,6 @@ kotlin {
             implementation(projects.sqliteEmbedderChicory)
             implementation(projects.native.sqliteAndroidWasmEmscriptenIcu346)
             implementation(projects.native.sqliteAndroidWasmEmscriptenIcuMtPthread346)
-
-            runtimeOnly(libs.junit.jupiter.engine)
         }
 
         commonMain.dependencies {

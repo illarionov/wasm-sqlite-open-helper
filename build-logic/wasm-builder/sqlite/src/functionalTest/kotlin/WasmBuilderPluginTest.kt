@@ -9,22 +9,24 @@ package ru.pixnews.wasm.builder.sqlite
 import assertk.assertThat
 import assertk.assertions.contains
 import org.gradle.testkit.runner.GradleRunner
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
+import org.junit.rules.TemporaryFolder
 import java.nio.file.Path
 import kotlin.io.path.writeText
 
 class WasmBuilderPluginTest {
-    @TempDir
-    lateinit var testProjectDir: Path
+    @Rule
+    @JvmField
+    var testProjectDir = TemporaryFolder()
     private lateinit var settingsFile: Path
     private lateinit var buildFile: Path
 
-    @BeforeEach
+    @Before
     fun setup() {
-        settingsFile = testProjectDir.resolve("settings.gradle.kts")
-        buildFile = testProjectDir.resolve("build.gradle.kts")
+        settingsFile = testProjectDir.root.toPath().resolve("settings.gradle.kts")
+        buildFile = testProjectDir.root.toPath().resolve("build.gradle.kts")
     }
 
     @Test
@@ -48,7 +50,7 @@ class WasmBuilderPluginTest {
                 "--stacktrace",
                 "assemble",
             )
-            withProjectDir(testProjectDir.toFile())
+            withProjectDir(testProjectDir.root)
         }
         val result = runner.build()
         assertThat(result.output).contains("BUILD SUCCESSFUL")

@@ -24,15 +24,17 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            api(kotlin("test-common"))
+            api(kotlin("test-annotations-common"))
             api(projects.sqliteCommon)
             api(projects.sqliteTests.sqliteTestUtils)
             implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.kermit)
         }
         androidMain.dependencies {
-            api(libs.junit.jupiter.api)
-            implementation(libs.kermit.jvm)
             api(libs.androidx.room.runtime26)
             api(libs.androidx.room.testing26)
+            compileOnly(kotlin("test-junit5"))
         }
     }
 }

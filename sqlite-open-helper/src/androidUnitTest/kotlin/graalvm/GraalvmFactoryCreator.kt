@@ -14,14 +14,13 @@ import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperFactory
 import ru.pixnews.wasm.sqlite.open.helper.base.util.defaultTestHelperConfig
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.test.base.TestOpenHelperFactoryCreator
-import java.io.File
 
 internal class GraalvmFactoryCreator(
     private val initialGraalvmEngine: Engine? = WASM_GRAALVM_ENGINE,
     override val defaultSqliteBinary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcu346,
 ) : TestOpenHelperFactoryCreator {
     override fun create(
-        dstDir: File,
+        dstDir: String,
         dbLogger: Logger,
         sqlite3Binary: WasmSqliteConfiguration,
     ): SupportSQLiteOpenHelper.Factory {

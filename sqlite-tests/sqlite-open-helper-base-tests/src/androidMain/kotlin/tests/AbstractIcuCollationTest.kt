@@ -12,13 +12,13 @@ import assertk.assertions.containsExactly
 import assertk.assertions.isEqualTo
 import co.touchlab.kermit.Severity
 import co.touchlab.kermit.Severity.Info
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import ru.pixnews.wasm.sqlite.open.helper.test.base.AbstractOpenHelperFactoryTest
 import ru.pixnews.wasm.sqlite.open.helper.test.base.TestOpenHelperFactoryCreator
 import ru.pixnews.wasm.sqlite.open.helper.test.base.util.readValues
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 abstract class AbstractIcuCollationTest<E : SqliteEmbedderConfig>(
     factoryCreator: TestOpenHelperFactoryCreator,
@@ -29,13 +29,13 @@ abstract class AbstractIcuCollationTest<E : SqliteEmbedderConfig>(
 ) {
     lateinit var database: SupportSQLiteDatabase
 
-    @BeforeEach
+    @BeforeTest
     fun setup() {
         val helper = createWasmSQLiteOpenHelper()
         database = helper.writableDatabase
     }
 
-    @AfterEach
+    @AfterTest
     fun destroy() {
         database.close()
     }

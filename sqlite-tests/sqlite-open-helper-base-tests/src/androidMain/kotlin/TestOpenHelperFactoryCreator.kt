@@ -9,12 +9,11 @@ package ru.pixnews.wasm.sqlite.open.helper.test.base
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
-import java.io.File
 
 interface TestOpenHelperFactoryCreator {
     public val defaultSqliteBinary: WasmSqliteConfiguration
     public fun create(
-        dstDir: File,
+        dstDir: String,
         dbLogger: Logger,
         sqlite3Binary: WasmSqliteConfiguration,
     ): SupportSQLiteOpenHelper.Factory

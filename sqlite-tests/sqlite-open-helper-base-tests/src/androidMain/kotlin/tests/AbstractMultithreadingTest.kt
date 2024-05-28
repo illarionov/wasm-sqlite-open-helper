@@ -12,12 +12,12 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isTrue
 import co.touchlab.kermit.Severity
 import co.touchlab.kermit.Severity.Info
-import org.junit.jupiter.api.Test
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import ru.pixnews.wasm.sqlite.open.helper.test.base.AbstractOpenHelperFactoryTest
 import ru.pixnews.wasm.sqlite.open.helper.test.base.TestOpenHelperFactoryCreator
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
+import kotlin.test.Test
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.TimedValue
 import kotlin.time.measureTimedValue

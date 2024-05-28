@@ -11,12 +11,12 @@ import androidx.room.Room
 import androidx.sqlite.db.SupportSQLiteDatabase
 import co.touchlab.kermit.Severity
 import co.touchlab.kermit.Severity.Info
-import org.junit.jupiter.api.Test
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import ru.pixnews.wasm.sqlite.open.helper.test.base.AbstractOpenHelperFactoryTest
 import ru.pixnews.wasm.sqlite.open.helper.test.base.TestOpenHelperFactoryCreator
 import ru.pixnews.wasm.sqlite.open.helper.test.base.room.User
 import ru.pixnews.wasm.sqlite.open.helper.test.base.room.UserDatabaseBlocking
+import kotlin.test.Test
 
 abstract class AbstractCommonFactoryTest<E : SqliteEmbedderConfig>(
     factoryCreator: TestOpenHelperFactoryCreator,
@@ -26,7 +26,7 @@ abstract class AbstractCommonFactoryTest<E : SqliteEmbedderConfig>(
     dbLoggerSeverity = dbLoggerSeverity,
 ) {
     @Test
-    open fun `Factory_initialization_should_work`() {
+    open fun Factory_initialization_should_work() {
         val helper = createWasmSQLiteOpenHelper()
         helper.writableDatabase.use { db: SupportSQLiteDatabase ->
             logger.i { "db: $db; version: ${db.version}" }
@@ -47,7 +47,7 @@ abstract class AbstractCommonFactoryTest<E : SqliteEmbedderConfig>(
 
     @Test
     @Suppress("MagicNumber")
-    open fun `Test_Room`() {
+    open fun Test_Room() {
         val helperFactory = createWasmSQLiteOpenHelperFactory()
         val mockContext = ContextWrapper(null)
         val db: UserDatabaseBlocking = Room.databaseBuilder(
