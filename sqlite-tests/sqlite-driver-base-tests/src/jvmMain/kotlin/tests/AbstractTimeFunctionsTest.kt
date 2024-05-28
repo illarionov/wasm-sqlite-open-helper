@@ -47,7 +47,7 @@ abstract class AbstractTimeFunctionsTest<E : SqliteEmbedderConfig>(
     }
 
     @Test
-    fun `date() should work`() {
+    fun date_should_work() {
         val dateString = connection.queryForString("""SELECT date()""")
 
         assertThat(dateString).isEqualTo(
@@ -58,7 +58,7 @@ abstract class AbstractTimeFunctionsTest<E : SqliteEmbedderConfig>(
     }
 
     @Test
-    fun `unixepoch() should work`() {
+    fun unixepoch_should_work() {
         val timestampNow = Instant.now().epochSecond
         val unixEpoch = connection.queryForLong("""SELECT unixepoch()""") ?: error("Null epoch")
 
@@ -66,7 +66,7 @@ abstract class AbstractTimeFunctionsTest<E : SqliteEmbedderConfig>(
     }
 
     @Test
-    fun `localtime modifier should work`() {
+    fun localtime_modifier_should_work() {
         val localtimeString = connection.queryForString(
             """SELECT datetime(1092941466, 'unixepoch', 'localtime')""",
         ) ?: ""

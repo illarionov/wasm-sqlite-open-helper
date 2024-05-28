@@ -41,21 +41,21 @@ abstract class AbstractIcuCollationTest<E : SqliteEmbedderConfig>(
     }
 
     @Test
-    fun `Icu uppercase() should work`() {
+    fun Icu_uppercase_should_work() {
         val upperUser = connection.queryForString("""SELECT upper('пользователь 1', 'ru_RU')""")
 
         assertThat(upperUser).isEqualTo("ПОЛЬЗОВАТЕЛЬ 1")
     }
 
     @Test
-    fun `Icu lowercase() should work`() {
+    fun Icu_lowercase_should_work() {
         val lowerUser = connection.queryForString("""SELECT lower('ISPANAK', 'tr_tr')""")
 
         assertThat(lowerUser).isEqualTo("ıspanak")
     }
 
     @Test
-    fun `Case-insensitive LIKE should work`() {
+    fun Case_insensitive_LIKE_should_work() {
         val caseInsensitiveLike = connection.queryForLong(
             """SELECT 'тамга сезимсиз текст издөө' LIKE '%ЕЗИМС%'""",
         )
@@ -63,7 +63,7 @@ abstract class AbstractIcuCollationTest<E : SqliteEmbedderConfig>(
     }
 
     @Test
-    fun `Icu Collation should work`() {
+    fun Icu_Collation_should_work() {
         connection.execSQL("SELECT icu_load_collation('tr_TR', 'turkish')")
         connection.execSQL("""CREATE TABLE Penpal(name TEXT COLLATE turkish)""".trimIndent())
         connection.execSQL(
