@@ -6,8 +6,16 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chicory
 
+import org.junit.Rule
+import org.junit.rules.TemporaryFolder
 import ru.pixnews.wasm.sqlite.open.helper.test.base.tests.AbstractCommonFactoryTest
 
 class ChicoryBaseFactoryTest : AbstractCommonFactoryTest<ChicorySqliteEmbedderConfig>(
     factoryCreator = ChicoryFactoryCreator,
-)
+) {
+    @JvmField
+    @Rule
+    val tempFolder: TemporaryFolder = TemporaryFolder()
+
+    override val tempDir: String get() = tempFolder.root.path
+}

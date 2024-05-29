@@ -23,8 +23,6 @@ diktat = "2.0.0"
 dokka = "1.9.20"
 graalvm = "24.0.1"
 gradle-maven-publish-plugin = "0.28.0"
-junit-platform-launcher = "1.10.2"
-junit5 = "5.10.2"
 kotlin = "2.0.0"
 kotlinx-coroutines = "1.8.1"
 kotlinx-binary-compatibility-validator = "0.14.0"
@@ -65,13 +63,6 @@ graalvm-polyglot-wasm = { group = "org.graalvm.polyglot", name = "wasm-community
 graalvm-truffle-api = { group = "org.graalvm.truffle", name = "truffle-api", version.ref = "graalvm" }
 graalvm-truffle-dsl-processor = { group = "org.graalvm.truffle", name = "truffle-dsl-processor", version.ref = "graalvm" }
 graalvm-wasm-language = { group = "org.graalvm.wasm", name = "wasm-language", version.ref = "graalvm" }
-junit-bom = { group = "org.junit", name = "junit-bom", version.ref = "junit5" }
-junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junit5" }
-junit-jupiter-api = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit5" }
-junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit5" }
-junit-jupiter-params = { group = "org.junit.jupiter", name = "junit-jupiter-params", version.ref = "junit5" }
-junit-jupiter-vintage-engine = { group = "org.junit.vintage", name = "junit-vintage-engine", version.ref = "junit5" }
-junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher", version.ref = "junit-platform-launcher" }
 kermit = { group = "co.touchlab", name = "kermit", version.ref = "kermit" }
 kermit-jvm = { group = "co.touchlab", name = "kermit-jvm", version.ref = "kermit" }
 kotlin-bom = { group = "org.jetbrains.kotlin", name = "kotlin-bom", version.ref = "kotlin" }

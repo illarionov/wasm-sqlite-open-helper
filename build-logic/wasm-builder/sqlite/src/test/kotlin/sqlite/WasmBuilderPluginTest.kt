@@ -8,16 +8,13 @@ package ru.pixnews.wasm.builder.sqlite
 
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertDoesNotThrow
+import org.junit.Test
 
 class WasmBuilderPluginTest {
-    @Test
+    @Test(expected = Test.None::class)
     fun `plugin should apply successfully`() {
         val project = ProjectBuilder.builder().build()
         project.plugins.apply("ru.pixnews.wasm.builder.sqlite.plugin")
-        assertDoesNotThrow {
-            (project as? ProjectInternal)?.evaluate()
-        }
+        (project as? ProjectInternal)?.evaluate()
     }
 }

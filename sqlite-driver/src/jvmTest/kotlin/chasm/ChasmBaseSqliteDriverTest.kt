@@ -6,9 +6,17 @@
 
 package ru.pixnews.wasm.sqlite.driver.chasm
 
+import org.junit.Rule
+import org.junit.rules.TemporaryFolder
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractBasicSqliteDriverTest
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ChasmSqliteEmbedderConfig
 
 class ChasmBaseSqliteDriverTest : AbstractBasicSqliteDriverTest<ChasmSqliteEmbedderConfig>(
-    driverCreator = ChasmSqliteDriverCreator,
-)
+    driverCreator = ChasmSqliteDriverFactory,
+) {
+    @JvmField
+    @Rule
+    val tempFolder: TemporaryFolder = TemporaryFolder()
+
+    override val tempDir: String get() = tempFolder.root.path
+}

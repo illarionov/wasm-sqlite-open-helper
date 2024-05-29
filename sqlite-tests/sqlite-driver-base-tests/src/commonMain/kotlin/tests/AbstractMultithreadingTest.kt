@@ -11,9 +11,6 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isTrue
 import co.touchlab.kermit.Severity
-import org.junit.jupiter.api.Test
-import ru.pixnews.wasm.sqlite.driver.test.base.AbstractSqliteDriverTest
-import ru.pixnews.wasm.sqlite.driver.test.base.TestSqliteDriverCreator
 import ru.pixnews.wasm.sqlite.driver.test.base.util.execSQL
 import ru.pixnews.wasm.sqlite.driver.test.base.util.queryForString
 import ru.pixnews.wasm.sqlite.driver.test.base.util.readResult
@@ -21,15 +18,16 @@ import ru.pixnews.wasm.sqlite.driver.test.base.util.use
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
+import kotlin.test.Test
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.TimedValue
 import kotlin.time.measureTimedValue
 
 public abstract class AbstractMultithreadingTest<E : SqliteEmbedderConfig>(
-    driverCreator: TestSqliteDriverCreator,
+    driverCreator: TestSqliteDriverFactory,
     dbLoggerSeverity: Severity = Severity.Info,
 ) : AbstractSqliteDriverTest<E>(
-    driverCreator = driverCreator,
+    driverFactory = driverCreator,
     dbLoggerSeverity = dbLoggerSeverity,
 ) {
     @Test

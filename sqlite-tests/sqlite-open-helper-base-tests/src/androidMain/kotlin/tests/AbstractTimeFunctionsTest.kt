@@ -13,9 +13,6 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.startsWith
 import co.touchlab.kermit.Severity
 import co.touchlab.kermit.Severity.Info
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import ru.pixnews.wasm.sqlite.open.helper.test.base.AbstractOpenHelperFactoryTest
 import ru.pixnews.wasm.sqlite.open.helper.test.base.TestOpenHelperFactoryCreator
@@ -23,6 +20,9 @@ import java.text.SimpleDateFormat
 import java.time.Instant
 import java.util.Date
 import java.util.TimeZone
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.time.Duration.Companion.minutes
 
 abstract class AbstractTimeFunctionsTest<E : SqliteEmbedderConfig>(
@@ -34,13 +34,13 @@ abstract class AbstractTimeFunctionsTest<E : SqliteEmbedderConfig>(
 ) {
     lateinit var database: SupportSQLiteDatabase
 
-    @BeforeEach
+    @BeforeTest
     fun setup() {
         val helper = createWasmSQLiteOpenHelper(dbName = null)
         database = helper.writableDatabase
     }
 
-    @AfterEach
+    @AfterTest
     fun destroy() {
         database.close()
     }

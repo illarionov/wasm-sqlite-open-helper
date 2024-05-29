@@ -6,8 +6,16 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm
 
+import org.junit.Rule
+import org.junit.rules.TemporaryFolder
 import ru.pixnews.wasm.sqlite.open.helper.test.base.tests.AbstractIcuCollationTest
 
 class GraalvmIcuCollationTest : AbstractIcuCollationTest<GraalvmSqliteEmbedderConfig>(
     factoryCreator = GraalvmFactoryCreator(),
-)
+) {
+    @JvmField
+    @Rule
+    val tempFolder: TemporaryFolder = TemporaryFolder()
+
+    override val tempDir: String get() = tempFolder.root.path
+}

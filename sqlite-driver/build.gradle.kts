@@ -113,8 +113,7 @@ kotlin {
         val jvmAndAndroidTest by creating {
             dependsOn(commonTest.get())
             dependencies {
-                implementation(libs.junit.jupiter.api)
-                implementation(libs.junit.jupiter.params)
+                kotlin(("test-junit"))
                 implementation(libs.kermit.jvm)
                 implementation(libs.kotlinx.coroutines.test)
 
@@ -125,8 +124,6 @@ kotlin {
                 implementation(projects.sqliteEmbedderGraalvm)
                 implementation(projects.sqliteTests.sqliteDriverBaseTests)
                 implementation(projects.sqliteTests.sqliteTestUtils)
-
-                runtimeOnly(libs.junit.jupiter.engine)
             }
         }
         androidUnitTest.get().dependsOn(jvmAndAndroidTest)
@@ -135,7 +132,7 @@ kotlin {
 }
 
 tasks.withType<Test> {
-    useJUnitPlatform()
+    useJUnit()
     maxHeapSize = "2G"
     testLogging {
         events = setOf(FAILED, PASSED, SKIPPED, STANDARD_ERROR, STANDARD_OUT)

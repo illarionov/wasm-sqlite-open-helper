@@ -6,9 +6,17 @@
 
 package ru.pixnews.wasm.sqlite.driver.chicory
 
+import org.junit.Rule
+import org.junit.rules.TemporaryFolder
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractBasicSqliteDriverTest
 import ru.pixnews.wasm.sqlite.open.helper.chicory.ChicorySqliteEmbedderConfig
 
 class ChicoryBaseSqliteDriverTest : AbstractBasicSqliteDriverTest<ChicorySqliteEmbedderConfig>(
-    driverCreator = ChicorySqliteDriverCreator,
-)
+    driverCreator = ChicorySqliteDriverFactory,
+) {
+    @JvmField
+    @Rule
+    val tempFolder: TemporaryFolder = TemporaryFolder()
+
+    override val tempDir: String get() = tempFolder.root.path
+}

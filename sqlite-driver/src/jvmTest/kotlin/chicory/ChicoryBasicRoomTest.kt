@@ -6,13 +6,21 @@
 
 package ru.pixnews.wasm.sqlite.driver.chicory
 
-import org.junit.jupiter.api.Disabled
+import org.junit.Ignore
+import org.junit.Rule
+import org.junit.rules.TemporaryFolder
 import ru.pixnews.wasm.sqlite.driver.base.JvmDatabaseFactory
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractBasicRoomTest
 import ru.pixnews.wasm.sqlite.open.helper.chicory.ChicorySqliteEmbedderConfig
 
-@Disabled("TODO: fix")
+@Ignore("TODO: fix")
 class ChicoryBasicRoomTest : AbstractBasicRoomTest<ChicorySqliteEmbedderConfig>(
-    driverCreator = ChicorySqliteDriverCreator,
+    driverCreator = ChicorySqliteDriverFactory,
     databaseFactory = JvmDatabaseFactory,
-)
+) {
+    @JvmField
+    @Rule
+    val tempFolder: TemporaryFolder = TemporaryFolder()
+
+    override val tempDir: String get() = tempFolder.root.path
+}

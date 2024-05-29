@@ -26,31 +26,25 @@ dependencies {
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
-            useJUnitJupiter(libs.versions.junit5)
+            useJUnit()
             targets.all {
                 testTask.configure {
                     configureTestTaskDefaults()
                 }
             }
             dependencies {
-                implementation(platform(libs.junit.bom))
                 implementation(libs.assertk)
-                implementation(libs.junit.jupiter.api)
-                implementation(libs.junit.jupiter.params)
             }
         }
         register<JvmTestSuite>("functionalTest") {
             testType = "functional-test"
-            useJUnitJupiter(libs.versions.junit5)
+            useJUnit()
 
             dependencies {
                 implementation(gradleApi())
                 implementation(gradleTestKit())
                 implementation(libs.assertk)
                 implementation(libs.assertk)
-                implementation(libs.junit.jupiter.api)
-                implementation(libs.junit.jupiter.params)
-                implementation(platform(libs.junit.bom))
                 implementation(project())
             }
 

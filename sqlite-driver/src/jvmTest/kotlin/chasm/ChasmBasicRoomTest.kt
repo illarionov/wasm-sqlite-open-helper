@@ -6,13 +6,21 @@
 
 package ru.pixnews.wasm.sqlite.driver.chasm
 
-import org.junit.jupiter.api.Disabled
+import org.junit.Ignore
+import org.junit.Rule
+import org.junit.rules.TemporaryFolder
 import ru.pixnews.wasm.sqlite.driver.base.JvmDatabaseFactory
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractBasicRoomTest
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ChasmSqliteEmbedderConfig
 
-@Disabled("TODO: fix")
+@Ignore("TODO: fix")
 class ChasmBasicRoomTest : AbstractBasicRoomTest<ChasmSqliteEmbedderConfig>(
-    driverCreator = ChasmSqliteDriverCreator,
+    driverCreator = ChasmSqliteDriverFactory,
     databaseFactory = JvmDatabaseFactory,
-)
+) {
+    @JvmField
+    @Rule
+    val tempFolder: TemporaryFolder = TemporaryFolder()
+
+    override val tempDir: String get() = tempFolder.root.path
+}

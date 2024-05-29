@@ -6,10 +6,18 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chasm
 
-import org.junit.jupiter.api.Disabled
+import org.junit.Ignore
+import org.junit.Rule
+import org.junit.rules.TemporaryFolder
 import ru.pixnews.wasm.sqlite.open.helper.test.base.tests.AbstractMultithreadingTest
 
-@Disabled("not applicable")
+@Ignore("not applicable")
 class ChasmMultithreadingTest : AbstractMultithreadingTest<ChasmSqliteEmbedderConfig>(
     factoryCreator = ChasmFactoryCreator,
-)
+) {
+    @JvmField
+    @Rule
+    val tempFolder: TemporaryFolder = TemporaryFolder()
+
+    override val tempDir: String get() = tempFolder.root.path
+}

@@ -6,10 +6,18 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chicory
 
-import org.junit.jupiter.api.Disabled
+import org.junit.Ignore
+import org.junit.Rule
+import org.junit.rules.TemporaryFolder
 import ru.pixnews.wasm.sqlite.open.helper.test.base.tests.AbstractMultithreadingTest
 
-@Disabled("not applicable")
+@Ignore("not applicable")
 class ChicoryMultithreadingTest : AbstractMultithreadingTest<ChicorySqliteEmbedderConfig>(
     factoryCreator = ChicoryFactoryCreator,
-)
+) {
+    @JvmField
+    @Rule
+    val tempFolder: TemporaryFolder = TemporaryFolder()
+
+    override val tempDir: String get() = tempFolder.root.path
+}

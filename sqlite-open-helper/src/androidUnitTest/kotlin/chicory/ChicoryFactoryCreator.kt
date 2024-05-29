@@ -13,12 +13,11 @@ import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperFactory
 import ru.pixnews.wasm.sqlite.open.helper.base.util.defaultTestHelperConfig
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.test.base.TestOpenHelperFactoryCreator
-import java.io.File
 
 object ChicoryFactoryCreator : TestOpenHelperFactoryCreator {
     override val defaultSqliteBinary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcu346
     override fun create(
-        dstDir: File,
+        dstDir: String,
         dbLogger: Logger,
         sqlite3Binary: WasmSqliteConfiguration,
     ): SupportSQLiteOpenHelper.Factory {

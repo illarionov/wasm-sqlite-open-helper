@@ -19,6 +19,8 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            api(kotlin("test-common"))
+            api(kotlin("test-annotations-common"))
             api(libs.androidx.sqlite.sqlite)
             api(projects.sqliteCommon)
             api(projects.sqliteTests.sqliteTestUtils)
@@ -27,7 +29,7 @@ kotlin {
             implementation(libs.kotlinx.coroutines.test)
         }
         jvmMain.dependencies {
-            api(libs.junit.jupiter.api)
+            compileOnly(kotlin("test-junit5"))
         }
     }
 }
