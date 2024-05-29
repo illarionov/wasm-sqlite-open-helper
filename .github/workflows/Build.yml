@@ -111,16 +111,7 @@ jobs:
           script: >
             ./gradlew
             -Pkotlin.daemon.jvmargs="${{ env.KOTLIN_DAEMON_JVMARGS }}"
-            connectedCheck
-
-      - name: Run instrumented tests
-        run: >
-          ./gradlew
-          -Pkotlin.daemon.jvmargs="${{ env.KOTLIN_DAEMON_JVMARGS }}"
-          -Pandroid.testoptions.manageddevices.emulator.gpu=swiftshader_indirect
-          -Dorg.gradle.workers.max=1
-          pixel2api30DebugAndroidTest
-          --scan --info --continue
+            connectedCheck --scan --continue
 
       - name: Publish test results
         uses: EnricoMi/publish-unit-test-result-action@v2
