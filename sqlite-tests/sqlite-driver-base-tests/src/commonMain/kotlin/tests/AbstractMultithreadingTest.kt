@@ -31,7 +31,7 @@ public abstract class AbstractMultithreadingTest<E : SqliteEmbedderConfig>(
     dbLoggerSeverity = dbLoggerSeverity,
 ) {
     @Test
-    public fun Factory_from_multiple_threads_should_work() {
+    public open fun Factory_from_multiple_threads_should_work() {
         val driver = createWasmSQLiteDriver()
 
         driver.open("test.db").use { db ->
@@ -60,7 +60,7 @@ public abstract class AbstractMultithreadingTest<E : SqliteEmbedderConfig>(
 
     @Test
     @Suppress("MagicNumber")
-    public fun Factory_from_multiple_threads_with_active_transaction_should_work() {
+    public open fun Factory_from_multiple_threads_with_active_transaction_should_work() {
         val driver = createWasmSQLiteDriver()
 
         driver.open("test.db").use { db ->

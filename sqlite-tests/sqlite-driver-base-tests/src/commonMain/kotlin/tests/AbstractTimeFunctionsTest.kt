@@ -34,18 +34,20 @@ public abstract class AbstractTimeFunctionsTest<E : SqliteEmbedderConfig>(
     lateinit var connection: SQLiteConnection
 
     @BeforeTest
-    fun setup() {
+    open fun setup() {
         val driver = createWasmSQLiteDriver()
         connection = driver.open("test.db")
     }
 
     @AfterTest
-    fun destroy() {
-        connection.close()
+    open fun destroy() {
+        if (::connection.isInitialized) {
+            connection.close()
+        }
     }
 
     @Test
-    fun date_should_work() {
+    open fun date_should_work() {
         val dateString = connection.queryForString("""SELECT date()""")
 
         assertThat(dateString).isEqualTo(
@@ -56,7 +58,7 @@ public abstract class AbstractTimeFunctionsTest<E : SqliteEmbedderConfig>(
     }
 
     @Test
-    fun unixepoch_should_work() {
+    open fun unixepoch_should_work() {
         val timestampNow = Instant.now().epochSecond
         val unixEpoch = connection.queryForLong("""SELECT unixepoch()""") ?: error("Null epoch")
 
@@ -64,7 +66,7 @@ public abstract class AbstractTimeFunctionsTest<E : SqliteEmbedderConfig>(
     }
 
     @Test
-    fun localtime_modifier_should_work() {
+    open fun localtime_modifier_should_work() {
         val localtimeString = connection.queryForString(
             """SELECT datetime(1092941466, 'unixepoch', 'localtime')""",
         ) ?: ""
