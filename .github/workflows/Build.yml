@@ -37,6 +37,12 @@ jobs:
     if: ${{ !contains(github.event.head_commit.message, '[ci skip]') }}
 
     steps:
+      - name: Enable KVM group perms
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
       - name: Checkout sources
         uses: actions/checkout@v4
         with:
@@ -78,21 +84,49 @@ jobs:
           ./gradlew -Pkotlin.daemon.jvmargs="${{ env.KOTLIN_DAEMON_JVMARGS }}"
           build --stacktrace --scan
 
+      - name: AVD cache
+        uses: actions/cache@v4
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-30
+
+      - name: create AVD and generate snapshot for caching
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          target: aosp_atd
+          force-avd-creation: false
+          script: echo "Generated AVD snapshot for caching."
+
+      - name: Run instrumented tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          target: aosp_atd
+          force-avd-creation: false
+          script: >
+            ./gradlew
+            -Pkotlin.daemon.jvmargs="${{ env.KOTLIN_DAEMON_JVMARGS }}"
+            connectedCheck --scan --continue
+
       - name: Publish test results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: ${{ !cancelled() && (github.actor != 'dependabot[bot]') }}
         with:
           comment_mode: off
-          junit_files: '**/build/test-results/**/*.xml'
+          junit_files: '**/build/*test-results/**/*.xml'
           check_name: "Test results"
 
-      - name: Bundle the test reports
+      - name: Bundle the test reports and outputs
         if: failure()
         run: >
           find . \(
-          -name .idea -o -path '*build/intermediates' -o -path '*build/.transforms' -o -path '*build/generated'
-          \) -prune -o
-          -type d -name 'reports' -print0
+          -type d -path '*/build/reports'  -o -type d -path '*/build/outputs'
+          \) -print0
           | xargs -0 tar -c -I 'zstd -19 -T0' -f test-reports.tar.zst
 
       - name: Upload test reports

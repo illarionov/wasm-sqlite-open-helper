@@ -16,6 +16,7 @@ plugins {
     id("com.google.devtools.ksp")
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.lint.binary-compatibility-validator")
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.android")
+    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.android-instrumented-test")
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.atomicfu")
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.kotlin")
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.publish")
@@ -30,7 +31,6 @@ version = wasmSqliteVersions.getSubmoduleVersionProvider(
 android {
     namespace = "ru.pixnews.wasm.sqlite.driver"
     defaultConfig {
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
     buildTypes {
