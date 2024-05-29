@@ -95,7 +95,7 @@ jobs:
           -Pkotlin.daemon.jvmargs="${{ env.KOTLIN_DAEMON_JVMARGS }}"
           -Dorg.gradle.workers.max=1
           pixel2api30DebugAndroidTest
-          --scan --continue
+          --scan --info --continue
 
       - name: Publish test results
         uses: EnricoMi/publish-unit-test-result-action@v2
