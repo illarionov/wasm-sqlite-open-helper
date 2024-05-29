@@ -37,6 +37,13 @@ jobs:
     if: ${{ !contains(github.event.head_commit.message, '[ci skip]') }}
 
     steps:
+      - name: Enable KVM group perms
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+          ls /dev/kvm
+
       - name: Checkout sources
         uses: actions/checkout@v4
         with:
@@ -78,21 +85,32 @@ jobs:
           ./gradlew -Pkotlin.daemon.jvmargs="${{ env.KOTLIN_DAEMON_JVMARGS }}"
           build --stacktrace --scan
 
+      - name: Accept licenses
+        run: |
+          yes | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses
+
+      - name: Run instrumented tests
+        run: >
+          ./gradlew
+          -Pkotlin.daemon.jvmargs="${{ env.KOTLIN_DAEMON_JVMARGS }}"
+          -Dorg.gradle.workers.max=1
+          pixel2api30DebugAndroidTest
+          --scan --continue
+
       - name: Publish test results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: ${{ !cancelled() && (github.actor != 'dependabot[bot]') }}
         with:
           comment_mode: off
-          junit_files: '**/build/test-results/**/*.xml'
+          junit_files: '**/build/*test-results/**/*.xml'
           check_name: "Test results"
 
-      - name: Bundle the test reports
+      - name: Bundle the test reports and outputs
         if: failure()
         run: >
           find . \(
-          -name .idea -o -path '*build/intermediates' -o -path '*build/.transforms' -o -path '*build/generated'
-          \) -prune -o
-          -type d -name 'reports' -print0
+          -type d -path '*/build/reports'  -o -type d -path '*/build/outputs'
+          \) -print0
           | xargs -0 tar -c -I 'zstd -19 -T0' -f test-reports.tar.zst
 
       - name: Upload test reports
