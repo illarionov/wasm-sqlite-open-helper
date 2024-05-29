@@ -17,7 +17,7 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import kotlin.coroutines.CoroutineContext
 import kotlin.test.Test
 
-abstract class AbstractBasicRoomTest<E : SqliteEmbedderConfig>(
+public abstract class AbstractBasicRoomTest<E : SqliteEmbedderConfig>(
     driverCreator: TestSqliteDriverFactory,
     val databaseFactory: UserDatabaseFactory,
     dbLoggerSeverity: Severity = Severity.Info,

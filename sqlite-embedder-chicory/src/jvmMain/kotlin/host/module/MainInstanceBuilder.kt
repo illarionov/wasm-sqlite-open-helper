@@ -28,11 +28,13 @@ import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmModules.ENV_MODULE_NAME
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WASM_MEMORY_PAGE_SIZE
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WASM_MEMORY_SQLITE_MAX_PAGES
+import com.dylibso.chicory.log.Logger as ChicoryLogger
 import com.dylibso.chicory.runtime.Memory as ChicoryMemory
 
 @Suppress("COMMENTED_OUT_CODE")
 internal class MainInstanceBuilder(
     private val host: EmbedderHost,
+    private val chicoryLogger: ChicoryLogger,
     private val callbackStore: SqliteCallbackStore,
     private val minMemorySize: Long = 50_331_648L,
 ) {
@@ -62,7 +64,10 @@ internal class MainInstanceBuilder(
         )
 
         val sqlite3Module: Module = sqlite3Binary.sqliteUrl.openStream().use {
-            Module.builder(it).build()
+            Module
+                .builder(it)
+                .withLogger(chicoryLogger)
+                .build()
         }
 
         val instance = sqlite3Module

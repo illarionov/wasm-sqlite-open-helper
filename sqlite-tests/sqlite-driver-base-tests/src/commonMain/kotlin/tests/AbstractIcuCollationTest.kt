@@ -18,7 +18,7 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-abstract class AbstractIcuCollationTest<E : SqliteEmbedderConfig>(
+public abstract class AbstractIcuCollationTest<E : SqliteEmbedderConfig>(
     driverCreator: TestSqliteDriverFactory,
     dbLoggerSeverity: Severity = Severity.Info,
 ) : AbstractSqliteDriverTest<E>(

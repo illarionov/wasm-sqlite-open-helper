@@ -6,8 +6,10 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chicory
 
+import com.dylibso.chicory.log.Logger.Level
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.chicory.bindings.ChicorySqliteBindings
+import ru.pixnews.wasm.sqlite.open.helper.chicory.host.ChicoryLogger
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.MainInstanceBuilder
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.MainInstanceBuilder.ChicoryInstance
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
@@ -33,6 +35,7 @@ public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig
             config.host,
             callbackStore,
             config.sqlite3Binary,
+            config.logSeverity,
         )
     }
 
@@ -40,15 +43,21 @@ public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig
         host: EmbedderHost,
         callbackStore: SqliteCallbackStore,
         sqlite3Binary: WasmSqliteConfiguration,
+        logSeverity: Level,
     ): SqliteWasmEnvironment {
         require(!sqlite3Binary.requireThreads) {
             "The specified SQLite binary is compiled with threading support, which is not compatible with the " +
                     "Chicory WebAssembly runtime. Use a version of SQLite compiled without thread support."
         }
 
+        val chicoryLogger = ChicoryLogger(
+            logger = host.rootLogger,
+            severity = logSeverity,
+        )
         val chicoryInstance: ChicoryInstance = MainInstanceBuilder(
             host = host,
             callbackStore = callbackStore,
+            chicoryLogger = chicoryLogger,
             minMemorySize = sqlite3Binary.wasmMinMemorySize,
         ).setupModule(sqlite3Binary)
 

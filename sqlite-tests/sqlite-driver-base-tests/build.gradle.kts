@@ -29,7 +29,7 @@ kotlin {
             implementation(libs.kotlinx.coroutines.test)
         }
         jvmMain.dependencies {
-            compileOnly(kotlin("test-junit5"))
+            compileOnly(kotlin("test-junit"))
         }
     }
 }

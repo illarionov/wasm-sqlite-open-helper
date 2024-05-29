@@ -24,7 +24,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.time.Duration.Companion.minutes
 
-abstract class AbstractTimeFunctionsTest<E : SqliteEmbedderConfig>(
+public abstract class AbstractTimeFunctionsTest<E : SqliteEmbedderConfig>(
     driverCreator: TestSqliteDriverFactory,
     dbLoggerSeverity: Severity = Severity.Info,
 ) : AbstractSqliteDriverTest<E>(
