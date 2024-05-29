@@ -93,6 +93,7 @@ jobs:
         run: >
           ./gradlew
           -Pkotlin.daemon.jvmargs="${{ env.KOTLIN_DAEMON_JVMARGS }}"
+          -Pandroid.testoptions.manageddevices.emulator.gpu=swiftshader_indirect
           -Dorg.gradle.workers.max=1
           pixel2api30DebugAndroidTest
           --scan --info --continue
