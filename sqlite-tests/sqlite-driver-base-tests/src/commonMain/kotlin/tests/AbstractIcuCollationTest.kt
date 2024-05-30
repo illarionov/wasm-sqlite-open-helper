@@ -18,7 +18,7 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-abstract class AbstractIcuCollationTest<E : SqliteEmbedderConfig>(
+public abstract class AbstractIcuCollationTest<E : SqliteEmbedderConfig>(
     driverCreator: TestSqliteDriverFactory,
     dbLoggerSeverity: Severity = Severity.Info,
 ) : AbstractSqliteDriverTest<E>(
@@ -28,32 +28,34 @@ abstract class AbstractIcuCollationTest<E : SqliteEmbedderConfig>(
     lateinit var connection: SQLiteConnection
 
     @BeforeTest
-    fun setup() {
+    open fun setup() {
         val driver = createWasmSQLiteDriver()
         connection = driver.open("test.db")
     }
 
     @AfterTest
-    fun destroy() {
-        connection.close()
+    open fun destroy() {
+        if (::connection.isInitialized) {
+            connection.close()
+        }
     }
 
     @Test
-    fun Icu_uppercase_should_work() {
+    open fun Icu_uppercase_should_work() {
         val upperUser = connection.queryForString("""SELECT upper('пользователь 1', 'ru_RU')""")
 
         assertThat(upperUser).isEqualTo("ПОЛЬЗОВАТЕЛЬ 1")
     }
 
     @Test
-    fun Icu_lowercase_should_work() {
+    open fun Icu_lowercase_should_work() {
         val lowerUser = connection.queryForString("""SELECT lower('ISPANAK', 'tr_tr')""")
 
         assertThat(lowerUser).isEqualTo("ıspanak")
     }
 
     @Test
-    fun Case_insensitive_LIKE_should_work() {
+    open fun Case_insensitive_LIKE_should_work() {
         val caseInsensitiveLike = connection.queryForLong(
             """SELECT 'тамга сезимсиз текст издөө' LIKE '%ЕЗИМС%'""",
         )
@@ -61,7 +63,7 @@ abstract class AbstractIcuCollationTest<E : SqliteEmbedderConfig>(
     }
 
     @Test
-    fun Icu_Collation_should_work() {
+    open fun Icu_Collation_should_work() {
         connection.execSQL("SELECT icu_load_collation('tr_TR', 'turkish')")
         connection.execSQL("""CREATE TABLE Penpal(name TEXT COLLATE turkish)""".trimIndent())
         connection.execSQL(

@@ -6,6 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chicory
 
+import com.dylibso.chicory.log.Logger.Level
 import ru.pixnews.wasm.sqlite.open.helper.SqliteAndroidWasmEmscriptenIcu346
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
@@ -30,4 +31,9 @@ public class ChicorySqliteEmbedderConfig internal constructor(
      * Implementation of a host object that provides access from the WebAssembly to external host resources.
      */
     public var host: EmbedderHost = JvmEmbedderHost(rootLogger = rootLogger)
+
+    /**
+     * Logging severity for Chicory
+     */
+    public var logSeverity: Level = Level.INFO
 }

@@ -30,18 +30,20 @@ abstract class AbstractIcuCollationTest<E : SqliteEmbedderConfig>(
     lateinit var database: SupportSQLiteDatabase
 
     @BeforeTest
-    fun setup() {
+    open fun setup() {
         val helper = createWasmSQLiteOpenHelper()
         database = helper.writableDatabase
     }
 
     @AfterTest
-    fun destroy() {
-        database.close()
+    open fun destroy() {
+        if (::database.isInitialized) {
+            database.close()
+        }
     }
 
     @Test
-    fun Icu_uppercase_should_work() {
+    open fun Icu_uppercase_should_work() {
         val upperUser = database.compileStatement("""SELECT upper('пользователь 1', 'ru_RU')""").use {
             it.simpleQueryForString()
         }
@@ -49,7 +51,7 @@ abstract class AbstractIcuCollationTest<E : SqliteEmbedderConfig>(
     }
 
     @Test
-    fun Icu_lowercase_should_work() {
+    open fun Icu_lowercase_should_work() {
         val rows: List<String?> = database.query("""SELECT lower('ISPANAK', 'tr_tr')""")
             .readValues()
             .map { row: Map<String, String?> -> row.values.single() }
@@ -58,7 +60,7 @@ abstract class AbstractIcuCollationTest<E : SqliteEmbedderConfig>(
     }
 
     @Test
-    fun Case_insensitive_LIKE_should_work() {
+    open fun Case_insensitive_LIKE_should_work() {
         val caseInsensitiveLike = database.compileStatement(
             """SELECT 'тамга сезимсиз текст издөө' LIKE '%ЕЗИМС%'""",
         ).use {
@@ -68,7 +70,7 @@ abstract class AbstractIcuCollationTest<E : SqliteEmbedderConfig>(
     }
 
     @Test
-    fun Icu_Collation_should_work() {
+    open fun Icu_Collation_should_work() {
         database.query("SELECT icu_load_collation('tr_TR', 'turkish')").readValues()
         database.execSQL("""CREATE TABLE Penpal(name TEXT COLLATE turkish)""".trimIndent())
 

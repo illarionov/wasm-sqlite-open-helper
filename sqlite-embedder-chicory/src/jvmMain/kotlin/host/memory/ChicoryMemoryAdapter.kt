@@ -86,9 +86,12 @@ internal class ChicoryMemoryAdapter(
         @Suppress("PrivateApi", "MagicNumber", "TooGenericExceptionCaught", "SwallowedException")
         fun isJvmOrAndroidMinApi34(): Boolean {
             try {
-                val sdkIntField = Class.forName("android.os.Build").getDeclaredField("SDK_INT")
-                val version = sdkIntField.get(null) as? Int ?: 0
-                return version >= 34
+                val sdkIntField = Class.forName("android.os.Build\$VERSION").getField("SDK_INT")
+                val version = sdkIntField.getInt(null) as? Int ?: 0
+                return when {
+                    version == 0 -> true // Android unit tests
+                    else -> version >= 34
+                }
             } catch (ex: Exception) {
                 // is JVM
                 return true

@@ -22,9 +22,12 @@ public actual val wasmSqliteCleaner: WasmSqliteCleaner = run {
 internal fun isJvmOrAndroidMinApi(requireMinApi: Int = 33): Boolean {
     // Use reflection, taking into account that this should work on Android JVM unit tests
     try {
-        val sdkIntField = Class.forName("android.os.Build").getDeclaredField("SDK_INT")
-        val version = sdkIntField.get(null) as? Int ?: 0
-        return version >= requireMinApi
+        val sdkIntField = Class.forName("android.os.Build\$VERSION").getField("SDK_INT")
+        val version = sdkIntField.getInt(null) as? Int ?: 0
+        return when {
+            version == 0 -> true // Android unit tests
+            else -> version >= requireMinApi
+        }
     } catch (@Suppress("TooGenericExceptionCaught", "SwallowedException") ex: Exception) {
         // is JVM
         return true

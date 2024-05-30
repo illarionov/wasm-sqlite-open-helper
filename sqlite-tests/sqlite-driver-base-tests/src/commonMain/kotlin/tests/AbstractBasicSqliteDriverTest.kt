@@ -10,12 +10,12 @@ import androidx.sqlite.SQLiteConnection
 import assertk.assertThat
 import assertk.assertions.containsExactly
 import co.touchlab.kermit.Severity
-import org.junit.jupiter.api.Test
 import ru.pixnews.wasm.sqlite.driver.test.base.util.execSQL
 import ru.pixnews.wasm.sqlite.driver.test.base.util.queryForString
 import ru.pixnews.wasm.sqlite.driver.test.base.util.queryTable
 import ru.pixnews.wasm.sqlite.driver.test.base.util.use
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
+import kotlin.test.Test
 
 public abstract class AbstractBasicSqliteDriverTest<E : SqliteEmbedderConfig>(
     driverCreator: TestSqliteDriverFactory,
