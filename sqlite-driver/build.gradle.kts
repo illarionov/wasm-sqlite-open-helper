@@ -55,6 +55,9 @@ android {
             "META-INF/LICENSE-notice.md",
         )
     }
+    compileOptions {
+        isCoreLibraryDesugaringEnabled = true
+    }
 }
 
 kotlin {
@@ -129,6 +132,10 @@ kotlin {
         androidUnitTest.get().dependsOn(jvmAndAndroidTest)
         jvmTest.get().dependsOn(jvmAndAndroidTest)
     }
+}
+
+dependencies {
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
 }
 
 tasks.withType<Test> {

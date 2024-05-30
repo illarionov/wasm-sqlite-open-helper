@@ -20,4 +20,6 @@ class ChicoryIcuCollationTest : AbstractIcuCollationTest<ChicorySqliteEmbedderCo
     val tempFolder = TemporaryFolder(InstrumentationRegistry.getInstrumentation().targetContext.cacheDir)
 
     override val tempDir: String get() = tempFolder.root.path
+
+    override fun beforeSetup() = checkChicorySdk()
 }
