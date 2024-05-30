@@ -32,6 +32,7 @@ import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.functio
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.function.SyscallGetcwd
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.function.SyscallMkdirat
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.function.SyscallOpenat
+import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.function.SyscallReadlinkat
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.function.SyscallRmdir
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.function.SyscallUnlinkat
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.function.SyscallUtimensat
@@ -103,7 +104,7 @@ internal class EmscriptenEnvFunctionsBuilder(
                 EmscriptenHostFunction.SYSCALL_MKDIRAT -> ::SyscallMkdirat
                 EmscriptenHostFunction.SYSCALL_NEWFSTATAT -> notImplementedEmscriptenHostFunction
                 EmscriptenHostFunction.SYSCALL_OPENAT -> ::SyscallOpenat
-                EmscriptenHostFunction.SYSCALL_READLINKAT -> notImplementedEmscriptenHostFunction
+                EmscriptenHostFunction.SYSCALL_READLINKAT -> ::SyscallReadlinkat
                 EmscriptenHostFunction.SYSCALL_RMDIR -> ::SyscallRmdir
                 EmscriptenHostFunction.SYSCALL_STAT64 -> ::syscallStat64
                 EmscriptenHostFunction.SYSCALL_LSTAT64 -> ::syscallLstat64

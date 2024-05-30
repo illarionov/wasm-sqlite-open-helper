@@ -148,7 +148,7 @@ public enum class EmscriptenHostFunction(
     SYSCALL_OPENAT(
         wasmName = "__syscall_openat",
         paramTypes = listOf(
-            I32, // dirfd
+            Fd.wasmValueType, // dirfd
             U8.pointer, // pathname
             I32, // flags
             I32, // mode / varargs
@@ -157,7 +157,12 @@ public enum class EmscriptenHostFunction(
     ),
     SYSCALL_READLINKAT(
         wasmName = "__syscall_readlinkat",
-        paramTypes = List(4) { I32 },
+        paramTypes = listOf(
+            Fd.wasmValueType, // dirfd
+            U8.pointer, // pathname
+            U8.pointer, // buf
+            I32, // bufsiz
+        ),
         retType = I32,
     ),
     SYSCALL_RMDIR(
