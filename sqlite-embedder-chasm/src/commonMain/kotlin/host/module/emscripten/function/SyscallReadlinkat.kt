@@ -27,7 +27,7 @@ internal class SyscallReadlinkat(
             rawDirFd = args[0].asInt(),
             pathnamePtr = args[1].asWasmAddr(),
             buf = args[2].asWasmAddr(),
-            bufSize = args[2].asInt(),
+            bufSize = args[3].asInt(),
         )
         return listOf(I32(sizeOrErrno))
     }
