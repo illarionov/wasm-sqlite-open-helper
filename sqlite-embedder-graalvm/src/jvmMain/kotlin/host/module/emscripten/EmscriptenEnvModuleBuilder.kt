@@ -38,6 +38,7 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.functio
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.SyscallGetcwd
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.SyscallMkdirat
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.SyscallOpenat
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.SyscallReadlinkat
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.SyscallRmdir
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.SyscallUnlinkat
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.SyscallUtimensat
@@ -85,7 +86,7 @@ internal class EmscriptenEnvModuleBuilder(
             EmscriptenHostFunction.SYSCALL_MKDIRAT -> ::SyscallMkdirat
             EmscriptenHostFunction.SYSCALL_NEWFSTATAT -> notImplementedFunctionNodeFactory(this)
             EmscriptenHostFunction.SYSCALL_OPENAT -> ::SyscallOpenat
-            EmscriptenHostFunction.SYSCALL_READLINKAT -> notImplementedFunctionNodeFactory(this)
+            EmscriptenHostFunction.SYSCALL_READLINKAT -> ::SyscallReadlinkat
             EmscriptenHostFunction.SYSCALL_RMDIR -> ::SyscallRmdir
             EmscriptenHostFunction.SYSCALL_STAT64 -> ::syscallStat64
             EmscriptenHostFunction.SYSCALL_LSTAT64 -> ::syscallLstat64

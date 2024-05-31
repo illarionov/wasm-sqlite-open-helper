@@ -116,6 +116,11 @@ public interface FileSystem<P : Path> {
         flags: UInt,
     )
 
+    public fun readLinkAt(
+        dirFd: DirFd,
+        path: String,
+    ): String
+
     public fun addAdvisoryLock(
         fd: Fd,
         flock: StructFlock,

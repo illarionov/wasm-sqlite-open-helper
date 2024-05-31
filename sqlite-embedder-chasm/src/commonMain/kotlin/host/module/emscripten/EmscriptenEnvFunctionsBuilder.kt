@@ -31,6 +31,7 @@ import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.SyscallGetcwd
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.SyscallMkdirat
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.SyscallOpenat
+import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.SyscallReadlinkat
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.SyscallRmdir
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.SyscallUnlinkat
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.SyscallUtimensat
@@ -61,6 +62,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.SYSCALL_LSTAT64
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.SYSCALL_MKDIRAT
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.SYSCALL_OPENAT
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.SYSCALL_READLINKAT
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.SYSCALL_RMDIR
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.SYSCALL_STAT64
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.SYSCALL_UNLINKAT
@@ -114,6 +116,7 @@ private fun EmscriptenHostFunction.createChasmHostFunction(
     SYSCALL_MKDIRAT -> SyscallMkdirat(host, memory)
     SYSCALL_OPENAT -> SyscallOpenat(host, memory)
     SYSCALL_RMDIR -> SyscallRmdir(host, memory)
+    SYSCALL_READLINKAT -> SyscallReadlinkat(host, memory)
     SYSCALL_STAT64 -> syscallStat64(host, memory)
     SYSCALL_LSTAT64 -> syscallLstat64(host, memory)
     SYSCALL_UNLINKAT -> SyscallUnlinkat(host, memory)

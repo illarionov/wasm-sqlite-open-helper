@@ -28,6 +28,7 @@ kotlin {
             implementation(libs.okio.okio)
         }
         commonTest.dependencies {
+            implementation(projects.sqliteTests.sqliteTestUtils)
             implementation(kotlin("test"))
             implementation(libs.assertk)
         }

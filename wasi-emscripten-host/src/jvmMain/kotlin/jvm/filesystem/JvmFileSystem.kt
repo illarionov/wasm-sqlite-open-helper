@@ -69,6 +69,7 @@ import java.nio.file.Files
 import java.nio.file.LinkOption
 import java.nio.file.LinkOption.NOFOLLOW_LINKS
 import java.nio.file.NoSuchFileException
+import java.nio.file.NotLinkException
 import java.nio.file.OpenOption
 import java.nio.file.StandardOpenOption
 import java.nio.file.attribute.BasicFileAttributeView
@@ -653,6 +654,22 @@ public class JvmFileSystem(
         }
         if (mode.contains(FileAccessibilityCheck.X_OK) && !absolutePath.nio.isExecutable()) {
             throw SysException(ACCES, "File `$absolutePath` not executable")
+        }
+    }
+
+    override fun readLinkAt(dirFd: DirFd, path: String): String {
+        logger.v { "readLinkAt($dirFd, $path)" }
+        val absolutePath = resolveAbsolutePath(dirFd, path)
+        return try {
+            Files.readSymbolicLink(absolutePath.nio).toString()
+        } catch (uoe: UnsupportedOperationException) {
+            throw SysException(INVAL, "Symbolic links are not supported", uoe)
+        } catch (nle: NotLinkException) {
+            throw SysException(INVAL, "File `$absolutePath` is not a symlink", nle)
+        } catch (ioe: IOException) {
+            throw SysException(IO, "I/o error while read symbolink link of `$absolutePath`", ioe)
+        } catch (se: SecurityException) {
+            throw SysException(ACCES, "Permission denied `$absolutePath`", se)
         }
     }
 
