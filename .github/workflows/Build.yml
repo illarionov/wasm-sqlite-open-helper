@@ -97,8 +97,8 @@ jobs:
           target: aosp_atd
           force-avd-creation: false
           script: >
-            ./gradlew uninstallAll;
-            ./gradlew -Pkotlin.daemon.jvmargs="${{ env.KOTLIN_DAEMON_JVMARGS }}" connectedCheck --scan --continue;
+            ./gradlew uninstallAll &&
+            ./gradlew -Pkotlin.daemon.jvmargs="${{ env.KOTLIN_DAEMON_JVMARGS }}" connectedCheck --scan --continue &&
             ./gradlew uninstallAll;
 
       - name: Publish test results
