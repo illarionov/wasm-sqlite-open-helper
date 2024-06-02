@@ -12,5 +12,4 @@ package ru.pixnews.wasm.sqlite.open.helper.gradle.settings
 plugins {
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.settings.common")
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.settings.repositories")
-    id("ru.pixnews.wasm.sqlite.open.helper.gradle.settings.gradle-enterprise")
 }
