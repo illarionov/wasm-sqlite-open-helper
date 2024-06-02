@@ -9,10 +9,10 @@ package ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function
 import io.github.charlietap.chasm.executor.runtime.value.ExecutionValue
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.EmscriptenHostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.AbortFunctionHandle
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.AbortJsFunctionHandle
 
-internal class Abort(host: EmbedderHost) : EmscriptenHostFunctionHandle {
-    private val handle = AbortFunctionHandle(host)
+internal class AbortJs(host: EmbedderHost) : EmscriptenHostFunctionHandle {
+    private val handle = AbortJsFunctionHandle(host)
     override fun invoke(args: List<ExecutionValue>): List<ExecutionValue> {
         handle.execute()
     }

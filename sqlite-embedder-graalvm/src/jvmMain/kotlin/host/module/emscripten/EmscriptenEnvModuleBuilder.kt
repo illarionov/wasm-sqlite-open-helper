@@ -17,7 +17,7 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.SharedMemoryWaiter
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.WasmMemoryNotifyCallback
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.WasmMemoryWaitCallback
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.NodeFactory
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.Abort
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.AbortJs
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.AssertFail
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.EmscriptenDateNow
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.EmscriptenGetNow
@@ -64,7 +64,7 @@ internal class EmscriptenEnvModuleBuilder(
 ) {
     private val EmscriptenHostFunction.nodeFactory: NodeFactory
         get() = when (this) {
-            EmscriptenHostFunction.ABORT -> ::Abort
+            EmscriptenHostFunction.ABORT_JS -> ::AbortJs
             EmscriptenHostFunction.ASSERT_FAIL -> ::AssertFail
             EmscriptenHostFunction.EMSCRIPTEN_DATE_NOW -> ::EmscriptenDateNow
             EmscriptenHostFunction.EMSCRIPTEN_GET_NOW -> ::EmscriptenGetNow

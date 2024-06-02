@@ -138,7 +138,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/AssertionF
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/EmscriptenHostFunction : java/lang/Enum, ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunction {
-	public static final field ABORT Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/EmscriptenHostFunction;
+	public static final field ABORT_JS Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/EmscriptenHostFunction;
 	public static final field ASSERT_FAIL Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/EmscriptenHostFunction;
 	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/EmscriptenHostFunction$Companion;
 	public static final field EMSCRIPTEN_CHECK_BLOCKING_ALLOWED Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/EmscriptenHostFunction;
@@ -189,7 +189,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/Emscripten
 	public final fun getByWasmName ()Ljava/util/Map;
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/AbortFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
+public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/AbortJsFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
 	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
 	public final fun execute ()Ljava/lang/Void;
 }

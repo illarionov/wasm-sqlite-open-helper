@@ -10,9 +10,9 @@ import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
 
-public class AbortFunctionHandle(
+public class AbortJsFunctionHandle(
     host: EmbedderHost,
-) : HostFunctionHandle(EmscriptenHostFunction.ABORT, host) {
+) : HostFunctionHandle(EmscriptenHostFunction.ABORT_JS, host) {
     public fun execute(): Nothing {
         error("native code called abort()")
     }
