@@ -8,8 +8,7 @@ package ru.pixnews.wasm.sqlite.open.helper.gradle.settings
 
 import ru.pixnews.wasm.sqlite.open.helper.gradle.settings.repository.chicoryMavenLocal
 import ru.pixnews.wasm.sqlite.open.helper.gradle.settings.repository.googleFiltered
-import ru.pixnews.wasm.sqlite.open.helper.gradle.settings.repository.icuRepository
-import ru.pixnews.wasm.sqlite.open.helper.gradle.settings.repository.sqliteRepository
+import ru.pixnews.wasm.sqlite.open.helper.gradle.settings.repository.pixnewsMaven
 
 /*
  * Settings convention plugin that configures repositories used in the application
@@ -24,7 +23,6 @@ pluginManagement {
     // Get our own convention plugins from 'gradle/plugin/project'
     listOf(
         "project" to "sqlite-helper-gradle-project-plugins",
-        "wasm-builder" to "sqlite-helper-gradle-wasm-builder-plugins",
     ).forEach { (path, gradleProjectsPluginName) ->
         if (File(rootDir, "build-logic/$path").exists()) {
             includeBuild("build-logic/$path") {
@@ -45,7 +43,6 @@ dependencyResolutionManagement {
         chicoryMavenLocal()
         mavenCentral()
         googleFiltered()
-        sqliteRepository()
-        icuRepository()
+        pixnewsMaven()
     }
 }

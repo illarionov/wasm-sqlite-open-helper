@@ -5,9 +5,9 @@ public final class ru/pixnews/wasm/sqlite/open/helper/graalvm/GraalvmSqliteEmbed
 public final class ru/pixnews/wasm/sqlite/open/helper/graalvm/GraalvmSqliteEmbedderConfig : ru/pixnews/wasm/sqlite/open/helper/embedder/SqliteEmbedderConfig {
 	public final fun getGraalvmEngine ()Lorg/graalvm/polyglot/Engine;
 	public final fun getHost ()Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;
-	public final fun getSqlite3Binary ()Lru/pixnews/wasm/sqlite/open/helper/WasmSqliteConfiguration;
+	public final fun getSqlite3Binary ()Lru/pixnews/wasm/sqlite/binary/base/WasmSqliteConfiguration;
 	public final fun setGraalvmEngine (Lorg/graalvm/polyglot/Engine;)V
 	public final fun setHost (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
-	public final fun setSqlite3Binary (Lru/pixnews/wasm/sqlite/open/helper/WasmSqliteConfiguration;)V
+	public final fun setSqlite3Binary (Lru/pixnews/wasm/sqlite/binary/base/WasmSqliteConfiguration;)V
 }
 

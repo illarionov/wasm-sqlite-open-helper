@@ -7,8 +7,8 @@
 package ru.pixnews.wasm.sqlite.open.helper.chicory
 
 import com.dylibso.chicory.log.Logger.Level
-import ru.pixnews.wasm.sqlite.open.helper.SqliteAndroidWasmEmscriptenIcu346
-import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteConfiguration
+import ru.pixnews.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcu346
+import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig

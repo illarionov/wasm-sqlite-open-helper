@@ -7,7 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.test.base
 
 import androidx.sqlite.db.SupportSQLiteOpenHelper
-import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteConfiguration
+import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 
 interface TestOpenHelperFactoryCreator {

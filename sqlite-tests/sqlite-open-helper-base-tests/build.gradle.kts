@@ -27,6 +27,7 @@ kotlin {
             api(kotlin("test-common"))
             api(kotlin("test-annotations-common"))
             api(projects.sqliteCommon)
+            api(libs.wsoh.binary.base)
             api(projects.sqliteTests.sqliteTestUtils)
             implementation(libs.kotlinx.coroutines.test)
             implementation(libs.kermit)

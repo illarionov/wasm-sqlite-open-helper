@@ -23,8 +23,8 @@ kotlin {
         commonMain.dependencies {
             api(projects.sqliteCommon)
             implementation(libs.chicory)
+            implementation(libs.wsoh.sqlite.st)
             implementation(projects.wasiEmscriptenHost)
-            implementation(projects.native.sqliteAndroidWasmEmscriptenIcu346)
         }
     }
 }

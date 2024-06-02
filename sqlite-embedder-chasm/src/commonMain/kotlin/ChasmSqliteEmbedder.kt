@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chasm
 
-import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteConfiguration
+import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.chasm.bindings.ChasmSqliteBindings
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.ChasmInstanceBuilder
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.ChasmInstanceBuilder.ChasmInstance

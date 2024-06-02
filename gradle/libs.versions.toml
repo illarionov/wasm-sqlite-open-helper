@@ -1,8 +1,4 @@
 [versions]
-emscripten = "3.1.58"
-sqlite = "3460000"
-icu = "74.2"
-
 androidMinSdk = "26"
 androidCompileSdk = "34"
 
@@ -31,6 +27,7 @@ kermit = "2.0.3"
 ksp = "2.0.0-1.0.21"
 okio = "3.9.0"
 spotless = "6.25.0"
+sqlite-wasm-binary = "0.1-alpha04-SNAPSHOT"
 
 [libraries]
 androidx-collection = { group = "androidx.collection", name = "collection", version.ref = "androidx-collection" }
@@ -73,6 +70,9 @@ kotlinx-coroutines-bom = { group = "org.jetbrains.kotlinx", name = "kotlinx-coro
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test" }
 okio-okio = { group = "com.squareup.okio", name = "okio", version.ref = "okio" }
+wsoh-sqlite-mt = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-android-wasm-emscripten-icu-mt-pthread-346", version.ref = "sqlite-wasm-binary" }
+wsoh-sqlite-st = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-android-wasm-emscripten-icu-346", version.ref = "sqlite-wasm-binary" }
+wsoh-binary-base = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-binary-api", version.ref = "sqlite-wasm-binary" }
 
 # Dependencies of the included build-logic
 agp-plugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }

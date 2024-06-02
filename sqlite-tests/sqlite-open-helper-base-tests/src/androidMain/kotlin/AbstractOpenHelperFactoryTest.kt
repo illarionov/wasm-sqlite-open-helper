@@ -11,7 +11,7 @@ import androidx.sqlite.db.SupportSQLiteOpenHelper
 import androidx.sqlite.db.SupportSQLiteOpenHelper.Configuration
 import co.touchlab.kermit.Severity
 import co.touchlab.kermit.Severity.Info
-import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteConfiguration
+import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import ru.pixnews.wasm.sqlite.test.utils.KermitLogger
 

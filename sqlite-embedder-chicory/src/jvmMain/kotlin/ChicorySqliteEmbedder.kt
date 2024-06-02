@@ -7,7 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.chicory
 
 import com.dylibso.chicory.log.Logger.Level
-import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteConfiguration
+import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.chicory.bindings.ChicorySqliteBindings
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.ChicoryLogger
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.MainInstanceBuilder
