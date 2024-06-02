@@ -79,8 +79,8 @@ kotlin {
             implementation(projects.sqliteEmbedderGraalvm)
             implementation(projects.sqliteEmbedderChasm)
             implementation(projects.sqliteEmbedderChicory)
-            implementation(projects.native.sqliteAndroidWasmEmscriptenIcu346)
-            implementation(projects.native.sqliteAndroidWasmEmscriptenIcuMtPthread346)
+            implementation(libs.wsoh.sqlite.mt)
+            implementation(libs.wsoh.sqlite.st)
         }
 
         commonMain.dependencies {

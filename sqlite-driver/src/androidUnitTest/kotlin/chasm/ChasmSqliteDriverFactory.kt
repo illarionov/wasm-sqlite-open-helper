@@ -7,16 +7,16 @@
 package ru.pixnews.wasm.sqlite.driver.chasm
 
 import androidx.sqlite.SQLiteDriver
+import ru.pixnews.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcu346
+import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
 import ru.pixnews.wasm.sqlite.driver.base.defaultTestSqliteDriverConfig
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.TestSqliteDriverFactory
-import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ChasmSqliteEmbedder
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
-import ru.pixnews.wasm.sqlite.open.helper.SqliteAndroidWasmEmscriptenIcu346 as SqliteAndroidWasmEmscriptenIcu3461
 
 object ChasmSqliteDriverFactory : TestSqliteDriverFactory {
-    override val defaultSqliteBinary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcu3461
+    override val defaultSqliteBinary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcu346
     override fun create(
         dstDir: String,
         dbLogger: Logger,

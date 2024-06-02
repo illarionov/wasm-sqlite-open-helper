@@ -9,7 +9,7 @@ package ru.pixnews.wasm.sqlite.open.helper.graalvm
 import org.graalvm.polyglot.Context
 import org.graalvm.polyglot.Engine
 import org.graalvm.polyglot.Source
-import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteConfiguration
+import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.EmbedderMemory
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SQLiteEmbedderRuntimeInfo
@@ -27,6 +27,7 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.SqliteCal
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.wasi.WasiSnapshotPreview1ModuleBuilder
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.pthread.Pthread
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
+import java.net.URI
 import java.util.concurrent.atomic.AtomicReference
 
 public object GraalvmSqliteEmbedder : SqliteEmbedder<GraalvmSqliteEmbedderConfig> {
@@ -78,7 +79,7 @@ public object GraalvmSqliteEmbedder : SqliteEmbedder<GraalvmSqliteEmbedderConfig
         )
 
         val sourceName = "sqlite3"
-        val sqliteSource = Source.newBuilder("wasm", sqlite3Binary.sqliteUrl)
+        val sqliteSource = Source.newBuilder("wasm", URI(sqlite3Binary.sqliteUrl).toURL())
             .name(sourceName)
             .build()
         graalContext.eval(sqliteSource)

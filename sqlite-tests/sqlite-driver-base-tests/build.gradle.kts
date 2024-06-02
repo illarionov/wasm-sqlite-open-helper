@@ -23,6 +23,7 @@ kotlin {
             api(kotlin("test-annotations-common"))
             api(libs.androidx.sqlite.sqlite)
             api(projects.sqliteCommon)
+            api(libs.wsoh.binary.base)
             api(projects.sqliteTests.sqliteTestUtils)
             implementation(libs.androidx.room.runtime)
             implementation(libs.androidx.room.testing)

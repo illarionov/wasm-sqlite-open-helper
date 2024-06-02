@@ -9,19 +9,14 @@ package ru.pixnews.wasm.sqlite.open.helper.gradle.settings.repository
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import java.net.URI
 
-public fun RepositoryHandler.sqliteRepository(): Unit = exclusiveContent {
+internal fun RepositoryHandler.pixnewsMaven(): Unit = exclusiveContent {
     forRepository {
-        ivy {
-            url = URI("https://www.sqlite.org/")
-            patternLayout {
-                artifact("2024/sqlite-amalgamation-[revision].[ext]")
-            }
-            metadataSources {
-                artifact()
-            }
+        maven {
+            name = "PixnewsMaven"
+            url = URI("https://maven.pixnews.ru")
         }
     }
     filter {
-        includeModule("sqlite", "amalgamation")
+        includeGroup("ru.pixnews.wasm-sqlite-open-helper")
     }
 }

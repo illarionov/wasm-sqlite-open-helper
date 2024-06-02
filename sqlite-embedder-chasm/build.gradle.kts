@@ -30,7 +30,7 @@ kotlin {
             compileOnly(libs.chasm.validator)
             api(projects.sqliteCommon)
             implementation(projects.wasiEmscriptenHost)
-            implementation(projects.native.sqliteAndroidWasmEmscriptenIcu346)
+            implementation(libs.wsoh.sqlite.st)
         }
     }
 }

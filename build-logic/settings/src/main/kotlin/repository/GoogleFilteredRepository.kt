@@ -8,7 +8,7 @@ package ru.pixnews.wasm.sqlite.open.helper.gradle.settings.repository
 
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 
-fun RepositoryHandler.googleFiltered() {
+internal fun RepositoryHandler.googleFiltered() {
     google {
         mavenContent {
             // https://maven.google.com/web/index.html

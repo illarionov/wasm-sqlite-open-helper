@@ -46,7 +46,7 @@ dependencies {
     testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-chicory:0.1-alpha03")
 
     // Sqlite WebAssembly binary
-    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-mt-pthread-345:0.1-alpha03")
+    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-mt-pthread-346:0.1-alpha04")
 }
 ```
 
@@ -104,7 +104,7 @@ dependencies {
     testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-graalvm:0.1-alpha03")
 
     // Sqlite WebAssembly binary with multithreading enabled 
-    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-mt-pthread-345:0.1-alpha03")
+    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-mt-pthread-345:0.1-alpha04")
 }
 ```
 
@@ -178,7 +178,7 @@ dependencies {
     testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-chicory:0.1-alpha03")
     
 	// Sqlite WebAssembly binary
-    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-345:0.1-alpha03")
+    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-346:0.1-alpha04")
 }
 ```
 
@@ -209,7 +209,7 @@ dependencies {
     testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-chasm:0.1-alpha03")
 
     // Sqlite WebAssembly binary
-    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-345:0.1-alpha03")
+    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-346:0.1-alpha04")
 }
 ```
 
@@ -219,25 +219,16 @@ Usage:
 val factory = WasmSqliteOpenHelperFactory(ChasmSqliteEmbedder) {
     // Configuration of the Chasm embedder
     embedder {
-        sqlite3Binary = SqliteAndroidWasmEmscriptenIcu345
+        sqlite3Binary = SqliteAndroidWasmEmscriptenIcu346
     }
 }
 ```
 
 ## SQLite binaries
 
-The project uses SQLite with patches from Android AOSP and some WebAssembly extensions.
-The Build configuration is similar to AOSP's, with multithreading and the Android-specific Localized collator enabled.
-
-The ICU library is statically compiled, resulting in a SQLite binary size of about 30 megabytes.
-This binary is loaded into RAM during execution, so the RAM requirements are quite high.
-
-You can check the SQLite build configuration in the implementation of the [native/](native/) modules.
-
-Now there are two modules with different build configurations are available:
-
-- `sqlite-android-wasm-emscripten-icu-mt-pthread-345`: SQLite compiled with multithreading support
-- `sqlite-android-wasm-emscripten-icu-345`: Single-threaded version
+The building of the WebAssembly SQLite libraries has been moved to
+[wasm-sqlite-driver-binary](https://github.com/illarionov/wasm-sqlite-driver-binary) repository.
+Please check it out to see the available binaries.
 
 ### Customization
 
@@ -365,33 +356,6 @@ class DatabaseTest {
     }
 }
 ```
-
-## Development notes
-
-To build the project, you need to have Emscripten SDK installed.
-Check [this link](https://emscripten.org/docs/getting_started/downloads.html#installation-instructions-using-the-emsdk-recommended)
-for instructions on installing the SDK.
-
-`EMSDK` environment variable must point to the root of the installed SDK.
-Version of the SDK used in the project must be activated (check the `emscripten` version
-in [gradle/libs.versions.toml](gradle/libs.versions.toml)).
-
-Alternatively, you can specify the Emscripten SDK root by setting the `emsdkRoot` project property.
-You can do this for example in `~/.gradle/gradle.properties`:
-
-```properties
-emsdkRoot=/opt/emsdk
-```
-
-Install and activate the SDK version used in the project (not the latest one):
-
-```shell
-./emsdk install 3.1.58
-./emsdk activate 3.1.58
-source ./emsdk_env.sh
-```
-
-The first build may take quite a long time, since the ICU and SQLite libraries are build from source code.
 
 ## Contributing
 
