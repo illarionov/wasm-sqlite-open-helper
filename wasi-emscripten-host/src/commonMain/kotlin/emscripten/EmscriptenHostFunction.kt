@@ -22,8 +22,8 @@ public enum class EmscriptenHostFunction(
     public override val wasmName: String,
     public override val type: HostFunctionType,
 ) : HostFunction {
-    ABORT(
-        wasmName = "abort",
+    ABORT_JS(
+        wasmName = "_abort_js",
         paramTypes = listOf(),
     ),
     ASSERT_FAIL(

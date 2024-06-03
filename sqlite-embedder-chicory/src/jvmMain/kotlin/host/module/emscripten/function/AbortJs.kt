@@ -11,13 +11,13 @@ import com.dylibso.chicory.wasm.types.Value
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.EmscriptenHostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
-import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.AbortFunctionHandle
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.AbortJsFunctionHandle
 
-internal class Abort(
+internal class AbortJs(
     host: EmbedderHost,
     @Suppress("UNUSED_PARAMETER") memory: Memory,
 ) : EmscriptenHostFunctionHandle {
-    private val handle = AbortFunctionHandle(host)
+    private val handle = AbortJsFunctionHandle(host)
 
     override fun apply(instance: Instance, vararg args: Value): Value? {
         handle.execute()

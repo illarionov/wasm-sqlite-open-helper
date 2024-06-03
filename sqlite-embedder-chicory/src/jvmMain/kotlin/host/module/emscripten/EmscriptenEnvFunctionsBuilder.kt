@@ -12,7 +12,7 @@ import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.runtime.WasmFunctionHandle
 import com.dylibso.chicory.wasm.types.Value
 import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.chicory
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.function.Abort
+import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.function.AbortJs
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.function.AssertFail
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.function.EmscriptenDateNow
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.function.EmscriptenGetNow
@@ -82,7 +82,7 @@ internal class EmscriptenEnvFunctionsBuilder(
 
         private val EmscriptenHostFunction.functionFactory: EmscriptenHostFunctionHandleFactory
             get() = when (this) {
-                EmscriptenHostFunction.ABORT -> ::Abort
+                EmscriptenHostFunction.ABORT_JS -> ::AbortJs
                 EmscriptenHostFunction.ASSERT_FAIL -> ::AssertFail
                 EmscriptenHostFunction.EMSCRIPTEN_DATE_NOW -> ::EmscriptenDateNow
                 EmscriptenHostFunction.EMSCRIPTEN_GET_NOW -> ::EmscriptenGetNow

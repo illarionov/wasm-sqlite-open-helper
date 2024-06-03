@@ -10,7 +10,7 @@ import io.github.charlietap.chasm.embedding.function
 import io.github.charlietap.chasm.executor.runtime.store.Store
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.toChasmFunctionTypes
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.memory.ChasmMemoryAdapter
-import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.Abort
+import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.AbortJs
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.AssertFail
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.EmscriptenDateNow
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.EmscriptenGetNow
@@ -41,7 +41,7 @@ import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmModules.ENV_MODULE_NAME
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.ABORT
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.ABORT_JS
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.ASSERT_FAIL
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.EMSCRIPTEN_DATE_NOW
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.EMSCRIPTEN_GET_NOW
@@ -95,7 +95,7 @@ private fun EmscriptenHostFunction.createChasmHostFunction(
     host: EmbedderHost,
     memory: ChasmMemoryAdapter,
 ): EmscriptenHostFunctionHandle = when (this) {
-    ABORT -> Abort(host)
+    ABORT_JS -> AbortJs(host)
     ASSERT_FAIL -> AssertFail(host, memory)
     EMSCRIPTEN_DATE_NOW -> EmscriptenDateNow(host)
     EMSCRIPTEN_GET_NOW -> EmscriptenGetNow(host)
