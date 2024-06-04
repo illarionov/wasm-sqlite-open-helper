@@ -15,7 +15,6 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.api.or
 import ru.pixnews.wasm.sqlite.open.helper.dsl.path.DatabasePathResolver
-import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteCantOpenDatabaseException
 import ru.pixnews.wasm.sqlite.open.helper.io.lock.SynchronizedObject
 import ru.pixnews.wasm.sqlite.open.helper.io.lock.synchronized
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteConfigParameter
@@ -43,39 +42,32 @@ internal class WasmSqliteDriver(
     private var isSqliteInitialized: Boolean = false
     private val lock = SynchronizedObject()
 
-    override fun open(fileName: String): SQLiteConnection =
-        synchronized(lock) {
-            initIfRequiredLocked()
-            val path = pathResolver.getDatabasePathWithSpecialFilenames(fileName)
-            val connectionPtr: WasmPtr<SqliteDb> = try {
-                nativeOpen(
-                    path = path,
-                    enableTrace = debugConfig.sqlStatements,
-                    enableProfile = debugConfig.sqlTime,
-                    lookasideSlotSize = openParams.lookasideSlotSize,
-                    lookasideSlotCount = openParams.lookasideSlotCount,
-                )
-            } catch (ex: AndroidSqliteCantOpenDatabaseException) {
-                throw AndroidSqliteCantOpenDatabaseException("Cannot open database '$path'").apply {
-                    initCause(ex)
-                }
-            }
+    override fun open(fileName: String): SQLiteConnection = synchronized(lock) {
+        initIfRequiredLocked()
+        val path = pathResolver.getDatabasePathWithSpecialFilenames(fileName)
+        val connectionPtr: WasmPtr<SqliteDb> = nativeOpen(
+            path = path,
+            enableTrace = debugConfig.sqlStatements,
+            enableProfile = debugConfig.sqlTime,
+            lookasideSlotSize = openParams.lookasideSlotSize,
+            lookasideSlotCount = openParams.lookasideSlotCount,
+        )
 
-            val connection = WasmSqliteConnection(
-                databaseLabel = path,
-                connectionPtr = connectionPtr,
-                cApi = cApi,
-                rootLogger = logger,
-                openParams = openParams,
-            )
-            try {
-                connection.configure()
-                return connection
-            } catch (ex: SQLiteException) {
-                connection.close()
-                throw ex
-            }
+        val connection = WasmSqliteConnection(
+            databaseLabel = path,
+            connectionPtr = connectionPtr,
+            cApi = cApi,
+            rootLogger = logger,
+            openParams = openParams,
+        )
+        try {
+            connection.configure()
+            return connection
+        } catch (ex: SQLiteException) {
+            connection.close()
+            throw ex
         }
+    }
 
     /**
      * Initializes the SQLite library.

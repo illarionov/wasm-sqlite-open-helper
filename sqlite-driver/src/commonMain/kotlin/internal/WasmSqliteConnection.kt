@@ -14,7 +14,6 @@ import ru.pixnews.wasm.sqlite.driver.dsl.OpenFlags
 import ru.pixnews.wasm.sqlite.driver.dsl.OpenParamsBlock
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.exception.throwAndroidSqliteException
 import ru.pixnews.wasm.sqlite.open.helper.internal.wasmSqliteCleaner
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
@@ -43,14 +42,14 @@ internal class WasmSqliteConnection(
             if (errCode is Sqlite3Result.Error) {
                 // This can happen if sub-objects aren't closed first.  Make sure the caller knows.
                 logger.i { "register_localized_collators(${connectionPtrResource.nativePtr}) failed: ${errCode.info}" }
-                throwAndroidSqliteException(errCode.info, "Count not setup localized collators.")
+                throwSqliteException(errCode.info, "Could not setup localized collators.")
             }
         }
     }
 
     override fun prepare(sql: String): SQLiteStatement {
         if (connectionPtrResource.isClosed.value) {
-            throwAndroidSqliteException("Connection closed", SqliteResultCode.SQLITE_MISUSE)
+            throwSqliteException("Connection closed", SqliteResultCode.SQLITE_MISUSE)
         }
 
         return when (val statementPtr = cApi.statement.sqlite3PrepareV2(connectionPtrResource.nativePtr, sql)) {
@@ -66,7 +65,7 @@ internal class WasmSqliteConnection(
                 )
             }
 
-            is Sqlite3Result.Error -> cApi.readErrorThrowAndroidSqliteException(
+            is Sqlite3Result.Error -> cApi.readErrorThrowSqliteException(
                 connectionPtrResource.nativePtr,
                 ", while compiling: $sql",
             )
