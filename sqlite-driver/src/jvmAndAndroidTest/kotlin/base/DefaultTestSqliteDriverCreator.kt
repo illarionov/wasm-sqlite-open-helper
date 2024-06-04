@@ -16,10 +16,8 @@ fun <E : SqliteEmbedderConfig> WasmSqliteDriverConfigBlock<E>.defaultTestSqliteD
 ) {
     logger = dbLogger
     debug {
-        sqlLog = true
-        sqlTime = true
-        sqlStatements = true
-        logSlowQueries = true
+        logSqlTime = true
+        logSqlStatements = true
     }
     openParams {
         locale = Locale("ru_RU")
