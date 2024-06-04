@@ -19,7 +19,8 @@ public abstract class AbstractSqliteDriverTest<E : SqliteEmbedderConfig>(
 ) {
     protected open val logger: KermitLogger = KermitLogger(this::class.java.simpleName)
     protected open val dbLogger: KermitLogger = KermitLogger(tag = "WasmSQLiteDriver", minSeverity = dbLoggerSeverity)
-    abstract val tempDir: String
+
+    abstract fun fileInTempDir(databaseName: String): String
 
     // Supposed to be called before all @BeforeTest - functions of descendants
     open fun beforeSetup() {}
@@ -31,6 +32,5 @@ public abstract class AbstractSqliteDriverTest<E : SqliteEmbedderConfig>(
 
     public open fun createWasmSQLiteDriver(
         sqlite3Binary: WasmSqliteConfiguration = driverFactory.defaultSqliteBinary,
-        tempDir: String = this.tempDir,
-    ): SQLiteDriver = driverFactory.create(tempDir, dbLogger, sqlite3Binary)
+    ): SQLiteDriver = driverFactory.create(dbLogger, sqlite3Binary)
 }

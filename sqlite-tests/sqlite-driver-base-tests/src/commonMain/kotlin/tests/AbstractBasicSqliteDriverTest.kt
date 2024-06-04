@@ -27,13 +27,13 @@ public abstract class AbstractBasicSqliteDriverTest<E : SqliteEmbedderConfig>(
     @Test
     public open fun Driver_initialization_should_work() {
         val driver = createWasmSQLiteDriver()
-        val connection = driver.open("user.db")
+        val connection = driver.open(fileInTempDir("user.db"))
         connection.use(::testDb)
     }
 
     @Test
     public open fun Driver_initialization_with_in_memory_database_should_work() {
-        val driver = createWasmSQLiteDriver(tempDir = "/nonexistent")
+        val driver = createWasmSQLiteDriver()
         val connection = driver.open(":memory:")
         connection.use(::testDb)
     }

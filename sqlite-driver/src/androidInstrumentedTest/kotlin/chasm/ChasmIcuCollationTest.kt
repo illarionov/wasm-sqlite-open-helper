@@ -19,5 +19,5 @@ class ChasmIcuCollationTest : AbstractIcuCollationTest<ChasmSqliteEmbedderConfig
     @Rule
     val tempFolder = TemporaryFolder(InstrumentationRegistry.getInstrumentation().targetContext.cacheDir)
 
-    override val tempDir: String get() = tempFolder.root.path
+    override fun fileInTempDir(databaseName: String): String = tempFolder.root.resolve(databaseName).path
 }

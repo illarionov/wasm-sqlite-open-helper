@@ -30,7 +30,7 @@ public abstract class AbstractIcuCollationTest<E : SqliteEmbedderConfig>(
     @BeforeTest
     open fun setup() {
         val driver = createWasmSQLiteDriver()
-        connection = driver.open("test.db")
+        connection = driver.open(fileInTempDir("test.db"))
     }
 
     @AfterTest

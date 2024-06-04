@@ -34,14 +34,14 @@ public abstract class AbstractMultithreadingTest<E : SqliteEmbedderConfig>(
     public open fun Factory_from_multiple_threads_should_work() {
         val driver = createWasmSQLiteDriver()
 
-        driver.open("test.db").use { db ->
+        driver.open(fileInTempDir("test.db")).use { db ->
             db.execSQL("CREATE TABLE t1(x, y)")
             db.execSQL("INSERT INTO t1 VALUES (1, 2), (3, 4)")
 
             var thread2Result: TimedValue<String?>? = null
 
             Thread {
-                driver.open("test.db").use { db2 ->
+                driver.open(fileInTempDir("test.db")).use { db2 ->
                     thread2Result = measureTimedValue {
                         db2.queryForString("SELECT sum(x+y) FROM t1")
                     }
@@ -63,7 +63,7 @@ public abstract class AbstractMultithreadingTest<E : SqliteEmbedderConfig>(
     public open fun Factory_from_multiple_threads_with_active_transaction_should_work() {
         val driver = createWasmSQLiteDriver()
 
-        driver.open("test.db").use { db ->
+        driver.open(fileInTempDir("test.db")).use { db ->
             db.execSQL("CREATE TABLE t1(x, y)")
             db.execSQL("INSERT INTO t1 VALUES (1, 2), (3, 4)")
 
@@ -77,7 +77,7 @@ public abstract class AbstractMultithreadingTest<E : SqliteEmbedderConfig>(
             var thread2Result: String? = null
 
             val backgroundThread = Thread {
-                driver.open("test.db").use { db2 ->
+                driver.open(fileInTempDir("test.db")).use { db2 ->
                     db2.prepare("SELECT sum(x+y) FROM t1").use {
                         db2.execSQL("BEGIN DEFERRED TRANSACTION")
                         innerStatementCompiled.countDown()

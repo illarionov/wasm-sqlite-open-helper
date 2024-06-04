@@ -20,9 +20,9 @@ class GraalvmSqliteDriverFactory(
     private val initialGraalvmEngine: Engine? = WASM_GRAALVM_ENGINE,
     override val defaultSqliteBinary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcuMtPthread346,
 ) : TestSqliteDriverFactory {
-    override fun create(dstDir: String, dbLogger: Logger, sqlite3Binary: WasmSqliteConfiguration): SQLiteDriver {
+    override fun create(dbLogger: Logger, sqlite3Binary: WasmSqliteConfiguration): SQLiteDriver {
         return WasmSQLiteDriver(GraalvmSqliteEmbedder) {
-            defaultTestSqliteDriverConfig(dstDir, dbLogger)
+            defaultTestSqliteDriverConfig(dbLogger)
             embedder {
                 this.sqlite3Binary = sqlite3Binary
                 if (initialGraalvmEngine != null) {

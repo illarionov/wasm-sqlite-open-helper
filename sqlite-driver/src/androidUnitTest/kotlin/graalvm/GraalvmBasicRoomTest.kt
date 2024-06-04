@@ -20,5 +20,5 @@ class GraalvmBasicRoomTest : AbstractBasicRoomTest<GraalvmSqliteEmbedderConfig>(
     @Rule
     val tempFolder: TemporaryFolder = TemporaryFolder()
 
-    override val tempDir: String get() = tempFolder.root.path
+    override fun fileInTempDir(databaseName: String): String = tempFolder.root.resolve(databaseName).path
 }
