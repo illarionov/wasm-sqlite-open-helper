@@ -7,14 +7,12 @@
 package ru.pixnews.wasm.sqlite.driver.chicory
 
 import androidx.test.platform.app.InstrumentationRegistry
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import ru.pixnews.wasm.sqlite.driver.base.AndroidUserDatabaseSuspendFactory
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractBasicRoomTest
 import ru.pixnews.wasm.sqlite.open.helper.chicory.ChicorySqliteEmbedderConfig
 
-@Ignore("TODO: fix Unable to lock file: 'test.db.lck'.")
 class ChicoryBasicRoomTest : AbstractBasicRoomTest<ChicorySqliteEmbedderConfig>(
     driverCreator = ChicorySqliteDriverFactory,
     databaseFactory = AndroidUserDatabaseSuspendFactory,
