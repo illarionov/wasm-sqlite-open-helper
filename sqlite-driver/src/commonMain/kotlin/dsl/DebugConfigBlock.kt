@@ -15,38 +15,17 @@ import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
 @WasmSqliteOpenHelperDsl
 public class DebugConfigBlock {
     /**
-     * Controls the printing of informational SQL log messages.
-     */
-    public var sqlLog: Boolean = false
-
-    /**
      * Controls the printing of SQL statements as they are executed.
      */
-    public var sqlStatements: Boolean = false
+    public var logSqlStatements: Boolean = false
 
     /**
      * Controls the printing of wall-clock time taken to execute SQL statements as they are executed.
      */
-    public var sqlTime: Boolean = false
-
-    /**
-     * True to enable database performance testing instrumentation.
-     */
-    public var logSlowQueries: Boolean = false
-
-    /**
-     * Value of the "db.log.slow_query_threshold" system property, which can be changed
-     * by the user at any time.  If the value is zero, then all queries will
-     * be considered slow.  If the value does not exist or is negative, then no queries will
-     * be considered slow.
-     */
-    public var slowQueryThresholdProvider: () -> Int = { -1 }
+    public var logSqlTime: Boolean = false
 
     internal fun build(): SqliteDebug = SqliteDebug(
-        sqlLog = sqlLog,
-        sqlStatements = sqlStatements,
-        sqlTime = sqlTime,
-        logSlowQueries = logSlowQueries,
-        slowQueryThresholdProvider = slowQueryThresholdProvider,
+        logSqlStatements = logSqlStatements,
+        logSqlTime = logSqlTime,
     )
 }

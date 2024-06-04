@@ -44,8 +44,8 @@ internal class WasmSqliteDriver(
         initIfRequiredLocked()
         val connectionPtr: WasmPtr<SqliteDb> = nativeOpen(
             path = fileName,
-            enableTrace = debugConfig.sqlStatements,
-            enableProfile = debugConfig.sqlTime,
+            enableTrace = debugConfig.logSqlStatements,
+            enableProfile = debugConfig.logSqlTime,
             lookasideSlotSize = openParams.lookasideSlotSize,
             lookasideSlotCount = openParams.lookasideSlotCount,
         )

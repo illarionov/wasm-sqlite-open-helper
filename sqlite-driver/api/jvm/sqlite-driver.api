@@ -4,16 +4,10 @@ public final class ru/pixnews/wasm/sqlite/driver/WasmSqliteDriverDriverBuilderKt
 
 public final class ru/pixnews/wasm/sqlite/driver/dsl/DebugConfigBlock {
 	public fun <init> ()V
-	public final fun getLogSlowQueries ()Z
-	public final fun getSlowQueryThresholdProvider ()Lkotlin/jvm/functions/Function0;
-	public final fun getSqlLog ()Z
-	public final fun getSqlStatements ()Z
-	public final fun getSqlTime ()Z
-	public final fun setLogSlowQueries (Z)V
-	public final fun setSlowQueryThresholdProvider (Lkotlin/jvm/functions/Function0;)V
-	public final fun setSqlLog (Z)V
-	public final fun setSqlStatements (Z)V
-	public final fun setSqlTime (Z)V
+	public final fun getLogSqlStatements ()Z
+	public final fun getLogSqlTime ()Z
+	public final fun setLogSqlStatements (Z)V
+	public final fun setLogSqlTime (Z)V
 }
 
 public final class ru/pixnews/wasm/sqlite/driver/dsl/OpenFlags : java/lang/Enum {
