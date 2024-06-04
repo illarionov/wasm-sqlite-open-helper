@@ -14,7 +14,6 @@ import ru.pixnews.wasm.sqlite.driver.dsl.OpenParamsBlock
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.api.or
-import ru.pixnews.wasm.sqlite.open.helper.dsl.path.DatabasePathResolver
 import ru.pixnews.wasm.sqlite.open.helper.io.lock.SynchronizedObject
 import ru.pixnews.wasm.sqlite.open.helper.io.lock.synchronized
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteConfigParameter
@@ -32,7 +31,6 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3CApi
 
 internal class WasmSqliteDriver(
-    private val pathResolver: DatabasePathResolver,
     private val debugConfig: SqliteDebug,
     rootLogger: Logger,
     private val cApi: Sqlite3CApi,
@@ -44,9 +42,8 @@ internal class WasmSqliteDriver(
 
     override fun open(fileName: String): SQLiteConnection = synchronized(lock) {
         initIfRequiredLocked()
-        val path = pathResolver.getDatabasePathWithSpecialFilenames(fileName)
         val connectionPtr: WasmPtr<SqliteDb> = nativeOpen(
-            path = path,
+            path = fileName,
             enableTrace = debugConfig.sqlStatements,
             enableProfile = debugConfig.sqlTime,
             lookasideSlotSize = openParams.lookasideSlotSize,
@@ -54,7 +51,7 @@ internal class WasmSqliteDriver(
         )
 
         val connection = WasmSqliteConnection(
-            databaseLabel = path,
+            databaseLabel = fileName,
             connectionPtr = connectionPtr,
             cApi = cApi,
             rootLogger = logger,
@@ -186,12 +183,5 @@ internal class WasmSqliteDriver(
          */
         // XXX: copy from SQLiteGlobal
         public const val SOFT_HEAP_LIMIT: Long = 8 * 1024 * 1024
-
-        private fun DatabasePathResolver.getDatabasePathWithSpecialFilenames(
-            databaseName: String,
-        ): String = when {
-            ":memory:".equals(databaseName, ignoreCase = true) -> databaseName
-            else -> getDatabasePath(databaseName)
-        }
     }
 }

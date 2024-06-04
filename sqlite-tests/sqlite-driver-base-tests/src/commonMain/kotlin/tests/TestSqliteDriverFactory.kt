@@ -14,7 +14,6 @@ public interface TestSqliteDriverFactory {
     public val defaultSqliteBinary: WasmSqliteConfiguration
 
     public fun create(
-        dstDir: String,
         dbLogger: Logger,
         sqlite3Binary: WasmSqliteConfiguration,
     ): SQLiteDriver

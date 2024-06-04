@@ -28,7 +28,11 @@ public abstract class AbstractBasicRoomTest<E : SqliteEmbedderConfig>(
     @Test
     public open fun Test_Room() = runTest {
         val driver = createWasmSQLiteDriver()
-        val database = databaseFactory.create(driver, "test.db", this.backgroundScope.coroutineContext)
+        val database = databaseFactory.create(
+            driver,
+            fileInTempDir("test.db"),
+            this.backgroundScope.coroutineContext,
+        )
         try {
             testRoom(database)
         } finally {
@@ -38,7 +42,7 @@ public abstract class AbstractBasicRoomTest<E : SqliteEmbedderConfig>(
 
     @Test
     public open fun Test_In_Memory_Room() = runTest {
-        val driver = createWasmSQLiteDriver(tempDir = "/nonexistent")
+        val driver = createWasmSQLiteDriver()
         val database = databaseFactory.create(driver, null, this.backgroundScope.coroutineContext)
         try {
             testRoom(database)

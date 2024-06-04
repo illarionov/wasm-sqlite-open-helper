@@ -51,7 +51,6 @@ public fun <E : SqliteEmbedderConfig> WasmSQLiteDriver(
     )
 
     return WasmSqliteDriver(
-        pathResolver = config.pathResolver,
         cApi = cApi,
         debugConfig = DebugConfigBlock().apply { config.debugConfigBlock(this) }.build(),
         rootLogger = config.logger,

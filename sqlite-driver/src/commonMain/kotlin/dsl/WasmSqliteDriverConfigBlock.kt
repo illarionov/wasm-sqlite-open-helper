@@ -8,7 +8,6 @@ package ru.pixnews.wasm.sqlite.driver.dsl
 
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
-import ru.pixnews.wasm.sqlite.open.helper.dsl.path.DatabasePathResolver
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 
 @WasmSqliteOpenHelperDsl
@@ -20,11 +19,6 @@ public class WasmSqliteDriverConfigBlock<E : SqliteEmbedderConfig> {
      */
     public var logger: Logger = Logger
 
-    /**
-     * Sets the path resolver to be used to resolve the database file path on the file system.
-     * Not used for in-memory databases.
-     */
-    public var pathResolver: DatabasePathResolver = DatabasePathResolver { databaseName -> databaseName }
     internal var debugConfigBlock: DebugConfigBlock.() -> Unit = { }
         private set
     internal var openParams: OpenParamsBlock.() -> Unit = {}

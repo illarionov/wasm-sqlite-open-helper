@@ -6,10 +6,10 @@
 
 package ru.pixnews.wasm.sqlite.driver.base
 
-import android.content.ContextWrapper
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.SQLiteDriver
+import androidx.test.platform.app.InstrumentationRegistry
 import ru.pixnews.wasm.sqlite.driver.test.base.room.UserDatabaseSuspend
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractBasicRoomTest.UserDatabaseFactory
 import kotlin.coroutines.CoroutineContext
@@ -20,16 +20,16 @@ internal object AndroidUserDatabaseSuspendFactory : UserDatabaseFactory {
         databaseName: String?,
         queryCoroutineContext: CoroutineContext,
     ): UserDatabaseSuspend {
-        val mockContext = ContextWrapper(null)
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
         val builder = if (databaseName != null) {
             Room.databaseBuilder(
-                mockContext,
+                context,
                 UserDatabaseSuspend::class.java,
                 databaseName,
             )
         } else {
             Room.inMemoryDatabaseBuilder(
-                mockContext,
+                context,
                 UserDatabaseSuspend::class.java,
             )
         }
