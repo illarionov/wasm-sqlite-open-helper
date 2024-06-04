@@ -92,7 +92,6 @@ kotlin {
             api(projects.commonApi)
             api(projects.sqliteCommon)
             api(projects.sqliteDatabasePathResolver)
-            api(projects.sqliteException)
             api(libs.androidx.sqlite.sqlite)
             implementation(projects.commonCleaner)
             implementation(projects.commonLock)
@@ -122,6 +121,7 @@ kotlin {
 
                 implementation(libs.wsoh.sqlite.mt)
                 implementation(libs.wsoh.sqlite.st)
+                implementation(libs.androidx.sqlite.bundled)
                 implementation(projects.sqliteEmbedderChasm)
                 implementation(projects.sqliteEmbedderChicory)
                 implementation(projects.sqliteEmbedderGraalvm)
@@ -130,7 +130,12 @@ kotlin {
             }
         }
         androidUnitTest.get().dependsOn(jvmAndAndroidTest)
-        jvmTest.get().dependsOn(jvmAndAndroidTest)
+        jvmTest {
+            dependsOn(jvmAndAndroidTest)
+            dependencies {
+                implementation(libs.kotlinx.coroutines.debug)
+            }
+        }
     }
 }
 

@@ -6,14 +6,12 @@
 
 package ru.pixnews.wasm.sqlite.driver.chasm
 
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import ru.pixnews.wasm.sqlite.driver.base.JvmDatabaseFactory
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractBasicRoomTest
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ChasmSqliteEmbedderConfig
 
-@Ignore("TODO: fix")
 class ChasmBasicRoomTest : AbstractBasicRoomTest<ChasmSqliteEmbedderConfig>(
     driverCreator = ChasmSqliteDriverFactory,
     databaseFactory = JvmDatabaseFactory,

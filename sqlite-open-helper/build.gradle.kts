@@ -87,7 +87,6 @@ kotlin {
             api(projects.commonApi)
             api(projects.sqliteCommon)
             api(projects.sqliteDatabasePathResolver)
-            api(projects.sqliteException)
             implementation(projects.commonCleaner)
             implementation(projects.commonLock)
             implementation(projects.wasiEmscriptenHost)

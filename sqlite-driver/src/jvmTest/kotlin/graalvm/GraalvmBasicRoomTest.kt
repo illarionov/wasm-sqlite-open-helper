@@ -6,18 +6,22 @@
 
 package ru.pixnews.wasm.sqlite.driver.graalvm
 
-import org.junit.Ignore
+import co.touchlab.kermit.Severity.Verbose
+import kotlinx.coroutines.debug.junit4.CoroutinesTimeout
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import ru.pixnews.wasm.sqlite.driver.base.JvmDatabaseFactory
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractBasicRoomTest
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmSqliteEmbedderConfig
 
-@Ignore("TODO: fix")
 class GraalvmBasicRoomTest : AbstractBasicRoomTest<GraalvmSqliteEmbedderConfig>(
     driverCreator = GraalvmSqliteDriverFactory(),
     databaseFactory = JvmDatabaseFactory,
+    dbLoggerSeverity = Verbose,
 ) {
+    @get:Rule
+    public val timeout = CoroutinesTimeout.seconds(600)
+
     @JvmField
     @Rule
     val tempFolder: TemporaryFolder = TemporaryFolder()

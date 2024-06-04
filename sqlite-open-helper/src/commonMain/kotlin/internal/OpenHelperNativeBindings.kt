@@ -12,10 +12,10 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
 import ru.pixnews.wasm.sqlite.open.helper.common.api.or
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.encodedNullTerminatedStringLength
 import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteCantOpenDatabaseException
-import ru.pixnews.wasm.sqlite.open.helper.exception.throwAndroidSqliteException
 import ru.pixnews.wasm.sqlite.open.helper.internal.OpenHelperNativeBindings.CopyRowResult.CPR_FULL
 import ru.pixnews.wasm.sqlite.open.helper.internal.OpenHelperNativeBindings.CopyRowResult.CPR_OK
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow
+import ru.pixnews.wasm.sqlite.open.helper.internal.ext.throwAndroidSqliteException
 import ru.pixnews.wasm.sqlite.open.helper.internal.platform.yieldSleepAroundMSec
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteColumnType
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteConfigParameter

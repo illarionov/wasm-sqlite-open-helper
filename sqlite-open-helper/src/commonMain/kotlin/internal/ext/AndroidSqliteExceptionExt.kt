@@ -4,9 +4,27 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.exception
+package ru.pixnews.wasm.sqlite.open.helper.internal.ext
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
+import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidOperationCanceledException
+import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteAbortException
+import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteAccessPermException
+import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteBindOrColumnIndexOutOfRangeException
+import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteBlobTooBigException
+import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteCantOpenDatabaseException
+import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteConstraintException
+import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteDatabaseCorruptException
+import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteDatabaseLockedException
+import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteDatatypeMismatchException
+import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteDiskIoException
+import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteDoneException
+import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteException
+import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteFullException
+import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteMisuseException
+import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteOutOfMemoryException
+import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteReadOnlyDatabaseException
+import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteTableLockedException
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrorInfo
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode.Companion.SQLITE_OK

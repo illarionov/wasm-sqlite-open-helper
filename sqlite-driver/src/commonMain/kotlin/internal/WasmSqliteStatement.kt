@@ -12,7 +12,6 @@ import kotlinx.atomicfu.atomic
 import ru.pixnews.wasm.sqlite.driver.internal.WasmSqliteConnection.ConnectionPtrClosable
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.exception.throwAndroidSqliteException
 import ru.pixnews.wasm.sqlite.open.helper.internal.wasmSqliteCleaner
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteColumnType
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
@@ -83,7 +82,7 @@ internal class WasmSqliteStatement(
     override fun getColumnName(index: Int): String {
         throwIfFinalized()
         throwIfInvalidColumn(index)
-        return statementApi.sqlite3ColumnName(rawStatementPtr, index) ?: throwAndroidSqliteException(
+        return statementApi.sqlite3ColumnName(rawStatementPtr, index) ?: throwSqliteException(
             "Can not get column name",
             SqliteResultCode.SQLITE_NOMEM,
         )
@@ -107,7 +106,7 @@ internal class WasmSqliteStatement(
         throwIfFinalized()
         throwIfNoRow()
         throwIfInvalidColumn(index)
-        return statementApi.sqlite3ColumnText(rawStatementPtr, index) ?: throwAndroidSqliteException(
+        return statementApi.sqlite3ColumnText(rawStatementPtr, index) ?: throwSqliteException(
             "Can not get text column",
             SqliteResultCode.SQLITE_NOMEM,
         )
@@ -130,7 +129,7 @@ internal class WasmSqliteStatement(
         return when (error) {
             SqliteResultCode.SQLITE_ROW -> true
             SqliteResultCode.SQLITE_DONE -> false
-            else -> cApi.readErrorThrowAndroidSqliteException(rawConnectionPtr)
+            else -> cApi.readErrorThrowSqliteException(rawConnectionPtr)
         }
     }
 
@@ -140,26 +139,26 @@ internal class WasmSqliteStatement(
         throwIfFinalized()
         val err = block(statementApi, rawConnectionPtr, rawStatementPtr)
         if (err != SqliteResultCode.SQLITE_OK) {
-            cApi.readErrorThrowAndroidSqliteException(rawConnectionPtr)
+            cApi.readErrorThrowSqliteException(rawConnectionPtr)
         }
     }
 
     private fun throwIfFinalized() {
         if (statementPtrResource.isFinalized.value) {
-            throwAndroidSqliteException("Statement closed", SqliteResultCode.SQLITE_MISUSE)
+            throwSqliteException("Statement closed", SqliteResultCode.SQLITE_MISUSE)
         }
     }
 
     private fun throwIfNoRow() {
         val lastRc = cApi.errors.sqlite3ErrCode(rawConnectionPtr)
         if (lastRc != SqliteResultCode.SQLITE_ROW) {
-            throwAndroidSqliteException("no row", SqliteResultCode.SQLITE_MISUSE)
+            throwSqliteException("no row", SqliteResultCode.SQLITE_MISUSE)
         }
     }
 
     private fun throwIfInvalidColumn(index: Int) {
         if (index !in 0 until statementApi.sqlite3ColumnCount(rawStatementPtr)) {
-            throwAndroidSqliteException("column index out of range", SqliteResultCode.SQLITE_RANGE)
+            throwSqliteException("column index out of range", SqliteResultCode.SQLITE_RANGE)
         }
     }
 
