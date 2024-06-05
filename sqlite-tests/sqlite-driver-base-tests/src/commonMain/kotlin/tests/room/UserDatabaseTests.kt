@@ -4,54 +4,37 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-@file:Suppress("MagicNumber")
-
-package ru.pixnews.wasm.sqlite.driver.test.base.tests
+package ru.pixnews.wasm.sqlite.driver.test.base.tests.room
 
 import androidx.sqlite.SQLiteDriver
-import co.touchlab.kermit.Severity
-import kotlinx.coroutines.test.runTest
 import ru.pixnews.wasm.sqlite.driver.test.base.room.User
 import ru.pixnews.wasm.sqlite.driver.test.base.room.UserDatabaseSuspend
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
+import ru.pixnews.wasm.sqlite.driver.test.base.tests.TestSqliteDriverFactory
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import kotlin.coroutines.CoroutineContext
-import kotlin.test.Test
 
-public abstract class AbstractBasicRoomTest<E : SqliteEmbedderConfig>(
-    driverCreator: TestSqliteDriverFactory,
-    val databaseFactory: UserDatabaseFactory,
-    dbLoggerSeverity: Severity = Severity.Info,
-) : AbstractSqliteDriverTest<E>(
-    driverFactory = driverCreator,
-    dbLoggerSeverity = dbLoggerSeverity,
+class UserDatabaseTests(
+    private val driverFactory: TestSqliteDriverFactory,
+    private val databaseFactory: UserDatabaseFactory,
+    val logger: Logger,
+    val dbLogger: Logger,
 ) {
-    @Test
-    public open fun Test_Room() = runTest {
-        val driver = createWasmSQLiteDriver()
-        val database = databaseFactory.create(
-            driver,
-            fileInTempDir("test.db"),
-            this.backgroundScope.coroutineContext,
-        )
+    internal suspend fun testRoomOnUserDatabase(
+        databaseName: String?,
+        queryCoroutineContext: CoroutineContext,
+        block: suspend (UserDatabaseSuspend) -> Unit,
+    ) {
+        val driver = driverFactory.create(dbLogger, driverFactory.defaultSqliteBinary)
+        val database = databaseFactory.create(driver, databaseName, queryCoroutineContext)
         try {
-            testRoom(database)
+            block(database)
         } finally {
             database.close()
         }
     }
 
-    @Test
-    public open fun Test_In_Memory_Room() = runTest {
-        val driver = createWasmSQLiteDriver()
-        val database = databaseFactory.create(driver, null, this.backgroundScope.coroutineContext)
-        try {
-            testRoom(database)
-        } finally {
-            database.close()
-        }
-    }
-
-    private suspend fun testRoom(database: UserDatabaseSuspend) {
+    @Suppress("MagicNumber")
+    internal suspend fun basicRoomTest(database: UserDatabaseSuspend) {
         val userDao = database.userDao()
 
         val user101 = User(101, "User 101 First Name", "User 101 Last Name")

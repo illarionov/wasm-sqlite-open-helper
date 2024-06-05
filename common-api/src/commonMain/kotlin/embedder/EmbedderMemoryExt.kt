@@ -48,28 +48,3 @@ public fun EmbedderMemory.writeNullTerminatedString(
     writeByte(WasmPtr<Unit>(offset.addr + encoded.size), 0)
     return encoded.size + 1
 }
-
-@InternalWasmSqliteHelperApi
-public fun String.encodeToNullTerminatedByteArray(
-    maxLength: Int = Int.MAX_VALUE,
-): ByteArray {
-    check(maxLength > 0)
-
-    val raw = this.encodeToByteArray()
-    val rawSize = raw.size.coerceAtMost(maxLength - 1)
-    val os = ByteArray(rawSize + 1) { pos ->
-        if (pos < rawSize) {
-            raw[pos]
-        } else {
-            0
-        }
-    }
-    os[rawSize - 1] = 0
-    return os
-}
-
-@InternalWasmSqliteHelperApi
-public fun String.encodedStringLength(): Int = this.encodeToByteArray().size
-
-@InternalWasmSqliteHelperApi
-public fun String.encodedNullTerminatedStringLength(): Int = this.encodeToByteArray().size + 1

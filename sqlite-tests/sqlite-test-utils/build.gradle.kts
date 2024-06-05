@@ -13,10 +13,11 @@ group = "ru.pixnews.wasm-sqlite-open-helper"
 kotlin {
     jvm()
     linuxX64()
-    js {
+    js(IR) {
         browser()
         nodejs()
     }
+    mingwX64()
 
     sourceSets {
         commonMain.dependencies {
