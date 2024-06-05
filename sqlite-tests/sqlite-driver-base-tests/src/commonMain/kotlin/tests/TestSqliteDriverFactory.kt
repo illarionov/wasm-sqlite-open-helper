@@ -15,6 +15,6 @@ public interface TestSqliteDriverFactory {
 
     public fun create(
         dbLogger: Logger,
-        sqlite3Binary: WasmSqliteConfiguration,
+        sqlite3Binary: WasmSqliteConfiguration = defaultSqliteBinary,
     ): SQLiteDriver
 }

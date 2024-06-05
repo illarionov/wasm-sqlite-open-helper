@@ -28,5 +28,13 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.okio.okio)
         }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(projects.sqliteTests.sqliteTestUtils)
+        }
     }
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }

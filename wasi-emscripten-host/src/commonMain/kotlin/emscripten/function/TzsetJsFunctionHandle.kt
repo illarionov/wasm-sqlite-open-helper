@@ -7,12 +7,12 @@
 package ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.common.embedder.encodeToNullTerminatedByteArray
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.write
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
+import ru.pixnews.wasm.sqlite.open.helper.host.ext.encodeToNullTerminatedByteArray
 
 public class TzsetJsFunctionHandle(
     host: EmbedderHost,
@@ -37,6 +37,6 @@ public class TzsetJsFunctionHandle(
     }
 
     private companion object {
-        private const val TZ_NAME_MAX_SIZE = 7
+        private const val TZ_NAME_MAX_SIZE = 17
     }
 }

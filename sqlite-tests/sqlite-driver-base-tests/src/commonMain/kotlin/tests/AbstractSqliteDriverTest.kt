@@ -9,6 +9,7 @@ package ru.pixnews.wasm.sqlite.driver.test.base.tests
 import androidx.sqlite.SQLiteDriver
 import co.touchlab.kermit.Severity
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import ru.pixnews.wasm.sqlite.test.utils.KermitLogger
 import kotlin.test.BeforeTest
@@ -17,8 +18,8 @@ public abstract class AbstractSqliteDriverTest<E : SqliteEmbedderConfig>(
     val driverFactory: TestSqliteDriverFactory,
     dbLoggerSeverity: Severity = Severity.Info,
 ) {
-    protected open val logger: KermitLogger = KermitLogger(this::class.java.simpleName)
-    protected open val dbLogger: KermitLogger = KermitLogger(tag = "WasmSQLiteDriver", minSeverity = dbLoggerSeverity)
+    protected open val logger: Logger = KermitLogger(this::class.java.simpleName)
+    protected open val dbLogger: Logger = KermitLogger(tag = "WasmSQLiteDriver", minSeverity = dbLoggerSeverity)
 
     abstract fun fileInTempDir(databaseName: String): String
 
@@ -30,7 +31,7 @@ public abstract class AbstractSqliteDriverTest<E : SqliteEmbedderConfig>(
         beforeSetup()
     }
 
-    public open fun createWasmSQLiteDriver(
+    public fun createWasmSQLiteDriver(
         sqlite3Binary: WasmSqliteConfiguration = driverFactory.defaultSqliteBinary,
     ): SQLiteDriver = driverFactory.create(dbLogger, sqlite3Binary)
 }

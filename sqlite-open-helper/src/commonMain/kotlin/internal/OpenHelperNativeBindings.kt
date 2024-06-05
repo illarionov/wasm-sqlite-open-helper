@@ -10,8 +10,8 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
 import ru.pixnews.wasm.sqlite.open.helper.common.api.or
-import ru.pixnews.wasm.sqlite.open.helper.common.embedder.encodedNullTerminatedStringLength
 import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteCantOpenDatabaseException
+import ru.pixnews.wasm.sqlite.open.helper.host.ext.encodedNullTerminatedStringLength
 import ru.pixnews.wasm.sqlite.open.helper.internal.OpenHelperNativeBindings.CopyRowResult.CPR_FULL
 import ru.pixnews.wasm.sqlite.open.helper.internal.OpenHelperNativeBindings.CopyRowResult.CPR_OK
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow

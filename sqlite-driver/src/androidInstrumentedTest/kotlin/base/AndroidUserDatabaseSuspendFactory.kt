@@ -11,7 +11,7 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.SQLiteDriver
 import androidx.test.platform.app.InstrumentationRegistry
 import ru.pixnews.wasm.sqlite.driver.test.base.room.UserDatabaseSuspend
-import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractBasicRoomTest.UserDatabaseFactory
+import ru.pixnews.wasm.sqlite.driver.test.base.tests.room.UserDatabaseTests.UserDatabaseFactory
 import kotlin.coroutines.CoroutineContext
 
 internal object AndroidUserDatabaseSuspendFactory : UserDatabaseFactory {
