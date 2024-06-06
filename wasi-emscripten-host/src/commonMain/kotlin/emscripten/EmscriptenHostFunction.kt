@@ -35,6 +35,10 @@ public enum class EmscriptenHostFunction(
             U8.pointer, // func
         ),
     ),
+    EMSCRIPTEN_CONSOLE_ERROR(
+        wasmName = "emscripten_console_error",
+        paramTypes = listOf(U8.pointer),
+    ),
     EMSCRIPTEN_DATE_NOW(
         wasmName = "emscripten_date_now",
         paramTypes = listOf(),
@@ -54,6 +58,14 @@ public enum class EmscriptenHostFunction(
         wasmName = "emscripten_resize_heap",
         paramTypes = listOf(
             I32, // requestedSize
+        ),
+        retType = I32,
+    ),
+    GETENTROPY(
+        wasmName = "getentropy",
+        paramTypes = listOf(
+            U8.pointer, // buffer
+            I32, // size
         ),
         retType = I32,
     ),

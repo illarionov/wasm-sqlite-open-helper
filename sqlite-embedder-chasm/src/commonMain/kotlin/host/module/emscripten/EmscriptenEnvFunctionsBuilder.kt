@@ -12,10 +12,12 @@ import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.toChasmFunctionTypes
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.memory.ChasmMemoryAdapter
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.AbortJs
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.AssertFail
+import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.EmscriptenConsoleError
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.EmscriptenDateNow
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.EmscriptenGetNow
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.EmscriptenGetNowIsMonotonic
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.EmscriptenResizeHeap
+import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.Getentropy
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.LocaltimeJs
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.MmapJs
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.MunmapJs
@@ -43,10 +45,12 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmModules.ENV_MODULE_NAME
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.ABORT_JS
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.ASSERT_FAIL
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.EMSCRIPTEN_CONSOLE_ERROR
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.EMSCRIPTEN_DATE_NOW
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.EMSCRIPTEN_GET_NOW
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.EMSCRIPTEN_GET_NOW_IS_MONOTONIC
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.EMSCRIPTEN_RESIZE_HEAP
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.GETENTROPY
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.LOCALTIME_JS
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.MMAP_JS
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.MUNMAP_JS
@@ -97,10 +101,12 @@ private fun EmscriptenHostFunction.createChasmHostFunction(
 ): EmscriptenHostFunctionHandle = when (this) {
     ABORT_JS -> AbortJs(host)
     ASSERT_FAIL -> AssertFail(host, memory)
+    EMSCRIPTEN_CONSOLE_ERROR -> EmscriptenConsoleError(host, memory)
     EMSCRIPTEN_DATE_NOW -> EmscriptenDateNow(host)
     EMSCRIPTEN_GET_NOW -> EmscriptenGetNow(host)
     EMSCRIPTEN_GET_NOW_IS_MONOTONIC -> EmscriptenGetNowIsMonotonic(host)
     EMSCRIPTEN_RESIZE_HEAP -> EmscriptenResizeHeap(host, memory)
+    GETENTROPY -> Getentropy(host, memory)
     LOCALTIME_JS -> LocaltimeJs(host, memory)
     MMAP_JS -> MmapJs(host)
     MUNMAP_JS -> MunmapJs(host)

@@ -22,6 +22,7 @@ public interface EmbedderHost {
     public val monotonicClock: () -> Duration
     public val localTimeFormatter: (Duration) -> StructTm
     public val timeZoneInfo: () -> TimeZoneInfo
+    public val entropySource: (size: Int) -> ByteArray
 }
 
 @Suppress("UNCHECKED_CAST")

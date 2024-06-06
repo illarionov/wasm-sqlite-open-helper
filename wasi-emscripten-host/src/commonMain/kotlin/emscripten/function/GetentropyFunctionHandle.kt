@@ -12,30 +12,23 @@ import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.ext.encodeToNullTerminatedByteArray
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 
-public class SyscallGetcwdFunctionHandle(
+public class GetentropyFunctionHandle(
     host: EmbedderHost,
-) : HostFunctionHandle(EmscriptenHostFunction.SYSCALL_GETCWD, host) {
+) : HostFunctionHandle(EmscriptenHostFunction.GETENTROPY, host) {
     public fun execute(
         memory: Memory,
-        dst: WasmPtr<Byte>,
+        buffer: WasmPtr<Byte>,
         size: Int,
     ): Int {
-        logger.v { "getCwd(dst: $dst size: $size)" }
-        if (size == 0) {
-            return -Errno.INVAL.code
+        return try {
+            val entropy = host.entropySource.invoke(size)
+            check(entropy.size == size)
+            memory.write(buffer, entropy)
+            0
+        } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
+            logger.e(e) { "getentropy() failed" }
+            -1
         }
-
-        val path = host.fileSystem.getCwd()
-        val pathBytes: ByteArray = path.encodeToNullTerminatedByteArray()
-
-        if (size < pathBytes.size) {
-            return -Errno.RANGE.code
-        }
-        memory.write(dst, pathBytes)
-
-        return pathBytes.size
     }
 }

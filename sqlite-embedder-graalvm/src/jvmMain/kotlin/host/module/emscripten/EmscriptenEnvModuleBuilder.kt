@@ -19,12 +19,14 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.WasmMemoryWaitCall
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.NodeFactory
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.AbortJs
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.AssertFail
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.EmscriptenConsoleError
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.EmscriptenDateNow
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.EmscriptenGetNow
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.EmscriptenGetNowIsMonotonic
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.EmscriptenInitMainThreadJs
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.EmscriptenResizeHeap
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.EmscriptenThreadMailboxAwait
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.Getentropy
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.LocaltimeJs
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.MmapJs
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.MunapJs
@@ -67,9 +69,11 @@ internal class EmscriptenEnvModuleBuilder(
             EmscriptenHostFunction.ABORT_JS -> ::AbortJs
             EmscriptenHostFunction.ASSERT_FAIL -> ::AssertFail
             EmscriptenHostFunction.EMSCRIPTEN_DATE_NOW -> ::EmscriptenDateNow
+            EmscriptenHostFunction.EMSCRIPTEN_CONSOLE_ERROR -> ::EmscriptenConsoleError
             EmscriptenHostFunction.EMSCRIPTEN_GET_NOW -> ::EmscriptenGetNow
             EmscriptenHostFunction.EMSCRIPTEN_GET_NOW_IS_MONOTONIC -> ::EmscriptenGetNowIsMonotonic
             EmscriptenHostFunction.EMSCRIPTEN_RESIZE_HEAP -> ::EmscriptenResizeHeap
+            EmscriptenHostFunction.GETENTROPY -> ::Getentropy
             EmscriptenHostFunction.LOCALTIME_JS -> ::LocaltimeJs
             EmscriptenHostFunction.MMAP_JS -> ::MmapJs
             EmscriptenHostFunction.MUNMAP_JS -> ::MunapJs
