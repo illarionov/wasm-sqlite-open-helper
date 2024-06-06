@@ -9,13 +9,13 @@ package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.EmbedderMemory
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SQLiteEmbedderRuntimeInfo
-import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.SqliteBindings
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
+import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.databaseresources.SqliteDatabaseResourcesRegistry
 
 public class Sqlite3CApi(
-    sqliteBindings: SqliteBindings,
+    sqliteExports: SqliteExports,
     public val embedderInfo: SQLiteEmbedderRuntimeInfo,
     memory: EmbedderMemory,
     callbackStore: SqliteCallbackStore,
@@ -24,13 +24,13 @@ public class Sqlite3CApi(
 ) {
     private val databaseResourcesRegistry = SqliteDatabaseResourcesRegistry(callbackStore, rootLogger)
     public val config: Sqlite3ConfigFunctions = Sqlite3ConfigFunctions(
-        sqliteBindings,
+        sqliteExports,
         callbackStore,
         callbackFunctionIndexes,
     )
-    public val errors: Sqlite3ErrorFunctions = Sqlite3ErrorFunctions(sqliteBindings, memory)
+    public val errors: Sqlite3ErrorFunctions = Sqlite3ErrorFunctions(sqliteExports, memory)
     public val db: Sqlite3DbFunctions = Sqlite3DbFunctions(
-        sqliteBindings = sqliteBindings,
+        sqliteExports = sqliteExports,
         memory = memory,
         callbackStore = callbackStore,
         callbackFunctionIndexes = callbackFunctionIndexes,
@@ -39,7 +39,7 @@ public class Sqlite3CApi(
         rootLogger = rootLogger,
     )
     public val statement: Sqlite3StatementFunctions = Sqlite3StatementFunctions(
-        sqliteBindings = sqliteBindings,
+        sqliteExports = sqliteExports,
         memory = memory,
         databaseResourcesRegistry = databaseResourcesRegistry,
         sqliteErrorApi = errors,

@@ -11,6 +11,7 @@ import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.bindings.GraalvmPthread
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.setupWasmModuleFunctions
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.withWasmContext
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.SharedMemoryWaiterListStore
@@ -50,7 +51,6 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.functio
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.syscallStat64
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.notImplementedFunctionNodeFactory
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.wasi.function.SyscallFdatasync
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.pthread.Pthread
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmModules.ENV_MODULE_NAME
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Pages
@@ -58,13 +58,13 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WASM_MEMORY_64_MAX_PA
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WASM_MEMORY_PAGE_SIZE
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WASM_MEMORY_SQLITE_MAX_PAGES
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.EmscriptenStackBindings
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.stack.EmscriptenStack
 
 internal class EmscriptenEnvModuleBuilder(
     private val graalContext: Context,
     private val host: EmbedderHost,
-    private val pthreadRef: () -> Pthread,
-    private val emscriptenStackBindingsRef: () -> EmscriptenStackBindings,
+    private val pthreadRef: () -> GraalvmPthread,
+    private val emscriptenStackRef: () -> EmscriptenStack,
     private val moduleName: String = ENV_MODULE_NAME,
 ) {
     private val EmscriptenHostFunction.nodeFactory: NodeFactory
@@ -88,7 +88,7 @@ internal class EmscriptenEnvModuleBuilder(
                     language = language,
                     module = module,
                     host = host,
-                    stackBindingsRef = emscriptenStackBindingsRef,
+                    stackBindingsRef = emscriptenStackRef,
                 )
             }
             EmscriptenHostFunction.LOCALTIME_JS -> ::LocaltimeJs

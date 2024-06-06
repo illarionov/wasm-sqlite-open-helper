@@ -6,13 +6,13 @@
 
 @file:Suppress("VariableNaming")
 
-package ru.pixnews.wasm.sqlite.open.helper.embedder.bindings
+package ru.pixnews.wasm.sqlite.open.helper.embedder.exports
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmFunctionBinding
 
 @InternalWasmSqliteHelperApi
-public interface SqliteBindings {
+public interface SqliteExports {
     public val sqlite3_db_status: WasmFunctionBinding
     public val sqlite3_initialize: WasmFunctionBinding
     public val sqlite3_prepare_v2: WasmFunctionBinding
@@ -60,6 +60,5 @@ public interface SqliteBindings {
     public val sqlite3__wasm_db_config_s: WasmFunctionBinding
     public val register_localized_collators: WasmFunctionBinding
     public val register_android_functions: WasmFunctionBinding
-    public val memoryBindings: SqliteMemoryBindings
-    public fun init()
+    public val memoryExports: SqliteMemoryExports
 }

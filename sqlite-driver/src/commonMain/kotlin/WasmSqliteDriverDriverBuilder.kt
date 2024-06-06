@@ -42,7 +42,7 @@ public fun <E : SqliteEmbedderConfig> WasmSQLiteDriver(
         embedderConfigBuilder = config.embedderConfig,
     )
     val cApi = Sqlite3CApi(
-        sqliteBindings = embedderEnv.sqliteBindings,
+        sqliteExports = embedderEnv.sqliteExports,
         embedderInfo = embedderEnv.embedderInfo,
         memory = embedderEnv.memory,
         callbackStore = callbackStore,

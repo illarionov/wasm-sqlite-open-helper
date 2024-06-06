@@ -32,7 +32,7 @@ class GraalvmBasicMultithreadingRoomTest : AbstractBasicMultithreadingRoomTest<G
     @Ignore("TODO: fix")
     override fun Test_Room_Multithread() {
         Assume.assumeTrue("TODO: fix", false)
-        // super.Test_Room_Multithread()
+        super.Test_Room_Multithread()
     }
 
     @Test

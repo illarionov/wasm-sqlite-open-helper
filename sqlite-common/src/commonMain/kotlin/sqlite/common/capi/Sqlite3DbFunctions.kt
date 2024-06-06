@@ -10,10 +10,10 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.EmbedderMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.readPtr
-import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.SqliteBindings
-import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.allocNullTerminatedString
-import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.sqliteFreeSilent
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
+import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
+import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.allocNullTerminatedString
+import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.sqliteFreeSilent
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDbConfigParameter
@@ -31,7 +31,7 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3Result.Succe
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.databaseresources.SqliteDatabaseResourcesRegistry
 
 public class Sqlite3DbFunctions internal constructor(
-    private val sqliteBindings: SqliteBindings,
+    private val sqliteExports: SqliteExports,
     private val memory: EmbedderMemory,
     private val callbackStore: SqliteCallbackStore,
     private val callbackFunctionIndexes: Sqlite3CallbackFunctionIndexes,
@@ -40,7 +40,7 @@ public class Sqlite3DbFunctions internal constructor(
     rootLogger: Logger,
 ) {
     private val logger = rootLogger.withTag("Sqlite3DbFunctions")
-    private val memoryBindings = sqliteBindings.memoryBindings
+    private val memoryBindings = sqliteExports.memoryExports
 
     public fun sqlite3OpenV2(
         filename: String,
@@ -50,6 +50,9 @@ public class Sqlite3DbFunctions internal constructor(
         var ppDb: WasmPtr<WasmPtr<SqliteDb>> = WasmPtr.sqlite3Null()
         var pFileName: WasmPtr<Byte> = WasmPtr.sqlite3Null()
         var pVfsName: WasmPtr<Byte> = WasmPtr.sqlite3Null()
+
+        logger.v { "sqlite3OpenV2($filename, $flags, $vfsName)" }
+
         try {
             ppDb = memoryBindings.sqliteAllocOrThrow(WasmPtr.WASM_SIZEOF_PTR)
             pFileName = memoryBindings.allocNullTerminatedString(memory, filename)
@@ -57,7 +60,7 @@ public class Sqlite3DbFunctions internal constructor(
                 pVfsName = memoryBindings.allocNullTerminatedString(memory, vfsName)
             }
 
-            val resultCode = sqliteBindings.sqlite3_open_v2.executeForSqliteResultCode(
+            val resultCode = sqliteExports.sqlite3_open_v2.executeForSqliteResultCode(
                 pFileName.addr,
                 ppDb.addr,
                 flags.mask.toInt(),
@@ -87,8 +90,9 @@ public class Sqlite3DbFunctions internal constructor(
     public fun sqlite3Close(
         sqliteDb: WasmPtr<SqliteDb>,
     ): SqliteResultCode {
+        logger.v { "sqlite3Close($sqliteDb)" }
         return try {
-            sqliteBindings.sqlite3_close_v2.executeForSqliteResultCode(sqliteDb.addr)
+            sqliteExports.sqlite3_close_v2.executeForSqliteResultCode(sqliteDb.addr)
         } finally {
             databaseResources.afterDbClosed(sqliteDb)
         }
@@ -105,7 +109,7 @@ public class Sqlite3DbFunctions internal constructor(
         }
 
         try {
-            val readonlyResultId = sqliteBindings.sqlite3_db_readonly.executeForInt(sqliteDb.addr, pDbName.addr)
+            val readonlyResultId = sqliteExports.sqlite3_db_readonly.executeForInt(sqliteDb.addr, pDbName.addr)
             return SqliteDbReadonlyResult.fromId(readonlyResultId)
         } finally {
             memoryBindings.sqliteFreeSilent(pDbName)
@@ -116,7 +120,7 @@ public class Sqlite3DbFunctions internal constructor(
         sqliteDb: WasmPtr<SqliteDb>,
         ms: Int,
     ): Sqlite3Result<Unit> {
-        val errCode = sqliteBindings.sqlite3_busy_timeout.executeForSqliteResultCode(sqliteDb.addr, ms)
+        val errCode = sqliteExports.sqlite3_busy_timeout.executeForSqliteResultCode(sqliteDb.addr, ms)
         return sqliteErrorApi.createSqlite3Result(errCode, Unit, sqliteDb)
     }
 
@@ -127,7 +131,7 @@ public class Sqlite3DbFunctions internal constructor(
         arg2: Int,
         arg3: Int,
     ): Sqlite3Result<Unit> {
-        val errCode = sqliteBindings.sqlite3__wasm_db_config_pii.executeForSqliteResultCode(
+        val errCode = sqliteExports.sqlite3__wasm_db_config_pii.executeForSqliteResultCode(
             sqliteDb.addr,
             op.id,
             pArg1.addr,
@@ -146,7 +150,7 @@ public class Sqlite3DbFunctions internal constructor(
             callbackStore.sqlite3TraceCallbacks[sqliteDb] = traceCallback
         }
 
-        val errCode = sqliteBindings.sqlite3_trace_v2.executeForSqliteResultCode(
+        val errCode = sqliteExports.sqlite3_trace_v2.executeForSqliteResultCode(
             sqliteDb.addr,
             mask.mask.toInt(),
             if (traceCallback != null) callbackFunctionIndexes.traceFunction.funcId else 0,
@@ -161,7 +165,7 @@ public class Sqlite3DbFunctions internal constructor(
     }
 
     public fun registerAndroidFunctions(sqliteDb: WasmPtr<SqliteDb>): Sqlite3Result<Unit> {
-        val errCode = sqliteBindings.register_android_functions.executeForSqliteResultCode(
+        val errCode = sqliteExports.register_android_functions.executeForSqliteResultCode(
             sqliteDb.addr,
             0, // utf16Storage
         )
@@ -175,7 +179,7 @@ public class Sqlite3DbFunctions internal constructor(
         var pNewLocale: WasmPtr<Byte> = WasmPtr.sqlite3Null()
         try {
             pNewLocale = memoryBindings.allocNullTerminatedString(memory, newLocale)
-            val errCode = sqliteBindings.register_localized_collators.executeForSqliteResultCode(
+            val errCode = sqliteExports.register_localized_collators.executeForSqliteResultCode(
                 sqliteDb.addr,
                 pNewLocale.addr,
                 0, // utf16Storage
@@ -202,7 +206,7 @@ public class Sqlite3DbFunctions internal constructor(
             callbackStore.sqlite3ProgressCallbacks[sqliteDb] = activeCallback
         }
 
-        val errNo = sqliteBindings.sqlite3_progress_handler.executeForSqliteResultCode(
+        val errNo = sqliteExports.sqlite3_progress_handler.executeForSqliteResultCode(
             sqliteDb.addr,
             instructions,
             if (activeCallback != null) callbackFunctionIndexes.progressFunction.funcId else 0,
@@ -228,7 +232,7 @@ public class Sqlite3DbFunctions internal constructor(
             pCur = memoryBindings.sqliteAllocOrThrow(4U)
             pHiwtr = memoryBindings.sqliteAllocOrThrow(4U)
 
-            val errCode = sqliteBindings.sqlite3_db_status.executeForSqliteResultCode(
+            val errCode = sqliteExports.sqlite3_db_status.executeForSqliteResultCode(
                 sqliteDb.addr,
                 op.id,
                 pCur.addr,
@@ -252,13 +256,13 @@ public class Sqlite3DbFunctions internal constructor(
     }
 
     public fun sqlite3Changes(sqliteDb: WasmPtr<SqliteDb>): Int {
-        return sqliteBindings.sqlite3_changes.executeForInt(sqliteDb.addr)
+        return sqliteExports.sqlite3_changes.executeForInt(sqliteDb.addr)
     }
 
     public fun sqlite3LastInsertRowId(
         sqliteDb: WasmPtr<SqliteDb>,
     ): Long {
-        return sqliteBindings.sqlite3_last_insert_rowid.executeForLong(sqliteDb.addr)
+        return sqliteExports.sqlite3_last_insert_rowid.executeForLong(sqliteDb.addr)
     }
 
     public enum class SqliteDbReadonlyResult(public val id: Int) {

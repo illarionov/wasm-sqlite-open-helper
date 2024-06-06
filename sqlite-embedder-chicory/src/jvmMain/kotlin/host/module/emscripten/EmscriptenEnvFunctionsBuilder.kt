@@ -47,13 +47,13 @@ import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmValueType
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.EmscriptenStackBindings
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.stack.EmscriptenStack
 import com.dylibso.chicory.runtime.HostFunction as ChicoryHostFunction
 
 internal class EmscriptenEnvFunctionsBuilder(
     private val memory: Memory,
     private val host: EmbedderHost,
-    private val stackBindingsRef: () -> EmscriptenStackBindings,
+    private val stackBindingsRef: () -> EmscriptenStack,
 ) {
     private val EmscriptenHostFunction.functionFactory: EmscriptenHostFunctionHandleFactory
         get() = when (this) {

@@ -6,6 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.fd
 
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
 import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.JvmFileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.JvmPath
@@ -13,17 +14,25 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno.BADF
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno.NFILE
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 import java.nio.channels.FileChannel
+import java.util.concurrent.locks.Lock
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
 internal class FileDescriptorMap(
     private val fileSystem: JvmFileSystem,
+    logger: Logger,
 ) {
+    private val logger = logger.withTag("FDSMap")
     private val fds: MutableMap<Fd, FdFileChannel> = mutableMapOf()
+    private val lock: Lock = ReentrantLock()
 
     fun add(
         path: JvmPath,
         channel: FileChannel,
-    ): FdFileChannel {
+    ): FdFileChannel = lock.withLock {
         val fd = getFreeFd()
+        logger.v { "add() fd: $fd" }
+
         return FdFileChannel(
             fileSystem = fileSystem,
             fd = fd,
@@ -35,16 +44,20 @@ internal class FileDescriptorMap(
         }
     }
 
-    fun remove(fd: Fd): FdFileChannel {
+    fun remove(fd: Fd): FdFileChannel = lock.withLock {
+        logger.v { "Remove($fd)" }
         return fds.remove(fd) ?: throw SysException(BADF, "Trying to remove already disposed file descriptor")
     }
 
     fun get(
         fd: Fd,
-    ): FdFileChannel? = fds[fd]
+    ): FdFileChannel? = lock.withLock {
+        logger.v { "get($fd)" }
+        fds[fd]
+    }
 
     @Throws(SysException::class)
-    private fun getFreeFd(): Fd {
+    private fun getFreeFd(): Fd = lock.withLock {
         for (no in MIN_FD..MAX_FD) {
             if (!fds.containsKey(Fd(no))) {
                 return Fd(no)

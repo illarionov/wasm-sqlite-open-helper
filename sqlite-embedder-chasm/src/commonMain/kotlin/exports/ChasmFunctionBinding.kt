@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.chasm.bindings
+package ru.pixnews.wasm.sqlite.open.helper.chasm.exports
 
 import io.github.charlietap.chasm.embedding.invoke
 import io.github.charlietap.chasm.error.ChasmError

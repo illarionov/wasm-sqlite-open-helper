@@ -16,7 +16,6 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Whence
 import kotlin.time.Duration
 
 public interface FileSystem<P : Path> {
-    public fun getCwd(): String
     public fun stat(
         path: String,
         followSymlinks: Boolean = true,
@@ -47,6 +46,8 @@ public interface FileSystem<P : Path> {
         fd: Fd,
     ): P
 
+    public fun getCwdPath(): P
+
     public fun isRegularFile(
         fd: Fd,
     ): Boolean
@@ -56,8 +57,6 @@ public interface FileSystem<P : Path> {
         path: String,
         flags: UInt,
     )
-
-    public fun getCwdPath(): P
 
     public fun resolveWhencePosition(
         fd: Fd,

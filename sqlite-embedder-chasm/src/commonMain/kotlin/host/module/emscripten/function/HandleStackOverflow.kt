@@ -10,12 +10,12 @@ import io.github.charlietap.chasm.executor.runtime.value.ExecutionValue
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.asWasmAddr
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.EmscriptenHostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.EmscriptenStackBindings
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.stack.EmscriptenStack
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.HandleStackOverflowFunctionHandle
 
 internal class HandleStackOverflow(
     host: EmbedderHost,
-    private val stackBindingsRef: () -> EmscriptenStackBindings,
+    private val stackBindingsRef: () -> EmscriptenStack,
 ) : EmscriptenHostFunctionHandle {
     private val handle = HandleStackOverflowFunctionHandle(host)
 

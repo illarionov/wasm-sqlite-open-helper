@@ -4,18 +4,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.embedder.bindings
+package ru.pixnews.wasm.sqlite.open.helper.embedder.exports
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 
 @InternalWasmSqliteHelperApi
-public interface SqliteMemoryBindings {
+public interface SqliteMemoryExports {
     public fun <P : Any?> sqliteAllocOrThrow(len: UInt): WasmPtr<P>
     public fun sqliteFree(ptr: WasmPtr<*>)
 }
 
 @InternalWasmSqliteHelperApi
-public fun SqliteMemoryBindings.sqliteFreeSilent(value: WasmPtr<*>): Result<Unit> = kotlin.runCatching {
+public fun SqliteMemoryExports.sqliteFreeSilent(value: WasmPtr<*>): Result<Unit> = kotlin.runCatching {
     sqliteFree(value)
 }

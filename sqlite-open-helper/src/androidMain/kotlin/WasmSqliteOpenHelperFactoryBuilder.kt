@@ -79,7 +79,7 @@ internal fun <E : SqliteEmbedderConfig> WasmSqliteOpenHelperFactory(
 
     return WasmSqliteOpenHelperFactory(
         pathResolver = config.pathResolver,
-        sqliteBindings = embedderEnv.sqliteBindings,
+        sqliteExports = embedderEnv.sqliteExports,
         embedderInfo = embedderEnv.embedderInfo,
         memory = embedderEnv.memory,
         callbackStore = callbackStore,

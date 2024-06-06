@@ -41,7 +41,7 @@ internal class WasmMemoryNotifyCallback(
     fun execute(arguments: Array<Any>): Any {
         val addr = arguments.getArgAsLong(0)
         val count = arguments.getArgAsInt(1)
-        logger.v { "execute(): $addr $count" }
+        logger.v { "atomic_notify(addr = 0x${addr.toString(16)}, count = $count)" }
 
         val waiterListRecord = waitersStore.getListForIndex((addr * 4).toInt())
         return waiterListRecord.notifyWaiters(count)

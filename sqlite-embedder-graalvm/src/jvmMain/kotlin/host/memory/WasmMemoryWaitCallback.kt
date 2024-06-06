@@ -17,6 +17,7 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsLong
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.SharedMemoryWaiterListStore.AtomicsWaitResult
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.SharedMemoryWaiterListStore.WaiterListRecord
+import java.lang.invoke.VarHandle
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -50,7 +51,10 @@ internal class WasmMemoryWaitCallback(
         val expectedValue = arguments.getArgAsLong(1)
         val timeout = arguments.getArgAsLong(2)
         val is64 = WasmArguments.getArgument(arguments, 3) as Boolean
-        logger.v { "execute(): $addr $expectedValue $timeout $is64" }
+        logger.v {
+            "execute(): ${"0x" + addr.toString(16)} ${"0x" + expectedValue.toString(16)} " +
+                    "$timeout ms, is64: $is64"
+        }
 
         val list: WaiterListRecord = waitersStore.getListForIndex(
             if (is64) addr * 8 else addr * 4,
@@ -60,22 +64,26 @@ internal class WasmMemoryWaitCallback(
                 val longValue = wasmMemory.atomic_load_i64(null, addr * 8L)
                 acquireFence()
                 if (longValue != expectedValue) {
+                    logger.v { "AtomicsWaitResult.NOT_EQUAL" }
                     return AtomicsWaitResult.NOT_EQUAL.id
                 }
             } else {
                 val intValue = wasmMemory.atomic_load_i32(null, addr * 4L)
                 acquireFence()
                 if (intValue.toLong() != expectedValue) {
+                    logger.v { "AtomicsWaitResult.NOT_EQUAL" }
                     return AtomicsWaitResult.NOT_EQUAL.id
                 }
             }
+            logger.v { "list.suspend()" }
             return list.suspend(if (timeout < 0) Duration.INFINITE else timeout.milliseconds)
         }
     }
 
+    @Suppress("NewApi")
     private fun acquireFence() {
         // Min API 33
-        // VarHandle.acquireFence()
+        VarHandle.acquireFence()
     }
 
     class WasmInterruptedException(ie: Throwable) : RuntimeException(ie)

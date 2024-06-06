@@ -7,12 +7,15 @@
 package ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem
 
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.Path
+import kotlin.io.path.pathString
 import java.nio.file.Path as NioPath
 
 @JvmInline
 public value class JvmPath private constructor(
     internal val nio: NioPath,
 ) : Path {
+    override val pathString: String get() = nio.pathString
+
     internal companion object {
         internal fun NioPath.toCommonPath(): JvmPath = JvmPath(this)
     }

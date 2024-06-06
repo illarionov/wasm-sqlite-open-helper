@@ -10,7 +10,7 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.api.isSqlite3Null
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.EmbedderMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.readNullableNullTerminatedString
-import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.SqliteBindings
+import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrorInfo
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
@@ -20,25 +20,25 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode.Com
  * Wrappers for SQLite3 C Api error functions: `sqlite3_errcode`, `sqlite3_extended_errcode`, `sqlite3_errmsg`
  */
 public class Sqlite3ErrorFunctions internal constructor(
-    private val sqliteBindings: SqliteBindings,
+    private val sqliteExports: SqliteExports,
     private val memory: EmbedderMemory,
 ) {
     public fun sqlite3ErrCode(
         sqliteDb: WasmPtr<SqliteDb>,
     ): SqliteResultCode {
-        return sqliteBindings.sqlite3_errcode.executeForSqliteResultCode(sqliteDb.addr)
+        return sqliteExports.sqlite3_errcode.executeForSqliteResultCode(sqliteDb.addr)
     }
 
     public fun sqlite3ExtendedErrCode(
         sqliteDb: WasmPtr<SqliteDb>,
     ): SqliteResultCode {
-        return sqliteBindings.sqlite3_extended_errcode.executeForSqliteResultCode(sqliteDb.addr)
+        return sqliteExports.sqlite3_extended_errcode.executeForSqliteResultCode(sqliteDb.addr)
     }
 
     public fun sqlite3ErrMsg(
         sqliteDb: WasmPtr<SqliteDb>,
     ): String? {
-        val errorAddr: WasmPtr<Byte> = sqliteBindings.sqlite3_errmsg.executeForPtr(sqliteDb.addr)
+        val errorAddr: WasmPtr<Byte> = sqliteExports.sqlite3_errmsg.executeForPtr(sqliteDb.addr)
         return memory.readNullableNullTerminatedString(errorAddr)
     }
 

@@ -24,10 +24,6 @@ open class TestFileSystem : FileSystem<Path> {
         error("Not implemented")
     }
 
-    override fun getCwd(): String {
-        error("Not implemented")
-    }
-
     override fun stat(path: String, followSymlinks: Boolean): StructStat {
         error("Not implemented")
     }
