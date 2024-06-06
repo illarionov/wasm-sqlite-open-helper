@@ -7,27 +7,20 @@
 package ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.common.embedder.write
+import ru.pixnews.wasm.sqlite.open.helper.common.embedder.readNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.include.StructTm
-import ru.pixnews.wasm.sqlite.open.helper.host.include.pack
-import kotlin.time.Duration.Companion.seconds
 
-public class LocaltimeJsFunctionHandle(
+public class EmscriptenConsoleErrorFunctionHandle(
     host: EmbedderHost,
-) : HostFunctionHandle(EmscriptenHostFunction.LOCALTIME_JS, host) {
+) : HostFunctionHandle(EmscriptenHostFunction.EMSCRIPTEN_CONSOLE_ERROR, host) {
     public fun execute(
         memory: Memory,
-        time: Long,
-        timePtr: WasmPtr<StructTm>,
+        messagePtr: WasmPtr<Byte>,
     ) {
-        val localTime = host.localTimeFormatter(time.seconds)
-        logger.v { "localtimeJs($time): $localTime" }
-
-        val bytes = localTime.pack()
-        memory.write(timePtr, bytes)
+        val message = memory.readNullTerminatedString(messagePtr)
+        logger.e { message }
     }
 }

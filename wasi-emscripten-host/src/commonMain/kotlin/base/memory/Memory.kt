@@ -6,7 +6,6 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.base.memory
 
-import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.EmbedderMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.CiovecArray
@@ -26,12 +25,3 @@ public interface Memory : EmbedderMemory {
         cioVecs: CiovecArray,
     ): ULong
 }
-
-public fun Memory.readU8(addr: WasmPtr<*>): UByte = readI8(addr).toUByte()
-public fun Memory.readU32(addr: WasmPtr<*>): UInt = readI32(addr).toUInt()
-
-@Suppress("UNCHECKED_CAST")
-public fun <T : Any, P : WasmPtr<T>> Memory.readPtr(addr: WasmPtr<P>): P = WasmPtr<T>(readI32(addr)) as P
-public fun Memory.writePtr(addr: WasmPtr<*>, data: WasmPtr<*>): Unit = writeI32(addr, data.addr)
-
-public fun Memory.write(addr: WasmPtr<*>, data: ByteArray): Unit = write(addr, data, 0, data.size)

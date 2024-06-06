@@ -25,4 +25,5 @@ public class JvmEmbedderHost(
     public override val monotonicClock: () -> Duration = { System.nanoTime().nanoseconds },
     public override val localTimeFormatter: (Duration) -> StructTm = JvmLocalTimeFormatter(),
     public override val timeZoneInfo: () -> TimeZoneInfo = JvmTimeZoneInfoProvider(),
+    public override val entropySource: (size: Int) -> ByteArray = JvmEntropySource(),
 ) : EmbedderHost

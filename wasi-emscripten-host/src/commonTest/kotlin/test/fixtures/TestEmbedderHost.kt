@@ -27,4 +27,5 @@ open class TestEmbedderHost(
     override var timeZoneInfo: () -> TimeZoneInfo = {
         TimeZoneInfo(-1, -1, "Dummy", "Dummy")
     },
+    override var entropySource: (size: Int) -> ByteArray = { size -> ByteArray(size) { 4 } },
 ) : EmbedderHost
