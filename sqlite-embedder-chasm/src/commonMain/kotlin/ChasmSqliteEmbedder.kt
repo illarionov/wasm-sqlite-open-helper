@@ -20,6 +20,8 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.SqliteBindings
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.EmscriptenStackBindings
+import java.util.concurrent.atomic.AtomicReference
 
 public object ChasmSqliteEmbedder : SqliteEmbedder<ChasmSqliteEmbedderConfig> {
     @InternalWasmSqliteHelperApi
@@ -46,13 +48,18 @@ public object ChasmSqliteEmbedder : SqliteEmbedder<ChasmSqliteEmbedderConfig> {
                     "Chasm WebAssembly runtime. Use a version of SQLite compiled without thread support."
         }
 
+        val emscriptenStackBindingsRef: AtomicReference<EmscriptenStackBindings> = AtomicReference()
         val chicoryInstance: ChasmInstance = ChasmInstanceBuilder(
             host = host,
             callbackStore = callbackStore,
             minMemorySize = sqlite3Binary.wasmMinMemorySize,
+            emscriptenStackBindingsRef = emscriptenStackBindingsRef::get,
         ).setupChasmInstance(sqlite3Binary)
 
         val bindings = ChasmSqliteBindings(chicoryInstance)
+        emscriptenStackBindingsRef.set(bindings.memoryBindings)
+
+        bindings.init()
 
         return object : SqliteWasmEnvironment {
             override val sqliteBindings: SqliteBindings = bindings

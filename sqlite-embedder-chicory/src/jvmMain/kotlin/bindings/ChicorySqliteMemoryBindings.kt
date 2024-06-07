@@ -17,10 +17,11 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.SqliteMemoryBindings
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmFunctionBinding
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenInitializer
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.EmscriptenStackBindings
 
 internal class ChicorySqliteMemoryBindings(
     mainBindings: Instance,
-) : SqliteMemoryBindings {
+) : SqliteMemoryBindings, EmscriptenStackBindings {
     val malloc by mainBindings.member()
     val free by mainBindings.member()
     val realloc by mainBindings.member()
@@ -45,6 +46,9 @@ internal class ChicorySqliteMemoryBindings(
     private val sqlite3_realloc by mainBindings.member()
     private val sqlite3_malloc64 by mainBindings.member()
     private val sqlite3_realloc64 by mainBindings.member()
+
+    override val emscriptenStackBase: WasmPtr<Byte> get() = emscripten_stack_get_base.executeForPtr()
+    override val emscriptenStackEnd: WasmPtr<Byte> get() = emscripten_stack_get_end.executeForPtr()
 
     // https://github.com/emscripten-core/emscripten/blob/main/system/lib/README.md
     fun init(memory: Memory) {

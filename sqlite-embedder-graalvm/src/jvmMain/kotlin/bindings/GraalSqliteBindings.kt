@@ -8,7 +8,6 @@ package ru.pixnews.wasm.sqlite.open.helper.graalvm.bindings
 
 import org.graalvm.polyglot.Value
 import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.SqliteBindings
-import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.SqliteMemoryBindings
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.member
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmFunctionBinding
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
@@ -75,11 +74,7 @@ internal class GraalSqliteBindings(
     override val register_android_functions by sqliteBindings.member()
 
     private val _memoryBindings = GraalSqliteMemoryBindings(sqliteBindings)
-    override val memoryBindings: SqliteMemoryBindings = _memoryBindings
-
-    init {
-        init()
-    }
+    override val memoryBindings: GraalSqliteMemoryBindings = _memoryBindings
 
     override fun init() {
          __wasm_call_ctors.executeVoid()

@@ -20,6 +20,7 @@ import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.functio
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.function.EmscriptenGetNowIsMonotonic
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.function.EmscriptenResizeHeap
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.function.Getentropy
+import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.function.HandleStackOverflow
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.function.LocaltimeJs
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.function.MmapJs
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.function.MunmapJs
@@ -46,12 +47,63 @@ import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmValueType
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.EmscriptenStackBindings
 import com.dylibso.chicory.runtime.HostFunction as ChicoryHostFunction
 
 internal class EmscriptenEnvFunctionsBuilder(
     private val memory: Memory,
     private val host: EmbedderHost,
+    private val stackBindingsRef: () -> EmscriptenStackBindings,
 ) {
+    private val EmscriptenHostFunction.functionFactory: EmscriptenHostFunctionHandleFactory
+        get() = when (this) {
+            EmscriptenHostFunction.ABORT_JS -> ::AbortJs
+            EmscriptenHostFunction.ASSERT_FAIL -> ::AssertFail
+            EmscriptenHostFunction.EMSCRIPTEN_ASM_CONST_INT -> notImplementedEmscriptenHostFunction
+            EmscriptenHostFunction.EMSCRIPTEN_ASM_CONST_ASYNC_ON_MAIN_THREAD -> notImplementedEmscriptenHostFunction
+            EmscriptenHostFunction.EMSCRIPTEN_CONSOLE_ERROR -> ::EmscriptenConsoleError
+            EmscriptenHostFunction.EMSCRIPTEN_DATE_NOW -> ::EmscriptenDateNow
+            EmscriptenHostFunction.EMSCRIPTEN_GET_NOW -> ::EmscriptenGetNow
+            EmscriptenHostFunction.EMSCRIPTEN_GET_NOW_IS_MONOTONIC -> ::EmscriptenGetNowIsMonotonic
+            EmscriptenHostFunction.EMSCRIPTEN_RESIZE_HEAP -> ::EmscriptenResizeHeap
+            EmscriptenHostFunction.GETENTROPY -> ::Getentropy
+            EmscriptenHostFunction.HANDLE_STACK_OVERFLOW -> { host, _ -> HandleStackOverflow(host, stackBindingsRef) }
+            EmscriptenHostFunction.LOCALTIME_JS -> ::LocaltimeJs
+            EmscriptenHostFunction.MMAP_JS -> ::MmapJs
+            EmscriptenHostFunction.MUNMAP_JS -> ::MunmapJs
+            EmscriptenHostFunction.SYSCALL_CHMOD -> ::SyscallChmod
+            EmscriptenHostFunction.SYSCALL_FACCESSAT -> ::SyscallFaccessat
+            EmscriptenHostFunction.SYSCALL_FCHMOD -> ::SyscallFchmod
+            EmscriptenHostFunction.SYSCALL_FCHOWN32 -> ::SyscallFchown32
+            EmscriptenHostFunction.SYSCALL_FCNTL64 -> ::SyscallFcntl64
+            EmscriptenHostFunction.SYSCALL_FDATASYNC -> ::SyscallFdatasync
+            EmscriptenHostFunction.SYSCALL_FSTAT64 -> ::SyscallFstat64
+            EmscriptenHostFunction.SYSCALL_FTRUNCATE64 -> ::SyscallFtruncate64
+            EmscriptenHostFunction.SYSCALL_GETCWD -> ::SyscallGetcwd
+            EmscriptenHostFunction.SYSCALL_IOCTL -> notImplementedEmscriptenHostFunction
+            EmscriptenHostFunction.SYSCALL_MKDIRAT -> ::SyscallMkdirat
+            EmscriptenHostFunction.SYSCALL_NEWFSTATAT -> notImplementedEmscriptenHostFunction
+            EmscriptenHostFunction.SYSCALL_OPENAT -> ::SyscallOpenat
+            EmscriptenHostFunction.SYSCALL_READLINKAT -> ::SyscallReadlinkat
+            EmscriptenHostFunction.SYSCALL_RMDIR -> ::SyscallRmdir
+            EmscriptenHostFunction.SYSCALL_STAT64 -> ::syscallStat64
+            EmscriptenHostFunction.SYSCALL_LSTAT64 -> ::syscallLstat64
+            EmscriptenHostFunction.SYSCALL_UNLINKAT -> ::SyscallUnlinkat
+            EmscriptenHostFunction.SYSCALL_UTIMENSAT -> ::SyscallUtimensat
+            EmscriptenHostFunction.TZSET_JS -> ::TzsetJs
+            EmscriptenHostFunction.EMSCRIPTEN_THREAD_SET_STRONGREF,
+            EmscriptenHostFunction.EMSCRIPTEN_EXIT_WITH_LIVE_RUNTIME,
+            EmscriptenHostFunction.EMSCRIPTEN_INIT_MAIN_THREAD_JS,
+            EmscriptenHostFunction.EMSCRIPTEN_THREAD_MAILBOX_AWAIT,
+            EmscriptenHostFunction.EMSCRIPTEN_RECEIVE_ON_MAIN_THREAD_JS,
+            EmscriptenHostFunction.EMSCRIPTEN_CHECK_BLOCKING_ALLOWED,
+            EmscriptenHostFunction.PTHREAD_CREATE_JS,
+            EmscriptenHostFunction.EXIT,
+            EmscriptenHostFunction.EMSCRIPTEN_THREAD_CLEANUP,
+            EmscriptenHostFunction.EMSCRIPTEN_NOTIFY_MAILBOX_POSTMESSAGE,
+            -> notImplementedEmscriptenHostFunction
+        }
+
     fun asChicoryHostFunctions(
         moduleName: String = ENV_MODULE_NAME,
     ): List<ChicoryHostFunction> {
@@ -81,51 +133,5 @@ internal class EmscriptenEnvFunctionsBuilder(
 
     private companion object {
         const val ENV_MODULE_NAME = "env"
-
-        private val EmscriptenHostFunction.functionFactory: EmscriptenHostFunctionHandleFactory
-            get() = when (this) {
-                EmscriptenHostFunction.ABORT_JS -> ::AbortJs
-                EmscriptenHostFunction.ASSERT_FAIL -> ::AssertFail
-                EmscriptenHostFunction.EMSCRIPTEN_CONSOLE_ERROR -> ::EmscriptenConsoleError
-                EmscriptenHostFunction.EMSCRIPTEN_DATE_NOW -> ::EmscriptenDateNow
-                EmscriptenHostFunction.EMSCRIPTEN_GET_NOW -> ::EmscriptenGetNow
-                EmscriptenHostFunction.EMSCRIPTEN_GET_NOW_IS_MONOTONIC -> ::EmscriptenGetNowIsMonotonic
-                EmscriptenHostFunction.EMSCRIPTEN_RESIZE_HEAP -> ::EmscriptenResizeHeap
-                EmscriptenHostFunction.GETENTROPY -> ::Getentropy
-                EmscriptenHostFunction.LOCALTIME_JS -> ::LocaltimeJs
-                EmscriptenHostFunction.MMAP_JS -> ::MmapJs
-                EmscriptenHostFunction.MUNMAP_JS -> ::MunmapJs
-                EmscriptenHostFunction.SYSCALL_CHMOD -> ::SyscallChmod
-                EmscriptenHostFunction.SYSCALL_FACCESSAT -> ::SyscallFaccessat
-                EmscriptenHostFunction.SYSCALL_FCHMOD -> ::SyscallFchmod
-                EmscriptenHostFunction.SYSCALL_FCHOWN32 -> ::SyscallFchown32
-                EmscriptenHostFunction.SYSCALL_FCNTL64 -> ::SyscallFcntl64
-                EmscriptenHostFunction.SYSCALL_FDATASYNC -> ::SyscallFdatasync
-                EmscriptenHostFunction.SYSCALL_FSTAT64 -> ::SyscallFstat64
-                EmscriptenHostFunction.SYSCALL_FTRUNCATE64 -> ::SyscallFtruncate64
-                EmscriptenHostFunction.SYSCALL_GETCWD -> ::SyscallGetcwd
-                EmscriptenHostFunction.SYSCALL_IOCTL -> notImplementedEmscriptenHostFunction
-                EmscriptenHostFunction.SYSCALL_MKDIRAT -> ::SyscallMkdirat
-                EmscriptenHostFunction.SYSCALL_NEWFSTATAT -> notImplementedEmscriptenHostFunction
-                EmscriptenHostFunction.SYSCALL_OPENAT -> ::SyscallOpenat
-                EmscriptenHostFunction.SYSCALL_READLINKAT -> ::SyscallReadlinkat
-                EmscriptenHostFunction.SYSCALL_RMDIR -> ::SyscallRmdir
-                EmscriptenHostFunction.SYSCALL_STAT64 -> ::syscallStat64
-                EmscriptenHostFunction.SYSCALL_LSTAT64 -> ::syscallLstat64
-                EmscriptenHostFunction.SYSCALL_UNLINKAT -> ::SyscallUnlinkat
-                EmscriptenHostFunction.SYSCALL_UTIMENSAT -> ::SyscallUtimensat
-                EmscriptenHostFunction.TZSET_JS -> ::TzsetJs
-                EmscriptenHostFunction.EMSCRIPTEN_THREAD_SET_STRONGREF,
-                EmscriptenHostFunction.EMSCRIPTEN_EXIT_WITH_LIVE_RUNTIME,
-                EmscriptenHostFunction.EMSCRIPTEN_INIT_MAIN_THREAD_JS,
-                EmscriptenHostFunction.EMSCRIPTEN_THREAD_MAILBOX_AWAIT,
-                EmscriptenHostFunction.EMSCRIPTEN_RECEIVE_ON_MAIN_THREAD_JS,
-                EmscriptenHostFunction.EMSCRIPTEN_CHECK_BLOCKING_ALLOWED,
-                EmscriptenHostFunction.PTHREAD_CREATE_JS,
-                EmscriptenHostFunction.EXIT,
-                EmscriptenHostFunction.EMSCRIPTEN_THREAD_CLEANUP,
-                EmscriptenHostFunction.EMSCRIPTEN_NOTIFY_MAILBOX_POSTMESSAGE,
-                -> notImplementedEmscriptenHostFunction
-            }
     }
 }

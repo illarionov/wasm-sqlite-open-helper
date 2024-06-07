@@ -22,6 +22,8 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.SqliteBindings
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.EmscriptenStackBindings
+import java.util.concurrent.atomic.AtomicReference
 
 public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig> {
     @InternalWasmSqliteHelperApi
@@ -54,14 +56,19 @@ public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig
             logger = host.rootLogger,
             severity = logSeverity,
         )
+        val stackBindingsRef: AtomicReference<EmscriptenStackBindings> = AtomicReference()
         val chicoryInstance: ChicoryInstance = MainInstanceBuilder(
             host = host,
             callbackStore = callbackStore,
             chicoryLogger = chicoryLogger,
+            stackBindingsRef = stackBindingsRef::get,
             minMemorySize = sqlite3Binary.wasmMinMemorySize,
         ).setupModule(sqlite3Binary)
 
         val bindings = ChicorySqliteBindings(chicoryInstance.memory, chicoryInstance.instance)
+        stackBindingsRef.set(bindings.memoryBindings)
+
+        bindings.init()
 
         return object : SqliteWasmEnvironment {
             override val sqliteBindings: SqliteBindings = bindings

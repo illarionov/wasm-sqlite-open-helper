@@ -35,6 +35,23 @@ public enum class EmscriptenHostFunction(
             U8.pointer, // func
         ),
     ),
+    EMSCRIPTEN_ASM_CONST_INT(
+        wasmName = "emscripten_asm_const_int",
+        paramTypes = listOf(
+            U8.pointer, // emAsmAddr
+            U8.pointer, // sigPtr
+            U8.pointer, // argbuf
+        ),
+        retType = I32,
+    ),
+    EMSCRIPTEN_ASM_CONST_ASYNC_ON_MAIN_THREAD(
+        wasmName = "emscripten_asm_const_async_on_main_thread",
+        paramTypes = listOf(
+            U8.pointer, // emAsmAddr
+            U8.pointer, // sigPtr
+            U8.pointer, // argbuf,
+        ),
+    ),
     EMSCRIPTEN_CONSOLE_ERROR(
         wasmName = "emscripten_console_error",
         paramTypes = listOf(U8.pointer),
@@ -68,6 +85,12 @@ public enum class EmscriptenHostFunction(
             I32, // size
         ),
         retType = I32,
+    ),
+    HANDLE_STACK_OVERFLOW(
+        wasmName = "__handle_stack_overflow",
+        paramTypes = listOf(
+            I32, // requested
+        ),
     ),
     LOCALTIME_JS(
         wasmName = "_localtime_js",

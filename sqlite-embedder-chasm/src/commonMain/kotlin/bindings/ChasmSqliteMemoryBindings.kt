@@ -16,10 +16,11 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.isSqlite3Null
 import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.SqliteMemoryBindings
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenInitializer
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.EmscriptenStackBindings
 
 internal class ChasmSqliteMemoryBindings(
     instance: ChasmInstance,
-) : SqliteMemoryBindings {
+) : SqliteMemoryBindings, EmscriptenStackBindings {
     val malloc by instance.member()
     val free by instance.member()
     val realloc by instance.member()
@@ -40,6 +41,11 @@ internal class ChasmSqliteMemoryBindings(
     private val sqlite3_realloc by instance.member()
     private val sqlite3_malloc64 by instance.member()
     private val sqlite3_realloc64 by instance.member()
+
+    override val emscriptenStackBase: WasmPtr<Byte>
+        get() = emscripten_stack_get_base.executeForPtr()
+    override val emscriptenStackEnd: WasmPtr<Byte>
+        get() = emscripten_stack_get_end.executeForPtr()
 
     // https://github.com/emscripten-core/emscripten/blob/main/system/lib/README.md
     fun init(memory: Memory) {
