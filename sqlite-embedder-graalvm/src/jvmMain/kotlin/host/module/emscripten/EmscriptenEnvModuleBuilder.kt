@@ -27,6 +27,7 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.functio
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.EmscriptenResizeHeap
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.EmscriptenThreadMailboxAwait
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.Getentropy
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.HandleStackOverflow
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.LocaltimeJs
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.MmapJs
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.MunapJs
@@ -57,23 +58,39 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WASM_MEMORY_64_MAX_PA
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WASM_MEMORY_PAGE_SIZE
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WASM_MEMORY_SQLITE_MAX_PAGES
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.EmscriptenStackBindings
 
 internal class EmscriptenEnvModuleBuilder(
     private val graalContext: Context,
     private val host: EmbedderHost,
     private val pthreadRef: () -> Pthread,
+    private val emscriptenStackBindingsRef: () -> EmscriptenStackBindings,
     private val moduleName: String = ENV_MODULE_NAME,
 ) {
     private val EmscriptenHostFunction.nodeFactory: NodeFactory
         get() = when (this) {
             EmscriptenHostFunction.ABORT_JS -> ::AbortJs
             EmscriptenHostFunction.ASSERT_FAIL -> ::AssertFail
+            EmscriptenHostFunction.EMSCRIPTEN_ASM_CONST_INT -> notImplementedFunctionNodeFactory(this)
+            EmscriptenHostFunction.EMSCRIPTEN_ASM_CONST_ASYNC_ON_MAIN_THREAD -> notImplementedFunctionNodeFactory(this)
             EmscriptenHostFunction.EMSCRIPTEN_DATE_NOW -> ::EmscriptenDateNow
             EmscriptenHostFunction.EMSCRIPTEN_CONSOLE_ERROR -> ::EmscriptenConsoleError
             EmscriptenHostFunction.EMSCRIPTEN_GET_NOW -> ::EmscriptenGetNow
             EmscriptenHostFunction.EMSCRIPTEN_GET_NOW_IS_MONOTONIC -> ::EmscriptenGetNowIsMonotonic
             EmscriptenHostFunction.EMSCRIPTEN_RESIZE_HEAP -> ::EmscriptenResizeHeap
             EmscriptenHostFunction.GETENTROPY -> ::Getentropy
+            EmscriptenHostFunction.HANDLE_STACK_OVERFLOW -> {
+                    language: WasmLanguage,
+                    module: WasmModule,
+                    host: EmbedderHost,
+                ->
+                HandleStackOverflow(
+                    language = language,
+                    module = module,
+                    host = host,
+                    stackBindingsRef = emscriptenStackBindingsRef,
+                )
+            }
             EmscriptenHostFunction.LOCALTIME_JS -> ::LocaltimeJs
             EmscriptenHostFunction.MMAP_JS -> ::MmapJs
             EmscriptenHostFunction.MUNMAP_JS -> ::MunapJs

@@ -18,6 +18,7 @@ import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.EmscriptenGetNowIsMonotonic
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.EmscriptenResizeHeap
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.Getentropy
+import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.HandleStackOverflow
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.LocaltimeJs
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.MmapJs
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.MunmapJs
@@ -51,6 +52,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.EMSCRIPTEN_GET_NOW_IS_MONOTONIC
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.EMSCRIPTEN_RESIZE_HEAP
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.GETENTROPY
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.HANDLE_STACK_OVERFLOW
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.LOCALTIME_JS
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.MMAP_JS
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.MUNMAP_JS
@@ -72,12 +74,15 @@ import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.SYSCALL_UNLINKAT
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.SYSCALL_UTIMENSAT
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.TZSET_JS
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.EmscriptenStackBindings
 import io.github.charlietap.chasm.import.Import as ChasmImport
 
+@Suppress("LAMBDA_IS_NOT_LAST_PARAMETER")
 internal fun getEmscriptenHostFunctions(
     store: Store,
     memory: ChasmMemoryAdapter,
     host: EmbedderHost,
+    emscriptenStackBindingsRef: () -> EmscriptenStackBindings,
     moduleName: String = ENV_MODULE_NAME,
 ): List<ChasmImport> {
     val functionTypes = EmscriptenHostFunction.entries.map(EmscriptenHostFunction::type).toChasmFunctionTypes()
@@ -88,7 +93,7 @@ internal fun getEmscriptenHostFunctions(
             value = function(
                 store = store,
                 type = functionTypes.getValue(emscriptenFunc.type),
-                function = emscriptenFunc.createChasmHostFunction(host, memory),
+                function = emscriptenFunc.createChasmHostFunction(host, memory, emscriptenStackBindingsRef),
             ),
         )
     }
@@ -98,6 +103,7 @@ internal fun getEmscriptenHostFunctions(
 private fun EmscriptenHostFunction.createChasmHostFunction(
     host: EmbedderHost,
     memory: ChasmMemoryAdapter,
+    emscriptenStackBindingsRef: () -> EmscriptenStackBindings,
 ): EmscriptenHostFunctionHandle = when (this) {
     ABORT_JS -> AbortJs(host)
     ASSERT_FAIL -> AssertFail(host, memory)
@@ -106,6 +112,7 @@ private fun EmscriptenHostFunction.createChasmHostFunction(
     EMSCRIPTEN_GET_NOW -> EmscriptenGetNow(host)
     EMSCRIPTEN_GET_NOW_IS_MONOTONIC -> EmscriptenGetNowIsMonotonic(host)
     EMSCRIPTEN_RESIZE_HEAP -> EmscriptenResizeHeap(host, memory)
+    HANDLE_STACK_OVERFLOW -> HandleStackOverflow(host, emscriptenStackBindingsRef)
     GETENTROPY -> Getentropy(host, memory)
     LOCALTIME_JS -> LocaltimeJs(host, memory)
     MMAP_JS -> MmapJs(host)

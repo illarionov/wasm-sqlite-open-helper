@@ -11,7 +11,6 @@ package ru.pixnews.wasm.sqlite.open.helper.chasm.bindings
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.member
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.ChasmInstanceBuilder.ChasmInstance
 import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.SqliteBindings
-import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.SqliteMemoryBindings
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmFunctionBinding
 
 internal class ChasmSqliteBindings(
@@ -70,15 +69,10 @@ internal class ChasmSqliteBindings(
     override val register_localized_collators: WasmFunctionBinding by instance.member()
     override val register_android_functions: WasmFunctionBinding by instance.member()
 
-    private val _memoryBindings = ChasmSqliteMemoryBindings(instance)
-    override val memoryBindings: SqliteMemoryBindings = _memoryBindings
-
-    init {
-        init()
-    }
+    override val memoryBindings: ChasmSqliteMemoryBindings = ChasmSqliteMemoryBindings(instance)
 
     override fun init() {
         __wasm_call_ctors.executeVoid()
-        _memoryBindings.init(memory)
+        memoryBindings.init(memory)
     }
 }

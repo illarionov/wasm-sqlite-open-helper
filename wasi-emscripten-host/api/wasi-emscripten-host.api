@@ -134,6 +134,8 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/Emscripten
 	public static final field ABORT_JS Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/EmscriptenHostFunction;
 	public static final field ASSERT_FAIL Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/EmscriptenHostFunction;
 	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/EmscriptenHostFunction$Companion;
+	public static final field EMSCRIPTEN_ASM_CONST_ASYNC_ON_MAIN_THREAD Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/EmscriptenHostFunction;
+	public static final field EMSCRIPTEN_ASM_CONST_INT Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/EmscriptenHostFunction;
 	public static final field EMSCRIPTEN_CHECK_BLOCKING_ALLOWED Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/EmscriptenHostFunction;
 	public static final field EMSCRIPTEN_CONSOLE_ERROR Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/EmscriptenHostFunction;
 	public static final field EMSCRIPTEN_DATE_NOW Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/EmscriptenHostFunction;
@@ -149,6 +151,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/Emscripten
 	public static final field EMSCRIPTEN_THREAD_SET_STRONGREF Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/EmscriptenHostFunction;
 	public static final field EXIT Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/EmscriptenHostFunction;
 	public static final field GETENTROPY Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/EmscriptenHostFunction;
+	public static final field HANDLE_STACK_OVERFLOW Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/EmscriptenHostFunction;
 	public static final field LOCALTIME_JS Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/EmscriptenHostFunction;
 	public static final field MMAP_JS Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/EmscriptenHostFunction;
 	public static final field MUNMAP_JS Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/EmscriptenHostFunction;
@@ -223,9 +226,19 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/E
 	public final fun calculateNewSizePages--3KitA8 (JJJ)J
 }
 
+public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/EmscriptenStackBindings {
+	public abstract fun getEmscriptenStackBase-LEMrgXI ()I
+	public abstract fun getEmscriptenStackEnd-LEMrgXI ()I
+}
+
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/GetentropyFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
 	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
 	public final fun execute--6ori6s (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory;II)I
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/HandleStackOverflowFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
+	public final fun execute-wTLQxr0 (Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/EmscriptenStackBindings;I)Ljava/lang/Void;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/LocaltimeJsFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {

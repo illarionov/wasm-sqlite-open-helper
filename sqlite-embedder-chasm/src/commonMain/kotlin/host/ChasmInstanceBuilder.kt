@@ -40,11 +40,13 @@ import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmModules.ENV_MODULE_NAME
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WASM_MEMORY_PAGE_SIZE
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WASM_MEMORY_SQLITE_MAX_PAGES
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.EmscriptenStackBindings
 import java.net.URI
 
 internal class ChasmInstanceBuilder(
     private val host: EmbedderHost,
     private val callbackStore: SqliteCallbackStore,
+    private val emscriptenStackBindingsRef: () -> EmscriptenStackBindings,
     private val minMemorySize: Long = 50_331_648L,
 ) {
     fun setupChasmInstance(
@@ -64,7 +66,7 @@ internal class ChasmInstanceBuilder(
 
         val hostImports = buildList {
             add(memoryImport)
-            addAll(getEmscriptenHostFunctions(store, memory, host))
+            addAll(getEmscriptenHostFunctions(store, memory, host, emscriptenStackBindingsRef))
             addAll(getWasiPreview1HostFunctions(store, memory, host))
             addAll(sqliteCallbacksHostFunctions)
         }

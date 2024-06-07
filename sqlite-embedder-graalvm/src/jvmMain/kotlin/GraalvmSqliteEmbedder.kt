@@ -27,6 +27,7 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.SqliteCal
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.wasi.WasiSnapshotPreview1ModuleBuilder
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.pthread.Pthread
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.EmscriptenStackBindings
 import java.net.URI
 import java.util.concurrent.atomic.AtomicReference
 
@@ -57,13 +58,15 @@ public object GraalvmSqliteEmbedder : SqliteEmbedder<GraalvmSqliteEmbedderConfig
         val useSharedMemory = USE_UNSAFE_MEMORY || sqlite3Binary.requireSharedMemory
         val wasmThreadsEnabled = sqlite3Binary.requireThreads
         val graalContext: Context = setupWasmGraalContext(graalvmEngine, useSharedMemory, wasmThreadsEnabled)
-        val ptreadRef: AtomicReference<Pthread> = AtomicReference()
+        val pthreadRef: AtomicReference<Pthread> = AtomicReference()
+        val stackBindingsRef: AtomicReference<EmscriptenStackBindings> = AtomicReference()
 
         val sqliteCallbacksModuleBuilder = SqliteCallbacksModuleBuilder(graalContext, host, callbackStore)
         val envModuleInstance = EmscriptenEnvModuleBuilder(
             graalContext,
             host,
-            ptreadRef::get,
+            pthreadRef::get,
+            stackBindingsRef::get,
         ).setupModule(
             minMemorySize = sqlite3Binary.wasmMinMemorySize,
             sharedMemory = sqlite3Binary.requireSharedMemory,
@@ -90,7 +93,7 @@ public object GraalvmSqliteEmbedder : SqliteEmbedder<GraalvmSqliteEmbedderConfig
         val mainBindings = wasmBindings.getMember(sourceName)
         val pthreadBindings = EmscriptenPthreadBindings(graalContext, mainBindings)
         @Suppress("DEPRECATION")
-        ptreadRef.set(
+        pthreadRef.set(
             Pthread(
                 host.rootLogger,
                 Thread.currentThread().id,
@@ -104,6 +107,10 @@ public object GraalvmSqliteEmbedder : SqliteEmbedder<GraalvmSqliteEmbedderConfig
             sqliteBindings = mainBindings,
             memory = memory,
         )
+        stackBindingsRef.set(bindings.memoryBindings)
+
+        bindings.init()
+
         return object : SqliteWasmEnvironment {
             override val sqliteBindings: SqliteBindings = bindings
             override val embedderInfo: SQLiteEmbedderRuntimeInfo = GraalvmEmbedderInfo(
