@@ -35,6 +35,7 @@ internal class WasmSqliteConnection(
     )
 
     fun configure() {
+        checkCurrentThread(logger, connectionPtrResource.threadId)
         // Register the localized collators.
         if (openParams.openFlags.contains(OpenFlags.LOCALIZED_COLLATORS)) {
             val newLocale: String = openParams.locale.icuId
@@ -51,6 +52,7 @@ internal class WasmSqliteConnection(
         if (connectionPtrResource.isClosed.value) {
             throwSqliteException("Connection closed", SqliteResultCode.SQLITE_MISUSE)
         }
+        checkCurrentThread(logger, connectionPtrResource.threadId)
 
         return when (val statementPtr = cApi.statement.sqlite3PrepareV2(connectionPtrResource.nativePtr, sql)) {
             is Sqlite3Result.Success -> {
@@ -73,9 +75,10 @@ internal class WasmSqliteConnection(
     }
 
     override fun close() {
+        logger.v { "close($connectionPtrResource) " }
         val alreadyClosed = connectionPtrResource.isClosed.getAndSet(true)
         if (!alreadyClosed) {
-            closeConnection(databaseLabel, connectionPtrResource, cApi)
+            closeConnection(databaseLabel, connectionPtrResource, cApi, logger)
         }
         connectionPtrResourceCleanable.clean()
     }
@@ -83,6 +86,7 @@ internal class WasmSqliteConnection(
     internal class ConnectionPtrClosable(
         val nativePtr: WasmPtr<SqliteDb>,
         val isClosed: AtomicBoolean = atomic(false),
+        val threadId: ULong = currentThreadId,
     )
 
     private class ConnectionPtrClosableCleanAction(
@@ -95,7 +99,7 @@ internal class WasmSqliteConnection(
             val alreadyClosed = ptr.isClosed.getAndSet(true)
             if (!alreadyClosed) {
                 onConnectionLeaked()
-                closeConnection(databaseLabel, ptr, cApi)
+                closeConnection(databaseLabel, ptr, cApi, rootLogger)
             }
         }
 
@@ -114,10 +118,13 @@ internal class WasmSqliteConnection(
             databaseLabel: String,
             closableConnectionPtr: ConnectionPtrClosable,
             cApi: Sqlite3CApi,
+            logger: Logger,
         ) {
             if (closableConnectionPtr.isClosed.getAndSet(true)) {
                 return
             }
+            logger.v { "closeConnection($closableConnectionPtr) " }
+            checkCurrentThread(logger, closableConnectionPtr.threadId)
 
             val rawConnectionPtr = closableConnectionPtr.nativePtr
             cApi.db.sqlite3Close(rawConnectionPtr)

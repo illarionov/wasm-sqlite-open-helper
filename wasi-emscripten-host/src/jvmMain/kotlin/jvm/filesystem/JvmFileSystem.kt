@@ -77,6 +77,9 @@ import java.nio.file.attribute.BasicFileAttributes
 import java.nio.file.attribute.FileTime
 import java.nio.file.attribute.PosixFileAttributeView
 import java.util.concurrent.TimeUnit.NANOSECONDS
+import java.util.concurrent.locks.Lock
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 import kotlin.io.path.exists
 import kotlin.io.path.fileAttributesView
 import kotlin.io.path.isDirectory
@@ -94,22 +97,21 @@ public class JvmFileSystem(
     internal val javaFs: java.nio.file.FileSystem = FileSystems.getDefault(),
     private val blockSize: ULong = 512UL,
 ) : FileSystem<JvmPath> {
-    private val logger: Logger = rootLogger.withTag("FileSystem")
-    private val fileDescriptors: FileDescriptorMap = FileDescriptorMap(this)
-
-    override fun getCwd(): String = getCwdPath().nio.pathString
+    private val logger: Logger = rootLogger.withTag("FS")
+    private val fileDescriptors: FileDescriptorMap = FileDescriptorMap(this, rootLogger)
+    public val fsLock: Lock = ReentrantLock()
 
     override fun stat(
         path: String,
         followSymlinks: Boolean,
-    ): StructStat {
+    ): StructStat = fsLock.withLock {
         val filePath = javaFs.getPath(path).toCommonPath()
         return stat(filePath, followSymlinks)
     }
 
     override fun stat(
         fd: Fd,
-    ): StructStat {
+    ): StructStat = fsLock.withLock {
         val stream = fileDescriptors.get(fd) ?: throw SysException(BADF, "File descriptor `$fd` not open")
         return stat(stream.path, true)
     }
@@ -118,8 +120,10 @@ public class JvmFileSystem(
     override fun stat(
         filePath: JvmPath,
         followSymlinks: Boolean,
-    ): StructStat {
+    ): StructStat = fsLock.withLock {
         val linkOptions = followSymlinksToLinkOptions(followSymlinks)
+        logger.v { "stat($filePath, $followSymlinks)" }
+
         if (!filePath.nio.exists(options = linkOptions)) {
             throw SysException(NOENT)
         }
@@ -179,7 +183,8 @@ public class JvmFileSystem(
         )
     }
 
-    override fun resolveAbsolutePath(dirFd: DirFd, path: String, allowEmpty: Boolean): JvmPath {
+    override fun resolveAbsolutePath(dirFd: DirFd, path: String, allowEmpty: Boolean): JvmPath = fsLock.withLock {
+        logger.v { "resolveAbsolutePath($dirFd, $path, $allowEmpty)" }
         val nioPath = javaFs.getPath(path)
 
         if (nioPath.isAbsolute) {
@@ -201,11 +206,12 @@ public class JvmFileSystem(
         return root.nio.resolve(nioPath).toCommonPath()
     }
 
-    override fun getPath(fd: Fd): JvmPath {
+    override fun getPath(fd: Fd): JvmPath = fsLock.withLock {
         return getStreamByFd(fd).path
     }
 
-    override fun isRegularFile(fd: Fd): Boolean {
+    override fun isRegularFile(fd: Fd): Boolean = fsLock.withLock {
+        logger.v { "isRegularFile($fd)" }
         return getStreamByFd(fd).path.nio.isRegularFile()
     }
 
@@ -213,7 +219,9 @@ public class JvmFileSystem(
         path: JvmPath,
         flags: UInt,
         mode: FileMode,
-    ): Fd {
+    ): Fd = fsLock.withLock {
+        logger.v { "open($path, $flags, $mode)" }
+
         if (path.nio.pathString.isEmpty()) {
             throw SysException(NOENT)
         }
@@ -246,7 +254,7 @@ public class JvmFileSystem(
         dirfd: DirFd,
         path: String,
         flags: UInt,
-    ) {
+    ): Unit = fsLock.withLock {
         val absolutePath = resolveAbsolutePath(dirfd, path)
         logger.v { "unlinkAt($absolutePath, flags: 0${flags.toString(8)} (${Fcntl.oMaskToString(flags)}))" }
 
@@ -285,19 +293,22 @@ public class JvmFileSystem(
         }
     }
 
-    override fun getCwdPath(): JvmPath {
-        return javaFs.getPath("").toAbsolutePath().toCommonPath()
+    override fun getCwdPath(): JvmPath = fsLock.withLock {
+        val cwd = javaFs.getPath("").toAbsolutePath().toCommonPath()
+        logger.v { "cwd(): $cwd" }
+        return cwd
     }
 
-    override fun resolveWhencePosition(fd: Fd, offset: Long, whence: Whence): Long {
+    override fun resolveWhencePosition(fd: Fd, offset: Long, whence: Whence): Long = fsLock.withLock {
+        logger.v { "resolveWhencePosition($fd, $offset, $whence)" }
         return getStreamByFd(fd).resolveWhencePosition(offset, whence)
     }
 
-    internal fun getStreamByFd(fd: Fd): FdFileChannel {
+    internal fun getStreamByFd(fd: Fd): FdFileChannel = fsLock.withLock {
         return fileDescriptors.get(fd) ?: throw SysException(BADF, "File descriptor $fd is not opened")
     }
 
-    public fun getNioFileChannelByFd(fd: Fd): FileChannel {
+    public fun getNioFileChannelByFd(fd: Fd): FileChannel = fsLock.withLock {
         return getStreamByFd(fd).channel
     }
 
@@ -305,7 +316,7 @@ public class JvmFileSystem(
         fd: Fd,
         offset: Long,
         whence: Whence,
-    ): Long {
+    ): Long = fsLock.withLock {
         val channel = getStreamByFd(fd)
         logger.v { "seek($fd, $offset, $whence)" }
         val newPosition = channel.resolveWhencePosition(offset, whence)
@@ -321,7 +332,7 @@ public class JvmFileSystem(
         fd: Fd,
         iovecs: List<FileSystemByteBuffer>,
         strategy: ReadWriteStrategy,
-    ): ULong {
+    ): ULong = fsLock.withLock {
         logger.v { "read($fd, $iovecs, $strategy)" }
         val channel = getStreamByFd(fd)
 
@@ -367,7 +378,7 @@ public class JvmFileSystem(
         fd: Fd,
         cIovecs: List<FileSystemByteBuffer>,
         strategy: ReadWriteStrategy,
-    ): ULong {
+    ): ULong = fsLock.withLock {
         logger.v { "write($fd, $cIovecs, $strategy)" }
         val channel = getStreamByFd(fd)
         try {
@@ -407,7 +418,7 @@ public class JvmFileSystem(
         }
     }
 
-    override fun close(fd: Fd) {
+    override fun close(fd: Fd): Unit = fsLock.withLock {
         logger.v { "close($fd)" }
         val channel = fileDescriptors.remove(fd)
         try {
@@ -420,7 +431,7 @@ public class JvmFileSystem(
     override fun sync(
         fd: Fd,
         metadata: Boolean,
-    ) {
+    ): Unit = fsLock.withLock {
         logger.v { "sync($fd)" }
         val channel = getStreamByFd(fd)
 
@@ -433,7 +444,7 @@ public class JvmFileSystem(
         }
     }
 
-    override fun chown(fd: Fd, owner: Int, group: Int) {
+    override fun chown(fd: Fd, owner: Int, group: Int): Unit = fsLock.withLock {
         logger.v { "chown($fd, $owner, $group)" }
         val channel = getStreamByFd(fd)
         try {
@@ -451,13 +462,12 @@ public class JvmFileSystem(
         }
     }
 
-    override fun chmod(fd: Fd, mode: FileMode) {
-        logger.v { "chmod($fd, $mode)" }
+    override fun chmod(fd: Fd, mode: FileMode): Unit = fsLock.withLock {
         val channel = getStreamByFd(fd)
         chmod(channel.path, mode)
     }
 
-    override fun chmod(path: String, mode: FileMode) {
+    override fun chmod(path: String, mode: FileMode): Unit = fsLock.withLock {
         val javaPath = javaFs.getPath(path)
         chmod(javaPath.toCommonPath(), mode)
     }
@@ -465,7 +475,8 @@ public class JvmFileSystem(
     override fun chmod(
         javaPath: JvmPath,
         mode: FileMode,
-    ) {
+    ): Unit = fsLock.withLock {
+        logger.v { "chmod($javaPath, $mode)" }
         try {
             javaPath.nio.setPosixFilePermissions(mode.toPosixFilePermissions())
         } catch (uoe: UnsupportedOperationException) {
@@ -479,7 +490,7 @@ public class JvmFileSystem(
         }
     }
 
-    override fun ftruncate(fd: Fd, length: ULong) {
+    override fun ftruncate(fd: Fd, length: ULong): Unit = fsLock.withLock {
         logger.v { "ftruncate($fd, $length)" }
         val channel = getStreamByFd(fd)
         try {
@@ -496,7 +507,7 @@ public class JvmFileSystem(
         }
     }
 
-    override fun mkdirAt(dirFd: DirFd, path: String, mode: FileMode) {
+    override fun mkdirAt(dirFd: DirFd, path: String, mode: FileMode): Unit = fsLock.withLock {
         val absolutePath = resolveAbsolutePath(dirFd, path)
         logger.v { "mkdirAt($absolutePath, $mode}" }
         try {
@@ -516,7 +527,7 @@ public class JvmFileSystem(
         atime: Duration?,
         mtime: Duration?,
         noFolowSymlinks: Boolean,
-    ) {
+    ): Unit = fsLock.withLock {
         val absolutePath = resolveAbsolutePath(dirFd, path)
         logger.v { "utimensat($absolutePath, $atime, $mtime, $noFolowSymlinks)" }
         try {
@@ -537,7 +548,7 @@ public class JvmFileSystem(
         }
     }
 
-    override fun rmdir(path: String) {
+    override fun rmdir(path: String): Unit = fsLock.withLock {
         logger.v { "rmdir($path}" }
         try {
             val absolutePath = javaFs.getPath(path)
@@ -632,8 +643,9 @@ public class JvmFileSystem(
         path: String,
         mode: FileAccessibilityCheck,
         flags: UInt,
-    ) {
+    ): Unit = fsLock.withLock {
         val absolutePath = resolveAbsolutePath(dirFd, path)
+        logger.v { "faccessat($dirFd, $path, $mode, $flags)" }
 
         if (mode.clear(FileAccessibilityCheck.MASK).mask != 0U) {
             throw SysException(INVAL, "Unrecognized check mode $mode")
@@ -657,7 +669,7 @@ public class JvmFileSystem(
         }
     }
 
-    override fun readLinkAt(dirFd: DirFd, path: String): String {
+    override fun readLinkAt(dirFd: DirFd, path: String): String = fsLock.withLock {
         logger.v { "readLinkAt($dirFd, $path)" }
         val absolutePath = resolveAbsolutePath(dirFd, path)
         return try {
@@ -673,12 +685,13 @@ public class JvmFileSystem(
         }
     }
 
-    override fun addAdvisoryLock(fd: Fd, flock: StructFlock) {
+    override fun addAdvisoryLock(fd: Fd, flock: StructFlock): Unit = fsLock.withLock {
         val channel = getStreamByFd(fd)
+        logger.v { "addAdvisoryLock($fd, $flock)" }
         addAdvisorylock(channel, flock)
     }
 
-    override fun removeAdvisoryLock(fd: Fd, flock: StructFlock) {
+    override fun removeAdvisoryLock(fd: Fd, flock: StructFlock): Unit = fsLock.withLock {
         val channel = getStreamByFd(fd)
         removeAdvisoryLock(channel, flock)
     }

@@ -11,12 +11,12 @@ import com.dylibso.chicory.wasm.types.Value
 import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.asWasmAddr
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.EmscriptenHostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.EmscriptenStackBindings
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.stack.EmscriptenStack
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.HandleStackOverflowFunctionHandle
 
 internal class HandleStackOverflow(
     host: EmbedderHost,
-    private val stackBindingsRef: () -> EmscriptenStackBindings,
+    private val stackBindingsRef: () -> EmscriptenStack,
 ) : EmscriptenHostFunctionHandle {
     private val handle = HandleStackOverflowFunctionHandle(host)
 

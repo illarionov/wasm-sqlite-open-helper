@@ -4,17 +4,20 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.graalvm.host.pthread
+@file:Suppress("VariableNaming", "BLANK_LINE_BETWEEN_PROPERTIES")
+
+package ru.pixnews.wasm.sqlite.open.helper.graalvm.bindings
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.bindings.EmscriptenPthreadBindings
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.toInt
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.pthread.EmscriptenPthreadExports
 
-internal class Pthread(
+internal class GraalvmPthread(
+    private val exports: EmscriptenPthreadExports,
     rootLogger: Logger,
     @Suppress("DEPRECATION")
     private val mainThreadId: Long = Thread.currentThread().id,
-    private val emscriptenPthreadBindings: EmscriptenPthreadBindings,
 ) {
     private val logger: Logger = rootLogger.withTag("Pthread")
 
@@ -25,30 +28,30 @@ internal class Pthread(
         // EXITSTATUS
     }
 
-    fun emscriptenThreadInit(
+    public fun emscriptenThreadLocalStorageInit() {
+        logger.v { "emscriptenThreadLocalStorageInit()" }
+        exports._emscripten_tls_init.executeVoid()
+    }
+
+    public fun emscriptenThreadInit(
         threadPtr: WasmPtr<*>,
-        isMain: Boolean,
-        isRuntime: Boolean,
-        canBlock: Boolean,
-        defaultStackSize: Int,
-        startProfiling: Boolean,
+        isMain: Boolean, // !ENVIRONMENT_IS_WORKER
+        isRuntime: Boolean = true, //
+        canBlock: Boolean = true, // !ENVIRONMENT_IS_WEB
+        defaultStackSize: Int = 524288,
+        startProfiling: Boolean = false,
     ) {
         logger.v {
             "emscriptenThreadInit($threadPtr, $isMain, $isRuntime, $canBlock, $defaultStackSize, $startProfiling)"
         }
-        emscriptenPthreadBindings.emscriptenThreadInit(
-            threadPtr,
-            isMain,
-            isRuntime,
-            canBlock,
+        exports._emscripten_thread_init.executeVoid(
+            threadPtr.addr,
+            isMain.toInt(),
+            isRuntime.toInt(),
+            canBlock.toInt(),
             defaultStackSize,
-            startProfiling,
+            startProfiling.toInt(),
         )
-    }
-
-    public fun emscriptenThreadLocalStorageInit() {
-        logger.v { "emscriptenThreadLocalStorageInit()" }
-        emscriptenPthreadBindings.emscriptenTlsInit()
     }
 
     public fun isMainThread(): Boolean {
@@ -56,7 +59,7 @@ internal class Pthread(
         return Thread.currentThread().id == mainThreadId
     }
 
-     internal companion object {
-         internal const val DEFAULT_THREAD_STACK_SIZE = 524288
-     }
+    internal companion object {
+        internal const val DEFAULT_THREAD_STACK_SIZE = 524288
+    }
 }

@@ -12,8 +12,8 @@ import ru.pixnews.wasm.sqlite.open.helper.common.embedder.EmbedderMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.readNullableNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.readPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.write
-import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.SqliteBindings
-import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.sqliteFreeSilent
+import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
+import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.sqliteFreeSilent
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteColumnType
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDestructorType
@@ -24,12 +24,12 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3Result.Succe
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.databaseresources.SqliteDatabaseResourcesRegistry
 
 public class Sqlite3StatementFunctions internal constructor(
-    private val sqliteBindings: SqliteBindings,
+    private val sqliteExports: SqliteExports,
     private val memory: EmbedderMemory,
     private val databaseResourcesRegistry: SqliteDatabaseResourcesRegistry,
     private val sqliteErrorApi: Sqlite3ErrorFunctions,
 ) {
-    private val memoryBindings = sqliteBindings.memoryBindings
+    private val memoryBindings = sqliteExports.memoryExports
 
     public fun sqlite3PrepareV2(
         sqliteDb: WasmPtr<SqliteDb>,
@@ -48,7 +48,7 @@ public class Sqlite3StatementFunctions internal constructor(
             memory.write(sqlBytesPtr, sqlEncoded)
             memory.writeByte(sqlBytesPtr + sqlEncoded.size, 0)
 
-            val errCode = sqliteBindings.sqlite3_prepare_v2.executeForSqliteResultCode(
+            val errCode = sqliteExports.sqlite3_prepare_v2.executeForSqliteResultCode(
                 sqliteDb.addr,
                 sqlBytesPtr.addr,
                 nullTerminatedSqlSize,
@@ -73,30 +73,30 @@ public class Sqlite3StatementFunctions internal constructor(
     public fun sqlite3ColumnCount(
         statement: WasmPtr<SqliteStatement>,
     ): Int {
-        return sqliteBindings.sqlite3_column_count.executeForInt(statement.addr)
+        return sqliteExports.sqlite3_column_count.executeForInt(statement.addr)
     }
 
     public fun sqlite3ColumnType(
         statement: WasmPtr<SqliteStatement>,
         columnNo: Int,
     ): SqliteColumnType {
-        return SqliteColumnType(sqliteBindings.sqlite3_column_type.executeForInt(statement.addr, columnNo))
+        return SqliteColumnType(sqliteExports.sqlite3_column_type.executeForInt(statement.addr, columnNo))
     }
 
     public fun sqlite3Step(
         statement: WasmPtr<SqliteStatement>,
     ): SqliteResultCode {
-        return sqliteBindings.sqlite3_step.executeForSqliteResultCode(statement.addr)
+        return sqliteExports.sqlite3_step.executeForSqliteResultCode(statement.addr)
     }
 
     public fun sqlite3Reset(
         statement: WasmPtr<SqliteStatement>,
     ): SqliteResultCode {
-        return sqliteBindings.sqlite3_reset.executeForSqliteResultCode(statement.addr)
+        return sqliteExports.sqlite3_reset.executeForSqliteResultCode(statement.addr)
     }
 
     public fun sqlite3ClearBindings(statement: WasmPtr<SqliteStatement>): SqliteResultCode {
-        return sqliteBindings.sqlite3_clear_bindings.executeForSqliteResultCode(statement.addr)
+        return sqliteExports.sqlite3_clear_bindings.executeForSqliteResultCode(statement.addr)
     }
 
     public fun sqlite3BindBlobTransient(
@@ -107,7 +107,7 @@ public class Sqlite3StatementFunctions internal constructor(
         val pValue: WasmPtr<Byte> = memoryBindings.sqliteAllocOrThrow(value.size.toUInt())
         memory.write(pValue, value, 0, value.size)
         val errCode = try {
-            sqliteBindings.sqlite3_bind_blob.executeForSqliteResultCode(
+            sqliteExports.sqlite3_bind_blob.executeForSqliteResultCode(
                 statement.addr,
                 index,
                 pValue.addr,
@@ -132,7 +132,7 @@ public class Sqlite3StatementFunctions internal constructor(
         val pValue: WasmPtr<Byte> = memoryBindings.sqliteAllocOrThrow(size.toUInt())
         memory.write(pValue, encoded, 0, size)
         val errCode = try {
-            sqliteBindings.sqlite3_bind_text.executeForInt(
+            sqliteExports.sqlite3_bind_text.executeForInt(
                 statement.addr,
                 index,
                 pValue.addr,
@@ -151,7 +151,7 @@ public class Sqlite3StatementFunctions internal constructor(
         index: Int,
         value: Double,
     ): SqliteResultCode {
-        return sqliteBindings.sqlite3_bind_double.executeForSqliteResultCode(
+        return sqliteExports.sqlite3_bind_double.executeForSqliteResultCode(
             statement.addr,
             index,
             value,
@@ -163,7 +163,7 @@ public class Sqlite3StatementFunctions internal constructor(
         index: Int,
         value: Long,
     ): SqliteResultCode {
-        return sqliteBindings.sqlite3_bind_int64.executeForSqliteResultCode(
+        return sqliteExports.sqlite3_bind_int64.executeForSqliteResultCode(
             statement.addr,
             index,
             value,
@@ -174,23 +174,23 @@ public class Sqlite3StatementFunctions internal constructor(
         sqliteDb: WasmPtr<SqliteStatement>,
         index: Int,
     ): SqliteResultCode {
-        return sqliteBindings.sqlite3_bind_null.executeForSqliteResultCode(sqliteDb.addr, index)
+        return sqliteExports.sqlite3_bind_null.executeForSqliteResultCode(sqliteDb.addr, index)
     }
 
     public fun sqlite3ColumnName(
         statement: WasmPtr<SqliteStatement>,
         index: Int,
     ): String? {
-        val ptr: WasmPtr<Byte> = sqliteBindings.sqlite3_column_name.executeForPtr(statement.addr, index)
+        val ptr: WasmPtr<Byte> = sqliteExports.sqlite3_column_name.executeForPtr(statement.addr, index)
         return memory.readNullableNullTerminatedString(ptr)
     }
 
     public fun sqlite3StmtReadonly(statement: WasmPtr<SqliteStatement>): Boolean {
-        return sqliteBindings.sqlite3_stmt_readonly.executeForInt(statement.addr) != 0
+        return sqliteExports.sqlite3_stmt_readonly.executeForInt(statement.addr) != 0
     }
 
     public fun sqlite3BindParameterCount(statement: WasmPtr<SqliteStatement>): Int {
-        return sqliteBindings.sqlite3_bind_parameter_count.executeForInt(statement.addr)
+        return sqliteExports.sqlite3_bind_parameter_count.executeForInt(statement.addr)
     }
 
     public fun sqlite3Finalize(
@@ -198,7 +198,7 @@ public class Sqlite3StatementFunctions internal constructor(
         statement: WasmPtr<SqliteStatement>,
     ): Sqlite3Result<Unit> {
         try {
-            val errCode = sqliteBindings.sqlite3_finalize.executeForSqliteResultCode(statement.addr)
+            val errCode = sqliteExports.sqlite3_finalize.executeForSqliteResultCode(statement.addr)
             return sqliteErrorApi.createSqlite3Result(errCode, Unit, sqliteDatabase)
         } finally {
             databaseResourcesRegistry.unregisterStatement(sqliteDatabase, statement)
@@ -206,7 +206,7 @@ public class Sqlite3StatementFunctions internal constructor(
     }
 
     public fun sqlite3ExpandedSql(statement: WasmPtr<SqliteStatement>): String? {
-        val ptr: WasmPtr<Byte> = sqliteBindings.sqlite3_expanded_sql.executeForPtr(statement.addr)
+        val ptr: WasmPtr<Byte> = sqliteExports.sqlite3_expanded_sql.executeForPtr(statement.addr)
         return memory.readNullableNullTerminatedString(ptr)
     }
 
@@ -214,7 +214,7 @@ public class Sqlite3StatementFunctions internal constructor(
         statement: WasmPtr<SqliteStatement>,
         columnIndex: Int,
     ): String? {
-        val ptr: WasmPtr<Byte> = sqliteBindings.sqlite3_column_text.executeForPtr(statement.addr, columnIndex)
+        val ptr: WasmPtr<Byte> = sqliteExports.sqlite3_column_text.executeForPtr(statement.addr, columnIndex)
         return memory.readNullableNullTerminatedString(ptr)
     }
 
@@ -222,25 +222,25 @@ public class Sqlite3StatementFunctions internal constructor(
         statement: WasmPtr<SqliteStatement>,
         columnIndex: Int,
     ): Long {
-        return sqliteBindings.sqlite3_column_int64.executeForLong(statement.addr, columnIndex)
+        return sqliteExports.sqlite3_column_int64.executeForLong(statement.addr, columnIndex)
     }
 
     public fun sqlite3ColumnDouble(
         statement: WasmPtr<SqliteStatement>,
         columnIndex: Int,
     ): Double {
-        return sqliteBindings.sqlite3_column_double.executeForDouble(statement.addr, columnIndex)
+        return sqliteExports.sqlite3_column_double.executeForDouble(statement.addr, columnIndex)
     }
 
     public fun sqlite3ColumnBlob(
         statement: WasmPtr<SqliteStatement>,
         columnIndex: Int,
     ): ByteArray {
-        val ptr: WasmPtr<Byte> = sqliteBindings.sqlite3_column_text.executeForPtr(
+        val ptr: WasmPtr<Byte> = sqliteExports.sqlite3_column_text.executeForPtr(
             statement.addr,
             columnIndex,
         )
-        val bytes = sqliteBindings.sqlite3_column_bytes.executeForInt(
+        val bytes = sqliteExports.sqlite3_column_bytes.executeForInt(
             statement.addr,
             columnIndex,
         )

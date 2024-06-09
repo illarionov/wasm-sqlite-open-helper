@@ -8,15 +8,35 @@
 
 package ru.pixnews.wasm.sqlite.test.utils
 
+import co.touchlab.kermit.MessageStringFormatter
 import co.touchlab.kermit.Severity
+import co.touchlab.kermit.Tag
+import co.touchlab.kermit.platformLogWriter
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import co.touchlab.kermit.Logger as KermitLogger
+
+internal expect val currentTimestamp: ULong
+internal expect val currentThreadId: ULong
 
 public open class KermitLogger(
     tag: String = "WSOH",
     private val minSeverity: Severity = Severity.Verbose,
 ) : Logger {
-    private val delegate: KermitLogger = KermitLogger.apply { setMinSeverity(minSeverity) }.withTag(tag)
+    private val delegate: KermitLogger = KermitLogger.apply {
+        setMinSeverity(minSeverity)
+        setLogWriters(platformLogWriter(MessageFormatter))
+    }.withTag(tag)
+
+    @Suppress("MagicNumber")
+    internal object MessageFormatter : MessageStringFormatter {
+        override fun formatSeverity(severity: Severity): String = listOf(
+            currentTimestamp.toString().padEnd(13),
+            currentThreadId.toString().padEnd(4),
+            severity.toString().take(1),
+        ).joinToString(" ")
+
+        override fun formatTag(tag: Tag): String = "${tag.tag}:"
+    }
 
     override fun withTag(tag: String): Logger = KermitLogger(tag, minSeverity)
 

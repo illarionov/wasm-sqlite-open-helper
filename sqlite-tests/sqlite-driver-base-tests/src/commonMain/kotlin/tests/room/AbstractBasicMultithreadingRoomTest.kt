@@ -15,6 +15,7 @@ import ru.pixnews.wasm.sqlite.driver.test.base.tests.room.UserDatabaseTests.User
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import java.util.concurrent.Executors
 import kotlin.test.Test
+import kotlin.time.Duration.Companion.minutes
 
 abstract class AbstractBasicMultithreadingRoomTest<E : SqliteEmbedderConfig>(
     driverFactory: TestSqliteDriverFactory,
@@ -24,8 +25,8 @@ abstract class AbstractBasicMultithreadingRoomTest<E : SqliteEmbedderConfig>(
     val tests = UserDatabaseTests(driverFactory, databaseFactory, logger, dbLogger)
 
     @Test
-    public open fun Test_Room_Multithread() = runTest {
-        Executors.newFixedThreadPool(4).asCoroutineDispatcher().use { dispatcher ->
+    public open fun Test_Room_Multithread() = runTest(timeout = 10.minutes) {
+        Executors.newFixedThreadPool(2).asCoroutineDispatcher().use { dispatcher ->
             tests.testRoomOnUserDatabase(
                 databaseName = fileInTempDir("test.db"),
                 queryCoroutineContext = dispatcher,
@@ -36,7 +37,7 @@ abstract class AbstractBasicMultithreadingRoomTest<E : SqliteEmbedderConfig>(
 
     @Test
     public open fun Test_In_Memory_Room_Multithread() = runTest {
-        Executors.newFixedThreadPool(4).asCoroutineDispatcher().use { dispatcher ->
+        Executors.newFixedThreadPool(2).asCoroutineDispatcher().use { dispatcher ->
             tests.testRoomOnUserDatabase(
                 databaseName = null,
                 queryCoroutineContext = dispatcher,

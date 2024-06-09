@@ -6,4 +6,12 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.filesystem
 
-public interface Path
+public interface Path {
+    /**
+    * Returns the string representation of this path.
+    *
+    * The returned path string uses the default name [separator][FileSystem.getSeparator]
+    * to separate names in the path.
+    */
+    public val pathString: String
+}

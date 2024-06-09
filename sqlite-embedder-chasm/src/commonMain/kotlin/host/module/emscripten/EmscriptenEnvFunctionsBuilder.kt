@@ -74,7 +74,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.SYSCALL_UNLINKAT
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.SYSCALL_UTIMENSAT
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.TZSET_JS
-import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.EmscriptenStackBindings
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.stack.EmscriptenStack
 import io.github.charlietap.chasm.import.Import as ChasmImport
 
 @Suppress("LAMBDA_IS_NOT_LAST_PARAMETER")
@@ -82,7 +82,7 @@ internal fun getEmscriptenHostFunctions(
     store: Store,
     memory: ChasmMemoryAdapter,
     host: EmbedderHost,
-    emscriptenStackBindingsRef: () -> EmscriptenStackBindings,
+    emscriptenStackRef: () -> EmscriptenStack,
     moduleName: String = ENV_MODULE_NAME,
 ): List<ChasmImport> {
     val functionTypes = EmscriptenHostFunction.entries.map(EmscriptenHostFunction::type).toChasmFunctionTypes()
@@ -93,7 +93,7 @@ internal fun getEmscriptenHostFunctions(
             value = function(
                 store = store,
                 type = functionTypes.getValue(emscriptenFunc.type),
-                function = emscriptenFunc.createChasmHostFunction(host, memory, emscriptenStackBindingsRef),
+                function = emscriptenFunc.createChasmHostFunction(host, memory, emscriptenStackRef),
             ),
         )
     }
@@ -103,7 +103,7 @@ internal fun getEmscriptenHostFunctions(
 private fun EmscriptenHostFunction.createChasmHostFunction(
     host: EmbedderHost,
     memory: ChasmMemoryAdapter,
-    emscriptenStackBindingsRef: () -> EmscriptenStackBindings,
+    emscriptenStackRef: () -> EmscriptenStack,
 ): EmscriptenHostFunctionHandle = when (this) {
     ABORT_JS -> AbortJs(host)
     ASSERT_FAIL -> AssertFail(host, memory)
@@ -112,7 +112,7 @@ private fun EmscriptenHostFunction.createChasmHostFunction(
     EMSCRIPTEN_GET_NOW -> EmscriptenGetNow(host)
     EMSCRIPTEN_GET_NOW_IS_MONOTONIC -> EmscriptenGetNowIsMonotonic(host)
     EMSCRIPTEN_RESIZE_HEAP -> EmscriptenResizeHeap(host, memory)
-    HANDLE_STACK_OVERFLOW -> HandleStackOverflow(host, emscriptenStackBindingsRef)
+    HANDLE_STACK_OVERFLOW -> HandleStackOverflow(host, emscriptenStackRef)
     GETENTROPY -> Getentropy(host, memory)
     LOCALTIME_JS -> LocaltimeJs(host, memory)
     MMAP_JS -> MmapJs(host)

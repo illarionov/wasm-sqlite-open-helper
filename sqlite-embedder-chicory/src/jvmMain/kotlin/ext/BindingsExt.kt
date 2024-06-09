@@ -6,29 +6,81 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chicory.ext
 
+import com.dylibso.chicory.runtime.ExportFunction
 import com.dylibso.chicory.runtime.Instance
-import ru.pixnews.wasm.sqlite.open.helper.chicory.bindings.ChicoryWasmFunctionBinding
-import ru.pixnews.wasm.sqlite.open.helper.host.base.BINDING_NOT_INITIALIZED
+import com.dylibso.chicory.wasm.exceptions.ChicoryException
+import com.dylibso.chicory.wasm.types.Value
+import ru.pixnews.wasm.sqlite.open.helper.chicory.exports.ChicoryWasmFunctionBinding
+import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SinglePropertyLazyValue
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmFunctionBinding
 import kotlin.properties.ReadOnlyProperty
+import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-internal fun Instance.member(): ReadOnlyProperty<Any?, WasmFunctionBinding> {
+internal fun Instance.functionMember(): ReadOnlyProperty<Any?, WasmFunctionBinding> {
     return object : ReadOnlyProperty<Any?, WasmFunctionBinding> {
-        @Volatile
-        private var binding: WasmFunctionBinding = BINDING_NOT_INITIALIZED
-
-        override fun getValue(thisRef: Any?, property: KProperty<*>): WasmFunctionBinding {
-            return binding.let { cachedInstance ->
-                if (cachedInstance != BINDING_NOT_INITIALIZED) {
-                    cachedInstance
-                } else {
-                    val export = this@member.export(property.name) ?: error("No member ${property.name}")
-                    ChicoryWasmFunctionBinding(export).also {
-                        this.binding = it
-                    }
-                }
+        private val binding: SinglePropertyLazyValue<WasmFunctionBinding> = SinglePropertyLazyValue {
+            try {
+                val export = this@functionMember.export(it)
+                ChicoryWasmFunctionBinding(export)
+            } catch (ce: ChicoryException) {
+                throw IllegalStateException("No member $it", ce)
             }
+        }
+
+        override fun getValue(thisRef: Any?, property: KProperty<*>): WasmFunctionBinding = binding.get(property)
+    }
+}
+
+internal fun Instance.optionalFunctionMember(): ReadOnlyProperty<Any?, WasmFunctionBinding?> {
+    return object : ReadOnlyProperty<Any?, WasmFunctionBinding?> {
+        private val binding: SinglePropertyLazyValue<WasmFunctionBinding?> = SinglePropertyLazyValue {
+            try {
+                this@optionalFunctionMember.export(it).let(::ChicoryWasmFunctionBinding)
+            } catch (@Suppress("SwallowedException") ce: ChicoryException) {
+                null
+            }
+        }
+
+        override fun getValue(thisRef: Any?, property: KProperty<*>): WasmFunctionBinding? = binding.get(property)
+    }
+}
+
+internal fun Instance.intGlobalMember(): ReadWriteProperty<Any?, Int> {
+    return object : ReadWriteProperty<Any?, Int> {
+        private val binding: SinglePropertyLazyValue<ExportFunction> = SinglePropertyLazyValue {
+            try {
+                this@intGlobalMember.export(it)
+            } catch (ce: ChicoryException) {
+                throw IllegalStateException("No member $it", ce)
+            }
+        }
+        override fun getValue(thisRef: Any?, property: KProperty<*>): Int {
+            return binding.get(property).apply()[0].asInt()
+        }
+
+        override fun setValue(thisRef: Any?, property: KProperty<*>, value: Int) {
+            binding.get(property).apply(Value.i32(value.toLong()))
+        }
+    }
+}
+
+internal fun Instance.optionalIntGlobalMember(): ReadWriteProperty<Any?, Int?> {
+    return object : ReadWriteProperty<Any?, Int?> {
+        private val binding = SinglePropertyLazyValue {
+            try {
+                this@optionalIntGlobalMember.export(it)
+            } catch (@Suppress("SwallowedException") ce: ChicoryException) {
+                null
+            }
+        }
+        override fun getValue(thisRef: Any?, property: KProperty<*>): Int? {
+            return binding.get(property)?.let { it.apply()[0].asInt() }
+        }
+
+        override fun setValue(thisRef: Any?, property: KProperty<*>, value: Int?) {
+            requireNotNull(value)
+            binding.get(property)?.apply(Value.i32(value.toLong()))
         }
     }
 }

@@ -28,7 +28,7 @@ public class SyscallGetcwdFunctionHandle(
             return -Errno.INVAL.code
         }
 
-        val path = host.fileSystem.getCwd()
+        val path = host.fileSystem.getCwdPath().pathString
         val pathBytes: ByteArray = path.encodeToNullTerminatedByteArray()
 
         if (size < pathBytes.size) {

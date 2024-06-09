@@ -8,4 +8,6 @@ package ru.pixnews.wasm.sqlite.open.helper.host.test.fixtures
 
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.Path
 
-open class TestPath : Path
+open class TestPath : Path {
+    override val pathString: String get() = "nonexistent"
+}

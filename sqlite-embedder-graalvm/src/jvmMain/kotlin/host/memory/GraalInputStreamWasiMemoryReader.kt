@@ -22,6 +22,7 @@ import java.nio.channels.Channels
 import java.nio.channels.ClosedByInterruptException
 import java.nio.channels.ClosedChannelException
 import java.nio.channels.NonReadableChannelException
+import kotlin.concurrent.withLock
 import kotlin.time.measureTimedValue
 
 internal class GraalInputStreamWasiMemoryReader(
@@ -29,7 +30,7 @@ internal class GraalInputStreamWasiMemoryReader(
     private val fileSystem: JvmFileSystem,
     logger: Logger,
 ) : WasiMemoryReader {
-    private val logger: Logger = logger.withTag("GraalInputStreamWasiMemoryReader")
+    private val logger: Logger = logger.withTag("FS:GraalReader")
     private val wasmMemory get() = memory.wasmMemory
     private val defaultMemoryReader = DefaultWasiMemoryReader(memory, fileSystem, logger)
 
@@ -37,7 +38,7 @@ internal class GraalInputStreamWasiMemoryReader(
         fd: Fd,
         strategy: ReadWriteStrategy,
         iovecs: IovecArray,
-    ): ULong {
+    ): ULong = fileSystem.fsLock.withLock {
         val bytesRead = measureTimedValue {
             if (strategy == CHANGE_POSITION) {
                 read(fd, iovecs)

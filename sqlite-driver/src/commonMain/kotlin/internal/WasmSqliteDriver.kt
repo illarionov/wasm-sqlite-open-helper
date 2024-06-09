@@ -73,6 +73,7 @@ internal class WasmSqliteDriver(
      * can only be called before it.
      */
     private fun initIfRequiredLocked() {
+        logger.v { "initIfRequiredLocked(). Sqlite initialized: $isSqliteInitialized" }
         if (isSqliteInitialized) {
             return
         } else {
@@ -109,6 +110,7 @@ internal class WasmSqliteDriver(
         lookasideSlotSize: Int,
         lookasideSlotCount: Int,
     ): WasmPtr<SqliteDb> {
+        logger.v { "nativeOpen($path, $enableTrace, $enableProfile, $lookasideSlotSize, $lookasideSlotCount)" }
         var db: WasmPtr<SqliteDb>? = null
         try {
             db = cApi.db.sqlite3OpenV2(
@@ -153,6 +155,7 @@ internal class WasmSqliteDriver(
 
     private fun closeDatabaseSilent(db: WasmPtr<SqliteDb>?) {
         db?.let { database ->
+            logger.v { "closeDatabaseSilent($db)" }
             val closeError = cApi.db.sqlite3Close(database)
             if (closeError != SqliteResultCode.SQLITE_OK) {
                 logger.e { "sqlite3Close() failed with error code `${closeError.name}`" }

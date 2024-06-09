@@ -21,17 +21,18 @@ import java.nio.channels.Channels
 import java.nio.channels.ClosedByInterruptException
 import java.nio.channels.ClosedChannelException
 import java.nio.channels.NonReadableChannelException
+import kotlin.concurrent.withLock
 
 internal class GraalOutputStreamWasiMemoryWriter(
     private val memory: GraalvmWasmHostMemoryAdapter,
     private val fileSystem: JvmFileSystem,
     logger: Logger,
 ) : WasiMemoryWriter {
-    private val logger = logger.withTag("GraalOutputStreamWasiMemoryWriter")
+    private val logger = logger.withTag("FS:GrWriter")
     private val wasmMemory = memory.wasmMemory
     private val defaultMemoryWriter = DefaultWasiMemoryWriter(memory, fileSystem, logger)
 
-    override fun write(fd: Fd, strategy: ReadWriteStrategy, cioVecs: CiovecArray): ULong {
+    override fun write(fd: Fd, strategy: ReadWriteStrategy, cioVecs: CiovecArray): ULong = fileSystem.fsLock.withLock {
         return if (strategy == ReadWriteStrategy.CHANGE_POSITION) {
             write(fd, cioVecs)
         } else {

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.embedder.bindings
+package ru.pixnews.wasm.sqlite.open.helper.embedder.exports
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
@@ -12,7 +12,7 @@ import ru.pixnews.wasm.sqlite.open.helper.common.embedder.EmbedderMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.writeNullTerminatedString
 
 @InternalWasmSqliteHelperApi
-public fun SqliteMemoryBindings.allocNullTerminatedString(
+public fun SqliteMemoryExports.allocNullTerminatedString(
     memory: EmbedderMemory,
     string: String,
 ): WasmPtr<Byte> {

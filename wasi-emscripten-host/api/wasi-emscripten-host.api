@@ -187,6 +187,85 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/Emscripten
 	public final fun getByWasmName ()Ljava/util/Map;
 }
 
+public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/EmscriptenMainExports {
+	public abstract fun get__errno_location ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
+	public abstract fun get__wasm_call_ctors ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
+	public abstract fun get_initialize ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/EmscriptenRuntime {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/EmscriptenRuntime$Companion;
+	public synthetic fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/EmscriptenMainExports;Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/stack/EmscriptenStackExports;Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/pthread/EmscriptenPthreadExports;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getMainExports ()Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/EmscriptenMainExports;
+	public final fun getPthreadExports ()Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/pthread/EmscriptenPthreadExports;
+	public final fun getStack ()Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/stack/EmscriptenStack;
+	public final fun getStackExports ()Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/stack/EmscriptenStackExports;
+	public final fun initRuntime (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory;)V
+	public final fun isMultiThread ()Z
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/EmscriptenRuntime$Companion {
+	public final fun emscriptenMultithreadedRuntime (Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/EmscriptenMainExports;Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/stack/EmscriptenStackExports;Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/pthread/EmscriptenPthreadExports;)Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/EmscriptenRuntime;
+	public final fun emscriptenSingleThreadedRuntime (Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/EmscriptenMainExports;Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/stack/EmscriptenStackExports;)Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/EmscriptenRuntime;
+}
+
+public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/pthread/EmscriptenPthreadExports {
+	public abstract fun getEmscripten_main_runtime_thread_id ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
+	public abstract fun getEmscripten_main_thread_process_queued_calls ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
+	public abstract fun getEmscripten_stack_set_limits ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
+	public abstract fun getG_needs_dynamic_alloc ()I
+	public abstract fun getPthread_self ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
+	public abstract fun getSupports_wait ()I
+	public abstract fun getThread_ptr ()I
+	public abstract fun get__tls_align ()I
+	public abstract fun get__tls_base ()I
+	public abstract fun get__tls_size ()I
+	public abstract fun get_emscripten_check_mailbox ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
+	public abstract fun get_emscripten_run_on_main_thread_js ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
+	public abstract fun get_emscripten_thread_crashed ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
+	public abstract fun get_emscripten_thread_exit ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
+	public abstract fun get_emscripten_thread_free_data ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
+	public abstract fun get_emscripten_thread_init ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
+	public abstract fun get_emscripten_tls_init ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
+	public abstract fun is_main_thread ()I
+	public abstract fun is_runtime_thread ()I
+	public abstract fun setG_needs_dynamic_alloc (I)V
+	public abstract fun setSupports_wait (I)V
+	public abstract fun setThread_ptr (I)V
+	public abstract fun set__tls_base (I)V
+	public abstract fun set_main_thread (I)V
+	public abstract fun set_runtime_thread (I)V
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/stack/EmscriptenStack {
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/stack/EmscriptenStackExports;)V
+	public final fun checkStackCookie (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory;)V
+	public final fun emscriptenStackSetLimits-Dyx77Y0 (II)V
+	public final fun getEmscriptenStackBase-LEMrgXI ()I
+	public final fun getEmscriptenStackCurrent-LEMrgXI ()I
+	public final fun getEmscriptenStackEnd-LEMrgXI ()I
+	public final fun getEmscriptenStackFree ()I
+	public final fun stackCheckInit (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory;)V
+	public final fun writeStackCookie (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory;)V
+}
+
+public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/stack/EmscriptenStackExports {
+	public abstract fun getEmscripten_stack_get_base ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
+	public abstract fun getEmscripten_stack_get_current ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
+	public abstract fun getEmscripten_stack_get_end ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
+	public abstract fun getEmscripten_stack_get_free ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
+	public abstract fun getEmscripten_stack_init ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
+	public abstract fun getEmscripten_stack_set_limits ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
+	public abstract fun get__stack_base ()Ljava/lang/Integer;
+	public abstract fun get__stack_end ()Ljava/lang/Integer;
+	public abstract fun get__stack_pointer ()I
+	public abstract fun get_emscripten_stack_alloc ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
+	public abstract fun get_emscripten_stack_restore ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
+	public abstract fun set__stack_base (Ljava/lang/Integer;)V
+	public abstract fun set__stack_end (Ljava/lang/Integer;)V
+	public abstract fun set__stack_pointer (I)V
+}
+
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/AbortJsFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
 	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
 	public final fun execute ()Ljava/lang/Void;
@@ -226,11 +305,6 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/E
 	public final fun calculateNewSizePages--3KitA8 (JJJ)J
 }
 
-public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/EmscriptenStackBindings {
-	public abstract fun getEmscriptenStackBase-LEMrgXI ()I
-	public abstract fun getEmscriptenStackEnd-LEMrgXI ()I
-}
-
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/GetentropyFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
 	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
 	public final fun execute--6ori6s (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory;II)I
@@ -238,7 +312,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/G
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/HandleStackOverflowFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
 	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
-	public final fun execute-wTLQxr0 (Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/EmscriptenStackBindings;I)Ljava/lang/Void;
+	public final fun execute-wTLQxr0 (Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/stack/EmscriptenStack;I)Ljava/lang/Void;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/LocaltimeJsFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
@@ -351,7 +425,6 @@ public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/filesyst
 	public abstract fun close-l5Tu65g (I)V
 	public abstract fun faccessat-2ycdC8E (Lru/pixnews/wasm/sqlite/open/helper/host/include/DirFd;Ljava/lang/String;II)V
 	public abstract fun ftruncate-tVmRj-E (IJ)V
-	public abstract fun getCwd ()Ljava/lang/String;
 	public abstract fun getCwdPath ()Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/Path;
 	public abstract fun getPath-l5Tu65g (I)Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/Path;
 	public abstract fun isRegularFile-l5Tu65g (I)Z
@@ -388,6 +461,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/FileSystem
 }
 
 public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/Path {
+	public abstract fun getPathString ()Ljava/lang/String;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/ReadWriteStrategy : java/lang/Enum {
@@ -833,9 +907,9 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/jvm/filesystem/JvmFil
 	public fun close-l5Tu65g (I)V
 	public fun faccessat-2ycdC8E (Lru/pixnews/wasm/sqlite/open/helper/host/include/DirFd;Ljava/lang/String;II)V
 	public fun ftruncate-tVmRj-E (IJ)V
-	public fun getCwd ()Ljava/lang/String;
 	public synthetic fun getCwdPath ()Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/Path;
 	public fun getCwdPath-OMMn6mU ()Ljava/nio/file/Path;
+	public final fun getFsLock ()Ljava/util/concurrent/locks/Lock;
 	public final fun getNioFileChannelByFd-l5Tu65g (I)Ljava/nio/channels/FileChannel;
 	public synthetic fun getPath-l5Tu65g (I)Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/Path;
 	public fun getPath-vy7A5jo (I)Ljava/nio/file/Path;
@@ -866,6 +940,8 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/jvm/filesystem/JvmPat
 	public fun equals (Ljava/lang/Object;)Z
 	public static fun equals-impl (Ljava/nio/file/Path;Ljava/lang/Object;)Z
 	public static final fun equals-impl0 (Ljava/nio/file/Path;Ljava/nio/file/Path;)Z
+	public fun getPathString ()Ljava/lang/String;
+	public static fun getPathString-impl (Ljava/nio/file/Path;)Ljava/lang/String;
 	public fun hashCode ()I
 	public static fun hashCode-impl (Ljava/nio/file/Path;)I
 	public fun toString ()Ljava/lang/String;

@@ -560,7 +560,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteTr
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3CApi {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/embedder/bindings/SqliteBindings;Lru/pixnews/wasm/sqlite/open/helper/embedder/SQLiteEmbedderRuntimeInfo;Lru/pixnews/wasm/sqlite/open/helper/common/embedder/EmbedderMemory;Lru/pixnews/wasm/sqlite/open/helper/embedder/callback/SqliteCallbackStore;Lru/pixnews/wasm/sqlite/open/helper/embedder/functiontable/Sqlite3CallbackFunctionIndexes;Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;)V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/embedder/exports/SqliteExports;Lru/pixnews/wasm/sqlite/open/helper/embedder/SQLiteEmbedderRuntimeInfo;Lru/pixnews/wasm/sqlite/open/helper/common/embedder/EmbedderMemory;Lru/pixnews/wasm/sqlite/open/helper/embedder/callback/SqliteCallbackStore;Lru/pixnews/wasm/sqlite/open/helper/embedder/functiontable/Sqlite3CallbackFunctionIndexes;Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;)V
 	public final fun getConfig ()Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3ConfigFunctions;
 	public final fun getDb ()Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3DbFunctions;
 	public final fun getEmbedderInfo ()Lru/pixnews/wasm/sqlite/open/helper/embedder/SQLiteEmbedderRuntimeInfo;

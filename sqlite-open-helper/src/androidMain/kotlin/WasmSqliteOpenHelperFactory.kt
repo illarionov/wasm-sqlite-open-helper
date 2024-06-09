@@ -19,8 +19,8 @@ import ru.pixnews.wasm.sqlite.open.helper.common.embedder.EmbedderMemory
 import ru.pixnews.wasm.sqlite.open.helper.dsl.OpenParamsBlock
 import ru.pixnews.wasm.sqlite.open.helper.dsl.path.DatabasePathResolver
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SQLiteEmbedderRuntimeInfo
-import ru.pixnews.wasm.sqlite.open.helper.embedder.bindings.SqliteBindings
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
+import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.internal.DatabaseErrorHandler
 import ru.pixnews.wasm.sqlite.open.helper.internal.OpenHelperNativeBindings
@@ -37,7 +37,7 @@ internal class WasmSqliteOpenHelperFactory(
     private val pathResolver: DatabasePathResolver,
     private val debugConfig: SQLiteDebug,
     private val openParams: OpenParamsBlock,
-    private val sqliteBindings: SqliteBindings,
+    private val sqliteExports: SqliteExports,
     private val embedderInfo: SQLiteEmbedderRuntimeInfo,
     private val memory: EmbedderMemory,
     private val callbackStore: SqliteCallbackStore,
@@ -48,7 +48,7 @@ internal class WasmSqliteOpenHelperFactory(
 
     override fun create(configuration: SupportSQLiteOpenHelper.Configuration): SupportSQLiteOpenHelper {
         val cApi = Sqlite3CApi(
-            sqliteBindings = sqliteBindings,
+            sqliteExports = sqliteExports,
             embedderInfo = embedderInfo,
             memory = memory,
             callbackStore = callbackStore,
