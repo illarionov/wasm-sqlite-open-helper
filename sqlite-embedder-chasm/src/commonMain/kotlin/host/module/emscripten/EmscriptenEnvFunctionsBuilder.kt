@@ -12,6 +12,8 @@ import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.toChasmFunctionTypes
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.memory.ChasmMemoryAdapter
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.AbortJs
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.AssertFail
+import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.EmscriptenAsmConstAsyncOnMainThread
+import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.EmscriptenAsmConstInt
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.EmscriptenConsoleError
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.EmscriptenDateNow
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.function.EmscriptenGetNow
@@ -46,6 +48,8 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmModules.ENV_MODULE_NAME
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.ABORT_JS
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.ASSERT_FAIL
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.EMSCRIPTEN_ASM_CONST_ASYNC_ON_MAIN_THREAD
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.EMSCRIPTEN_ASM_CONST_INT
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.EMSCRIPTEN_CONSOLE_ERROR
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.EMSCRIPTEN_DATE_NOW
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction.EMSCRIPTEN_GET_NOW
@@ -107,13 +111,15 @@ private fun EmscriptenHostFunction.createChasmHostFunction(
 ): EmscriptenHostFunctionHandle = when (this) {
     ABORT_JS -> AbortJs(host)
     ASSERT_FAIL -> AssertFail(host, memory)
+    EMSCRIPTEN_ASM_CONST_ASYNC_ON_MAIN_THREAD -> EmscriptenAsmConstAsyncOnMainThread(host)
+    EMSCRIPTEN_ASM_CONST_INT -> EmscriptenAsmConstInt(host)
     EMSCRIPTEN_CONSOLE_ERROR -> EmscriptenConsoleError(host, memory)
     EMSCRIPTEN_DATE_NOW -> EmscriptenDateNow(host)
     EMSCRIPTEN_GET_NOW -> EmscriptenGetNow(host)
     EMSCRIPTEN_GET_NOW_IS_MONOTONIC -> EmscriptenGetNowIsMonotonic(host)
     EMSCRIPTEN_RESIZE_HEAP -> EmscriptenResizeHeap(host, memory)
-    HANDLE_STACK_OVERFLOW -> HandleStackOverflow(host, emscriptenStackRef)
     GETENTROPY -> Getentropy(host, memory)
+    HANDLE_STACK_OVERFLOW -> HandleStackOverflow(host, emscriptenStackRef)
     LOCALTIME_JS -> LocaltimeJs(host, memory)
     MMAP_JS -> MmapJs(host)
     MUNMAP_JS -> MunmapJs(host)
@@ -126,12 +132,12 @@ private fun EmscriptenHostFunction.createChasmHostFunction(
     SYSCALL_FSTAT64 -> SyscallFstat64(host, memory)
     SYSCALL_FTRUNCATE64 -> SyscallFtruncate64(host)
     SYSCALL_GETCWD -> SyscallGetcwd(host, memory)
+    SYSCALL_LSTAT64 -> syscallLstat64(host, memory)
     SYSCALL_MKDIRAT -> SyscallMkdirat(host, memory)
     SYSCALL_OPENAT -> SyscallOpenat(host, memory)
-    SYSCALL_RMDIR -> SyscallRmdir(host, memory)
     SYSCALL_READLINKAT -> SyscallReadlinkat(host, memory)
+    SYSCALL_RMDIR -> SyscallRmdir(host, memory)
     SYSCALL_STAT64 -> syscallStat64(host, memory)
-    SYSCALL_LSTAT64 -> syscallLstat64(host, memory)
     SYSCALL_UNLINKAT -> SyscallUnlinkat(host, memory)
     SYSCALL_UTIMENSAT -> SyscallUtimensat(host, memory)
     TZSET_JS -> TzsetJs(host, memory)

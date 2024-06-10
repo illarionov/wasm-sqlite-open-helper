@@ -4,56 +4,63 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+@file:JvmName("WasmSQLiteDriverBuilder")
+
 package ru.pixnews.wasm.sqlite.driver
 
 import androidx.sqlite.SQLiteDriver
 import ru.pixnews.wasm.sqlite.driver.dsl.DebugConfigBlock
 import ru.pixnews.wasm.sqlite.driver.dsl.OpenParamsBlock
 import ru.pixnews.wasm.sqlite.driver.dsl.WasmSqliteDriverConfigBlock
-import ru.pixnews.wasm.sqlite.driver.internal.WasmSqliteDriver
+import ru.pixnews.wasm.sqlite.driver.internal.WasmSqliteDriverImpl
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedder
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
+import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntimeInstance
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteWasmEnvironment
 import ru.pixnews.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3CApi
 
 /**
-* Creates a [SQLiteDriver] with the specified [block] configuration.
-*
-* @param embedder WebAssembly Runtime (embedder) for running SQLite compiled to Wasm.
-* For example, GraalvmSqliteEmbedder
-*/
-@Suppress("FunctionName")
-public fun <E : SqliteEmbedderConfig> WasmSQLiteDriver(
-    embedder: SqliteEmbedder<E>,
+ * Creates a [SQLiteDriver] with the specified [block] configuration.
+ *
+ * @param embedder WebAssembly Runtime (embedder) for running SQLite compiled to Wasm.
+ * For example, GraalvmSqliteEmbedder
+ */
+public fun <E : SqliteEmbedderConfig, R : SqliteRuntimeInstance> WasmSQLiteDriver(
+    embedder: SqliteEmbedder<E, R>,
     block: WasmSqliteDriverConfigBlock<E>.() -> Unit,
-): SQLiteDriver {
+): WasmSQLiteDriver<R> {
     val config = WasmSqliteDriverConfigBlock<E>().apply(block)
     val commonConfig = object : WasmSqliteCommonConfig {
         override val logger: Logger = config.logger
     }
 
     val callbackStore = SqliteCallbackStore()
-    val embedderEnv: SqliteWasmEnvironment = embedder.createSqliteWasmEnvironment(
+    val embedderEnv: SqliteWasmEnvironment<R> = embedder.createSqliteWasmEnvironment(
         commonConfig = commonConfig,
         callbackStore = callbackStore,
         embedderConfigBuilder = config.embedderConfig,
     )
     val cApi = Sqlite3CApi(
         sqliteExports = embedderEnv.sqliteExports,
-        embedderInfo = embedderEnv.embedderInfo,
+        embedderInfo = embedderEnv.runtimeInstance.embedderInfo,
         memory = embedderEnv.memory,
         callbackStore = callbackStore,
         callbackFunctionIndexes = embedderEnv.callbackFunctionIndexes,
         rootLogger = config.logger,
     )
 
-    return WasmSqliteDriver(
+    return WasmSqliteDriverImpl(
         cApi = cApi,
         debugConfig = DebugConfigBlock().apply { config.debugConfigBlock(this) }.build(),
         rootLogger = config.logger,
         openParams = OpenParamsBlock().apply { config.openParams(this) },
+        runtime = embedderEnv.runtimeInstance,
     )
+}
+
+public interface WasmSQLiteDriver<R : SqliteRuntimeInstance> : SQLiteDriver {
+    public val runtime: R
 }

@@ -6,6 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.stack
 
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 
@@ -16,7 +17,10 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
  */
 public class EmscriptenStack(
     private val exports: EmscriptenStackExports,
+    rootLogger: Logger,
 ) {
+    private val logger: Logger = rootLogger.withTag("EmscriptenStack")
+
     /**
      * Returns the starting address of the stack. This is the address that the stack pointer would point to when
      * no bytes are in use on the stack.
@@ -76,12 +80,25 @@ public class EmscriptenStack(
         exports.emscripten_stack_init?.let { stackInit ->
             stackInit.executeVoid()
             writeStackCookie(memory)
-            checkStackCookie(memory)
         }
+    }
+
+    public fun setStackLimits() {
+        if (exports.emscripten_stack_get_end == null) {
+            return
+        }
+        val stackLow = emscriptenStackBase
+        val stackHigh = emscriptenStackEnd
+        exports.__set_stack_limits?.executeVoid(stackLow.addr, stackHigh.addr)
+            ?: logger.v { "No __set_stack_limits export" }
     }
 
     @Suppress("MagicNumber")
     public fun writeStackCookie(memory: Memory) {
+        if (exports.emscripten_stack_get_end == null) {
+            return
+        }
+
         var max = emscriptenStackEnd.addr
         check(max.and(0x03) == 0)
 
@@ -96,6 +113,10 @@ public class EmscriptenStack(
 
     @Suppress("MagicNumber")
     public fun checkStackCookie(memory: Memory) {
+        if (exports.emscripten_stack_get_end == null) {
+            return
+        }
+
         var max = emscriptenStackEnd.addr
         check(max.and(0x03) == 0)
 

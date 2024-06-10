@@ -6,13 +6,13 @@
 
 package ru.pixnews.wasm.sqlite.driver.chicory
 
+import androidx.sqlite.SQLiteDriver
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import ru.pixnews.wasm.sqlite.driver.base.AndroidUserDatabaseSuspendFactory
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.room.AbstractBasicRoomTest
-import ru.pixnews.wasm.sqlite.open.helper.chicory.ChicorySqliteEmbedderConfig
 
-class ChicoryBasicRoomTest : AbstractBasicRoomTest<ChicorySqliteEmbedderConfig>(
+class ChicoryBasicRoomTest : AbstractBasicRoomTest<SQLiteDriver>(
     driverFactory = ChicorySqliteDriverFactory,
     databaseFactory = AndroidUserDatabaseSuspendFactory,
 ) {

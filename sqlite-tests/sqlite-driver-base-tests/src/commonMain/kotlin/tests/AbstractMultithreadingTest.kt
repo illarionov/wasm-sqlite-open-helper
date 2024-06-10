@@ -6,6 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.driver.test.base.tests
 
+import androidx.sqlite.SQLiteDriver
 import androidx.sqlite.use
 import assertk.assertThat
 import assertk.assertions.isEqualTo
@@ -15,7 +16,6 @@ import ru.pixnews.wasm.sqlite.driver.test.base.util.execSQL
 import ru.pixnews.wasm.sqlite.driver.test.base.util.queryForString
 import ru.pixnews.wasm.sqlite.driver.test.base.util.readResult
 import ru.pixnews.wasm.sqlite.driver.test.base.util.use
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import kotlin.test.Test
@@ -23,10 +23,10 @@ import kotlin.time.Duration.Companion.seconds
 import kotlin.time.TimedValue
 import kotlin.time.measureTimedValue
 
-public abstract class AbstractMultithreadingTest<E : SqliteEmbedderConfig>(
-    driverCreator: TestSqliteDriverFactory,
+public abstract class AbstractMultithreadingTest<S : SQLiteDriver>(
+    driverCreator: TestSqliteDriverFactory<S>,
     dbLoggerSeverity: Severity = Severity.Info,
-) : AbstractSqliteDriverTest<E>(
+) : AbstractSqliteDriverTest<S>(
     driverFactory = driverCreator,
     dbLoggerSeverity = dbLoggerSeverity,
 ) {

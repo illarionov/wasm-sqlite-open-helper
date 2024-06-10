@@ -7,13 +7,14 @@
 package ru.pixnews.wasm.sqlite.driver.internal
 
 import androidx.sqlite.SQLiteConnection
-import androidx.sqlite.SQLiteDriver
 import androidx.sqlite.SQLiteException
+import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
 import ru.pixnews.wasm.sqlite.driver.dsl.OpenFlags
 import ru.pixnews.wasm.sqlite.driver.dsl.OpenParamsBlock
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.api.or
+import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntimeInstance
 import ru.pixnews.wasm.sqlite.open.helper.io.lock.SynchronizedObject
 import ru.pixnews.wasm.sqlite.open.helper.io.lock.synchronized
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteConfigParameter
@@ -30,12 +31,13 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode.Companion.SQLITE_TRACE_STMT
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3CApi
 
-internal class WasmSqliteDriver(
+internal class WasmSqliteDriverImpl<R : SqliteRuntimeInstance>(
     private val debugConfig: SqliteDebug,
     rootLogger: Logger,
     private val cApi: Sqlite3CApi,
     private val openParams: OpenParamsBlock,
-) : SQLiteDriver {
+    override val runtime: R,
+) : WasmSQLiteDriver<R> {
     private val logger: Logger = rootLogger.withTag("WasmSqliteDriver")
     private var isSqliteInitialized: Boolean = false
     private val lock = SynchronizedObject()

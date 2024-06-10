@@ -6,13 +6,13 @@
 
 package ru.pixnews.wasm.sqlite.driver.graalvm
 
+import androidx.sqlite.SQLiteDriver
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import ru.pixnews.wasm.sqlite.driver.base.AndroidUserDatabaseSuspendFactory
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.room.AbstractBasicRoomTest
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmSqliteEmbedderConfig
 
-class GraalvmBasicRoomTest : AbstractBasicRoomTest<GraalvmSqliteEmbedderConfig>(
+class GraalvmBasicRoomTest : AbstractBasicRoomTest<SQLiteDriver>(
     driverFactory = GraalvmSqliteDriverFactory(),
     databaseFactory = AndroidUserDatabaseSuspendFactory,
 ) {

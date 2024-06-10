@@ -12,20 +12,20 @@ import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.bindings.GraalvmPthread
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.EmscriptenThreadMailboxAwait.EmscriptenThreadMailboxAwaitHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.pthread.PthreadManager
 
 internal class EmscriptenThreadMailboxAwait(
     language: WasmLanguage,
     module: WasmModule,
     host: EmbedderHost,
     @Suppress("UnusedPrivateProperty")
-    private val posixThreadRef: () -> GraalvmPthread,
+    private val posixThreadRef: () -> PthreadManager,
 ) : BaseWasmNode<EmscriptenThreadMailboxAwaitHandle>(language, module, EmscriptenThreadMailboxAwaitHandle(host)) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, instance: WasmInstance) {
         handle.execute(frame.arguments.getArgAsInt(0))

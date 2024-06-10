@@ -35,6 +35,14 @@ public enum class EmscriptenHostFunction(
             U8.pointer, // func
         ),
     ),
+    EMSCRIPTEN_ASM_CONST_ASYNC_ON_MAIN_THREAD(
+        wasmName = "emscripten_asm_const_async_on_main_thread",
+        paramTypes = listOf(
+            U8.pointer, // emAsmAddr
+            U8.pointer, // sigPtr
+            U8.pointer, // argbuf,
+        ),
+    ),
     EMSCRIPTEN_ASM_CONST_INT(
         wasmName = "emscripten_asm_const_int",
         paramTypes = listOf(
@@ -44,13 +52,9 @@ public enum class EmscriptenHostFunction(
         ),
         retType = I32,
     ),
-    EMSCRIPTEN_ASM_CONST_ASYNC_ON_MAIN_THREAD(
-        wasmName = "emscripten_asm_const_async_on_main_thread",
-        paramTypes = listOf(
-            U8.pointer, // emAsmAddr
-            U8.pointer, // sigPtr
-            U8.pointer, // argbuf,
-        ),
+    EMSCRIPTEN_CHECK_BLOCKING_ALLOWED(
+        wasmName = "emscripten_check_blocking_allowed",
+        paramTypes = listOf(),
     ),
     EMSCRIPTEN_CONSOLE_ERROR(
         wasmName = "emscripten_console_error",
@@ -60,6 +64,10 @@ public enum class EmscriptenHostFunction(
         wasmName = "emscripten_date_now",
         paramTypes = listOf(),
         retType = F64,
+    ),
+    EMSCRIPTEN_EXIT_WITH_LIVE_RUNTIME(
+        wasmName = "emscripten_exit_with_live_runtime",
+        paramTypes = listOf(),
     ),
     EMSCRIPTEN_GET_NOW(
         wasmName = "emscripten_get_now",
@@ -71,12 +79,45 @@ public enum class EmscriptenHostFunction(
         paramTypes = listOf(),
         retType = I32,
     ),
+    EMSCRIPTEN_INIT_MAIN_THREAD_JS(
+        wasmName = "_emscripten_init_main_thread_js",
+        paramTypes = listOf(I32),
+    ),
+    EMSCRIPTEN_NOTIFY_MAILBOX_POSTMESSAGE(
+        wasmName = "_emscripten_notify_mailbox_postmessage",
+        paramTypes = listOf(I32, I32, I32),
+    ),
+    EMSCRIPTEN_RECEIVE_ON_MAIN_THREAD_JS(
+        wasmName = "_emscripten_receive_on_main_thread_js",
+        paramTypes = List(5) { I32 },
+        retType = F64,
+    ),
     EMSCRIPTEN_RESIZE_HEAP(
         wasmName = "emscripten_resize_heap",
         paramTypes = listOf(
             I32, // requestedSize
         ),
         retType = I32,
+    ),
+    EMSCRIPTEN_THREAD_CLEANUP(
+        wasmName = "_emscripten_thread_cleanup",
+        paramTypes = listOf(I32),
+    ),
+    EMSCRIPTEN_THREAD_MAILBOX_AWAIT(
+        wasmName = "_emscripten_thread_mailbox_await",
+        paramTypes = listOf(I32),
+    ),
+    EMSCRIPTEN_THREAD_SET_STRONGREF(
+        wasmName = "_emscripten_thread_set_strongref",
+        paramTypes = listOf(I32),
+    ),
+    EMSCRIPTEN_UNWIND_TO_JS_EVENT_LOOP(
+        wasmName = "emscripten_unwind_to_js_event_loop",
+        paramTypes = listOf(),
+    ),
+    EXIT(
+        wasmName = "exit",
+        paramTypes = listOf(I32),
     ),
     GETENTROPY(
         wasmName = "getentropy",
@@ -104,6 +145,11 @@ public enum class EmscriptenHostFunction(
     MUNMAP_JS(
         wasmName = "_munmap_js",
         paramTypes = listOf(I32, I32, I32, I32, I32, I64),
+        retType = I32,
+    ),
+    PTHREAD_CREATE_JS(
+        wasmName = "__pthread_create_js",
+        paramTypes = List(4) { I32 },
         retType = I32,
     ),
     SYSCALL_CHMOD(
@@ -170,6 +216,11 @@ public enum class EmscriptenHostFunction(
         paramTypes = List(3) { I32 },
         retType = I32,
     ),
+    SYSCALL_LSTAT64(
+        wasmName = "__syscall_lstat64",
+        paramTypes = listOf(I32, I32),
+        retType = I32,
+    ),
     SYSCALL_MKDIRAT(
         wasmName = "__syscall_mkdirat",
         paramTypes = List(3) { I32 },
@@ -210,11 +261,6 @@ public enum class EmscriptenHostFunction(
         paramTypes = listOf(I32, I32),
         retType = I32,
     ),
-    SYSCALL_LSTAT64(
-        wasmName = "__syscall_lstat64",
-        paramTypes = listOf(I32, I32),
-        retType = I32,
-    ),
     SYSCALL_UNLINKAT(
         wasmName = "__syscall_unlinkat",
         paramTypes = List(3) { I32 },
@@ -233,48 +279,6 @@ public enum class EmscriptenHostFunction(
     TZSET_JS(
         wasmName = "_tzset_js",
         paramTypes = List(4) { I32 },
-    ),
-    EMSCRIPTEN_THREAD_SET_STRONGREF(
-        wasmName = "_emscripten_thread_set_strongref",
-        paramTypes = listOf(I32),
-    ),
-    EMSCRIPTEN_EXIT_WITH_LIVE_RUNTIME(
-        wasmName = "emscripten_exit_with_live_runtime",
-        paramTypes = listOf(),
-    ),
-    EMSCRIPTEN_INIT_MAIN_THREAD_JS(
-        wasmName = "_emscripten_init_main_thread_js",
-        paramTypes = listOf(I32),
-    ),
-    EMSCRIPTEN_THREAD_MAILBOX_AWAIT(
-        wasmName = "_emscripten_thread_mailbox_await",
-        paramTypes = listOf(I32),
-    ),
-    EMSCRIPTEN_RECEIVE_ON_MAIN_THREAD_JS(
-        wasmName = "_emscripten_receive_on_main_thread_js",
-        paramTypes = List(5) { I32 },
-        retType = F64,
-    ),
-    EMSCRIPTEN_CHECK_BLOCKING_ALLOWED(
-        wasmName = "emscripten_check_blocking_allowed",
-        paramTypes = listOf(),
-    ),
-    PTHREAD_CREATE_JS(
-        wasmName = "__pthread_create_js",
-        paramTypes = List(4) { I32 },
-        retType = I32,
-    ),
-    EXIT(
-        wasmName = "exit",
-        paramTypes = listOf(I32),
-    ),
-    EMSCRIPTEN_THREAD_CLEANUP(
-        wasmName = "_emscripten_thread_cleanup",
-        paramTypes = listOf(I32),
-    ),
-    EMSCRIPTEN_NOTIFY_MAILBOX_POSTMESSAGE(
-        wasmName = "_emscripten_notify_mailbox_postmessage",
-        paramTypes = listOf(I32, I32, I32),
     ),
     ;
 

@@ -10,11 +10,11 @@ import androidx.sqlite.SQLiteDriver
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 
-public interface TestSqliteDriverFactory {
+public interface TestSqliteDriverFactory<out S : SQLiteDriver> {
     public val defaultSqliteBinary: WasmSqliteConfiguration
 
     public fun create(
         dbLogger: Logger,
         sqlite3Binary: WasmSqliteConfiguration = defaultSqliteBinary,
-    ): SQLiteDriver
+    ): S
 }

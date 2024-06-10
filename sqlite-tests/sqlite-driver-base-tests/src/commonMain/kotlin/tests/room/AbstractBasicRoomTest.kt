@@ -6,19 +6,19 @@
 
 package ru.pixnews.wasm.sqlite.driver.test.base.tests.room
 
+import androidx.sqlite.SQLiteDriver
 import co.touchlab.kermit.Severity
 import kotlinx.coroutines.test.runTest
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractSqliteDriverTest
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.TestSqliteDriverFactory
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.room.UserDatabaseTests.UserDatabaseFactory
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import kotlin.test.Test
 
-public abstract class AbstractBasicRoomTest<E : SqliteEmbedderConfig>(
-    driverFactory: TestSqliteDriverFactory,
+public abstract class AbstractBasicRoomTest<S : SQLiteDriver>(
+    driverFactory: TestSqliteDriverFactory<S>,
     databaseFactory: UserDatabaseFactory,
     dbLoggerSeverity: Severity = Severity.Info,
-) : AbstractSqliteDriverTest<E>(
+) : AbstractSqliteDriverTest<S>(
     driverFactory = driverFactory,
     dbLoggerSeverity = dbLoggerSeverity,
 ) {

@@ -11,7 +11,6 @@ import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.bindings.GraalvmPthread
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.setupWasmModuleFunctions
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.withWasmContext
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.SharedMemoryWaiterListStore
@@ -20,6 +19,8 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.WasmMemoryWaitCall
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.NodeFactory
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.AbortJs
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.AssertFail
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.EmscriptenAsmConstAsyncOnMainThread
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.EmscriptenAsmConstInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.EmscriptenConsoleError
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.EmscriptenDateNow
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.EmscriptenGetNow
@@ -58,12 +59,13 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WASM_MEMORY_64_MAX_PA
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WASM_MEMORY_PAGE_SIZE
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WASM_MEMORY_SQLITE_MAX_PAGES
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
+import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.pthread.PthreadManager
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.stack.EmscriptenStack
 
 internal class EmscriptenEnvModuleBuilder(
     private val graalContext: Context,
     private val host: EmbedderHost,
-    private val pthreadRef: () -> GraalvmPthread,
+    private val pthreadRef: () -> PthreadManager,
     private val emscriptenStackRef: () -> EmscriptenStack,
     private val moduleName: String = ENV_MODULE_NAME,
 ) {
@@ -71,8 +73,8 @@ internal class EmscriptenEnvModuleBuilder(
         get() = when (this) {
             EmscriptenHostFunction.ABORT_JS -> ::AbortJs
             EmscriptenHostFunction.ASSERT_FAIL -> ::AssertFail
-            EmscriptenHostFunction.EMSCRIPTEN_ASM_CONST_INT -> notImplementedFunctionNodeFactory(this)
-            EmscriptenHostFunction.EMSCRIPTEN_ASM_CONST_ASYNC_ON_MAIN_THREAD -> notImplementedFunctionNodeFactory(this)
+            EmscriptenHostFunction.EMSCRIPTEN_ASM_CONST_INT -> ::EmscriptenAsmConstInt
+            EmscriptenHostFunction.EMSCRIPTEN_ASM_CONST_ASYNC_ON_MAIN_THREAD -> ::EmscriptenAsmConstAsyncOnMainThread
             EmscriptenHostFunction.EMSCRIPTEN_DATE_NOW -> ::EmscriptenDateNow
             EmscriptenHostFunction.EMSCRIPTEN_CONSOLE_ERROR -> ::EmscriptenConsoleError
             EmscriptenHostFunction.EMSCRIPTEN_GET_NOW -> ::EmscriptenGetNow
@@ -115,6 +117,7 @@ internal class EmscriptenEnvModuleBuilder(
             EmscriptenHostFunction.SYSCALL_UTIMENSAT -> ::SyscallUtimensat
             EmscriptenHostFunction.TZSET_JS -> ::TzsetJs
             EmscriptenHostFunction.EMSCRIPTEN_THREAD_SET_STRONGREF -> notImplementedFunctionNodeFactory(this)
+            EmscriptenHostFunction.EMSCRIPTEN_UNWIND_TO_JS_EVENT_LOOP -> notImplementedFunctionNodeFactory(this)
             EmscriptenHostFunction.EMSCRIPTEN_EXIT_WITH_LIVE_RUNTIME -> notImplementedFunctionNodeFactory(this)
             EmscriptenHostFunction.EMSCRIPTEN_INIT_MAIN_THREAD_JS -> {
                     language: WasmLanguage,

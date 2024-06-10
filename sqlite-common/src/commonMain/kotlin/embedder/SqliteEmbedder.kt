@@ -12,19 +12,19 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
 
-public interface SqliteEmbedder<E : SqliteEmbedderConfig> {
+public interface SqliteEmbedder<E : SqliteEmbedderConfig, I : SqliteRuntimeInstance> {
     @InternalWasmSqliteHelperApi
     public fun createSqliteWasmEnvironment(
         commonConfig: WasmSqliteCommonConfig,
         callbackStore: SqliteCallbackStore,
         embedderConfigBuilder: E.() -> Unit,
-    ): SqliteWasmEnvironment
+    ): SqliteWasmEnvironment<I>
 }
 
 @InternalWasmSqliteHelperApi
-public interface SqliteWasmEnvironment {
+public interface SqliteWasmEnvironment<I : SqliteRuntimeInstance> {
     public val sqliteExports: SqliteExports
-    public val embedderInfo: SQLiteEmbedderRuntimeInfo
     public val memory: EmbedderMemory
     public val callbackFunctionIndexes: Sqlite3CallbackFunctionIndexes
+    public val runtimeInstance: I
 }
