@@ -6,33 +6,60 @@
 
 package ru.pixnews.wasm.sqlite.driver.graalvm
 
-import org.junit.Assume
+import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.test.runTest
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
 import ru.pixnews.wasm.sqlite.driver.base.AndroidUserDatabaseSuspendFactory
-import ru.pixnews.wasm.sqlite.driver.test.base.tests.room.AbstractBasicMultithreadingRoomTest
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmSqliteEmbedderConfig
+import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractSqliteDriverTest
+import ru.pixnews.wasm.sqlite.driver.test.base.tests.room.UserDatabaseTests
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmRuntimeInstance
+import java.util.concurrent.Executors
 
-class GraalvmBasicMultithreadingRoomTest : AbstractBasicMultithreadingRoomTest<GraalvmSqliteEmbedderConfig>(
+class GraalvmBasicMultithreadingRoomTest : AbstractSqliteDriverTest<WasmSQLiteDriver<GraalvmRuntimeInstance>>(
     driverFactory = GraalvmSqliteDriverFactory(),
-    databaseFactory = AndroidUserDatabaseSuspendFactory,
 ) {
     @JvmField
     @Rule
     val tempFolder: TemporaryFolder = TemporaryFolder()
+    private val databaseFactory = AndroidUserDatabaseSuspendFactory
+    val tests = UserDatabaseTests(driverFactory, databaseFactory, logger, dbLogger)
 
     override fun fileInTempDir(databaseName: String): String = tempFolder.root.resolve(databaseName).path
 
-    @Ignore("TODO: fix")
-    override fun Test_Room_Multithread() {
-        Assume.assumeTrue("TODO: fix", false)
-        // super.Test_Room_Multithread()
+    @Test
+    @Ignore("TODO: Fix")
+    fun Test_Room_Multithread() = runTest {
+        val driver = driverFactory.create(dbLogger, driverFactory.defaultSqliteBinary)
+        Executors.newFixedThreadPool(
+            2,
+            driver.runtime.managedThreadFactory,
+        ).asCoroutineDispatcher().use { dispatcher ->
+            tests.testRoomOnUserDatabase(
+                driver = driver,
+                databaseName = fileInTempDir("test.db"),
+                coroutineContext = dispatcher,
+                block = tests::basicRoomTest,
+            )
+        }
     }
 
     @Test
-    override fun Test_In_Memory_Room_Multithread() {
-        super.Test_In_Memory_Room_Multithread()
+    fun Test_In_Memory_Room_Multithread() = runTest {
+        val driver = driverFactory.create(dbLogger, driverFactory.defaultSqliteBinary)
+        Executors.newFixedThreadPool(
+            2,
+            driver.runtime.managedThreadFactory,
+        ).asCoroutineDispatcher().use { dispatcher ->
+            tests.testRoomOnUserDatabase(
+                driver = driver,
+                databaseName = null,
+                coroutineContext = dispatcher,
+                block = tests::basicRoomTest,
+            )
+        }
     }
 }

@@ -7,21 +7,21 @@
 package ru.pixnews.wasm.sqlite.driver.test.base.tests
 
 import androidx.sqlite.SQLiteConnection
+import androidx.sqlite.SQLiteDriver
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import co.touchlab.kermit.Severity
 import ru.pixnews.wasm.sqlite.driver.test.base.util.execSQL
 import ru.pixnews.wasm.sqlite.driver.test.base.util.queryForLong
 import ru.pixnews.wasm.sqlite.driver.test.base.util.queryForString
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-public abstract class AbstractIcuCollationTest<E : SqliteEmbedderConfig>(
-    driverCreator: TestSqliteDriverFactory,
+public abstract class AbstractIcuCollationTest<S : SQLiteDriver>(
+    driverCreator: TestSqliteDriverFactory<S>,
     dbLoggerSeverity: Severity = Severity.Info,
-) : AbstractSqliteDriverTest<E>(
+) : AbstractSqliteDriverTest<S>(
     driverFactory = driverCreator,
     dbLoggerSeverity = dbLoggerSeverity,
 ) {

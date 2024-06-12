@@ -6,7 +6,6 @@
 
 package ru.pixnews.wasm.sqlite.driver.graalvm
 
-import androidx.sqlite.SQLiteDriver
 import org.graalvm.polyglot.Engine
 import ru.pixnews.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcuMtPthread346
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
@@ -14,13 +13,17 @@ import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
 import ru.pixnews.wasm.sqlite.driver.base.defaultTestSqliteDriverConfig
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.TestSqliteDriverFactory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmRuntimeInstance
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmSqliteEmbedder
 
 class GraalvmSqliteDriverFactory(
     private val initialGraalvmEngine: Engine? = WASM_GRAALVM_ENGINE,
     override val defaultSqliteBinary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcuMtPthread346,
-) : TestSqliteDriverFactory {
-    override fun create(dbLogger: Logger, sqlite3Binary: WasmSqliteConfiguration): SQLiteDriver {
+) : TestSqliteDriverFactory<WasmSQLiteDriver<GraalvmRuntimeInstance>> {
+    override fun create(
+        dbLogger: Logger,
+        sqlite3Binary: WasmSqliteConfiguration,
+    ): WasmSQLiteDriver<GraalvmRuntimeInstance> {
         return WasmSQLiteDriver(GraalvmSqliteEmbedder) {
             defaultTestSqliteDriverConfig(dbLogger)
             embedder {

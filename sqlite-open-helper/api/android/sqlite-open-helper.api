@@ -30,9 +30,13 @@ public final class ru/pixnews/wasm/sqlite/open/helper/OpenFlags$Companion {
 	public final fun getOPEN_URI-8W8yzzI ()I
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/WasmSqliteOpenHelperFactoryBuilderKt {
-	public static final fun WasmSqliteOpenHelperFactory (Lru/pixnews/wasm/sqlite/open/helper/embedder/SqliteEmbedder;Landroid/content/Context;Lkotlin/jvm/functions/Function1;)Landroidx/sqlite/db/SupportSQLiteOpenHelper$Factory;
-	public static final fun WasmSqliteOpenHelperFactory (Lru/pixnews/wasm/sqlite/open/helper/embedder/SqliteEmbedder;Lkotlin/jvm/functions/Function1;)Landroidx/sqlite/db/SupportSQLiteOpenHelper$Factory;
+public abstract interface class ru/pixnews/wasm/sqlite/open/helper/WasmSQLiteOpenHelperFactory : androidx/sqlite/db/SupportSQLiteOpenHelper$Factory {
+	public abstract fun getRuntime ()Lru/pixnews/wasm/sqlite/open/helper/embedder/SqliteRuntimeInstance;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/WasmSQLiteOpenHelperFactoryKt {
+	public static final fun WasmSqliteOpenHelperFactory (Lru/pixnews/wasm/sqlite/open/helper/embedder/SqliteEmbedder;Landroid/content/Context;Lkotlin/jvm/functions/Function1;)Lru/pixnews/wasm/sqlite/open/helper/WasmSQLiteOpenHelperFactory;
+	public static final fun WasmSqliteOpenHelperFactory (Lru/pixnews/wasm/sqlite/open/helper/embedder/SqliteEmbedder;Lkotlin/jvm/functions/Function1;)Lru/pixnews/wasm/sqlite/open/helper/WasmSQLiteOpenHelperFactory;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/dsl/DebugConfigBlock {

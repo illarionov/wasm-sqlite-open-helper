@@ -8,7 +8,7 @@ package ru.pixnews.wasm.sqlite.open.helper.graalvm.ext
 
 import org.graalvm.polyglot.Value
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SinglePropertyLazyValue
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.bindings.GraalWasmFunctionBinding
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.exports.GraalWasmFunctionBinding
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmFunctionBinding
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
@@ -69,8 +69,3 @@ internal fun Value.optionalIntGlobalMember(): ReadWriteProperty<Any?, Int?> {
         }
     }
 }
-
-internal fun Boolean.toInt(
-    trueValue: Int = 1,
-    falseValue: Int = 0,
-) = if (this) trueValue else falseValue

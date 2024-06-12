@@ -31,6 +31,5 @@ internal class GraalvmEmscriptenPthreadExports(
     override val _emscripten_tls_init by mainBindings.functionMember()
     override val emscripten_main_runtime_thread_id by mainBindings.functionMember()
     override val emscripten_main_thread_process_queued_calls by mainBindings.functionMember()
-    override val emscripten_stack_set_limits by mainBindings.functionMember()
     override val pthread_self by mainBindings.functionMember()
 }

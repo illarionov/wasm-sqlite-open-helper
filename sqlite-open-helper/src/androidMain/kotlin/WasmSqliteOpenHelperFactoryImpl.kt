@@ -18,7 +18,7 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.EmbedderMemory
 import ru.pixnews.wasm.sqlite.open.helper.dsl.OpenParamsBlock
 import ru.pixnews.wasm.sqlite.open.helper.dsl.path.DatabasePathResolver
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SQLiteEmbedderRuntimeInfo
+import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntimeInstance
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
@@ -33,23 +33,23 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3CApi
  * Implements [SupportSQLiteOpenHelper.Factory] using the SQLite implementation shipped in
  * this library.
  */
-internal class WasmSqliteOpenHelperFactory(
+internal class WasmSqliteOpenHelperFactoryImpl<R : SqliteRuntimeInstance>(
     private val pathResolver: DatabasePathResolver,
     private val debugConfig: SQLiteDebug,
     private val openParams: OpenParamsBlock,
     private val sqliteExports: SqliteExports,
-    private val embedderInfo: SQLiteEmbedderRuntimeInfo,
     private val memory: EmbedderMemory,
     private val callbackStore: SqliteCallbackStore,
     private val callbackFunctionIndexes: Sqlite3CallbackFunctionIndexes,
+    override val runtime: R,
     rootLogger: Logger,
-) : SupportSQLiteOpenHelper.Factory {
+) : WasmSQLiteOpenHelperFactory<R> {
     private val logger: Logger = rootLogger.withTag("WasmSqliteOpenHelperFactory")
 
     override fun create(configuration: SupportSQLiteOpenHelper.Configuration): SupportSQLiteOpenHelper {
         val cApi = Sqlite3CApi(
             sqliteExports = sqliteExports,
-            embedderInfo = embedderInfo,
+            embedderInfo = runtime.embedderInfo,
             memory = memory,
             callbackStore = callbackStore,
             callbackFunctionIndexes = callbackFunctionIndexes,

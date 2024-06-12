@@ -11,6 +11,10 @@ public abstract interface class ru/pixnews/wasm/sqlite/open/helper/embedder/Sqli
 public abstract interface class ru/pixnews/wasm/sqlite/open/helper/embedder/SqliteEmbedderConfig {
 }
 
+public abstract interface class ru/pixnews/wasm/sqlite/open/helper/embedder/SqliteRuntimeInstance {
+	public abstract fun getEmbedderInfo ()Lru/pixnews/wasm/sqlite/open/helper/embedder/SQLiteEmbedderRuntimeInfo;
+}
+
 public final class ru/pixnews/wasm/sqlite/open/helper/embedder/callback/SqliteCallbackStore$Companion {
 	public final fun invoke ()Lru/pixnews/wasm/sqlite/open/helper/embedder/callback/SqliteCallbackStore;
 }

@@ -28,13 +28,13 @@ import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.EmscriptenRunti
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.stack.EmscriptenStack
 import java.util.concurrent.atomic.AtomicReference
 
-public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig> {
+public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig, ChicoryRuntimeInstance> {
     @InternalWasmSqliteHelperApi
     override fun createSqliteWasmEnvironment(
         commonConfig: WasmSqliteCommonConfig,
         callbackStore: SqliteCallbackStore,
         embedderConfigBuilder: ChicorySqliteEmbedderConfig.() -> Unit,
-    ): SqliteWasmEnvironment {
+    ): SqliteWasmEnvironment<ChicoryRuntimeInstance> {
         val config = ChicorySqliteEmbedderConfig(commonConfig.logger).apply(embedderConfigBuilder)
         return createChicorySqliteWasmEnvironment(
             config.host,
@@ -49,7 +49,7 @@ public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig
         callbackStore: SqliteCallbackStore,
         sqlite3Binary: WasmSqliteConfiguration,
         logSeverity: Level,
-    ): SqliteWasmEnvironment {
+    ): SqliteWasmEnvironment<ChicoryRuntimeInstance> {
         require(!sqlite3Binary.requireThreads) {
             "The specified SQLite binary is compiled with threading support, which is not compatible with the " +
                     "Chicory WebAssembly runtime. Use a version of SQLite compiled without thread support."
@@ -71,19 +71,24 @@ public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig
         val emscriptenRuntime = EmscriptenRuntime.emscriptenSingleThreadedRuntime(
             mainExports = ChicoryEmscriptenMainExports(chicoryInstance.instance),
             stackExports = ChicoryEmscriptenStackExports(chicoryInstance.instance),
+            logger = host.rootLogger,
         )
         stackBindingsRef.set(emscriptenRuntime.stack)
 
-        emscriptenRuntime.initRuntime(chicoryInstance.memory)
+        emscriptenRuntime.initRuntimeMainThread(chicoryInstance.memory)
 
-        return object : SqliteWasmEnvironment {
-            override val sqliteExports: SqliteExports = ChicorySqliteExports(chicoryInstance.instance)
+        val runtimeInstance = object : ChicoryRuntimeInstance {
             override val embedderInfo: SQLiteEmbedderRuntimeInfo = object : SQLiteEmbedderRuntimeInfo {
                 override val supportMultithreading: Boolean = false
             }
+        }
+
+        return object : SqliteWasmEnvironment<ChicoryRuntimeInstance> {
+            override val sqliteExports: SqliteExports = ChicorySqliteExports(chicoryInstance.instance)
             override val memory: EmbedderMemory = chicoryInstance.memory
             override val callbackFunctionIndexes: Sqlite3CallbackFunctionIndexes =
                 chicoryInstance.indirectFunctionIndexes
+            override val runtimeInstance: ChicoryRuntimeInstance = runtimeInstance
         }
     }
 }

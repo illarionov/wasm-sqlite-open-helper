@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.graalvm.bindings
+package ru.pixnews.wasm.sqlite.open.helper.graalvm.exports
 
 import org.graalvm.polyglot.Value
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr

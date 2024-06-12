@@ -13,19 +13,28 @@ import ru.pixnews.wasm.sqlite.driver.test.base.tests.TestSqliteDriverFactory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import kotlin.coroutines.CoroutineContext
 
-class UserDatabaseTests(
-    private val driverFactory: TestSqliteDriverFactory,
+class UserDatabaseTests<S : SQLiteDriver>(
+    private val driverFactory: TestSqliteDriverFactory<S>,
     private val databaseFactory: UserDatabaseFactory,
     val logger: Logger,
     val dbLogger: Logger,
 ) {
-    internal suspend fun testRoomOnUserDatabase(
+    public suspend fun testRoomOnUserDatabase(
         databaseName: String?,
         queryCoroutineContext: CoroutineContext,
         block: suspend (UserDatabaseSuspend) -> Unit,
     ) {
-        val driver = driverFactory.create(dbLogger, driverFactory.defaultSqliteBinary)
-        val database = databaseFactory.create(driver, databaseName, queryCoroutineContext)
+        val driver: S = driverFactory.create(dbLogger, driverFactory.defaultSqliteBinary)
+        testRoomOnUserDatabase(driver, databaseName, queryCoroutineContext, block)
+    }
+
+    suspend fun testRoomOnUserDatabase(
+        driver: S,
+        databaseName: String?,
+        coroutineContext: CoroutineContext,
+        block: suspend (UserDatabaseSuspend) -> Unit,
+    ) {
+        val database = databaseFactory.create(driver, databaseName, coroutineContext)
         try {
             block(database)
         } finally {
@@ -34,7 +43,7 @@ class UserDatabaseTests(
     }
 
     @Suppress("MagicNumber")
-    internal suspend fun basicRoomTest(database: UserDatabaseSuspend) {
+    suspend fun basicRoomTest(database: UserDatabaseSuspend) {
         val userDao = database.userDao()
 
         val user101 = User(101, "User 101 First Name", "User 101 Last Name")

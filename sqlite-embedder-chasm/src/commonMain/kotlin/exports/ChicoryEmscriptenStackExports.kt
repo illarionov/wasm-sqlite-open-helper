@@ -18,6 +18,7 @@ internal class ChicoryEmscriptenStackExports(instance: ChasmInstance) : Emscript
     override var __stack_pointer: Int by instance.intGlobalMember()
     override var __stack_end: Int? by instance.optionalIntGlobalMember()
     override var __stack_base: Int? by instance.optionalIntGlobalMember()
+    override val __set_stack_limits: WasmFunctionBinding? by instance.optionalFunctionMember()
     override val emscripten_stack_init: WasmFunctionBinding? by instance.optionalFunctionMember()
     override val emscripten_stack_get_free: WasmFunctionBinding? by instance.optionalFunctionMember()
     override val emscripten_stack_get_base: WasmFunctionBinding? by instance.optionalFunctionMember()

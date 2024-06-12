@@ -10,12 +10,11 @@ import androidx.sqlite.SQLiteDriver
 import co.touchlab.kermit.Severity
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import ru.pixnews.wasm.sqlite.test.utils.KermitLogger
 import kotlin.test.BeforeTest
 
-public abstract class AbstractSqliteDriverTest<E : SqliteEmbedderConfig>(
-    val driverFactory: TestSqliteDriverFactory,
+public abstract class AbstractSqliteDriverTest<S : SQLiteDriver>(
+    val driverFactory: TestSqliteDriverFactory<S>,
     dbLoggerSeverity: Severity = Severity.Info,
 ) {
     protected open val logger: Logger = KermitLogger(this::class.java.simpleName)

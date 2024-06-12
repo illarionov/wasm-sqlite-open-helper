@@ -6,13 +6,13 @@
 
 package ru.pixnews.wasm.sqlite.driver.chasm
 
+import androidx.sqlite.SQLiteDriver
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import ru.pixnews.wasm.sqlite.driver.base.JvmDatabaseFactory
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.room.AbstractBasicRoomTest
-import ru.pixnews.wasm.sqlite.open.helper.chasm.ChasmSqliteEmbedderConfig
 
-class ChasmBasicRoomTest : AbstractBasicRoomTest<ChasmSqliteEmbedderConfig>(
+class ChasmBasicRoomTest : AbstractBasicRoomTest<SQLiteDriver>(
     driverFactory = ChasmSqliteDriverFactory,
     databaseFactory = JvmDatabaseFactory,
 ) {

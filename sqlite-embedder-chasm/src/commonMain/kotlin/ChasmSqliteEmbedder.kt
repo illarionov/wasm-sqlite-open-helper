@@ -26,13 +26,13 @@ import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.EmscriptenRunti
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.stack.EmscriptenStack
 import java.util.concurrent.atomic.AtomicReference
 
-public object ChasmSqliteEmbedder : SqliteEmbedder<ChasmSqliteEmbedderConfig> {
+public object ChasmSqliteEmbedder : SqliteEmbedder<ChasmSqliteEmbedderConfig, ChasmRuntimeInstance> {
     @InternalWasmSqliteHelperApi
     override fun createSqliteWasmEnvironment(
         commonConfig: WasmSqliteCommonConfig,
         callbackStore: SqliteCallbackStore,
         embedderConfigBuilder: ChasmSqliteEmbedderConfig.() -> Unit,
-    ): SqliteWasmEnvironment {
+    ): SqliteWasmEnvironment<ChasmRuntimeInstance> {
         val config = ChasmSqliteEmbedderConfig(commonConfig.logger).apply(embedderConfigBuilder)
         return createChasmSqliteWasmEnvironment(
             config.host,
@@ -45,7 +45,7 @@ public object ChasmSqliteEmbedder : SqliteEmbedder<ChasmSqliteEmbedderConfig> {
         host: EmbedderHost,
         @Suppress("UnusedParameter") callbackStore: SqliteCallbackStore,
         sqlite3Binary: WasmSqliteConfiguration,
-    ): SqliteWasmEnvironment {
+    ): SqliteWasmEnvironment<ChasmRuntimeInstance> {
         require(!sqlite3Binary.requireThreads) {
             "The specified SQLite binary is compiled with threading support, which is not compatible with the " +
                     "Chasm WebAssembly runtime. Use a version of SQLite compiled without thread support."
@@ -62,19 +62,24 @@ public object ChasmSqliteEmbedder : SqliteEmbedder<ChasmSqliteEmbedderConfig> {
         val emscriptenRuntime = EmscriptenRuntime.emscriptenSingleThreadedRuntime(
             mainExports = ChasmEmscriptenMainExports(chasmInstance),
             stackExports = ChicoryEmscriptenStackExports(chasmInstance),
+            logger = host.rootLogger,
         )
         emscriptenStackRef.set(emscriptenRuntime.stack)
 
-        emscriptenRuntime.initRuntime(chasmInstance.memory)
+        emscriptenRuntime.initRuntimeMainThread(chasmInstance.memory)
 
-        return object : SqliteWasmEnvironment {
-            override val sqliteExports: SqliteExports = ChasmSqliteExports(chasmInstance)
+        val runtimeInstance = object : ChasmRuntimeInstance {
             override val embedderInfo: SQLiteEmbedderRuntimeInfo = object : SQLiteEmbedderRuntimeInfo {
                 override val supportMultithreading: Boolean = false
             }
+        }
+
+        return object : SqliteWasmEnvironment<ChasmRuntimeInstance> {
+            override val sqliteExports: SqliteExports = ChasmSqliteExports(chasmInstance)
             override val memory: EmbedderMemory = chasmInstance.memory
             override val callbackFunctionIndexes: Sqlite3CallbackFunctionIndexes =
                 chasmInstance.indirectFunctionIndexes
+            override val runtimeInstance: ChasmRuntimeInstance = runtimeInstance
         }
     }
 }

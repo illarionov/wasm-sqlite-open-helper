@@ -6,13 +6,13 @@
 
 package ru.pixnews.wasm.sqlite.driver.chicory
 
+import androidx.sqlite.SQLiteDriver
 import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractIcuCollationTest
-import ru.pixnews.wasm.sqlite.open.helper.chicory.ChicorySqliteEmbedderConfig
 
-class ChicoryIcuCollationTest : AbstractIcuCollationTest<ChicorySqliteEmbedderConfig>(
+class ChicoryIcuCollationTest : AbstractIcuCollationTest<SQLiteDriver>(
     driverCreator = ChicorySqliteDriverFactory,
 ) {
     @JvmField

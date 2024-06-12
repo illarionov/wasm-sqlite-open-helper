@@ -14,6 +14,8 @@ import com.dylibso.chicory.wasm.types.Value
 import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.chicory
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.function.AbortJs
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.function.AssertFail
+import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.function.EmscriptenAsmConstAsyncOnMainThread
+import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.function.EmscriptenAsmConstInt
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.function.EmscriptenConsoleError
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.function.EmscriptenDateNow
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.function.EmscriptenGetNow
@@ -59,8 +61,8 @@ internal class EmscriptenEnvFunctionsBuilder(
         get() = when (this) {
             EmscriptenHostFunction.ABORT_JS -> ::AbortJs
             EmscriptenHostFunction.ASSERT_FAIL -> ::AssertFail
-            EmscriptenHostFunction.EMSCRIPTEN_ASM_CONST_INT -> notImplementedEmscriptenHostFunction
-            EmscriptenHostFunction.EMSCRIPTEN_ASM_CONST_ASYNC_ON_MAIN_THREAD -> notImplementedEmscriptenHostFunction
+            EmscriptenHostFunction.EMSCRIPTEN_ASM_CONST_ASYNC_ON_MAIN_THREAD -> ::EmscriptenAsmConstAsyncOnMainThread
+            EmscriptenHostFunction.EMSCRIPTEN_ASM_CONST_INT -> ::EmscriptenAsmConstInt
             EmscriptenHostFunction.EMSCRIPTEN_CONSOLE_ERROR -> ::EmscriptenConsoleError
             EmscriptenHostFunction.EMSCRIPTEN_DATE_NOW -> ::EmscriptenDateNow
             EmscriptenHostFunction.EMSCRIPTEN_GET_NOW -> ::EmscriptenGetNow
@@ -81,26 +83,27 @@ internal class EmscriptenEnvFunctionsBuilder(
             EmscriptenHostFunction.SYSCALL_FTRUNCATE64 -> ::SyscallFtruncate64
             EmscriptenHostFunction.SYSCALL_GETCWD -> ::SyscallGetcwd
             EmscriptenHostFunction.SYSCALL_IOCTL -> notImplementedEmscriptenHostFunction
+            EmscriptenHostFunction.SYSCALL_LSTAT64 -> ::syscallLstat64
             EmscriptenHostFunction.SYSCALL_MKDIRAT -> ::SyscallMkdirat
             EmscriptenHostFunction.SYSCALL_NEWFSTATAT -> notImplementedEmscriptenHostFunction
             EmscriptenHostFunction.SYSCALL_OPENAT -> ::SyscallOpenat
             EmscriptenHostFunction.SYSCALL_READLINKAT -> ::SyscallReadlinkat
             EmscriptenHostFunction.SYSCALL_RMDIR -> ::SyscallRmdir
             EmscriptenHostFunction.SYSCALL_STAT64 -> ::syscallStat64
-            EmscriptenHostFunction.SYSCALL_LSTAT64 -> ::syscallLstat64
             EmscriptenHostFunction.SYSCALL_UNLINKAT -> ::SyscallUnlinkat
             EmscriptenHostFunction.SYSCALL_UTIMENSAT -> ::SyscallUtimensat
             EmscriptenHostFunction.TZSET_JS -> ::TzsetJs
-            EmscriptenHostFunction.EMSCRIPTEN_THREAD_SET_STRONGREF,
+            EmscriptenHostFunction.EMSCRIPTEN_CHECK_BLOCKING_ALLOWED,
             EmscriptenHostFunction.EMSCRIPTEN_EXIT_WITH_LIVE_RUNTIME,
             EmscriptenHostFunction.EMSCRIPTEN_INIT_MAIN_THREAD_JS,
-            EmscriptenHostFunction.EMSCRIPTEN_THREAD_MAILBOX_AWAIT,
-            EmscriptenHostFunction.EMSCRIPTEN_RECEIVE_ON_MAIN_THREAD_JS,
-            EmscriptenHostFunction.EMSCRIPTEN_CHECK_BLOCKING_ALLOWED,
-            EmscriptenHostFunction.PTHREAD_CREATE_JS,
-            EmscriptenHostFunction.EXIT,
-            EmscriptenHostFunction.EMSCRIPTEN_THREAD_CLEANUP,
             EmscriptenHostFunction.EMSCRIPTEN_NOTIFY_MAILBOX_POSTMESSAGE,
+            EmscriptenHostFunction.EMSCRIPTEN_RECEIVE_ON_MAIN_THREAD_JS,
+            EmscriptenHostFunction.EMSCRIPTEN_THREAD_CLEANUP,
+            EmscriptenHostFunction.EMSCRIPTEN_THREAD_MAILBOX_AWAIT,
+            EmscriptenHostFunction.EMSCRIPTEN_THREAD_SET_STRONGREF,
+            EmscriptenHostFunction.EMSCRIPTEN_UNWIND_TO_JS_EVENT_LOOP,
+            EmscriptenHostFunction.EXIT,
+            EmscriptenHostFunction.PTHREAD_CREATE_JS,
             -> notImplementedEmscriptenHostFunction
         }
 
