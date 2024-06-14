@@ -69,11 +69,12 @@ public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig
         val emscriptenRuntime = EmscriptenRuntime.emscriptenSingleThreadedRuntime(
             mainExports = ChicoryEmscriptenMainExports(chicoryInstance.instance),
             stackExports = ChicoryEmscriptenStackExports(chicoryInstance.instance),
+            memory = chicoryInstance.memory,
             logger = host.rootLogger,
         )
         stackBindingsRef.set(emscriptenRuntime.stack)
 
-        emscriptenRuntime.initRuntimeMainThread(chicoryInstance.memory)
+        emscriptenRuntime.initMainThread()
 
         val runtimeInstance = object : ChicoryRuntimeInstance {
             override val embedderInfo: SQLiteEmbedderRuntimeInfo = object : SQLiteEmbedderRuntimeInfo {

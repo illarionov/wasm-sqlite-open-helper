@@ -13,7 +13,7 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.optionalFunctionMember
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.pthread.EmscriptenPthreadExports
 
 internal class GraalvmEmscriptenPthreadExports(
-    mainBindings: Value,
+    mainBindings: () -> Value,
 ) : EmscriptenPthreadExports {
     override var __tls_base: Int by mainBindings.intGlobalMember()
     override val __tls_size: Int by mainBindings.intGlobalMember()

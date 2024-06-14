@@ -6,17 +6,22 @@
 
 package ru.pixnews.wasm.sqlite.driver.graalvm
 
-import androidx.sqlite.SQLiteDriver
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
+import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractMultithreadingTest
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmRuntimeInstance
 
-class GraalvmMultithreadingTest : AbstractMultithreadingTest<SQLiteDriver>(
+class GraalvmMultithreadingTest : AbstractMultithreadingTest<WasmSQLiteDriver<GraalvmRuntimeInstance>>(
     driverCreator = GraalvmSqliteDriverFactory(),
 ) {
     @JvmField
     @Rule
     val tempFolder: TemporaryFolder = TemporaryFolder()
+
+    override fun createThread(driver: WasmSQLiteDriver<GraalvmRuntimeInstance>, runnable: Runnable): Thread {
+        return driver.runtime.managedThreadFactory.newThread(runnable)
+    }
 
     override fun fileInTempDir(databaseName: String): String = tempFolder.root.resolve(databaseName).path
 }

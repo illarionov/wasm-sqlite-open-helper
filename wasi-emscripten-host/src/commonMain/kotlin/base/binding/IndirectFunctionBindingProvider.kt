@@ -4,12 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable
+package ru.pixnews.wasm.sqlite.open.helper.host.base.binding
 
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.IndirectFunctionTableIndex
 
-public interface Sqlite3CallbackFunctionIndexes {
-    public val traceFunction: IndirectFunctionTableIndex
-    public val progressFunction: IndirectFunctionTableIndex
-    public val loggingCallbackFunction: IndirectFunctionTableIndex
+public fun interface IndirectFunctionBindingProvider {
+    public fun getFunctionBinding(indirectId: IndirectFunctionTableIndex): WasmFunctionBinding?
 }

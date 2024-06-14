@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread
+package ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.pthread
 
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 
-public class SpawnThreadException : RuntimeException {
+public class PthreadException : RuntimeException {
     public val errCode: Errno?
 
     public constructor(

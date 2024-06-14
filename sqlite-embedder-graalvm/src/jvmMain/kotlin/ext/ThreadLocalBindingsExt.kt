@@ -9,17 +9,18 @@ package ru.pixnews.wasm.sqlite.open.helper.graalvm.ext
 import org.graalvm.polyglot.Value
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SinglePropertyLazyValue
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.exports.GraalWasmFunctionBinding
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmFunctionBinding
+import ru.pixnews.wasm.sqlite.open.helper.host.base.binding.WasmFunctionBinding
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-internal fun Value.functionMember(): ReadOnlyProperty<Any?, WasmFunctionBinding> {
+internal fun (() -> Value).functionMember(): ReadOnlyProperty<Any?, WasmFunctionBinding> {
     return object : ReadOnlyProperty<Any?, WasmFunctionBinding> {
-        private val binding: SinglePropertyLazyValue<WasmFunctionBinding> = SinglePropertyLazyValue {
-            val export = this@functionMember.getMember(it) ?: error("No member $it")
-            GraalWasmFunctionBinding(export)
-        }
+        private val binding: SinglePropertyThreadLocalLazyValue<WasmFunctionBinding> =
+            SinglePropertyThreadLocalLazyValue {
+                val export = this@functionMember().getMember(it) ?: error("No member $it")
+                GraalWasmFunctionBinding(export)
+            }
 
         override fun getValue(thisRef: Any?, property: KProperty<*>): WasmFunctionBinding {
             return binding.get(property)
@@ -27,11 +28,12 @@ internal fun Value.functionMember(): ReadOnlyProperty<Any?, WasmFunctionBinding>
     }
 }
 
-internal fun Value.optionalFunctionMember(): ReadOnlyProperty<Any?, WasmFunctionBinding?> {
+internal fun (() -> Value).optionalFunctionMember(): ReadOnlyProperty<Any?, WasmFunctionBinding?> {
     return object : ReadOnlyProperty<Any?, WasmFunctionBinding?> {
-        private val binding: SinglePropertyLazyValue<WasmFunctionBinding?> = SinglePropertyLazyValue {
-            this@optionalFunctionMember.getMember(it)?.let(::GraalWasmFunctionBinding)
-        }
+        private val binding: SinglePropertyThreadLocalLazyValue<WasmFunctionBinding?> =
+            SinglePropertyThreadLocalLazyValue {
+                this@optionalFunctionMember().getMember(it)?.let(::GraalWasmFunctionBinding)
+            }
 
         override fun getValue(thisRef: Any?, property: KProperty<*>): WasmFunctionBinding? {
             return binding.get(property)
@@ -39,10 +41,10 @@ internal fun Value.optionalFunctionMember(): ReadOnlyProperty<Any?, WasmFunction
     }
 }
 
-internal fun Value.intGlobalMember(): ReadWriteProperty<Any?, Int> {
+internal fun (() -> Value).intGlobalMember(): ReadWriteProperty<Any?, Int> {
     return object : ReadWriteProperty<Any?, Int> {
         val lazyValue = SinglePropertyLazyValue {
-            this@intGlobalMember.getMember(it) ?: error("No member $it")
+            this@intGlobalMember().getMember(it) ?: error("No member $it")
         }
 
         override fun getValue(thisRef: Any?, property: KProperty<*>): Int {
@@ -55,9 +57,9 @@ internal fun Value.intGlobalMember(): ReadWriteProperty<Any?, Int> {
     }
 }
 
-internal fun Value.optionalIntGlobalMember(): ReadWriteProperty<Any?, Int?> {
+internal fun (() -> Value).optionalIntGlobalMember(): ReadWriteProperty<Any?, Int?> {
     return object : ReadWriteProperty<Any?, Int?> {
-        val lazyValue = SinglePropertyLazyValue { this@optionalIntGlobalMember.getMember(it) }
+        val lazyValue = SinglePropertyLazyValue { this@optionalIntGlobalMember().getMember(it) }
 
         override fun getValue(thisRef: Any?, property: KProperty<*>): Int? {
             return lazyValue.get(property)?.asInt()

@@ -6,14 +6,10 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread
 
-import ru.pixnews.wasm.sqlite.open.helper.host.include.pthread_t
+import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.host.include.StructPthread
 
-// TODO: merge with PthreadManager?
-internal class WasmManagedThreadStore {
-
-    internal class ManagedThread(
-        val pthreadId: pthread_t,
-        val thread: Thread,
-    )
-
+internal interface ManagedThreadInitializer {
+    fun initThreadLocalGraalvmAgent()
+    fun initWorkerThread(threadPtr: WasmPtr<StructPthread>)
 }

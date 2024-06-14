@@ -9,7 +9,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.embedder.exports
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmFunctionBinding
+import ru.pixnews.wasm.sqlite.open.helper.host.base.binding.WasmFunctionBinding
 
 @InternalWasmSqliteHelperApi
 public interface SqliteExports {
@@ -60,5 +60,5 @@ public interface SqliteExports {
     public val sqlite3__wasm_db_config_s: WasmFunctionBinding
     public val register_localized_collators: WasmFunctionBinding
     public val register_android_functions: WasmFunctionBinding
-    public val memoryExports: SqliteMemoryExports
+    public val memoryExports: SqliteDynamicMemoryExports
 }

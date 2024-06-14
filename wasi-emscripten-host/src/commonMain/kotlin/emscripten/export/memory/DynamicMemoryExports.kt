@@ -4,11 +4,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi
+package ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.memory
 
 import ru.pixnews.wasm.sqlite.open.helper.host.base.binding.WasmFunctionBinding
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
 
-internal fun WasmFunctionBinding.executeForSqliteResultCode(vararg args: Any?): SqliteResultCode = SqliteResultCode(
-    executeForInt(*args),
-)
+public interface DynamicMemoryExports {
+    /**
+     * POSIX malloc()
+     */
+    public val malloc: WasmFunctionBinding?
+
+    /**
+     * POSIX free()
+     */
+    public val free: WasmFunctionBinding?
+}

@@ -54,6 +54,10 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/base/WasmValueTypeExt
 	public static final fun getPointer-c7MdO8o (Ljava/lang/Byte;)Ljava/lang/Byte;
 }
 
+public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/base/binding/IndirectFunctionBindingProvider {
+	public abstract fun getFunctionBinding-16H6Mr0 (I)Lru/pixnews/wasm/sqlite/open/helper/host/base/binding/WasmFunctionBinding;
+}
+
 public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunction {
 	public abstract fun getType ()Lru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunction$HostFunctionType;
 	public abstract fun getWasmName ()Ljava/lang/String;
@@ -79,6 +83,20 @@ public class ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionH
 	public final fun getFunction ()Lru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunction;
 	public final fun getHost ()Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;
 	protected final fun getLogger ()Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/base/function/IndirectFunctionTableIndex {
+	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/host/base/function/IndirectFunctionTableIndex;
+	public static fun constructor-impl (I)I
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (ILjava/lang/Object;)Z
+	public static final fun equals-impl0 (II)Z
+	public final fun getFuncId ()I
+	public fun hashCode ()I
+	public static fun hashCode-impl (I)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (I)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()I
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/base/memory/DefaultWasiMemoryReader : ru/pixnews/wasm/sqlite/open/helper/host/base/memory/WasiMemoryReader {
@@ -189,48 +207,61 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/Emscripten
 }
 
 public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/EmscriptenMainExports {
-	public abstract fun get__errno_location ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
-	public abstract fun get__wasm_call_ctors ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
-	public abstract fun get_initialize ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
+	public abstract fun get__errno_location ()Lru/pixnews/wasm/sqlite/open/helper/host/base/binding/WasmFunctionBinding;
+	public abstract fun get__wasm_call_ctors ()Lru/pixnews/wasm/sqlite/open/helper/host/base/binding/WasmFunctionBinding;
+	public abstract fun get_initialize ()Lru/pixnews/wasm/sqlite/open/helper/host/base/binding/WasmFunctionBinding;
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/EmscriptenRuntime {
+public class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/EmscriptenRuntime {
 	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/EmscriptenRuntime$Companion;
-	public synthetic fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/EmscriptenMainExports;Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/stack/EmscriptenStackExports;Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/pthread/EmscriptenPthreadExports;Lkotlin/jvm/functions/Function0;Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	protected fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/EmscriptenMainExports;Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/stack/EmscriptenStackExports;Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory;Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;)V
 	public final fun getMainExports ()Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/EmscriptenMainExports;
-	public final fun getPthreadExports ()Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/pthread/EmscriptenPthreadExports;
-	public final fun getPthreadManager ()Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/pthread/PthreadManager;
+	protected final fun getMemory ()Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory;
 	public final fun getStack ()Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/stack/EmscriptenStack;
-	public final fun getStackExports ()Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/stack/EmscriptenStackExports;
-	public final fun initRuntimeMainThread (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory;)V
-	public final fun isMultiThread ()Z
-	public final fun runWorkerThread-MYs6Txo (I)V
+	public fun initMainThread ()V
+	protected final fun initSingleThreadedMainThread ()V
+	public fun isMultiThread ()Z
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/EmscriptenRuntime$Companion {
-	public final fun emscriptenMultithreadedRuntime (Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/EmscriptenMainExports;Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/stack/EmscriptenStackExports;Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/pthread/EmscriptenPthreadExports;Lkotlin/jvm/functions/Function0;Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;)Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/EmscriptenRuntime;
-	public final fun emscriptenSingleThreadedRuntime (Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/EmscriptenMainExports;Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/stack/EmscriptenStackExports;Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;)Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/EmscriptenRuntime;
+	public final fun emscriptenSingleThreadedRuntime (Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/EmscriptenMainExports;Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/stack/EmscriptenStackExports;Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory;Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;)Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/EmscriptenRuntime;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/memory/DynamicMemory$OutOfMemoryException : java/lang/RuntimeException {
+	public fun <init> ()V
+}
+
+public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/memory/DynamicMemoryExports {
+	public abstract fun getFree ()Lru/pixnews/wasm/sqlite/open/helper/host/base/binding/WasmFunctionBinding;
+	public abstract fun getMalloc ()Lru/pixnews/wasm/sqlite/open/helper/host/base/binding/WasmFunctionBinding;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/pthread/EmscriptenPthread {
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/pthread/EmscriptenPthreadExports;Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/memory/DynamicMemory;Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory;)V
+	public final fun pthreadCreate-RuGyVoA (III)J
+	public final fun pthreadExit-MYs6Txo (I)V
+	public final fun pthreadSelf-s-VKNKU ()J
 }
 
 public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/pthread/EmscriptenPthreadExports {
-	public abstract fun getEmscripten_main_runtime_thread_id ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
-	public abstract fun getEmscripten_main_thread_process_queued_calls ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
+	public abstract fun getEmscripten_main_runtime_thread_id ()Lru/pixnews/wasm/sqlite/open/helper/host/base/binding/WasmFunctionBinding;
+	public abstract fun getEmscripten_main_thread_process_queued_calls ()Lru/pixnews/wasm/sqlite/open/helper/host/base/binding/WasmFunctionBinding;
 	public abstract fun getG_needs_dynamic_alloc ()I
-	public abstract fun getPthread_create ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
-	public abstract fun getPthread_exit ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
-	public abstract fun getPthread_self ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
+	public abstract fun getPthread_create ()Lru/pixnews/wasm/sqlite/open/helper/host/base/binding/WasmFunctionBinding;
+	public abstract fun getPthread_exit ()Lru/pixnews/wasm/sqlite/open/helper/host/base/binding/WasmFunctionBinding;
+	public abstract fun getPthread_self ()Lru/pixnews/wasm/sqlite/open/helper/host/base/binding/WasmFunctionBinding;
 	public abstract fun getSupports_wait ()I
 	public abstract fun getThread_ptr ()I
 	public abstract fun get__tls_align ()I
 	public abstract fun get__tls_base ()I
 	public abstract fun get__tls_size ()I
-	public abstract fun get_emscripten_check_mailbox ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
-	public abstract fun get_emscripten_run_on_main_thread_js ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
-	public abstract fun get_emscripten_thread_crashed ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
-	public abstract fun get_emscripten_thread_exit ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
-	public abstract fun get_emscripten_thread_free_data ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
-	public abstract fun get_emscripten_thread_init ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
-	public abstract fun get_emscripten_tls_init ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
+	public abstract fun get_emscripten_check_mailbox ()Lru/pixnews/wasm/sqlite/open/helper/host/base/binding/WasmFunctionBinding;
+	public abstract fun get_emscripten_run_on_main_thread_js ()Lru/pixnews/wasm/sqlite/open/helper/host/base/binding/WasmFunctionBinding;
+	public abstract fun get_emscripten_thread_crashed ()Lru/pixnews/wasm/sqlite/open/helper/host/base/binding/WasmFunctionBinding;
+	public abstract fun get_emscripten_thread_exit ()Lru/pixnews/wasm/sqlite/open/helper/host/base/binding/WasmFunctionBinding;
+	public abstract fun get_emscripten_thread_free_data ()Lru/pixnews/wasm/sqlite/open/helper/host/base/binding/WasmFunctionBinding;
+	public abstract fun get_emscripten_thread_init ()Lru/pixnews/wasm/sqlite/open/helper/host/base/binding/WasmFunctionBinding;
+	public abstract fun get_emscripten_tls_init ()Lru/pixnews/wasm/sqlite/open/helper/host/base/binding/WasmFunctionBinding;
 	public abstract fun is_main_thread ()I
 	public abstract fun is_runtime_thread ()I
 	public abstract fun setG_needs_dynamic_alloc (I)V
@@ -241,20 +272,33 @@ public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/emscript
 	public abstract fun set_runtime_thread (I)V
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/pthread/PthreadManager {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/pthread/EmscriptenPthreadExports;Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;Lkotlin/jvm/functions/Function0;)V
+public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/pthread/EmscriptenPthreadInternal {
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/pthread/EmscriptenPthreadExports;)V
+	public final fun emscriptenThreadCrashed ()V
+	public final fun emscriptenThreadExit-MYs6Txo (I)V
+	public final fun emscriptenThreadFreeData-MYs6Txo (I)V
 	public final fun emscriptenThreadInit-llFElsE (IZZZIZ)V
-	public static synthetic fun emscriptenThreadInit-llFElsE$default (Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/pthread/PthreadManager;IZZZIZILjava/lang/Object;)V
-	public final fun getExports ()Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/pthread/EmscriptenPthreadExports;
+	public static synthetic fun emscriptenThreadInit-llFElsE$default (Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/pthread/EmscriptenPthreadInternal;IZZZIZILjava/lang/Object;)V
+	public final fun emscriptenTlsInit ()V
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/pthread/PthreadException : java/lang/RuntimeException {
+	public fun <init> (Ljava/lang/String;Ljava/lang/Integer;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Integer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;Ljava/lang/Integer;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;Ljava/lang/Integer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getErrCode ()Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+}
+
+public class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/pthread/PthreadManager {
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/pthread/EmscriptenPthreadInternal;Lkotlin/jvm/functions/Function0;)V
 	public final fun initMainThreadJs-MYs6Txo (I)V
-	public final fun initWorkerThread ()V
-	public final fun isMainThread ()Lkotlin/jvm/functions/Function0;
-	public final fun threadInitTls ()V
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/stack/EmscriptenStack {
 	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/stack/EmscriptenStackExports;Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;)V
 	public final fun checkStackCookie (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory;)V
+	public final fun emscriptenStackRestore-MYs6Txo (I)V
 	public final fun emscriptenStackSetLimits-Dyx77Y0 (II)V
 	public final fun getEmscriptenStackBase-LEMrgXI ()I
 	public final fun getEmscriptenStackCurrent-LEMrgXI ()I
@@ -266,18 +310,18 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/sta
 }
 
 public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/stack/EmscriptenStackExports {
-	public abstract fun getEmscripten_stack_get_base ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
-	public abstract fun getEmscripten_stack_get_current ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
-	public abstract fun getEmscripten_stack_get_end ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
-	public abstract fun getEmscripten_stack_get_free ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
-	public abstract fun getEmscripten_stack_init ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
-	public abstract fun getEmscripten_stack_set_limits ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
-	public abstract fun get__set_stack_limits ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
+	public abstract fun getEmscripten_stack_get_base ()Lru/pixnews/wasm/sqlite/open/helper/host/base/binding/WasmFunctionBinding;
+	public abstract fun getEmscripten_stack_get_current ()Lru/pixnews/wasm/sqlite/open/helper/host/base/binding/WasmFunctionBinding;
+	public abstract fun getEmscripten_stack_get_end ()Lru/pixnews/wasm/sqlite/open/helper/host/base/binding/WasmFunctionBinding;
+	public abstract fun getEmscripten_stack_get_free ()Lru/pixnews/wasm/sqlite/open/helper/host/base/binding/WasmFunctionBinding;
+	public abstract fun getEmscripten_stack_init ()Lru/pixnews/wasm/sqlite/open/helper/host/base/binding/WasmFunctionBinding;
+	public abstract fun getEmscripten_stack_set_limits ()Lru/pixnews/wasm/sqlite/open/helper/host/base/binding/WasmFunctionBinding;
+	public abstract fun get__set_stack_limits ()Lru/pixnews/wasm/sqlite/open/helper/host/base/binding/WasmFunctionBinding;
 	public abstract fun get__stack_base ()Ljava/lang/Integer;
 	public abstract fun get__stack_end ()Ljava/lang/Integer;
 	public abstract fun get__stack_pointer ()I
-	public abstract fun get_emscripten_stack_alloc ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
-	public abstract fun get_emscripten_stack_restore ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
+	public abstract fun get_emscripten_stack_alloc ()Lru/pixnews/wasm/sqlite/open/helper/host/base/binding/WasmFunctionBinding;
+	public abstract fun get_emscripten_stack_restore ()Lru/pixnews/wasm/sqlite/open/helper/host/base/binding/WasmFunctionBinding;
 	public abstract fun set__stack_base (Ljava/lang/Integer;)V
 	public abstract fun set__stack_end (Ljava/lang/Integer;)V
 	public abstract fun set__stack_pointer (I)V
@@ -677,6 +721,9 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/include/StructFlock$C
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/include/StructPthread {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/include/StructPthread$Companion;
+	public static final field STRUCT_PTHREAD_STACK_HIGH_OFFSET I
+	public static final field STRUCT_PTHREAD_STACK_SZIE_OFFSET I
 	public synthetic fun <init> (IIIIIIIIIBLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1-LEMrgXI ()I
 	public final fun component10 ()B
@@ -703,6 +750,9 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/include/StructPthread
 	public final fun getWaitingAsync ()I
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/include/StructPthread$Companion {
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/include/StructTimespec {

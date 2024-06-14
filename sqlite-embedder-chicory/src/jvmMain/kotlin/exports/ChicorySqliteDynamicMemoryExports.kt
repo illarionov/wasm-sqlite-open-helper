@@ -4,18 +4,19 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.graalvm.exports
+@file:Suppress("VariableNaming", "UnusedPrivateProperty", "BLANK_LINE_BETWEEN_PROPERTIES")
 
-import org.graalvm.polyglot.Value
+package ru.pixnews.wasm.sqlite.open.helper.chicory.exports
+
+import com.dylibso.chicory.runtime.Instance
+import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.functionMember
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.api.isSqlite3Null
-import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteMemoryExports
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.functionMember
+import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteDynamicMemoryExports
 
-@Suppress("VariableNaming", "MagicNumber", "UnusedPrivateProperty", "BLANK_LINE_BETWEEN_PROPERTIES")
-internal class GraalSqliteMemoryExports(
-    mainBindings: Value,
-) : SqliteMemoryExports {
+internal class ChicorySqliteDynamicMemoryExports(
+    mainBindings: Instance,
+) : SqliteDynamicMemoryExports {
     private val sqlite3_malloc by mainBindings.functionMember()
     private val sqlite3_free by mainBindings.functionMember()
     private val sqlite3_realloc by mainBindings.functionMember()

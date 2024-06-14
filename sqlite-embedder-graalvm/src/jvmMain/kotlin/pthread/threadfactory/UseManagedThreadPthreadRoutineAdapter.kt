@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.function
+package ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.threadfactory
 
-import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary
+import com.oracle.truffle.api.CompilerDirectives
 import com.oracle.truffle.api.frame.VirtualFrame
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
@@ -15,39 +15,30 @@ import org.graalvm.wasm.WasmModule
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.GraalvmManagedThreadFactory.Companion.PTHREAD_ROUTINE_CALLBACK_FUNCTION
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.WasmManagedThreadStore
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.function.StartManagedThreadCallbackFunctionAdapter.StartThreadCallbackFunctionHandle
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.threadfactory.UseManagedThreadPthreadRoutineAdapter.UseManagedThreadPthreadRoutineFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 
-internal class StartManagedThreadCallbackFunctionAdapter(
+internal class UseManagedThreadPthreadRoutineAdapter(
     language: WasmLanguage,
     module: WasmModule,
     host: EmbedderHost,
-    managedThreadStore: WasmManagedThreadStore,
-) : BaseWasmNode<StartThreadCallbackFunctionHandle>(
+) : BaseWasmNode<UseManagedThreadPthreadRoutineFunctionHandle>(
     language,
     module,
-    StartThreadCallbackFunctionHandle(host, managedThreadStore),
+    UseManagedThreadPthreadRoutineFunctionHandle(host),
 ) {
     override fun executeWithContext(frame: VirtualFrame, context: WasmContext, wasmInstance: WasmInstance): Int {
         val args = frame.arguments
-        return handle.execute(
-            args.getArgAsWasmPtr(0)
-        )
+        return handle.execute(args.getArgAsWasmPtr(0))
     }
 
-    internal class StartThreadCallbackFunctionHandle(
+    internal class UseManagedThreadPthreadRoutineFunctionHandle(
         host: EmbedderHost,
-        private val managedThreadStore: WasmManagedThreadStore,
-    ) : HostFunctionHandle(PTHREAD_ROUTINE_CALLBACK_FUNCTION, host) {
-        @TruffleBoundary
+    ) : HostFunctionHandle(ExternalManagedThreadOrchestrator.USE_MANAGED_THREAD_PTHREAD_ROUTINE_FUNCTION, host) {
+        @CompilerDirectives.TruffleBoundary
         fun execute(arg: WasmPtr<Unit>): Int {
-            logger.i { "Managed thread start_routine called with arg $arg" }
-
-            // Start runnable?
-            Thread.sleep(5000)
+            logger.v { "Managed thread start_routine called with arg $arg. Do nothing." }
             return 0
         }
     }

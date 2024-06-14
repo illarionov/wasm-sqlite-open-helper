@@ -60,11 +60,12 @@ public object ChasmSqliteEmbedder : SqliteEmbedder<ChasmSqliteEmbedderConfig, Ch
         val emscriptenRuntime = EmscriptenRuntime.emscriptenSingleThreadedRuntime(
             mainExports = ChasmEmscriptenMainExports(chasmInstance),
             stackExports = ChicoryEmscriptenStackExports(chasmInstance),
+            memory = chasmInstance.memory,
             logger = host.rootLogger,
         )
         emscriptenStackRef.set(emscriptenRuntime.stack)
 
-        emscriptenRuntime.initRuntimeMainThread(chasmInstance.memory)
+        emscriptenRuntime.initMainThread()
 
         val runtimeInstance = object : ChasmRuntimeInstance {
             override val embedderInfo: SQLiteEmbedderRuntimeInfo = object : SQLiteEmbedderRuntimeInfo {

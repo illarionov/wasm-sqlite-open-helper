@@ -12,7 +12,7 @@ import com.dylibso.chicory.wasm.exceptions.ChicoryException
 import com.dylibso.chicory.wasm.types.Value
 import ru.pixnews.wasm.sqlite.open.helper.chicory.exports.ChicoryWasmFunctionBinding
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SinglePropertyLazyValue
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmFunctionBinding
+import ru.pixnews.wasm.sqlite.open.helper.host.base.binding.WasmFunctionBinding
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty

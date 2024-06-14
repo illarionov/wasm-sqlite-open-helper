@@ -8,7 +8,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.pthread
 
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmFunctionBinding
+import ru.pixnews.wasm.sqlite.open.helper.host.base.binding.WasmFunctionBinding
 
 public interface EmscriptenPthreadExports {
     public var __tls_base: Int
@@ -112,16 +112,22 @@ public interface EmscriptenPthreadExports {
     /**
      * Internal Emscripten function.
      *
+     * Called from a Web Worker when a pthread is detached from the web worker.
+     * Runs thread destructors and internal cleanup, does not release StructPthread.
+     *
      * ```c
      * void _emscripten_thread_exit(void* result)
      * ```
+     *
      */
     public val _emscripten_thread_exit: WasmFunctionBinding
 
     /**
      * Internal Emscripten function.
      *
-     * Called from JS main thread to free data accociated a thread that is no longer running.
+     * Called from JS main thread to free data associated a thread that is no longer running.
+     *
+     * Should not be called from the thread being deallocated
      *
      * ```c
      * void _emscripten_thread_free_data(pthread_t t)
@@ -134,7 +140,7 @@ public interface EmscriptenPthreadExports {
     /**
      * Internal Emscripten function.
      *
-     * Initializes the thread state
+     * Initializes Wasm globals for thread metadata using the provided values and sets the thread status to RUNNING
      *
      * ```c
      * void _emscripten_thread_init(pthread_t ptr,
@@ -193,13 +199,12 @@ public interface EmscriptenPthreadExports {
      */
     public val pthread_self: WasmFunctionBinding
 
-
-    /***
+    /**
      * POSIX pthread_create() (if available)
      */
     public val pthread_create: WasmFunctionBinding?
 
-    /***
+    /**
      * POSIX pthread_exit() (if available)
      */
     public val pthread_exit: WasmFunctionBinding?

@@ -63,24 +63,10 @@ public final class ru/pixnews/wasm/sqlite/open/helper/embedder/callback/SqliteCa
 	public final synthetic fun unbox-impl ()I
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/embedder/functiontable/IndirectFunctionTableIndex {
-	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/embedder/functiontable/IndirectFunctionTableIndex;
-	public static fun constructor-impl (I)I
-	public fun equals (Ljava/lang/Object;)Z
-	public static fun equals-impl (ILjava/lang/Object;)Z
-	public static final fun equals-impl0 (II)Z
-	public final fun getFuncId ()I
-	public fun hashCode ()I
-	public static fun hashCode-impl (I)I
-	public fun toString ()Ljava/lang/String;
-	public static fun toString-impl (I)Ljava/lang/String;
-	public final synthetic fun unbox-impl ()I
-}
-
 public abstract interface class ru/pixnews/wasm/sqlite/open/helper/embedder/functiontable/Sqlite3CallbackFunctionIndexes {
-	public abstract fun getLoggingCallbackFunction-76yzr8E ()I
-	public abstract fun getProgressFunction-76yzr8E ()I
-	public abstract fun getTraceFunction-76yzr8E ()I
+	public abstract fun getLoggingCallbackFunction-ZL8peo8 ()I
+	public abstract fun getProgressFunction-ZL8peo8 ()I
+	public abstract fun getTraceFunction-ZL8peo8 ()I
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/embedder/sqlitecb/SqliteCallbacksModuleFunction : java/lang/Enum, ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunction {

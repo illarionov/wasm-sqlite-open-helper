@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+@file:Suppress("KDOC_NO_CONSTRUCTOR_PROPERTY_WITH_COMMENT")
+
 package ru.pixnews.wasm.sqlite.open.helper.host.include
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
@@ -22,38 +24,10 @@ public data class StructPthread(
     // canary_pad
     val canary: uintptr_t,
     // Part 2 -- implementation details, non-ABI.
-//            int tid;
-//        int errno_val;
-//        volatile int detach_state;
-//        volatile int cancel;
-//        volatile unsigned char canceldisable, cancelasync;
-//        unsigned char tsd_used:1;
-//        unsigned char dlerror_flag:1;
-//        unsigned char *map_base;
-//        size_t map_size;
-//        void *stack;
-//        size_t stack_size;
-//        size_t guard_size;
-//        void *result;
-//        struct __ptcb *cancelbuf;
-//        void **tsd;
-//        struct {
-//                volatile void *volatile head;
-//                long off;
-//                volatile void *volatile pending;
-//        } robust_list;
-//        int h_errno_val;
-//        volatile int timer_id;
-//        locale_t locale;
-//        volatile int killlock[1];
-//        char *dlerror_buf;
-//        void *stdio_locks;
+    // …
     /* Part 3 -- the positions of these fields relative to
      * the end of the structure is external and internal ABI. */
-//    #ifdef TLS_ABOVE_TP
-//    uintptr_t canary;
-//    uintptr_t *dtv;
-//    #endif
+    // …
 
     //    Emscripten specifics
     // thread_profiler_block * _Atomic profilerBlock;
@@ -102,7 +76,12 @@ public data class StructPthread(
     /**
      * When dynamic linking is enabled, threads use this to facilitate the
      * synchronization of loaded code between threads.
-     * See [emscripten_futex_wait.c](https://github.com/emscripten-core/emscripten/blob/3.1.61/system/lib/pthread/emscripten_futex_wait.c).
+     * See [emscripten_futex_wait.c](https://github.com/emscripten-core/emscripten/blob/3.1.61/system/lib/pthread/emscripten_futex_wait.c)
      */
     val sleeping: Byte,
-)
+) {
+    public companion object {
+        public const val STRUCT_PTHREAD_STACK_HIGH_OFFSET: Int = 52
+        public const val STRUCT_PTHREAD_STACK_SZIE_OFFSET: Int = 56
+    }
+}

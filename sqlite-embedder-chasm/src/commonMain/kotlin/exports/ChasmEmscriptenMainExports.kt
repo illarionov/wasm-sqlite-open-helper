@@ -9,7 +9,7 @@ package ru.pixnews.wasm.sqlite.open.helper.chasm.exports
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.functionMember
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.optionalFunctionMember
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.ChasmInstanceBuilder.ChasmInstance
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmFunctionBinding
+import ru.pixnews.wasm.sqlite.open.helper.host.base.binding.WasmFunctionBinding
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.EmscriptenMainExports
 
 internal class ChasmEmscriptenMainExports(instance: ChasmInstance) : EmscriptenMainExports {

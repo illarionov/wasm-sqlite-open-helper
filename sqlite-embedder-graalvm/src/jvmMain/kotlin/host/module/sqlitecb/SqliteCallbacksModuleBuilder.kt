@@ -11,7 +11,6 @@ import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
-import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.IndirectFunctionTableIndex
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.functionTable
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.setupImportedEnvMemory
@@ -21,18 +20,17 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.NodeFactory
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.function.Sqlite3LoggingAdapter
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.function.Sqlite3ProgressAdapter
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.function.Sqlite3TraceAdapter
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.GraalvmManagedThreadFactory.Companion.PTHREAD_ROUTINE_CALLBACK_FUNCTION
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.WasmManagedThreadStore
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.function.StartManagedThreadCallbackFunctionAdapter
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.threadfactory.ExternalManagedThreadOrchestrator.Companion.USE_MANAGED_THREAD_PTHREAD_ROUTINE_FUNCTION
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.threadfactory.UseManagedThreadPthreadRoutineAdapter
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmModules.SQLITE3_CALLBACK_MANAGER_MODULE_NAME
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction
+import ru.pixnews.wasm.sqlite.open.helper.host.base.function.IndirectFunctionTableIndex
 
 internal class SqliteCallbacksModuleBuilder(
     private val graalContext: Context,
     private val host: EmbedderHost,
     private val callbackStore: SqliteCallbackStore,
-    private val managedThreadStore: WasmManagedThreadStore,
 ) {
     private val callbackHostFunctions: Map<HostFunction, NodeFactory> = mapOf(
         SqliteCallbacksModuleFunction.SQLITE3_TRACE_CALLBACK to {
@@ -48,19 +46,16 @@ internal class SqliteCallbacksModuleBuilder(
         SqliteCallbacksModuleFunction.SQLITE3_LOGGING_CALLBACK to { language, module, host ->
             Sqlite3LoggingAdapter(language, module, host, callbackStore::sqlite3LogCallback)
         },
-        PTHREAD_ROUTINE_CALLBACK_FUNCTION to { language, module, host ->
-            StartManagedThreadCallbackFunctionAdapter(language, module, host, managedThreadStore)
-        }
+        USE_MANAGED_THREAD_PTHREAD_ROUTINE_FUNCTION to { language, module, host ->
+            UseManagedThreadPthreadRoutineAdapter(language, module, host)
+        },
     )
 
     fun setupModule(
         sharedMemory: Boolean = false,
         useUnsafeMemory: Boolean = false,
     ): WasmInstance {
-        val module = WasmModule.create(
-            SQLITE3_CALLBACK_MANAGER_MODULE_NAME,
-            null,
-        )
+        val module = WasmModule.create(SQLITE3_CALLBACK_MANAGER_MODULE_NAME, null)
         graalContext.withWasmContext { wasmContext ->
             module.setupImportedEnvMemory(
                 wasmContext,
@@ -71,20 +66,21 @@ internal class SqliteCallbacksModuleBuilder(
         }
     }
 
-    fun setupIndirectFunctionTable(): GraalvmSqliteCallbackFunctionIndexes = graalContext.withWasmContext { wasmContext ->
-        // Ensure module linked
-        val moduleInstance: WasmInstance = wasmContext.moduleInstances().getValue(SQLITE3_CALLBACK_MANAGER_MODULE_NAME)
-        wasmContext.linker().tryLink(moduleInstance)
+    fun setupIndirectFunctionTable(): GraalvmSqliteCallbackFunctionIndexes =
+        graalContext.withWasmContext { wasmContext ->
+            // Ensure module linked
+            val moduleInstance = wasmContext.moduleInstances().getValue(SQLITE3_CALLBACK_MANAGER_MODULE_NAME)
+            wasmContext.linker().tryLink(moduleInstance)
 
-        val functionTable = wasmContext.functionTable
-        val firstFuncId = functionTable.grow(callbackHostFunctions.size, null)
-        val funcIdx: Map<HostFunction, IndirectFunctionTableIndex> = callbackHostFunctions.keys
-            .mapIndexed { index, hostFunction ->
-                val indirectFuncId = firstFuncId + index
-                val funcInstance = moduleInstance.readMember(hostFunction.wasmName)
-                functionTable[indirectFuncId] = funcInstance
-                hostFunction to IndirectFunctionTableIndex(indirectFuncId)
-            }.toMap()
-        return GraalvmSqliteCallbackFunctionIndexes(funcIdx)
-    }
+            val functionTable = wasmContext.functionTable
+            val firstFuncId = functionTable.grow(callbackHostFunctions.size, null)
+            val funcIdx: Map<HostFunction, IndirectFunctionTableIndex> = callbackHostFunctions.keys
+                .mapIndexed { index, hostFunction ->
+                    val indirectFuncId = firstFuncId + index
+                    val funcInstance = moduleInstance.readMember(hostFunction.wasmName)
+                    functionTable[indirectFuncId] = funcInstance
+                    hostFunction to IndirectFunctionTableIndex(indirectFuncId)
+                }.toMap()
+            return GraalvmSqliteCallbackFunctionIndexes(funcIdx)
+        }
 }

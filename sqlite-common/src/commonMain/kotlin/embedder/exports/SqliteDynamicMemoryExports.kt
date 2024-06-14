@@ -10,12 +10,12 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 
 @InternalWasmSqliteHelperApi
-public interface SqliteMemoryExports {
+public interface SqliteDynamicMemoryExports {
     public fun <P : Any?> sqliteAllocOrThrow(len: UInt): WasmPtr<P>
     public fun sqliteFree(ptr: WasmPtr<*>)
 }
 
 @InternalWasmSqliteHelperApi
-public fun SqliteMemoryExports.sqliteFreeSilent(value: WasmPtr<*>): Result<Unit> = kotlin.runCatching {
+public fun SqliteDynamicMemoryExports.sqliteFreeSilent(value: WasmPtr<*>): Result<Unit> = kotlin.runCatching {
     sqliteFree(value)
 }

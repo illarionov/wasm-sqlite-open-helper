@@ -32,5 +32,5 @@ public abstract class AbstractSqliteDriverTest<S : SQLiteDriver>(
 
     public fun createWasmSQLiteDriver(
         sqlite3Binary: WasmSqliteConfiguration = driverFactory.defaultSqliteBinary,
-    ): SQLiteDriver = driverFactory.create(dbLogger, sqlite3Binary)
+    ): S = driverFactory.create(dbLogger, sqlite3Binary)
 }
