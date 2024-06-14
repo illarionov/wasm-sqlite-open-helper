@@ -20,6 +20,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.pthread.PthreadManager
+import ru.pixnews.wasm.sqlite.open.helper.host.include.StructPthread
 
 internal class EmscriptenInitMainThreadJs(
     language: WasmLanguage,
@@ -37,7 +38,7 @@ internal class EmscriptenInitMainThreadJs(
         private val posixThreadRef: () -> PthreadManager,
     ) : HostFunctionHandle(EmscriptenHostFunction.EMSCRIPTEN_INIT_MAIN_THREAD_JS, host) {
         @TruffleBoundary
-        fun execute(ptr: WasmPtr<Unit>) {
+        fun execute(ptr: WasmPtr<StructPthread>) {
             posixThreadRef().initMainThreadJs(ptr)
         }
     }

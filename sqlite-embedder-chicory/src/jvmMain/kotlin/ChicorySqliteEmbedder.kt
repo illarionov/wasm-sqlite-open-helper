@@ -32,13 +32,11 @@ public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig
     @InternalWasmSqliteHelperApi
     override fun createSqliteWasmEnvironment(
         commonConfig: WasmSqliteCommonConfig,
-        callbackStore: SqliteCallbackStore,
         embedderConfigBuilder: ChicorySqliteEmbedderConfig.() -> Unit,
     ): SqliteWasmEnvironment<ChicoryRuntimeInstance> {
         val config = ChicorySqliteEmbedderConfig(commonConfig.logger).apply(embedderConfigBuilder)
         return createChicorySqliteWasmEnvironment(
             config.host,
-            callbackStore,
             config.sqlite3Binary,
             config.logSeverity,
         )
@@ -46,7 +44,6 @@ public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig
 
     private fun createChicorySqliteWasmEnvironment(
         host: EmbedderHost,
-        callbackStore: SqliteCallbackStore,
         sqlite3Binary: WasmSqliteConfiguration,
         logSeverity: Level,
     ): SqliteWasmEnvironment<ChicoryRuntimeInstance> {
@@ -59,6 +56,7 @@ public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig
             logger = host.rootLogger,
             severity = logSeverity,
         )
+        val callbackStore = SqliteCallbackStore()
         val stackBindingsRef: AtomicReference<EmscriptenStack> = AtomicReference()
         val chicoryInstance: ChicoryInstance = MainInstanceBuilder(
             host = host,
@@ -86,6 +84,7 @@ public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig
         return object : SqliteWasmEnvironment<ChicoryRuntimeInstance> {
             override val sqliteExports: SqliteExports = ChicorySqliteExports(chicoryInstance.instance)
             override val memory: EmbedderMemory = chicoryInstance.memory
+            override val callbackStore: SqliteCallbackStore = callbackStore
             override val callbackFunctionIndexes: Sqlite3CallbackFunctionIndexes =
                 chicoryInstance.indirectFunctionIndexes
             override val runtimeInstance: ChicoryRuntimeInstance = runtimeInstance

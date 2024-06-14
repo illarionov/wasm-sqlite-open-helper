@@ -8,12 +8,14 @@ package ru.pixnews.wasm.sqlite.open.helper.graalvm
 
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.EmbedderMemory
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteWasmEnvironment
+import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
 
 public class GraalvmSqliteWasmEnvironment internal constructor(
     override val sqliteExports: SqliteExports,
     override val memory: EmbedderMemory,
+    override val callbackStore: SqliteCallbackStore,
     override val callbackFunctionIndexes: Sqlite3CallbackFunctionIndexes,
     override val runtimeInstance: GraalvmRuntimeInstance,
 ) : SqliteWasmEnvironment<GraalvmRuntimeInstance>

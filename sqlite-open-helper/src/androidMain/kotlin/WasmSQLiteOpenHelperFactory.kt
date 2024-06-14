@@ -74,7 +74,6 @@ internal fun <E : SqliteEmbedderConfig, R : SqliteRuntimeInstance> WasmSqliteOpe
     val callbackStore = SqliteCallbackStore()
     val embedderEnv: SqliteWasmEnvironment<R> = embedder.createSqliteWasmEnvironment(
         commonConfig = commonConfig,
-        callbackStore = callbackStore,
         embedderConfigBuilder = config.embedderConfig,
     )
 

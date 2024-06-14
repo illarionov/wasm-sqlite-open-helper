@@ -12,7 +12,6 @@ import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.IndirectFunctionTableIndex
-import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.functionTable
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.setupImportedEnvMemory
@@ -22,15 +21,20 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.NodeFactory
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.function.Sqlite3LoggingAdapter
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.function.Sqlite3ProgressAdapter
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.function.Sqlite3TraceAdapter
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.GraalvmManagedThreadFactory.Companion.PTHREAD_ROUTINE_CALLBACK_FUNCTION
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.WasmManagedThreadStore
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.function.StartManagedThreadCallbackFunctionAdapter
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmModules.SQLITE3_CALLBACK_MANAGER_MODULE_NAME
+import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction
 
 internal class SqliteCallbacksModuleBuilder(
     private val graalContext: Context,
     private val host: EmbedderHost,
     private val callbackStore: SqliteCallbackStore,
+    private val managedThreadStore: WasmManagedThreadStore,
 ) {
-    private val sqliteCallbackHostFunctions: Map<out SqliteCallbacksModuleFunction, NodeFactory> = mapOf(
+    private val callbackHostFunctions: Map<HostFunction, NodeFactory> = mapOf(
         SqliteCallbacksModuleFunction.SQLITE3_TRACE_CALLBACK to {
                 language: WasmLanguage,
                 module: WasmModule,
@@ -44,9 +48,10 @@ internal class SqliteCallbacksModuleBuilder(
         SqliteCallbacksModuleFunction.SQLITE3_LOGGING_CALLBACK to { language, module, host ->
             Sqlite3LoggingAdapter(language, module, host, callbackStore::sqlite3LogCallback)
         },
-    ).also {
-        check(it.size == SqliteCallbacksModuleFunction.entries.size)
-    }
+        PTHREAD_ROUTINE_CALLBACK_FUNCTION to { language, module, host ->
+            StartManagedThreadCallbackFunctionAdapter(language, module, host, managedThreadStore)
+        }
+    )
 
     fun setupModule(
         sharedMemory: Boolean = false,
@@ -62,18 +67,18 @@ internal class SqliteCallbacksModuleBuilder(
                 sharedMemory = sharedMemory,
                 useUnsafeMemory = useUnsafeMemory,
             )
-            return setupWasmModuleFunctions(wasmContext, host, module, sqliteCallbackHostFunctions)
+            return setupWasmModuleFunctions(wasmContext, host, module, callbackHostFunctions)
         }
     }
 
-    fun setupIndirectFunctionTable(): Sqlite3CallbackFunctionIndexes = graalContext.withWasmContext { wasmContext ->
+    fun setupIndirectFunctionTable(): GraalvmSqliteCallbackFunctionIndexes = graalContext.withWasmContext { wasmContext ->
         // Ensure module linked
         val moduleInstance: WasmInstance = wasmContext.moduleInstances().getValue(SQLITE3_CALLBACK_MANAGER_MODULE_NAME)
         wasmContext.linker().tryLink(moduleInstance)
 
         val functionTable = wasmContext.functionTable
-        val firstFuncId = functionTable.grow(sqliteCallbackHostFunctions.size, null)
-        val funcIdx: Map<SqliteCallbacksModuleFunction, IndirectFunctionTableIndex> = sqliteCallbackHostFunctions.keys
+        val firstFuncId = functionTable.grow(callbackHostFunctions.size, null)
+        val funcIdx: Map<HostFunction, IndirectFunctionTableIndex> = callbackHostFunctions.keys
             .mapIndexed { index, hostFunction ->
                 val indirectFuncId = firstFuncId + index
                 val funcInstance = moduleInstance.readMember(hostFunction.wasmName)

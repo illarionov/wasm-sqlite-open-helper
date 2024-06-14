@@ -8,11 +8,12 @@ package ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.pthread
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.host.include.StructPthread
 
 public class PthreadManager(
-    private val exports: EmscriptenPthreadExports,
+    public val exports: EmscriptenPthreadExports,
     rootLogger: Logger,
-    private val isMainThread: () -> Boolean,
+    public val isMainThread: () -> Boolean,
 ) {
     private val logger: Logger = rootLogger.withTag("GraalvmPthreadManager")
 
@@ -23,7 +24,7 @@ public class PthreadManager(
      * main thread of the webassembly environment
      */
     public fun initMainThreadJs(
-        threadPtr: WasmPtr<Unit>,
+        threadPtr: WasmPtr<StructPthread>,
     ) {
         check(isMainThread()) { "Should be called on main thread" }
 
@@ -58,7 +59,7 @@ public class PthreadManager(
 //    }
 
     public fun emscriptenThreadInit(
-        threadPtr: WasmPtr<*>,
+        threadPtr: WasmPtr<StructPthread>,
         isMain: Boolean,
         isRuntime: Boolean = true, //
         canBlock: Boolean = true, // !ENVIRONMENT_IS_WEB

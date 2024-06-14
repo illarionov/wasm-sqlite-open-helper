@@ -30,20 +30,17 @@ public object ChasmSqliteEmbedder : SqliteEmbedder<ChasmSqliteEmbedderConfig, Ch
     @InternalWasmSqliteHelperApi
     override fun createSqliteWasmEnvironment(
         commonConfig: WasmSqliteCommonConfig,
-        callbackStore: SqliteCallbackStore,
         embedderConfigBuilder: ChasmSqliteEmbedderConfig.() -> Unit,
     ): SqliteWasmEnvironment<ChasmRuntimeInstance> {
         val config = ChasmSqliteEmbedderConfig(commonConfig.logger).apply(embedderConfigBuilder)
         return createChasmSqliteWasmEnvironment(
             config.host,
-            callbackStore,
             config.sqlite3Binary,
         )
     }
 
     private fun createChasmSqliteWasmEnvironment(
         host: EmbedderHost,
-        @Suppress("UnusedParameter") callbackStore: SqliteCallbackStore,
         sqlite3Binary: WasmSqliteConfiguration,
     ): SqliteWasmEnvironment<ChasmRuntimeInstance> {
         require(!sqlite3Binary.requireThreads) {
@@ -51,6 +48,7 @@ public object ChasmSqliteEmbedder : SqliteEmbedder<ChasmSqliteEmbedderConfig, Ch
                     "Chasm WebAssembly runtime. Use a version of SQLite compiled without thread support."
         }
 
+        val callbackStore = SqliteCallbackStore()
         val emscriptenStackRef: AtomicReference<EmscriptenStack> = AtomicReference()
         val chasmInstance: ChasmInstance = ChasmInstanceBuilder(
             host = host,
@@ -77,6 +75,7 @@ public object ChasmSqliteEmbedder : SqliteEmbedder<ChasmSqliteEmbedderConfig, Ch
         return object : SqliteWasmEnvironment<ChasmRuntimeInstance> {
             override val sqliteExports: SqliteExports = ChasmSqliteExports(chasmInstance)
             override val memory: EmbedderMemory = chasmInstance.memory
+            override val callbackStore: SqliteCallbackStore = callbackStore
             override val callbackFunctionIndexes: Sqlite3CallbackFunctionIndexes =
                 chasmInstance.indirectFunctionIndexes
             override val runtimeInstance: ChasmRuntimeInstance = runtimeInstance

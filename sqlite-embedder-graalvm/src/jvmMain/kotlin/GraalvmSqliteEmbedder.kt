@@ -26,6 +26,7 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.Emscrip
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.SqliteCallbacksModuleBuilder
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.wasi.WasiSnapshotPreview1ModuleBuilder
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.GraalvmManagedThreadFactory
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.WasmManagedThreadStore
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.EmscriptenRuntime
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.pthread.PthreadManager
@@ -40,14 +41,12 @@ public object GraalvmSqliteEmbedder : SqliteEmbedder<GraalvmSqliteEmbedderConfig
     @InternalWasmSqliteHelperApi
     override fun createSqliteWasmEnvironment(
         commonConfig: WasmSqliteCommonConfig,
-        callbackStore: SqliteCallbackStore,
         embedderConfigBuilder: GraalvmSqliteEmbedderConfig.() -> Unit,
     ): GraalvmSqliteWasmEnvironment {
         val config = GraalvmSqliteEmbedderConfig(commonConfig.logger).apply(embedderConfigBuilder)
         return createGraalvmSqliteWasmEnvironment(
             config.graalvmEngine,
             config.host,
-            callbackStore,
             config.sqlite3Binary,
         )
     }
@@ -55,7 +54,6 @@ public object GraalvmSqliteEmbedder : SqliteEmbedder<GraalvmSqliteEmbedderConfig
     private fun createGraalvmSqliteWasmEnvironment(
         graalvmEngine: Engine,
         host: EmbedderHost,
-        callbackStore: SqliteCallbackStore,
         sqlite3Binary: WasmSqliteConfiguration,
     ): GraalvmSqliteWasmEnvironment {
         val useSharedMemory = USE_UNSAFE_MEMORY || sqlite3Binary.requireSharedMemory
@@ -63,6 +61,7 @@ public object GraalvmSqliteEmbedder : SqliteEmbedder<GraalvmSqliteEmbedderConfig
         val pthreadRef: AtomicReference<PthreadManager> = AtomicReference()
         val stackBindingsRef: AtomicReference<EmscriptenStack> = AtomicReference()
 
+        val callbackStore = SqliteCallbackStore()
         val graalContext: Context = setupWasmGraalContext(graalvmEngine, useSharedMemory, wasmThreadsEnabled)
         val envModuleInstance = EmscriptenEnvModuleBuilder(
             graalContext,
@@ -79,7 +78,13 @@ public object GraalvmSqliteEmbedder : SqliteEmbedder<GraalvmSqliteEmbedderConfig
             useUnsafeMemory = useSharedMemory,
         )
 
-        val sqliteCallbacksModuleBuilder = SqliteCallbacksModuleBuilder(graalContext, host, callbackStore)
+        val managedThreadStore = WasmManagedThreadStore()
+        val sqliteCallbacksModuleBuilder = SqliteCallbacksModuleBuilder(
+            graalContext = graalContext,
+            host = host,
+            callbackStore = callbackStore,
+            managedThreadStore = managedThreadStore,
+        )
         sqliteCallbacksModuleBuilder.setupModule(
             sharedMemory = sqlite3Binary.requireSharedMemory,
             useUnsafeMemory = useSharedMemory,
@@ -108,18 +113,28 @@ public object GraalvmSqliteEmbedder : SqliteEmbedder<GraalvmSqliteEmbedderConfig
             host.rootLogger,
         )
 
-        emscriptenRuntime.initRuntimeMainThread(memory)
+        val sqliteExports = GraalSqliteExports(mainBindings)
 
         val runtimeInstance = object : GraalvmRuntimeInstance {
             override val embedderInfo: SQLiteEmbedderRuntimeInfo = GraalvmEmbedderInfo(
                 wasmThreadsEnabled = sqlite3Binary.requireThreads,
             )
-            override val managedThreadFactory: ThreadFactory = GraalvmManagedThreadFactory()
+            override val managedThreadFactory: ThreadFactory = GraalvmManagedThreadFactory(
+                threadManager = emscriptenRuntime.pthreadManager!!,
+                managedThreadStore = managedThreadStore,
+                dynamicMemory = sqliteExports.memoryExports,
+                memory = memory,
+                indirectFunctionIndexes = indirectFunctionIndexes,
+                rootLogger = host.rootLogger,
+            )
         }
 
+        emscriptenRuntime.initRuntimeMainThread(memory)
+
         return GraalvmSqliteWasmEnvironment(
-            sqliteExports = GraalSqliteExports(mainBindings),
+            sqliteExports = sqliteExports,
             memory = memory,
+            callbackStore = callbackStore,
             callbackFunctionIndexes = indirectFunctionIndexes,
             runtimeInstance = runtimeInstance,
         )

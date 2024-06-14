@@ -16,7 +16,6 @@ public interface SqliteEmbedder<E : SqliteEmbedderConfig, I : SqliteRuntimeInsta
     @InternalWasmSqliteHelperApi
     public fun createSqliteWasmEnvironment(
         commonConfig: WasmSqliteCommonConfig,
-        callbackStore: SqliteCallbackStore,
         embedderConfigBuilder: E.() -> Unit,
     ): SqliteWasmEnvironment<I>
 }
@@ -25,6 +24,7 @@ public interface SqliteEmbedder<E : SqliteEmbedderConfig, I : SqliteRuntimeInsta
 public interface SqliteWasmEnvironment<I : SqliteRuntimeInstance> {
     public val sqliteExports: SqliteExports
     public val memory: EmbedderMemory
+    public val callbackStore: SqliteCallbackStore
     public val callbackFunctionIndexes: Sqlite3CallbackFunctionIndexes
     public val runtimeInstance: I
 }

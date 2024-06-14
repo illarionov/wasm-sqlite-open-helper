@@ -216,6 +216,8 @@ public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/emscript
 	public abstract fun getEmscripten_main_runtime_thread_id ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
 	public abstract fun getEmscripten_main_thread_process_queued_calls ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
 	public abstract fun getG_needs_dynamic_alloc ()I
+	public abstract fun getPthread_create ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
+	public abstract fun getPthread_exit ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
 	public abstract fun getPthread_self ()Lru/pixnews/wasm/sqlite/open/helper/host/base/WasmFunctionBinding;
 	public abstract fun getSupports_wait ()I
 	public abstract fun getThread_ptr ()I
@@ -243,8 +245,10 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/pth
 	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/pthread/EmscriptenPthreadExports;Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;Lkotlin/jvm/functions/Function0;)V
 	public final fun emscriptenThreadInit-llFElsE (IZZZIZ)V
 	public static synthetic fun emscriptenThreadInit-llFElsE$default (Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/pthread/PthreadManager;IZZZIZILjava/lang/Object;)V
+	public final fun getExports ()Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/pthread/EmscriptenPthreadExports;
 	public final fun initMainThreadJs-MYs6Txo (I)V
 	public final fun initWorkerThread ()V
+	public final fun isMainThread ()Lkotlin/jvm/functions/Function0;
 	public final fun threadInitTls ()V
 }
 
@@ -670,6 +674,35 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/include/StructFlock {
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/include/StructFlock$Companion {
 	public final fun unpack ([B)Lru/pixnews/wasm/sqlite/open/helper/host/include/StructFlock;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/include/StructPthread {
+	public synthetic fun <init> (IIIIIIIIIBLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-LEMrgXI ()I
+	public final fun component10 ()B
+	public final fun component2-LEMrgXI ()I
+	public final fun component3-LEMrgXI ()I
+	public final fun component4 ()I
+	public final fun component5 ()I
+	public final fun component6-LEMrgXI ()I
+	public final fun component7-LEMrgXI ()I
+	public final fun component8 ()I
+	public final fun component9 ()I
+	public final fun copy--ChjuKs (IIIIIIIIIB)Lru/pixnews/wasm/sqlite/open/helper/host/include/StructPthread;
+	public static synthetic fun copy--ChjuKs$default (Lru/pixnews/wasm/sqlite/open/helper/host/include/StructPthread;IIIIIIIIIBILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/host/include/StructPthread;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCanary ()I
+	public final fun getMailbox-LEMrgXI ()I
+	public final fun getMailboxRefcount ()I
+	public final fun getNext-LEMrgXI ()I
+	public final fun getPrev-LEMrgXI ()I
+	public final fun getSelf-LEMrgXI ()I
+	public final fun getSleeping ()B
+	public final fun getSysinfo ()I
+	public final fun getTlsBase-LEMrgXI ()I
+	public final fun getWaitingAsync ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/include/StructTimespec {

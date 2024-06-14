@@ -13,6 +13,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.pthread.Emscrip
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.pthread.PthreadManager
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.stack.EmscriptenStack
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.stack.EmscriptenStackExports
+import ru.pixnews.wasm.sqlite.open.helper.host.include.StructPthread
 
 public class EmscriptenRuntime private constructor(
     public val mainExports: EmscriptenMainExports,
@@ -51,7 +52,7 @@ public class EmscriptenRuntime private constructor(
     }
 
     public fun runWorkerThread(
-        threadPtr: WasmPtr<*>,
+        threadPtr: WasmPtr<StructPthread>,
     ) {
         val pthread = pthreadManager
         check(pthread != null) { "Should not be called in single-threaded environment" }

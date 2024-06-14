@@ -192,4 +192,15 @@ public interface EmscriptenPthreadExports {
      * MUSL `pthread_t pthread_self(void)`. Returns [thread_ptr] global.
      */
     public val pthread_self: WasmFunctionBinding
+
+
+    /***
+     * POSIX pthread_create() (if available)
+     */
+    public val pthread_create: WasmFunctionBinding?
+
+    /***
+     * POSIX pthread_exit() (if available)
+     */
+    public val pthread_exit: WasmFunctionBinding?
 }
