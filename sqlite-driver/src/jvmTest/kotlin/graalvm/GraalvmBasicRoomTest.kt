@@ -9,20 +9,42 @@ package ru.pixnews.wasm.sqlite.driver.graalvm
 import androidx.sqlite.SQLiteDriver
 import kotlinx.coroutines.debug.junit4.CoroutinesTimeout
 import org.junit.Rule
+import org.junit.experimental.runners.Enclosed
 import org.junit.rules.TemporaryFolder
+import org.junit.runner.RunWith
+import ru.pixnews.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcu346
 import ru.pixnews.wasm.sqlite.driver.base.JvmDatabaseFactory
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.room.AbstractBasicRoomTest
 
-class GraalvmBasicRoomTest : AbstractBasicRoomTest<SQLiteDriver>(
-    driverFactory = GraalvmSqliteDriverFactory(),
-    databaseFactory = JvmDatabaseFactory,
-) {
-    @get:Rule
-    public val timeout = CoroutinesTimeout.seconds(60)
+@RunWith(Enclosed::class)
+class GraalvmBasicRoomTest {
+    class MultithreadingSqliteTest : AbstractBasicRoomTest<SQLiteDriver>(
+        driverFactory = GraalvmSqliteDriverFactory(),
+        databaseFactory = JvmDatabaseFactory,
+    ) {
+        @get:Rule
+        public val timeout = CoroutinesTimeout.seconds(60)
 
-    @JvmField
-    @Rule
-    val tempFolder: TemporaryFolder = TemporaryFolder()
+        @JvmField
+        @Rule
+        val tempFolder: TemporaryFolder = TemporaryFolder()
 
-    override fun fileInTempDir(databaseName: String): String = tempFolder.root.resolve(databaseName).path
+        override fun fileInTempDir(databaseName: String): String = tempFolder.root.resolve(databaseName).path
+    }
+
+    class SingleThreadedSqliteTest : AbstractBasicRoomTest<SQLiteDriver>(
+        driverFactory = GraalvmSqliteDriverFactory(
+            defaultSqliteBinary = SqliteAndroidWasmEmscriptenIcu346,
+        ),
+        databaseFactory = JvmDatabaseFactory,
+    ) {
+        @get:Rule
+        public val timeout = CoroutinesTimeout.seconds(60)
+
+        @JvmField
+        @Rule
+        val tempFolder: TemporaryFolder = TemporaryFolder()
+
+        override fun fileInTempDir(databaseName: String): String = tempFolder.root.resolve(databaseName).path
+    }
 }
