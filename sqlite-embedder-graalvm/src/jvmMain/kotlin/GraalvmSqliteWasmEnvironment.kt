@@ -9,7 +9,6 @@ package ru.pixnews.wasm.sqlite.open.helper.graalvm
 import org.graalvm.polyglot.Context
 import org.graalvm.polyglot.Value
 import org.graalvm.wasm.WasmInstance
-import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SQLiteEmbedderRuntimeInfo
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteWasmEnvironment
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
@@ -30,6 +29,7 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.GraalvmPthreadManager
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.ManagedThreadInitializer
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.threadfactory.GraalvmManagedThreadFactory
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.memory.DynamicMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.pthread.EmscriptenPthread
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.pthread.EmscriptenPthreadInternal

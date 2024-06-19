@@ -6,7 +6,6 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform
 
-import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget

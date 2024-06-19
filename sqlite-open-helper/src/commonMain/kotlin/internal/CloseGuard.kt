@@ -6,6 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.internal
 
+import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard.Reporter
 import kotlin.concurrent.Volatile
 
 /**

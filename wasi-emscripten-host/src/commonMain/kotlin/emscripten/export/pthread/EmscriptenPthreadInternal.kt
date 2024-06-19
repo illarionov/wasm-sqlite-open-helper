@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.pthread
 
-import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.include.StructPthread
 
 public class EmscriptenPthreadInternal(

@@ -6,7 +6,6 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread
 
-import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.ManagedThreadBase.State.ATTACHING
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.ManagedThreadBase.State.DESTROYED
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.ManagedThreadBase.State.DESTROYING
@@ -14,6 +13,7 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.ManagedThreadBase.Stat
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.ManagedThreadBase.State.LOADING
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.ManagedThreadBase.State.RUNNING
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.ManagedThreadBase.StateListener
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.pthread.EmscriptenPthread
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.pthread.EmscriptenPthreadInternal
 import ru.pixnews.wasm.sqlite.open.helper.host.include.StructPthread

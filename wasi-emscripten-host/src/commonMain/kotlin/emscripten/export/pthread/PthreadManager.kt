@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.pthread
 
-import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.pthread.EmscriptenPthreadInternal.Companion.DEFAULT_THREAD_STACK_SIZE
 import ru.pixnews.wasm.sqlite.open.helper.host.include.StructPthread
 

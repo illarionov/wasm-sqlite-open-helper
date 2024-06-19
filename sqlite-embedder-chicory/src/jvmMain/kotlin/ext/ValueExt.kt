@@ -15,7 +15,7 @@ import com.dylibso.chicory.wasm.types.ValueType.FuncRef
 import com.dylibso.chicory.wasm.types.ValueType.I32
 import com.dylibso.chicory.wasm.types.ValueType.I64
 import com.dylibso.chicory.wasm.types.ValueType.V128
-import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 
 internal fun <P : Any?> Value.asWasmAddr(): WasmPtr<P> = WasmPtr(asInt())
 

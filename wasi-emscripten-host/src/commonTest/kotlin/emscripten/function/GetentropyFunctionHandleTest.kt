@@ -9,7 +9,7 @@ package ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function
 import assertk.assertThat
 import assertk.assertions.isNotZero
 import assertk.assertions.isZero
-import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.test.assertions.hasBytesAt
 import ru.pixnews.wasm.sqlite.open.helper.host.test.fixtures.TestEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.test.fixtures.TestMemory

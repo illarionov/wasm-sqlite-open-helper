@@ -7,10 +7,10 @@
 package ru.pixnews.wasm.sqlite.open.helper.embedder
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
-import ru.pixnews.wasm.sqlite.open.helper.common.embedder.EmbedderMemory
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.EmbedderMemory
 
 public interface SqliteEmbedder<E : SqliteEmbedderConfig, I : SqliteRuntimeInstance> {
     @InternalWasmSqliteHelperApi

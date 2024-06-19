@@ -6,7 +6,6 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform
 
-import org.gradle.kotlin.dsl.withType
 import ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.graalvm.GraalvmCompilerJvmArgumentsProvider
 import ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.graalvm.isRunningOnGraalVm
 

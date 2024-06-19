@@ -7,10 +7,10 @@
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.exports
 
 import org.graalvm.polyglot.Value
-import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.common.api.isSqlite3Null
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteDynamicMemoryExports
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.functionMember
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.host.base.isSqlite3Null
 
 @Suppress("VariableNaming", "MagicNumber", "UnusedPrivateProperty", "BLANK_LINE_BETWEEN_PROPERTIES")
 internal class GraalvmSqliteDynamicDynamicMemoryExports(

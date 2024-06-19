@@ -7,8 +7,8 @@
 package ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.memory
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
-import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.common.api.isSqlite3Null
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.host.base.isSqlite3Null
 
 @InternalWasmSqliteHelperApi
 public class DynamicMemory(

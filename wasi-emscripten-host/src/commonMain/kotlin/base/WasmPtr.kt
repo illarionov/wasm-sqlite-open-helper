@@ -4,9 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.common.api
+package ru.pixnews.wasm.sqlite.open.helper.host.base
 
-import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr.Companion
+import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr.Companion.SQLITE3_NULL
 import kotlin.jvm.JvmInline
 
 @InternalWasmSqliteHelperApi
@@ -26,7 +27,7 @@ public value class WasmPtr<out P : Any?>(
 }
 
 @InternalWasmSqliteHelperApi
-public fun WasmPtr<*>.isSqlite3Null(): Boolean = this == Companion.SQLITE3_NULL
+public fun WasmPtr<*>.isSqlite3Null(): Boolean = this == SQLITE3_NULL
 
 @InternalWasmSqliteHelperApi
 public operator fun <P> WasmPtr<P>.plus(bytes: Int): WasmPtr<P> = WasmPtr(addr + bytes)

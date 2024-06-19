@@ -8,9 +8,9 @@ package ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.common.api.plus
-import ru.pixnews.wasm.sqlite.open.helper.common.embedder.writeNullTerminatedString
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.writeNullTerminatedString
+import ru.pixnews.wasm.sqlite.open.helper.host.base.plus
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
 import ru.pixnews.wasm.sqlite.open.helper.host.include.Fcntl
 import ru.pixnews.wasm.sqlite.open.helper.host.test.assertions.byteAt

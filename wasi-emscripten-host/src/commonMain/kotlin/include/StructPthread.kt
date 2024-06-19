@@ -8,7 +8,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.include
 
-import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 
 /**
  * Internal Pthread struct
