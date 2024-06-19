@@ -10,8 +10,8 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNull
 import assertk.assertions.isTrue
-import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.common.embedder.writeNullTerminatedString
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.writeNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.host.test.fixtures.TestEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.test.fixtures.TestMemory
 import ru.pixnews.wasm.sqlite.test.utils.TestLogger

@@ -9,7 +9,7 @@ package ru.pixnews.wasm.sqlite.open.helper.host.test.assertions
 import assertk.Assert
 import assertk.assertions.isEqualTo
 import assertk.assertions.support.appendName
-import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.test.fixtures.TestMemory
 
 fun Assert<TestMemory>.bytesAt(

@@ -8,8 +8,6 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api
 
-import kotlin.jvm.JvmInline
-
 /**
  * SQLite C Interface: Result Codes
  *

@@ -28,7 +28,7 @@ public abstract class AbstractBasicRoomTest<S : SQLiteDriver>(
     open fun Test_Room() = runTest {
         tests.testRoomOnUserDatabase(
             databaseName = fileInTempDir("test.db"),
-            queryCoroutineContext = this.coroutineContext,
+            queryCoroutineContext = coroutineContext,
             block = tests::basicRoomTest,
         )
     }

@@ -9,7 +9,7 @@ package ru.pixnews.wasm.sqlite.open.helper.chasm.ext
 import io.github.charlietap.chasm.executor.runtime.value.ExecutionValue
 import io.github.charlietap.chasm.executor.runtime.value.NumberValue.I32
 import io.github.charlietap.chasm.executor.runtime.value.NumberValue.I64
-import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 
 internal fun ExecutionValue.asInt(): Int = (this as I32).value
 internal fun ExecutionValue.asUInt(): UInt = (this as I32).value.toUInt()

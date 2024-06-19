@@ -10,7 +10,7 @@ package ru.pixnews.wasm.sqlite.open.helper.chicory.exports
 
 import com.dylibso.chicory.runtime.ExportFunction
 import com.dylibso.chicory.wasm.types.Value
-import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.binding.WasmFunctionBinding
 
 internal class ChicoryWasmFunctionBinding(

@@ -7,8 +7,6 @@
 package ru.pixnews.wasm.sqlite.open.helper.gradle.lint
 
 import io.gitlab.arturbosch.detekt.Detekt
-import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.register
 
 /*
  * Convention plugin that creates and configures task designated to run Detekt static code analyzer

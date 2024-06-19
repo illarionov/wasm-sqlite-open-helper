@@ -10,9 +10,9 @@ package ru.pixnews.wasm.sqlite.open.helper.chicory.exports
 
 import com.dylibso.chicory.runtime.Instance
 import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.functionMember
-import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.common.api.isSqlite3Null
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteDynamicMemoryExports
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.host.base.isSqlite3Null
 
 internal class ChicorySqliteDynamicMemoryExports(
     mainBindings: Instance,

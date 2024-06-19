@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.internal
 
-import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
 
 internal class Sqlite3ConnectionRegistry {

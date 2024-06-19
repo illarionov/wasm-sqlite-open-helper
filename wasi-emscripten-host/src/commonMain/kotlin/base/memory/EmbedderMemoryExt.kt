@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.common.embedder
+package ru.pixnews.wasm.sqlite.open.helper.host.base.memory
 
 import okio.Buffer
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
-import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.common.api.isSqlite3Null
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.host.base.isSqlite3Null
 
 @InternalWasmSqliteHelperApi
 public fun EmbedderMemory.readNullableNullTerminatedString(offset: WasmPtr<Byte>): String? {

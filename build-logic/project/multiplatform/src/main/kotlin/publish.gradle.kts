@@ -8,7 +8,6 @@ package ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform
 
 import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.KotlinMultiplatform
-import org.gradle.kotlin.dsl.withType
 import org.jetbrains.dokka.gradle.DokkaTask
 import ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.publish.createWasmSqliteVersionsExtension
 

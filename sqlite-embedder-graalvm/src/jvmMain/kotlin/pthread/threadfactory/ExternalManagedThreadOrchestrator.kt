@@ -7,12 +7,12 @@
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.threadfactory
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
-import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.common.embedder.readU64
 import ru.pixnews.wasm.sqlite.open.helper.host.base.POINTER
+import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.IndirectFunctionTableIndex
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readU64
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.memory.DynamicMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.memory.freeSilent
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.pthread.EmscriptenPthread
