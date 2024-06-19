@@ -11,13 +11,13 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.SQLiteEmbedderRuntimeInfo
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.EmbedderMemory
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.databaseresources.SqliteDatabaseResourcesRegistry
 
 public class Sqlite3CApi(
     sqliteExports: SqliteExports,
     public val embedderInfo: SQLiteEmbedderRuntimeInfo,
-    memory: EmbedderMemory,
+    memory: Memory,
     callbackStore: SqliteCallbackStore,
     callbackFunctionIndexes: Sqlite3CallbackFunctionIndexes,
     rootLogger: Logger,

@@ -21,32 +21,66 @@ import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.function.FdSe
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.function.FdSync
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.function.FdWriteFdPwrite.Companion.fdPwrite
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.function.FdWriteFdPwrite.Companion.fdWrite
+import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.function.NotImplemented
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.function.SchedYield
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.function.notImplementedWasiHostFunctionHandleFactory
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmModules.WASI_SNAPSHOT_PREVIEW1_MODULE_NAME
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmValueType
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WasiMemoryReader
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WasiMemoryWriter
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction.ENVIRON_GET
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction.ENVIRON_SIZES_GET
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction.FD_CLOSE
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction.FD_PREAD
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction.FD_PWRITE
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction.FD_READ
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction.FD_SEEK
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction.FD_SYNC
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction.FD_WRITE
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction.SCHED_YIELD
 import com.dylibso.chicory.runtime.WasmFunctionHandle as ChicoryWasmFunctionHandle
 
 // https://github.com/WebAssembly/WASI/tree/main
 internal class WasiSnapshotPreview1ModuleBuilder(
     private val memory: Memory,
+    private val wasiMemoryReader: WasiMemoryReader,
+    private val wasiMemoryWriter: WasiMemoryWriter,
     private val host: EmbedderHost,
 ) {
     fun asChicoryHostFunctions(
         moduleName: String = WASI_SNAPSHOT_PREVIEW1_MODULE_NAME,
     ): List<HostFunction> {
         return WasiHostFunction.entries.map { wasiFunc ->
+            val functionHandle = wasiFunc.createWasiHostFunctionHandle(host, memory, wasiMemoryReader, wasiMemoryWriter)
             HostFunction(
-                WasiHostFunctionAdapter(wasiFunc.functionFactory(host, memory)),
+                WasiHostFunctionAdapter(functionHandle),
                 moduleName,
                 wasiFunc.wasmName,
                 wasiFunc.type.paramTypes.map(WasmValueType::chicory),
                 wasiFunc.type.returnTypes.map(WasmValueType::chicory),
             )
         }
+    }
+
+    private fun WasiHostFunction.createWasiHostFunctionHandle(
+        host: EmbedderHost,
+        memory: Memory,
+        wasiMemoryReader: WasiMemoryReader,
+        wasiMemoryWriter: WasiMemoryWriter,
+    ): WasiHostFunctionHandle = when (this) {
+        ENVIRON_GET -> EnvironGet(host, memory)
+        ENVIRON_SIZES_GET -> EnvironSizesGet(host, memory)
+        FD_CLOSE -> FdClose(host)
+        FD_PREAD -> fdPread(host, memory, wasiMemoryReader)
+        FD_PWRITE -> fdPwrite(host, memory, wasiMemoryWriter)
+        FD_READ -> fdRead(host, memory, wasiMemoryReader)
+        FD_SEEK -> FdSeek(host, memory)
+        FD_SYNC -> FdSync(host)
+        FD_WRITE -> fdWrite(host, memory, wasiMemoryWriter)
+        SCHED_YIELD -> SchedYield(host)
+        else -> NotImplemented
     }
 
     private class WasiHostFunctionAdapter(
@@ -56,57 +90,5 @@ internal class WasiSnapshotPreview1ModuleBuilder(
             val result = delegate.apply(instance, args = args)
             return arrayOf(Value.i32(result.code.toLong()))
         }
-    }
-
-    private companion object {
-        val WasiHostFunction.functionFactory: WasiHostFunctionHandleFactory
-            get() = when (this) {
-                WasiHostFunction.ARGS_GET -> notImplementedWasiHostFunctionHandleFactory
-                WasiHostFunction.ARGS_SIZES_GET -> notImplementedWasiHostFunctionHandleFactory
-                WasiHostFunction.CLOCK_RES_GET -> notImplementedWasiHostFunctionHandleFactory
-                WasiHostFunction.CLOCK_TIME_GET -> notImplementedWasiHostFunctionHandleFactory
-                WasiHostFunction.ENVIRON_GET -> ::EnvironGet
-                WasiHostFunction.ENVIRON_SIZES_GET -> ::EnvironSizesGet
-                WasiHostFunction.FD_ADVISE -> notImplementedWasiHostFunctionHandleFactory
-                WasiHostFunction.FD_ALLOCATE -> notImplementedWasiHostFunctionHandleFactory
-                WasiHostFunction.FD_CLOSE -> ::FdClose
-                WasiHostFunction.FD_DATASYNC -> notImplementedWasiHostFunctionHandleFactory
-                WasiHostFunction.FD_FDSTAT_GET -> notImplementedWasiHostFunctionHandleFactory
-                WasiHostFunction.FD_FDSTAT_SET_FLAGS -> notImplementedWasiHostFunctionHandleFactory
-                WasiHostFunction.FD_FDSTAT_SET_RIGHTS -> notImplementedWasiHostFunctionHandleFactory
-                WasiHostFunction.FD_FILESTAT_GET -> notImplementedWasiHostFunctionHandleFactory
-                WasiHostFunction.FD_FILESTAT_SET_SIZE -> notImplementedWasiHostFunctionHandleFactory
-                WasiHostFunction.FD_FILESTAT_SET_TIMES -> notImplementedWasiHostFunctionHandleFactory
-                WasiHostFunction.FD_PREAD -> ::fdPread
-                WasiHostFunction.FD_PRESTAT_DIR_NAME -> notImplementedWasiHostFunctionHandleFactory
-                WasiHostFunction.FD_PRESTAT_GET -> notImplementedWasiHostFunctionHandleFactory
-                WasiHostFunction.FD_PWRITE -> ::fdPwrite
-                WasiHostFunction.FD_READ -> ::fdRead
-                WasiHostFunction.FD_READDIR -> notImplementedWasiHostFunctionHandleFactory
-                WasiHostFunction.FD_RENUMBER -> notImplementedWasiHostFunctionHandleFactory
-                WasiHostFunction.FD_SEEK -> ::FdSeek
-                WasiHostFunction.FD_SYNC -> ::FdSync
-                WasiHostFunction.FD_TELL -> notImplementedWasiHostFunctionHandleFactory
-                WasiHostFunction.FD_WRITE -> ::fdWrite
-                WasiHostFunction.PATH_CREATE_DIRECTORY -> notImplementedWasiHostFunctionHandleFactory
-                WasiHostFunction.PATH_FILESTAT_GET -> notImplementedWasiHostFunctionHandleFactory
-                WasiHostFunction.PATH_FILESTAT_SET_TIMES -> notImplementedWasiHostFunctionHandleFactory
-                WasiHostFunction.PATH_LINK -> notImplementedWasiHostFunctionHandleFactory
-                WasiHostFunction.PATH_OPEN -> notImplementedWasiHostFunctionHandleFactory
-                WasiHostFunction.PATH_READLINK -> notImplementedWasiHostFunctionHandleFactory
-                WasiHostFunction.PATH_REMOVE_DIRECTORY -> notImplementedWasiHostFunctionHandleFactory
-                WasiHostFunction.PATH_RENAME -> notImplementedWasiHostFunctionHandleFactory
-                WasiHostFunction.PATH_SYMLINK -> notImplementedWasiHostFunctionHandleFactory
-                WasiHostFunction.PATH_UNLINK_FILE -> notImplementedWasiHostFunctionHandleFactory
-                WasiHostFunction.POLL_ONEOFF -> notImplementedWasiHostFunctionHandleFactory
-                WasiHostFunction.PROC_EXIT -> notImplementedWasiHostFunctionHandleFactory
-                WasiHostFunction.PROC_RAISE -> notImplementedWasiHostFunctionHandleFactory
-                WasiHostFunction.RANDOM_GET -> notImplementedWasiHostFunctionHandleFactory
-                WasiHostFunction.SCHED_YIELD -> ::SchedYield
-                WasiHostFunction.SOCK_ACCEPT -> notImplementedWasiHostFunctionHandleFactory
-                WasiHostFunction.SOCK_RECV -> notImplementedWasiHostFunctionHandleFactory
-                WasiHostFunction.SOCK_SEND -> notImplementedWasiHostFunctionHandleFactory
-                WasiHostFunction.SOCK_SHUTDOWN -> notImplementedWasiHostFunctionHandleFactory
-            }
     }
 }

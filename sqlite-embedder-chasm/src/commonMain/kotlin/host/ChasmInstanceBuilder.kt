@@ -38,6 +38,8 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModul
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmModules.ENV_MODULE_NAME
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.IndirectFunctionTableIndex
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.DefaultWasiMemoryReader
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.DefaultWasiMemoryWriter
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WASM_MEMORY_PAGE_SIZE
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WASM_MEMORY_SQLITE_MAX_PAGES
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.stack.EmscriptenStack
@@ -55,19 +57,16 @@ internal class ChasmInstanceBuilder(
         val store: Store = store()
 
         val memoryImport = setupMemory(store, minMemorySize)
-        val memory = ChasmMemoryAdapter(
-            store,
-            (memoryImport.value as Memory).address,
-            host.fileSystem,
-            host.rootLogger,
-        )
+        val memory = ChasmMemoryAdapter(store, (memoryImport.value as Memory).address)
+        val wasiMemoryReader = DefaultWasiMemoryReader(memory, host.fileSystem, host.rootLogger)
+        val wasiMemoryWriter = DefaultWasiMemoryWriter(memory, host.fileSystem, host.rootLogger)
 
         val sqliteCallbacksHostFunctions = getSqliteCallbacksHostFunctions(store, memory, host, callbackStore)
 
         val hostImports = buildList {
             add(memoryImport)
             addAll(getEmscriptenHostFunctions(store, memory, host, emscriptenStackRef))
-            addAll(getWasiPreview1HostFunctions(store, memory, host))
+            addAll(getWasiPreview1HostFunctions(store, memory, wasiMemoryReader, wasiMemoryWriter, host))
             addAll(sqliteCallbacksHostFunctions)
         }
 
@@ -109,7 +108,10 @@ internal class ChasmInstanceBuilder(
             ChasmModuleRuntimeErrorException(it)
         }
         val oldSize = table.elements.size
-        val newTable = table.grow(callbackHostFunctions.size, ReferenceValue.Function(Address.Function(0))).getOrThrow {
+        val newTable = table.grow(
+            callbackHostFunctions.size,
+            ReferenceValue.Function(Address.Function(0)),
+        ).getOrThrow {
             ChasmModuleRuntimeErrorException(it)
         }
 

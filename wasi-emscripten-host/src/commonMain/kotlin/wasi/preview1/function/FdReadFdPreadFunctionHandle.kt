@@ -11,6 +11,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WasiMemoryReader
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.plus
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy
@@ -29,6 +30,7 @@ public class FdReadFdPreadFunctionHandle private constructor(
 ) : HostFunctionHandle(function, host) {
     public fun execute(
         memory: Memory,
+        bulkReader: WasiMemoryReader,
         fd: Fd,
         pIov: WasmPtr<Iovec>,
         iovCnt: Int,
@@ -36,7 +38,7 @@ public class FdReadFdPreadFunctionHandle private constructor(
     ): Errno {
         val ioVecs: IovecArray = readIovecs(memory, pIov, iovCnt)
         return try {
-            val readBytes = memory.readFromChannel(fd, strategy, ioVecs)
+            val readBytes = bulkReader.read(fd, strategy, ioVecs)
             memory.writeI32(pNum, readBytes.toInt())
             Errno.SUCCESS
         } catch (e: SysException) {

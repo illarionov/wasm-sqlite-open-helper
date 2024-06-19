@@ -7,7 +7,6 @@
 package ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.wasi
 
 import io.github.charlietap.chasm.embedding.function
-import io.github.charlietap.chasm.executor.runtime.instance.HostFunction
 import io.github.charlietap.chasm.executor.runtime.store.Store
 import io.github.charlietap.chasm.executor.runtime.value.NumberValue.I32
 import io.github.charlietap.chasm.import.Import
@@ -26,6 +25,8 @@ import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.wasi.function.NotImp
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmModules.WASI_SNAPSHOT_PREVIEW1_MODULE_NAME
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WasiMemoryReader
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WasiMemoryWriter
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction.ENVIRON_GET
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction.ENVIRON_SIZES_GET
@@ -36,10 +37,13 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction.FD_READ
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction.FD_SEEK
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction.FD_SYNC
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction.FD_WRITE
+import io.github.charlietap.chasm.executor.runtime.instance.HostFunction as ChasmHostFunction
 
 internal fun getWasiPreview1HostFunctions(
     store: Store,
     memory: ChasmMemoryAdapter,
+    wasiMemoryReader: WasiMemoryReader,
+    wasiMemoryWriter: WasiMemoryWriter,
     host: EmbedderHost,
     moduleName: String = WASI_SNAPSHOT_PREVIEW1_MODULE_NAME,
 ): List<Import> {
@@ -51,28 +55,31 @@ internal fun getWasiPreview1HostFunctions(
             value = function(
                 store = store,
                 type = functionTypes.getValue(wasiFunc.type),
-                function = wasiFunc.createWasiHostFunctionHandle(host, memory).toChasmHostFunction(),
+                function = wasiFunc.createWasiHostFunctionHandle(host, memory, wasiMemoryReader, wasiMemoryWriter)
+                    .toChasmHostFunction(),
             ),
         )
     }
 }
 
-private fun WasiHostFunctionHandle.toChasmHostFunction(): HostFunction = { args ->
+private fun WasiHostFunctionHandle.toChasmHostFunction(): ChasmHostFunction = { args ->
     listOf(I32(this.invoke(args).code))
 }
 
 private fun WasiHostFunction.createWasiHostFunctionHandle(
     host: EmbedderHost,
     memory: Memory,
+    wasiMemoryReader: WasiMemoryReader,
+    wasiMemoryWriter: WasiMemoryWriter,
 ): WasiHostFunctionHandle = when (this) {
     ENVIRON_GET -> EnvironGet(host, memory)
     ENVIRON_SIZES_GET -> EnvironSizesGet(host, memory)
     FD_CLOSE -> FdClose(host)
-    FD_PREAD -> fdPread(host, memory)
-    FD_PWRITE -> fdPwrite(host, memory)
-    FD_READ -> fdRead(host, memory)
+    FD_PREAD -> fdPread(host, memory, wasiMemoryReader)
+    FD_PWRITE -> fdPwrite(host, memory, wasiMemoryWriter)
+    FD_READ -> fdRead(host, memory, wasiMemoryReader)
     FD_SEEK -> FdSeek(host, memory)
     FD_SYNC -> FdSync(host)
-    FD_WRITE -> fdWrite(host, memory)
+    FD_WRITE -> fdWrite(host, memory, wasiMemoryWriter)
     else -> NotImplementedWasiFunction(this)
 }

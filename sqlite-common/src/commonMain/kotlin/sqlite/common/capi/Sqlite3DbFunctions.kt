@@ -13,7 +13,7 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.allocNullTerminatedSt
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.sqliteFreeSilent
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.EmbedderMemory
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readPtr
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDbConfigParameter
@@ -32,7 +32,7 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.databaseresources.S
 
 public class Sqlite3DbFunctions internal constructor(
     private val sqliteExports: SqliteExports,
-    private val memory: EmbedderMemory,
+    private val memory: Memory,
     private val callbackStore: SqliteCallbackStore,
     private val callbackFunctionIndexes: Sqlite3CallbackFunctionIndexes,
     private val databaseResources: SqliteDatabaseResourcesRegistry,

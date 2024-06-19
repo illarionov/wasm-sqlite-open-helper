@@ -8,12 +8,12 @@ package ru.pixnews.wasm.sqlite.open.helper.embedder.exports
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.EmbedderMemory
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.writeNullTerminatedString
 
 @InternalWasmSqliteHelperApi
 public fun SqliteDynamicMemoryExports.allocNullTerminatedString(
-    memory: EmbedderMemory,
+    memory: Memory,
     string: String,
 ): WasmPtr<Byte> {
     val bytes = string.encodeToByteArray()

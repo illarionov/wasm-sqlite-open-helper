@@ -12,10 +12,6 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.DefaultWasiMemoryRead
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.DefaultWasiMemoryWriter
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.CiovecArray
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.IovecArray
 import ru.pixnews.wasm.sqlite.test.utils.KermitLogger
 
 open class TestMemory(
@@ -24,19 +20,11 @@ open class TestMemory(
     val logger: Logger = KermitLogger(),
 ) : Memory {
     val bytes = ByteArray(size) { 0xdc.toByte() }
-    private val memoryReader = DefaultWasiMemoryReader(this, fileSystem, logger)
-    private val memoryWriter = DefaultWasiMemoryWriter(this, fileSystem, logger)
+    val memoryReader = DefaultWasiMemoryReader(this, fileSystem, logger)
+    val memoryWriter = DefaultWasiMemoryWriter(this, fileSystem, logger)
 
     fun fill(value: Byte) {
         bytes.fill(value)
-    }
-
-    override fun readFromChannel(fd: Fd, strategy: ReadWriteStrategy, iovecs: IovecArray): ULong {
-        return memoryReader.read(fd, strategy, iovecs)
-    }
-
-    override fun writeToChannel(fd: Fd, strategy: ReadWriteStrategy, cioVecs: CiovecArray): ULong {
-        return memoryWriter.write(fd, strategy, cioVecs)
     }
 
     override fun readI8(addr: WasmPtr<*>): Byte {

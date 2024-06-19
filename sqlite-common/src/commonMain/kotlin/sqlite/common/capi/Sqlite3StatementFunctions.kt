@@ -9,7 +9,7 @@ package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.sqliteFreeSilent
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.EmbedderMemory
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readNullableNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.write
@@ -25,7 +25,7 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.databaseresources.S
 
 public class Sqlite3StatementFunctions internal constructor(
     private val sqliteExports: SqliteExports,
-    private val memory: EmbedderMemory,
+    private val memory: Memory,
     private val databaseResourcesRegistry: SqliteDatabaseResourcesRegistry,
     private val sqliteErrorApi: Sqlite3ErrorFunctions,
 ) {

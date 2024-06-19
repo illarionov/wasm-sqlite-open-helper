@@ -12,7 +12,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.isSqlite3Null
 
 @InternalWasmSqliteHelperApi
-public fun EmbedderMemory.readNullableNullTerminatedString(offset: WasmPtr<Byte>): String? {
+public fun Memory.readNullableNullTerminatedString(offset: WasmPtr<Byte>): String? {
     return if (!offset.isSqlite3Null()) {
         readNullTerminatedString(offset)
     } else {
@@ -21,7 +21,7 @@ public fun EmbedderMemory.readNullableNullTerminatedString(offset: WasmPtr<Byte>
 }
 
 @InternalWasmSqliteHelperApi
-public fun EmbedderMemory.readNullTerminatedString(offset: WasmPtr<Byte>): String {
+public fun Memory.readNullTerminatedString(offset: WasmPtr<Byte>): String {
     check(offset.addr != 0)
 
     val mem = Buffer()
@@ -39,7 +39,7 @@ public fun EmbedderMemory.readNullTerminatedString(offset: WasmPtr<Byte>): Strin
 }
 
 @InternalWasmSqliteHelperApi
-public fun EmbedderMemory.writeNullTerminatedString(
+public fun Memory.writeNullTerminatedString(
     offset: WasmPtr<*>,
     value: String,
 ): Int {

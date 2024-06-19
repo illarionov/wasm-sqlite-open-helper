@@ -22,26 +22,13 @@ import io.github.charlietap.chasm.executor.runtime.store.Address
 import io.github.charlietap.chasm.executor.runtime.store.Store
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.orThrow
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.exception.ChasmModuleRuntimeErrorException
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.DefaultWasiMemoryReader
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.DefaultWasiMemoryWriter
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.CiovecArray
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.IovecArray
 
 internal class ChasmMemoryAdapter(
     private val store: Store,
     private val memoryAddress: Address.Memory,
-    fileSystem: FileSystem<*>,
-    logger: Logger,
 ) : Memory {
-    private val memoryReader = DefaultWasiMemoryReader(this, fileSystem, logger)
-    private val memoryWriter = DefaultWasiMemoryWriter(this, fileSystem, logger)
-
     val memoryInstance get() = store.memory(memoryAddress).getOrThrow { ChasmModuleRuntimeErrorException(it) }
 
     override fun readI8(addr: WasmPtr<*>): Byte {
@@ -76,14 +63,6 @@ internal class ChasmMemoryAdapter(
         for (addrOffset in 0 until size) {
             writeMemory(store, memoryAddress, addr.addr + addrOffset, data[offset + addrOffset])
         }
-    }
-
-    override fun readFromChannel(fd: Fd, strategy: ReadWriteStrategy, iovecs: IovecArray): ULong {
-        return memoryReader.read(fd, strategy, iovecs)
-    }
-
-    override fun writeToChannel(fd: Fd, strategy: ReadWriteStrategy, cioVecs: CiovecArray): ULong {
-        return memoryWriter.write(fd, strategy, cioVecs)
     }
 
     // XXX

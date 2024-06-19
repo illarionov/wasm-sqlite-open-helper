@@ -21,7 +21,7 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.EmbedderMemory
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.EmscriptenRuntime
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.stack.EmscriptenStack
 import java.util.concurrent.atomic.AtomicReference
@@ -75,7 +75,7 @@ public object ChasmSqliteEmbedder : SqliteEmbedder<ChasmSqliteEmbedderConfig, Ch
 
         return object : SqliteWasmEnvironment<ChasmRuntimeInstance> {
             override val sqliteExports: SqliteExports = ChasmSqliteExports(chasmInstance)
-            override val memory: EmbedderMemory = chasmInstance.memory
+            override val memory: Memory = chasmInstance.memory
             override val callbackStore: SqliteCallbackStore = callbackStore
             override val callbackFunctionIndexes: Sqlite3CallbackFunctionIndexes =
                 chasmInstance.indirectFunctionIndexes

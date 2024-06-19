@@ -10,14 +10,10 @@ import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.wasm.types.Value
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.WasiHostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.function.SchedYieldFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 
-internal class SchedYield(
-    host: EmbedderHost,
-    @Suppress("UNUSED_PARAMETER") memory: Memory,
-) : WasiHostFunctionHandle {
+internal class SchedYield(host: EmbedderHost) : WasiHostFunctionHandle {
     private val handle = SchedYieldFunctionHandle(host)
 
     override fun apply(instance: Instance, vararg args: Value): Errno = handle.execute()

@@ -70,7 +70,7 @@ internal class GraalvmSqliteWasmEnvironment internal constructor(
     private val indirectFunctionBindingProvider = GraalvmIndirectFunctionProvider(::mainBindings)
     override val sqliteExports: SqliteExports = GraalvmSqliteExports(::mainBindings)
     private val dynamicMemory = DynamicMemory(dynamicMemoryExports)
-    override val memory = GraalvmWasmHostMemoryAdapter(envModuleInstance, null, host.fileSystem, host.rootLogger)
+    override val memory = GraalvmWasmHostMemoryAdapter(envModuleInstance, null)
     private val emscriptenPthread = EmscriptenPthread(pthreadExports, dynamicMemory, memory)
     private val emscriptenPthreadInternal = EmscriptenPthreadInternal(pthreadExports)
     val pthreadManager = GraalvmPthreadManager(

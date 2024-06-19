@@ -15,9 +15,12 @@ import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.GraalOutputStreamWasiMemoryWriter
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WasiMemoryWriter
+import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.JvmFileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.function.FdWriteFdPWriteFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.CioVec
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
@@ -58,5 +61,13 @@ private class FdWrite(
         pCiov: WasmPtr<CioVec>,
         cIovCnt: Int,
         pNum: WasmPtr<Int>,
-    ): Int = handle.execute(memory.toHostMemory(), Fd(fd), pCiov, cIovCnt, pNum).code
+    ): Int {
+        val hostMemory = memory.toHostMemory()
+        val wasiMemoryWriter: WasiMemoryWriter = GraalOutputStreamWasiMemoryWriter(
+            hostMemory,
+            handle.host.fileSystem as? JvmFileSystem ?: error("JvmFileSystem expected"),
+            handle.host.rootLogger,
+        )
+        return handle.execute(hostMemory, wasiMemoryWriter, Fd(fd), pCiov, cIovCnt, pNum).code
+    }
 }

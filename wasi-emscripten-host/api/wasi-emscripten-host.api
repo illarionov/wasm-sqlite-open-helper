@@ -109,11 +109,6 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/base/memory/DefaultWa
 	public fun write-xfxaLn8 (ILru/pixnews/wasm/sqlite/open/helper/host/filesystem/ReadWriteStrategy;Ljava/util/List;)J
 }
 
-public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory : ru/pixnews/wasm/sqlite/open/helper/host/base/memory/EmbedderMemory {
-	public abstract fun readFromChannel-RkYdwtg (ILru/pixnews/wasm/sqlite/open/helper/host/filesystem/ReadWriteStrategy;Ljava/util/List;)J
-	public abstract fun writeToChannel-xfxaLn8 (ILru/pixnews/wasm/sqlite/open/helper/host/filesystem/ReadWriteStrategy;Ljava/util/List;)J
-}
-
 public final class ru/pixnews/wasm/sqlite/open/helper/host/base/memory/Pages {
 	public static final synthetic fun box-impl (J)Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Pages;
 	public static fun constructor-impl (J)J
@@ -1136,7 +1131,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/functio
 public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/function/FdReadFdPreadFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
 	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/function/FdReadFdPreadFunctionHandle$Companion;
 	public synthetic fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;Lru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunction;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/ReadWriteStrategy;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun execute-gTvsSz0 (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory;IIII)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public final fun execute-LhxJfPI (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory;Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/WasiMemoryReader;IIII)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/function/FdReadFdPreadFunctionHandle$Companion {
@@ -1163,7 +1158,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/functio
 public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/function/FdWriteFdPWriteFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
 	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/function/FdWriteFdPWriteFunctionHandle$Companion;
 	public synthetic fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;Lru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunction;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/ReadWriteStrategy;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun execute-gTvsSz0 (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory;IIII)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
+	public final fun execute-LhxJfPI (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory;Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/WasiMemoryWriter;IIII)Lru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Errno;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/function/FdWriteFdPWriteFunctionHandle$Companion {

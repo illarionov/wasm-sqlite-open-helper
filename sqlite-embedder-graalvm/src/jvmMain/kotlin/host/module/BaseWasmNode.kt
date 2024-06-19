@@ -22,10 +22,5 @@ internal open class BaseWasmNode<H : HostFunctionHandle>(
 
     override fun module(): WasmModule = module
 
-    fun WasmMemory.toHostMemory() = GraalvmWasmHostMemoryAdapter(
-        { this },
-        this@BaseWasmNode,
-        handle.host.fileSystem,
-        handle.host.rootLogger,
-    )
+    fun WasmMemory.toHostMemory() = GraalvmWasmHostMemoryAdapter({ this }, this@BaseWasmNode)
 }
