@@ -7,7 +7,10 @@
 package ru.pixnews.wasm.sqlite.open.helper.chicory.host.memory
 
 import com.dylibso.chicory.runtime.Memory
+import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.isJvmOrAndroidMinApi34
 import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.trySetAccessibleCompat
+import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.DefaultWasiMemoryReader
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WasiMemoryReader
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystemByteBuffer
@@ -42,8 +45,18 @@ internal class ChicoryWasiMemoryReader(
     }
 
     companion object {
+        fun createOrDefault(
+            memory: ChicoryMemoryAdapter,
+            fileSystem: FileSystem<*>,
+            logger: Logger,
+        ): WasiMemoryReader = if (isJvmOrAndroidMinApi34()) {
+            tryCreate(memory.wasmMemory, fileSystem)
+        } else {
+            null
+        } ?: DefaultWasiMemoryReader(memory, fileSystem, logger)
+
         @Suppress("ReturnCount", "SwallowedException")
-        fun create(
+        fun tryCreate(
             memory: Memory,
             fileSystem: FileSystem<*>,
         ): ChicoryWasiMemoryReader? {

@@ -23,7 +23,7 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.EmbedderMemory
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.EmscriptenRuntime
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.stack.EmscriptenStack
 import java.util.concurrent.atomic.AtomicReference
@@ -84,7 +84,7 @@ public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig
 
         return object : SqliteWasmEnvironment<ChicoryRuntimeInstance> {
             override val sqliteExports: SqliteExports = ChicorySqliteExports(chicoryInstance.instance)
-            override val memory: EmbedderMemory = chicoryInstance.memory
+            override val memory: Memory = chicoryInstance.memory
             override val callbackStore: SqliteCallbackStore = callbackStore
             override val callbackFunctionIndexes: Sqlite3CallbackFunctionIndexes =
                 chicoryInstance.indirectFunctionIndexes

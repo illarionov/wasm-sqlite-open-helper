@@ -9,17 +9,8 @@ package ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory
 import com.oracle.truffle.api.nodes.Node
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.memory.WasmMemory
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WasiMemoryReader
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WasiMemoryWriter
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy
-import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.JvmFileSystem
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.CiovecArray
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.IovecArray
 import java.io.ByteArrayOutputStream
 
 /**
@@ -28,32 +19,13 @@ import java.io.ByteArrayOutputStream
 internal class GraalvmWasmHostMemoryAdapter(
     private val memoryProvider: () -> WasmMemory,
     internal val node: Node?,
-    fileSystem: FileSystem<*>,
-    logger: Logger,
 ) : Memory {
     internal val wasmMemory: WasmMemory get() = memoryProvider.invoke()
-    private val memoryReader: WasiMemoryReader = GraalInputStreamWasiMemoryReader(
-        this,
-        fileSystem as? JvmFileSystem ?: error("JvmFileSystem expected"),
-        logger,
-    )
-    private val memoryWriter: WasiMemoryWriter = GraalOutputStreamWasiMemoryWriter(
-        this,
-        fileSystem as? JvmFileSystem ?: error("JvmFileSystem expected"),
-        logger,
-    )
 
     constructor(
         memoryModuleInstance: WasmInstance,
         node: Node?,
-        fileSystem: FileSystem<*>,
-        logger: Logger,
-    ) : this(
-        { memoryModuleInstance.memory(0) },
-        node,
-        fileSystem,
-        logger,
-    )
+    ) : this({ memoryModuleInstance.memory(0) }, node)
 
     override fun readI8(addr: WasmPtr<*>): Byte {
         return wasmMemory.load_i32_8u(node, addr.addr.toLong()).toByte()
@@ -88,16 +60,4 @@ internal class GraalvmWasmHostMemoryAdapter(
     override fun write(addr: WasmPtr<*>, data: ByteArray, offset: Int, size: Int) {
         wasmMemory.initialize(data, offset, addr.addr.toLong(), size)
     }
-
-    override fun readFromChannel(
-        fd: Fd,
-        strategy: ReadWriteStrategy,
-        iovecs: IovecArray,
-    ): ULong = memoryReader.read(fd, strategy, iovecs)
-
-    override fun writeToChannel(
-        fd: Fd,
-        strategy: ReadWriteStrategy,
-        cioVecs: CiovecArray,
-    ): ULong = memoryWriter.write(fd, strategy, cioVecs)
 }

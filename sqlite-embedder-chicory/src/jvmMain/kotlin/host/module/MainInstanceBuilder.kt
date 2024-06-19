@@ -18,6 +18,8 @@ import com.dylibso.chicory.runtime.Module.START_FUNCTION_NAME
 import com.dylibso.chicory.wasm.types.MemoryLimits
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.memory.ChicoryMemoryAdapter
+import ru.pixnews.wasm.sqlite.open.helper.chicory.host.memory.ChicoryWasiMemoryReader
+import ru.pixnews.wasm.sqlite.open.helper.chicory.host.memory.ChicoryWasiMemoryWriter
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.EmscriptenEnvFunctionsBuilder
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.sqlitecb.SqliteCallbacksFunctionsBuilder
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.sqlitecb.SqliteCallbacksFunctionsBuilder.Companion.setupIndirectFunctionIndexes
@@ -28,6 +30,8 @@ import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmModules.ENV_MODULE_NAME
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WASM_MEMORY_PAGE_SIZE
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WASM_MEMORY_SQLITE_MAX_PAGES
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WasiMemoryReader
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WasiMemoryWriter
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.stack.EmscriptenStack
 import java.net.URI
 import com.dylibso.chicory.log.Logger as ChicoryLogger
@@ -46,14 +50,24 @@ internal class MainInstanceBuilder(
     ): ChicoryInstance {
         val memory = setupMemory(minMemorySize)
 
-        val memoryAdapter = ChicoryMemoryAdapter(memory.memory(), host.fileSystem, host.rootLogger)
+        val memoryAdapter = ChicoryMemoryAdapter(memory.memory())
+        val wasiMemoryReader: WasiMemoryReader = ChicoryWasiMemoryReader.createOrDefault(
+            memoryAdapter,
+            host.fileSystem,
+            host.rootLogger,
+        )
+        val wasiMemoryWriter: WasiMemoryWriter = ChicoryWasiMemoryWriter.createOrDefault(
+            memoryAdapter,
+            host.fileSystem,
+            host.rootLogger,
+        )
         val sqliteCallbackFunctionsBuilder = SqliteCallbacksFunctionsBuilder(
             memoryAdapter,
             host,
             callbackStore,
         )
 
-        val wasiFunctions = WasiSnapshotPreview1ModuleBuilder(memoryAdapter, host)
+        val wasiFunctions = WasiSnapshotPreview1ModuleBuilder(memoryAdapter, wasiMemoryReader, wasiMemoryWriter, host)
             .asChicoryHostFunctions()
         val emscriptenFunctions = EmscriptenEnvFunctionsBuilder(memoryAdapter, host, stackBindingsRef)
             .asChicoryHostFunctions()

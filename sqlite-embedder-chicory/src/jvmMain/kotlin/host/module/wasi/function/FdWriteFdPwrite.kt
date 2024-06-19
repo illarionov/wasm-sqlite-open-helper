@@ -13,6 +13,7 @@ import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.WasiHostFunct
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WasiMemoryWriter
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.function.FdWriteFdPWriteFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.CioVec
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
@@ -20,6 +21,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 
 internal class FdWriteFdPwrite private constructor(
     private val memory: Memory,
+    private val wasiMemoryWriter: WasiMemoryWriter,
     private val handle: FdWriteFdPWriteFunctionHandle,
 ) : WasiHostFunctionHandle {
     override fun apply(instance: Instance, vararg args: Value): Errno {
@@ -27,18 +29,28 @@ internal class FdWriteFdPwrite private constructor(
         val pCiov: WasmPtr<CioVec> = args[1].asWasmAddr()
         val cIovCnt = args[2].asInt()
         val pNum: WasmPtr<Int> = args[3].asWasmAddr()
-        return handle.execute(memory, fd, pCiov, cIovCnt, pNum)
+        return handle.execute(memory, wasiMemoryWriter, fd, pCiov, cIovCnt, pNum)
     }
 
     companion object {
         fun fdWrite(
             host: EmbedderHost,
             memory: Memory,
-        ): WasiHostFunctionHandle = FdWriteFdPwrite(memory, FdWriteFdPWriteFunctionHandle.fdWrite(host))
+            wasiMemoryWriter: WasiMemoryWriter,
+        ): WasiHostFunctionHandle = FdWriteFdPwrite(
+            memory,
+            wasiMemoryWriter,
+            FdWriteFdPWriteFunctionHandle.fdWrite(host),
+        )
 
         fun fdPwrite(
             host: EmbedderHost,
             memory: Memory,
-        ): WasiHostFunctionHandle = FdWriteFdPwrite(memory, FdWriteFdPWriteFunctionHandle.fdPwrite(host))
+            wasiMemoryWriter: WasiMemoryWriter,
+        ): WasiHostFunctionHandle = FdWriteFdPwrite(
+            memory,
+            wasiMemoryWriter,
+            FdWriteFdPWriteFunctionHandle.fdPwrite(host),
+        )
     }
 }

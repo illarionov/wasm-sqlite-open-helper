@@ -10,7 +10,7 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.EmbedderMemory
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 
 public interface SqliteEmbedder<E : SqliteEmbedderConfig, I : SqliteRuntimeInstance> {
     @InternalWasmSqliteHelperApi
@@ -23,7 +23,7 @@ public interface SqliteEmbedder<E : SqliteEmbedderConfig, I : SqliteRuntimeInsta
 @InternalWasmSqliteHelperApi
 public interface SqliteWasmEnvironment<I : SqliteRuntimeInstance> {
     public val sqliteExports: SqliteExports
-    public val memory: EmbedderMemory
+    public val memory: Memory
     public val callbackStore: SqliteCallbackStore
     public val callbackFunctionIndexes: Sqlite3CallbackFunctionIndexes
     public val runtimeInstance: I
