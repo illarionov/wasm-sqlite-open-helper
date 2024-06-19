@@ -8,15 +8,33 @@ package ru.pixnews.wasm.sqlite.driver.graalvm
 
 import androidx.sqlite.SQLiteDriver
 import org.junit.Rule
+import org.junit.experimental.runners.Enclosed
 import org.junit.rules.TemporaryFolder
+import org.junit.runner.RunWith
+import ru.pixnews.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcu346
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractBasicSqliteDriverTest
 
-class GraalvmBaseSqliteDriverTest : AbstractBasicSqliteDriverTest<SQLiteDriver>(
-    driverCreator = GraalvmSqliteDriverFactory(),
-) {
-    @JvmField
-    @Rule
-    val tempFolder: TemporaryFolder = TemporaryFolder()
+@RunWith(Enclosed::class)
+class GraalvmBaseSqliteDriverTest {
+    class MultiThreadedSqliteTest : AbstractBasicSqliteDriverTest<SQLiteDriver>(
+        driverCreator = GraalvmSqliteDriverFactory(),
+    ) {
+        @JvmField
+        @Rule
+        val tempFolder: TemporaryFolder = TemporaryFolder()
 
-    override fun fileInTempDir(databaseName: String): String = tempFolder.root.resolve(databaseName).path
+        override fun fileInTempDir(databaseName: String): String = tempFolder.root.resolve(databaseName).path
+    }
+
+    class SingleThreadedSqliteTest : AbstractBasicSqliteDriverTest<SQLiteDriver>(
+        driverCreator = GraalvmSqliteDriverFactory(
+            defaultSqliteBinary = SqliteAndroidWasmEmscriptenIcu346,
+        ),
+    ) {
+        @JvmField
+        @Rule
+        val tempFolder: TemporaryFolder = TemporaryFolder()
+
+        override fun fileInTempDir(databaseName: String): String = tempFolder.root.resolve(databaseName).path
+    }
 }
