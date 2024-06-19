@@ -30,6 +30,8 @@ public abstract class AbstractMultithreadingTest<S : SQLiteDriver>(
     driverFactory = driverCreator,
     dbLoggerSeverity = dbLoggerSeverity,
 ) {
+    abstract fun createThread(driver: S, runnable: Runnable): Thread
+
     @Test
     public open fun Factory_from_multiple_threads_should_work() {
         val driver = createWasmSQLiteDriver()
@@ -40,7 +42,7 @@ public abstract class AbstractMultithreadingTest<S : SQLiteDriver>(
 
             var thread2Result: TimedValue<String?>? = null
 
-            Thread {
+            createThread(driver) {
                 driver.open(fileInTempDir("test.db")).use { db2 ->
                     thread2Result = measureTimedValue {
                         db2.queryForString("SELECT sum(x+y) FROM t1")
@@ -76,7 +78,7 @@ public abstract class AbstractMultithreadingTest<S : SQLiteDriver>(
             val innerStatementCompiled = CountDownLatch(1)
             var thread2Result: String? = null
 
-            val backgroundThread = Thread {
+            val backgroundThread = createThread(driver) {
                 driver.open(fileInTempDir("test.db")).use { db2 ->
                     db2.prepare("SELECT sum(x+y) FROM t1").use {
                         db2.execSQL("BEGIN DEFERRED TRANSACTION")

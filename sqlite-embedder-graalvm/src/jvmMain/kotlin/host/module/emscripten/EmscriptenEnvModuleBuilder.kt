@@ -11,6 +11,8 @@ import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
+import org.graalvm.wasm.memory.WasmMemory
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmSqliteWasmEnvironment
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.setupWasmModuleFunctions
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.withWasmContext
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.SharedMemoryWaiterListStore
@@ -52,6 +54,8 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.functio
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.function.syscallStat64
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.notImplementedFunctionNodeFactory
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.wasi.function.SyscallFdatasync
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.GraalvmPthreadManager
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.PthreadCreateJsWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmModules.ENV_MODULE_NAME
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Pages
@@ -59,14 +63,13 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WASM_MEMORY_64_MAX_PA
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WASM_MEMORY_PAGE_SIZE
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WASM_MEMORY_SQLITE_MAX_PAGES
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.pthread.PthreadManager
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.stack.EmscriptenStack
 
 internal class EmscriptenEnvModuleBuilder(
-    private val graalContext: Context,
     private val host: EmbedderHost,
-    private val pthreadRef: () -> PthreadManager,
+    private val pthreadRef: () -> GraalvmPthreadManager,
     private val emscriptenStackRef: () -> EmscriptenStack,
+    private val memoryWaiters: SharedMemoryWaiterListStore,
     private val moduleName: String = ENV_MODULE_NAME,
 ) {
     private val EmscriptenHostFunction.nodeFactory: NodeFactory
@@ -147,19 +150,45 @@ internal class EmscriptenEnvModuleBuilder(
 
             EmscriptenHostFunction.EMSCRIPTEN_RECEIVE_ON_MAIN_THREAD_JS -> notImplementedFunctionNodeFactory(this)
             EmscriptenHostFunction.EMSCRIPTEN_CHECK_BLOCKING_ALLOWED -> notImplementedFunctionNodeFactory(this)
-            EmscriptenHostFunction.PTHREAD_CREATE_JS -> notImplementedFunctionNodeFactory(this)
+            EmscriptenHostFunction.PTHREAD_CREATE_JS -> {
+                    language: WasmLanguage,
+                    module: WasmModule,
+                    host: EmbedderHost, ->
+                PthreadCreateJsWasmNode(
+                    language = language,
+                    module = module,
+                    host = host,
+                    posixThreadRef = pthreadRef,
+                )
+            }
             EmscriptenHostFunction.EXIT -> notImplementedFunctionNodeFactory(this)
             EmscriptenHostFunction.EMSCRIPTEN_THREAD_CLEANUP -> notImplementedFunctionNodeFactory(this)
             EmscriptenHostFunction.EMSCRIPTEN_NOTIFY_MAILBOX_POSTMESSAGE -> notImplementedFunctionNodeFactory(this)
         }
 
     fun setupModule(
+        graalContext: Context,
         minMemorySize: Long = 50331648L,
         sharedMemory: Boolean = false,
         useUnsafeMemory: Boolean = false,
     ): WasmInstance = graalContext.withWasmContext { wasmContext ->
         val envModule = WasmModule.create(moduleName, null)
         setupMemory(wasmContext, envModule, minMemorySize, sharedMemory, useUnsafeMemory)
+        return setupWasmModuleFunctions(
+            wasmContext,
+            host,
+            envModule,
+            EmscriptenHostFunction.entries.associateWith { it.nodeFactory },
+        )
+    }
+
+    fun setupChildThreadModule(
+        mainThreadEnv: GraalvmSqliteWasmEnvironment,
+        childGraalContext: Context,
+    ): WasmInstance = childGraalContext.withWasmContext { wasmContext ->
+        val envModule = WasmModule.create(moduleName, null)
+        val sharedMemory = mainThreadEnv.envModuleInstance.memory(0)
+        setupChildMemory(envModule, sharedMemory)
         return setupWasmModuleFunctions(
             wasmContext,
             host,
@@ -192,7 +221,22 @@ internal class EmscriptenEnvModuleBuilder(
             allocateMemory(memoryIndex, minSize.count, maxSize.count, is64Bit, sharedMemory, false, useUnsafeMemory)
             exportMemory(memoryIndex, "memory")
         }
-        val memoryWaiters = SharedMemoryWaiterListStore()
+        envModule.addLinkAction { _: WasmContext, instance: WasmInstance ->
+            instance.memory(0).apply {
+                waitCallback = WasmMemoryWaitCallback(memoryWaiters, host.rootLogger)
+                notifyCallback = WasmMemoryNotifyCallback(memoryWaiters, host.rootLogger)
+            }
+        }
+    }
+
+    private fun setupChildMemory(
+        envModule: WasmModule,
+        sharedMemory: WasmMemory,
+    ) {
+        envModule.symbolTable().apply {
+            allocateExternalMemory(0, sharedMemory, false)
+            exportMemory(0, "memory")
+        }
         envModule.addLinkAction { _: WasmContext, instance: WasmInstance ->
             instance.memory(0).apply {
                 waitCallback = WasmMemoryWaitCallback(memoryWaiters, host.rootLogger)

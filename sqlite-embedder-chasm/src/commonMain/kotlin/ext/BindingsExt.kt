@@ -17,7 +17,7 @@ import ru.pixnews.wasm.sqlite.open.helper.chasm.exports.ChasmFunctionBinding
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.ChasmInstanceBuilder.ChasmInstance
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.exception.ChasmErrorException
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SinglePropertyLazyValue
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmFunctionBinding
+import ru.pixnews.wasm.sqlite.open.helper.host.base.binding.WasmFunctionBinding
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty

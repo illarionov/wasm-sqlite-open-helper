@@ -11,7 +11,7 @@ package ru.pixnews.wasm.sqlite.open.helper.chasm.exports
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.functionMember
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.ChasmInstanceBuilder.ChasmInstance
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmFunctionBinding
+import ru.pixnews.wasm.sqlite.open.helper.host.base.binding.WasmFunctionBinding
 
 internal class ChasmSqliteExports(instance: ChasmInstance) : SqliteExports {
     override val sqlite3_db_status: WasmFunctionBinding by instance.functionMember()
@@ -61,5 +61,5 @@ internal class ChasmSqliteExports(instance: ChasmInstance) : SqliteExports {
     override val sqlite3__wasm_db_config_s: WasmFunctionBinding by instance.functionMember()
     override val register_localized_collators: WasmFunctionBinding by instance.functionMember()
     override val register_android_functions: WasmFunctionBinding by instance.functionMember()
-    override val memoryExports: ChasmSqliteMemoryExports = ChasmSqliteMemoryExports(instance)
+    override val memoryExports: ChasmSqliteDynamicMemoryExports = ChasmSqliteDynamicMemoryExports(instance)
 }

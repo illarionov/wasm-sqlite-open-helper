@@ -11,11 +11,11 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.functionMember
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.intGlobalMember
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.optionalFunctionMember
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.optionalIntGlobalMember
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmFunctionBinding
+import ru.pixnews.wasm.sqlite.open.helper.host.base.binding.WasmFunctionBinding
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.stack.EmscriptenStackExports
 
 internal class GraalvmEmscriptenStackExports(
-    mainBindings: Value,
+    mainBindings: () -> Value,
 ) : EmscriptenStackExports {
     override var __stack_pointer: Int by mainBindings.intGlobalMember()
     override var __stack_end: Int? by mainBindings.optionalIntGlobalMember()

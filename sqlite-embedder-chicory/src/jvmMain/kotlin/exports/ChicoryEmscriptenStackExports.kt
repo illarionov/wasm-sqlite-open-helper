@@ -11,7 +11,7 @@ import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.functionMember
 import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.intGlobalMember
 import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.optionalFunctionMember
 import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.optionalIntGlobalMember
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmFunctionBinding
+import ru.pixnews.wasm.sqlite.open.helper.host.base.binding.WasmFunctionBinding
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.stack.EmscriptenStackExports
 
 internal class ChicoryEmscriptenStackExports(instance: Instance) : EmscriptenStackExports {

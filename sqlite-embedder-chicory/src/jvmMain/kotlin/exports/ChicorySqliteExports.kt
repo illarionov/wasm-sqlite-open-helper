@@ -64,5 +64,5 @@ internal class ChicorySqliteExports(instance: Instance) : SqliteExports {
     override val register_localized_collators by instance.functionMember()
     override val register_android_functions by instance.functionMember()
 
-    override val memoryExports: ChicorySqliteMemoryExports = ChicorySqliteMemoryExports(instance)
+    override val memoryExports: ChicorySqliteDynamicMemoryExports = ChicorySqliteDynamicMemoryExports(instance)
 }

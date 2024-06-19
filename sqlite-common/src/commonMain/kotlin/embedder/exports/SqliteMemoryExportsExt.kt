@@ -12,7 +12,7 @@ import ru.pixnews.wasm.sqlite.open.helper.common.embedder.EmbedderMemory
 import ru.pixnews.wasm.sqlite.open.helper.common.embedder.writeNullTerminatedString
 
 @InternalWasmSqliteHelperApi
-public fun SqliteMemoryExports.allocNullTerminatedString(
+public fun SqliteDynamicMemoryExports.allocNullTerminatedString(
     memory: EmbedderMemory,
     string: String,
 ): WasmPtr<Byte> {

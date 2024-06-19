@@ -7,18 +7,21 @@
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
-import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.IndirectFunctionTableIndex
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
-import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction.SQLITE3_LOGGING_CALLBACK
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction.SQLITE3_PROGRESS_CALLBACK
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction.SQLITE3_TRACE_CALLBACK
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.threadfactory.ExternalManagedThreadOrchestrator.Companion.USE_MANAGED_THREAD_PTHREAD_ROUTINE_FUNCTION
+import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction
+import ru.pixnews.wasm.sqlite.open.helper.host.base.function.IndirectFunctionTableIndex
 
 @InternalWasmSqliteHelperApi
 internal class GraalvmSqliteCallbackFunctionIndexes(
-    functionMap: Map<SqliteCallbacksModuleFunction, IndirectFunctionTableIndex>,
+    functionMap: Map<HostFunction, IndirectFunctionTableIndex>,
 ) : Sqlite3CallbackFunctionIndexes {
     override val traceFunction: IndirectFunctionTableIndex = functionMap.getValue(SQLITE3_TRACE_CALLBACK)
     override val progressFunction: IndirectFunctionTableIndex = functionMap.getValue(SQLITE3_PROGRESS_CALLBACK)
     override val loggingCallbackFunction: IndirectFunctionTableIndex = functionMap.getValue(SQLITE3_LOGGING_CALLBACK)
+    val useManagedThreadPthreadRoutineFunction: IndirectFunctionTableIndex =
+        functionMap.getValue(USE_MANAGED_THREAD_PTHREAD_ROUTINE_FUNCTION)
 }

@@ -6,22 +6,22 @@
 
 @file:Suppress("VariableNaming", "UnusedPrivateProperty", "BLANK_LINE_BETWEEN_PROPERTIES")
 
-package ru.pixnews.wasm.sqlite.open.helper.chicory.exports
+package ru.pixnews.wasm.sqlite.open.helper.chasm.exports
 
-import com.dylibso.chicory.runtime.Instance
-import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.functionMember
+import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.functionMember
+import ru.pixnews.wasm.sqlite.open.helper.chasm.host.ChasmInstanceBuilder.ChasmInstance
 import ru.pixnews.wasm.sqlite.open.helper.common.api.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.api.isSqlite3Null
-import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteMemoryExports
+import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteDynamicMemoryExports
 
-internal class ChicorySqliteMemoryExports(
-    mainBindings: Instance,
-) : SqliteMemoryExports {
-    private val sqlite3_malloc by mainBindings.functionMember()
-    private val sqlite3_free by mainBindings.functionMember()
-    private val sqlite3_realloc by mainBindings.functionMember()
-    private val sqlite3_malloc64 by mainBindings.functionMember()
-    private val sqlite3_realloc64 by mainBindings.functionMember()
+internal class ChasmSqliteDynamicMemoryExports(
+    instance: ChasmInstance,
+) : SqliteDynamicMemoryExports {
+    private val sqlite3_malloc by instance.functionMember()
+    private val sqlite3_free by instance.functionMember()
+    private val sqlite3_realloc by instance.functionMember()
+    private val sqlite3_malloc64 by instance.functionMember()
+    private val sqlite3_realloc64 by instance.functionMember()
 
     override fun <P : Any?> sqliteAllocOrThrow(len: UInt): WasmPtr<P> {
         check(len > 0U)

@@ -17,3 +17,6 @@ public typealias nlink_t = ULong
 public typealias off_t = ULong
 public typealias uid_t = ULong
 public typealias pid_t = Int
+public typealias pthread_t = ULong
+
+public typealias uintptr_t = Int

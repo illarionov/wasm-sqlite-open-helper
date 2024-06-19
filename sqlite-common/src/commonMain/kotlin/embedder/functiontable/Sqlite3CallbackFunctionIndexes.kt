@@ -6,6 +6,8 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable
 
+import ru.pixnews.wasm.sqlite.open.helper.host.base.function.IndirectFunctionTableIndex
+
 public interface Sqlite3CallbackFunctionIndexes {
     public val traceFunction: IndirectFunctionTableIndex
     public val progressFunction: IndirectFunctionTableIndex

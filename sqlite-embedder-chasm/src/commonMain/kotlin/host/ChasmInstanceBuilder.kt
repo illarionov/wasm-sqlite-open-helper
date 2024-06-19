@@ -33,11 +33,11 @@ import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.ChasmSqlite
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.getSqliteCallbacksHostFunctions
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.wasi.getWasiPreview1HostFunctions
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
-import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.IndirectFunctionTableIndex
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmModules.ENV_MODULE_NAME
+import ru.pixnews.wasm.sqlite.open.helper.host.base.function.IndirectFunctionTableIndex
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WASM_MEMORY_PAGE_SIZE
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WASM_MEMORY_SQLITE_MAX_PAGES
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.stack.EmscriptenStack

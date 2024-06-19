@@ -11,7 +11,7 @@ import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.intGlobalMember
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.optionalFunctionMember
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.optionalIntGlobalMember
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.ChasmInstanceBuilder.ChasmInstance
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmFunctionBinding
+import ru.pixnews.wasm.sqlite.open.helper.host.base.binding.WasmFunctionBinding
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.stack.EmscriptenStackExports
 
 internal class ChicoryEmscriptenStackExports(instance: ChasmInstance) : EmscriptenStackExports {

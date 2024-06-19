@@ -19,7 +19,6 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntimeInstance
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteWasmEnvironment
 import ru.pixnews.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
-import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3CApi
 
 /**
@@ -37,17 +36,15 @@ public fun <E : SqliteEmbedderConfig, R : SqliteRuntimeInstance> WasmSQLiteDrive
         override val logger: Logger = config.logger
     }
 
-    val callbackStore = SqliteCallbackStore()
     val embedderEnv: SqliteWasmEnvironment<R> = embedder.createSqliteWasmEnvironment(
         commonConfig = commonConfig,
-        callbackStore = callbackStore,
         embedderConfigBuilder = config.embedderConfig,
     )
     val cApi = Sqlite3CApi(
         sqliteExports = embedderEnv.sqliteExports,
         embedderInfo = embedderEnv.runtimeInstance.embedderInfo,
         memory = embedderEnv.memory,
-        callbackStore = callbackStore,
+        callbackStore = embedderEnv.callbackStore,
         callbackFunctionIndexes = embedderEnv.callbackFunctionIndexes,
         rootLogger = config.logger,
     )

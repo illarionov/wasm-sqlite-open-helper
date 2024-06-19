@@ -8,7 +8,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.stack
 
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmFunctionBinding
+import ru.pixnews.wasm.sqlite.open.helper.host.base.binding.WasmFunctionBinding
 
 /**
  * Interface for calling exported functions related to the Emscripten stack

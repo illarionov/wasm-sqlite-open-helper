@@ -9,7 +9,7 @@ package ru.pixnews.wasm.sqlite.open.helper.chicory.exports
 import com.dylibso.chicory.runtime.Instance
 import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.functionMember
 import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.optionalFunctionMember
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmFunctionBinding
+import ru.pixnews.wasm.sqlite.open.helper.host.base.binding.WasmFunctionBinding
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.EmscriptenMainExports
 
 internal class ChicoryEmscriptenMainExports(instance: Instance) : EmscriptenMainExports {

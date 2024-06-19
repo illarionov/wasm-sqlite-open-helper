@@ -70,11 +70,21 @@ public class EmscriptenStack(
     }
 
     /**
+     * Sets the current stack pointer to [addr].
+     *
+     * Binding for `_emscripten_stack_restore(PTR) -> ()`
+     *
+     * @see emscriptenStackCurrent
+     */
+    public fun emscriptenStackRestore(addr: WasmPtr<Unit>) {
+        exports._emscripten_stack_restore.executeVoid(addr.addr)
+    }
+
+    /**
      * Startup routine to initialize the stack.
      *
      * Must be called in the order specified on
-     * [https://github.com/emscripten-core/emscripten/blob/main/system/lib/README.md
-     * ](https://github.com/emscripten-core/emscripten/blob/main/system/lib/README.md)
+     * [https://github.com/emscripten-core/emscripten/blob/main/system/lib/README.md](https://github.com/emscripten-core/emscripten/blob/main/system/lib/README.md)
      */
     public fun stackCheckInit(memory: Memory) {
         exports.emscripten_stack_init?.let { stackInit ->

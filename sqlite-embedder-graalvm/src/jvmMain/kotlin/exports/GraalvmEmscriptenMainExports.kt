@@ -9,11 +9,11 @@ package ru.pixnews.wasm.sqlite.open.helper.graalvm.exports
 import org.graalvm.polyglot.Value
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.functionMember
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.optionalFunctionMember
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmFunctionBinding
+import ru.pixnews.wasm.sqlite.open.helper.host.base.binding.WasmFunctionBinding
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.EmscriptenMainExports
 
 internal class GraalvmEmscriptenMainExports(
-    mainBindings: Value,
+    mainBindings: () -> Value,
 ) : EmscriptenMainExports {
     override val _initialize: WasmFunctionBinding? by mainBindings.optionalFunctionMember()
     override val __errno_location: WasmFunctionBinding by mainBindings.functionMember()

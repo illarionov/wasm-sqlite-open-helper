@@ -6,9 +6,9 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb
 
-import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.IndirectFunctionTableIndex
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
+import ru.pixnews.wasm.sqlite.open.helper.host.base.function.IndirectFunctionTableIndex
 
 internal class ChasmSqlite3CallbackFunctionIndexes(
     functionMap: Map<SqliteCallbacksModuleFunction, IndirectFunctionTableIndex>,

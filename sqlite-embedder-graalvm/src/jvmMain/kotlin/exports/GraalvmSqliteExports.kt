@@ -11,8 +11,8 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.functionMember
 
 @Suppress("VariableNaming", "BLANK_LINE_BETWEEN_PROPERTIES")
-internal class GraalSqliteExports(
-    sqliteBindings: Value,
+internal class GraalvmSqliteExports(
+    sqliteBindings: () -> Value,
 ) : SqliteExports {
     override val sqlite3_db_status by sqliteBindings.functionMember()
     override val sqlite3_initialize by sqliteBindings.functionMember()
@@ -66,5 +66,6 @@ internal class GraalSqliteExports(
     override val register_localized_collators by sqliteBindings.functionMember()
     override val register_android_functions by sqliteBindings.functionMember()
 
-    override val memoryExports: GraalSqliteMemoryExports = GraalSqliteMemoryExports(sqliteBindings)
+    override val memoryExports: GraalvmSqliteDynamicDynamicMemoryExports =
+        GraalvmSqliteDynamicDynamicMemoryExports(sqliteBindings)
 }
