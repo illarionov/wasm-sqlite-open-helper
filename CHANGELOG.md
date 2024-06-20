@@ -1,5 +1,15 @@
 # Change Log
 
+## [0.1-alpha04] — 2024-06-20
+
+### Added
+
+- Add experimental androidx.sqlite.SQLiteDriver implementation
+
+### Removed
+
+- Multithreading (not working)
+
 ## [0.1-alpha03] — 2024-05-11 
 
 ### Added
