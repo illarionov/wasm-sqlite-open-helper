@@ -45,11 +45,16 @@ open class TestMemory(
             (bytes[addr.addr + 6].toLong() and 0xffL shl 48) or
             (bytes[addr.addr + 7].toLong() and 0xffL shl 56)
 
-    override fun readBytes(addr: WasmPtr<*>, length: Int): ByteArray = ByteArray(length) {
-        bytes[addr.addr + it]
+    override fun read(addr: WasmPtr<*>, destination: ByteArray, destinationOffset: Int, readBytes: Int) {
+        bytes.copyInto(
+            destination = destination,
+            destinationOffset = destinationOffset,
+            startIndex = addr.addr,
+            endIndex = addr.addr + readBytes,
+        )
     }
 
-    override fun writeByte(addr: WasmPtr<*>, data: Byte) {
+    override fun writeI8(addr: WasmPtr<*>, data: Byte) {
         bytes[addr.addr] = data
     }
 
@@ -71,9 +76,9 @@ open class TestMemory(
         bytes[addr.addr + 7] = (data ushr 56 and 0xff).toByte()
     }
 
-    override fun write(addr: WasmPtr<*>, data: ByteArray, offset: Int, size: Int) {
-        for (i in 0 until size) {
-            bytes[addr.addr + i] = data[offset + i]
+    override fun write(addr: WasmPtr<*>, source: ByteArray, sourceOffset: Int, writeBytes: Int) {
+        for (i in 0 until writeBytes) {
+            bytes[addr.addr + i] = source[sourceOffset + i]
         }
     }
 

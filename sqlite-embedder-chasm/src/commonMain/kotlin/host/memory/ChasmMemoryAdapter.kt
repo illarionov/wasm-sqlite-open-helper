@@ -43,11 +43,13 @@ internal class ChasmMemoryAdapter(
         return MemoryInstanceLongReaderImpl(memoryInstance, addr.addr, 8).getOrThrow()
     }
 
-    override fun readBytes(addr: WasmPtr<*>, length: Int): ByteArray {
-        return ByteArray(length) { readMemory(store, memoryAddress, addr.addr + it).orThrow() }
+    override fun read(addr: WasmPtr<*>, destination: ByteArray, destinationOffset: Int, readBytes: Int) {
+        repeat(readBytes) { offset ->
+            destination[destinationOffset + offset] = readMemory(store, memoryAddress, addr.addr + offset).orThrow()
+        }
     }
 
-    override fun writeByte(addr: WasmPtr<*>, data: Byte) {
+    override fun writeI8(addr: WasmPtr<*>, data: Byte) {
         writeMemory(store, memoryAddress, addr.addr, data).orThrow()
     }
 
@@ -59,9 +61,9 @@ internal class ChasmMemoryAdapter(
         return MemoryInstanceLongWriterImpl(memoryInstance, data, addr.addr, 8).getOrThrow()
     }
 
-    override fun write(addr: WasmPtr<*>, data: ByteArray, offset: Int, size: Int) {
-        for (addrOffset in 0 until size) {
-            writeMemory(store, memoryAddress, addr.addr + addrOffset, data[offset + addrOffset])
+    override fun write(addr: WasmPtr<*>, source: ByteArray, sourceOffset: Int, writeBytes: Int) {
+        for (addrOffset in 0 until writeBytes) {
+            writeMemory(store, memoryAddress, addr.addr + addrOffset, source[sourceOffset + addrOffset])
         }
     }
 

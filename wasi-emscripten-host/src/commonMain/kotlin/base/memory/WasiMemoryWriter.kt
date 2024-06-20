@@ -37,10 +37,9 @@ public class DefaultWasiMemoryWriter(
         memory: Memory,
     ): List<FileSystemByteBuffer> = List(ciovecList.size) { idx ->
         val ciovec = ciovecList[idx]
-        val bytes = memory.readBytes(
-            ciovec.buf,
-            ciovec.bufLen.value.toInt(),
-        )
+        val bytes = ByteArray(ciovec.bufLen.value.toInt()).also {
+            memory.read(ciovec.buf, it)
+        }
         FileSystemByteBuffer(bytes)
     }
 }

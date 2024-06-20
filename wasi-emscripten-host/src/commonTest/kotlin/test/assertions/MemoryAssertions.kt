@@ -15,8 +15,8 @@ import ru.pixnews.wasm.sqlite.open.helper.host.test.fixtures.TestMemory
 fun Assert<TestMemory>.bytesAt(
     address: WasmPtr<Byte>,
     size: Int,
-) = transform(appendName("TestMemory{$address}", separator = ".")) {
-    it.readBytes(address, size)
+) = transform(appendName("TestMemory{$address}", separator = ".")) { testMemory ->
+    ByteArray(size).also { testMemory.read(address, it) }
 }
 
 fun Assert<TestMemory>.hasBytesAt(
