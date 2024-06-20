@@ -39,13 +39,17 @@ internal class GraalvmWasmHostMemoryAdapter(
         return wasmMemory.load_i64(node, addr.addr.toLong())
     }
 
-    override fun readBytes(addr: WasmPtr<*>, length: Int): ByteArray {
-        val bous = ByteArrayOutputStream(length)
-        wasmMemory.copyToStream(node, bous, addr.addr, length)
-        return bous.toByteArray()
+    override fun read(addr: WasmPtr<*>, destination: ByteArray, destinationOffset: Int, readBytes: Int) {
+        val bous = object : ByteArrayOutputStream(readBytes) {
+            fun copyInto(destination: ByteArray, destinationOffset: Int) {
+                buf.copyInto(destination, destinationOffset, 0, count)
+            }
+        }
+        wasmMemory.copyToStream(node, bous, addr.addr, readBytes)
+        bous.copyInto(destination, destinationOffset)
     }
 
-    override fun writeByte(addr: WasmPtr<*>, data: Byte) {
+    override fun writeI8(addr: WasmPtr<*>, data: Byte) {
         wasmMemory.store_i32_8(node, addr.addr.toLong(), data)
     }
 
@@ -57,7 +61,7 @@ internal class GraalvmWasmHostMemoryAdapter(
         wasmMemory.store_i64(node, addr.addr.toLong(), data)
     }
 
-    override fun write(addr: WasmPtr<*>, data: ByteArray, offset: Int, size: Int) {
-        wasmMemory.initialize(data, offset, addr.addr.toLong(), size)
+    override fun write(addr: WasmPtr<*>, source: ByteArray, sourceOffset: Int, writeBytes: Int) {
+        wasmMemory.initialize(source, sourceOffset, addr.addr.toLong(), writeBytes)
     }
 }

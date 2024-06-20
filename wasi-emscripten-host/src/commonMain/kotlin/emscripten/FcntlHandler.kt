@@ -55,7 +55,9 @@ internal class FcntlHandler(
             varArgs: Int?,
         ): Int {
             val structStatPtr: WasmPtr<StructFlock> = memory.readPtr(WasmPtr(checkNotNull(varArgs)))
-            val flockPacked = memory.readBytes(structStatPtr, StructFlock.STRUCT_FLOCK_SIZE)
+            val flockPacked = ByteArray(StructFlock.STRUCT_FLOCK_SIZE).also {
+                memory.read(structStatPtr, it)
+            }
             val flock = StructFlock.unpack(flockPacked)
 
             logger.v { "F_SETLK($fd, $flock)" }

@@ -26,11 +26,12 @@ internal class ChicoryMemoryAdapter(
         return wasmMemory.readI64(addr.addr).asLong()
     }
 
-    override fun readBytes(addr: WasmPtr<*>, length: Int): ByteArray {
-        return wasmMemory.readBytes(addr.addr, length)
+    override fun read(addr: WasmPtr<*>, destination: ByteArray, destinationOffset: Int, readBytes: Int) {
+        val bytes = wasmMemory.readBytes(addr.addr, readBytes)
+        bytes.copyInto(destination, destinationOffset)
     }
 
-    override fun writeByte(addr: WasmPtr<*>, data: Byte) {
+    override fun writeI8(addr: WasmPtr<*>, data: Byte) {
         wasmMemory.writeByte(addr.addr, data)
     }
 
@@ -42,7 +43,7 @@ internal class ChicoryMemoryAdapter(
         wasmMemory.writeLong(addr.addr, data)
     }
 
-    override fun write(addr: WasmPtr<*>, data: ByteArray, offset: Int, size: Int) {
-        wasmMemory.write(addr.addr, data, offset, size)
+    override fun write(addr: WasmPtr<*>, source: ByteArray, sourceOffset: Int, writeBytes: Int) {
+        wasmMemory.write(addr.addr, source, sourceOffset, writeBytes)
     }
 }

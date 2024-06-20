@@ -10,12 +10,12 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
 
 @InternalWasmSqliteHelperApi
 public fun String.encodeToNullTerminatedByteArray(
-    maxDstSize: Int = Int.MAX_VALUE,
+    truncateAtSize: Int = Int.MAX_VALUE,
 ): ByteArray {
-    require(maxDstSize > 0)
+    require(truncateAtSize > 0)
 
     val raw = this.encodeToByteArray()
-    val rawSize = raw.size.coerceAtMost(maxDstSize - 1)
+    val rawSize = raw.size.coerceAtMost(truncateAtSize - 1)
     val os = ByteArray(rawSize + 1) { pos ->
         if (pos < rawSize) {
             raw[pos]

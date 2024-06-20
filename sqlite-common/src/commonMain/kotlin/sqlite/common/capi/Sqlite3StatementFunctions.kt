@@ -12,7 +12,6 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readNullableNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readPtr
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.write
 import ru.pixnews.wasm.sqlite.open.helper.host.base.plus
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteColumnType
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
@@ -46,7 +45,7 @@ public class Sqlite3StatementFunctions internal constructor(
             ppStatement = memoryBindings.sqliteAllocOrThrow(WasmPtr.WASM_SIZEOF_PTR)
 
             memory.write(sqlBytesPtr, sqlEncoded)
-            memory.writeByte(sqlBytesPtr + sqlEncoded.size, 0)
+            memory.writeI8(sqlBytesPtr + sqlEncoded.size, 0)
 
             val errCode = sqliteExports.sqlite3_prepare_v2.executeForSqliteResultCode(
                 sqliteDb.addr,
@@ -244,6 +243,6 @@ public class Sqlite3StatementFunctions internal constructor(
             statement.addr,
             columnIndex,
         )
-        return memory.readBytes(ptr, bytes)
+        return ByteArray(bytes).also { memory.read(ptr, it) }
     }
 }
