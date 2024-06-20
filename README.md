@@ -36,17 +36,17 @@ Add the dependencies:
 
 ```kotlin
 dependencies {
-    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-open-helper:0.1-alpha03")
-
+    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-open-helper:0.1-alpha04")
+    
     // Runtime environment for executing SQLite Wasm code based on GraalVM (Sqlite Embedder)
-    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-graalvm:0.1-alpha03")
+    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-graalvm:0.1-alpha04")
 
     // Optional: implementation of the runtime environment based on the Chicory library. 
     // It can be used to execute webassembly code instead of the GraalVM embedder
-    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-chicory:0.1-alpha03")
+    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-chicory:0.1-alpha04")
 
     // Sqlite WebAssembly binary
-    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-mt-pthread-346:0.1-alpha04")
+    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-mt-pthread-346:0.1-alpha05")
 }
 ```
 
@@ -101,7 +101,7 @@ Installation:
 
 ```kotlin
 dependencies {
-    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-graalvm:0.1-alpha03")
+    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-graalvm:0.1-alpha04")
 
     // Sqlite WebAssembly binary with multithreading enabled 
     testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-mt-pthread-345:0.1-alpha04")
@@ -175,10 +175,10 @@ Installation:
 
 ```kotlin
 dependencies {
-    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-chicory:0.1-alpha03")
+    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-chicory:0.1-alpha04")
     
 	// Sqlite WebAssembly binary
-    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-346:0.1-alpha04")
+    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-346:0.1-alpha05")
 }
 ```
 
@@ -206,10 +206,10 @@ Installation:
 
 ```kotlin
 dependencies {
-    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-chasm:0.1-alpha03")
+    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-chasm:0.1-alpha04")
 
     // Sqlite WebAssembly binary
-    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-346:0.1-alpha04")
+    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-346:0.1-alpha05")
 }
 ```
 
