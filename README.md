@@ -1,6 +1,9 @@
 # Wasm SQLite Open Helper
 
-Implementation of [SupportSQLiteOpenHelper] based on SQLite compiled for WebAssembly.
+Experimental implementation of [androidx.sqlite.SQLiteDriver] and [androidx.sqlite.SupportSQLiteOpenHelper] 
+based on SQLite compiled for WebAssembly.
+
+Currently, works on JVM only.
 
 It can be used to run small Android unit tests using a SQLite database inside the JVM on your host without using
 an Android emulator or Robolectric framework.
@@ -8,7 +11,6 @@ an Android emulator or Robolectric framework.
 ## Requirements
 
 - Java JVM 21+ when used in unit tests on the host
-- Android API 26+ when executed on an Android device
 
 ## Installation
 
@@ -36,8 +38,12 @@ Add the dependencies:
 
 ```kotlin
 dependencies {
+    // Implementation of the SQLiteDriver (androidx.sqlite 2.5.0+)
+    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-driver:0.1-alpha04")
+
+    // Implementation of the SupportSQLiteOpenHelper (androidx.sqlite 2.4.x)
     testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-open-helper:0.1-alpha04")
-    
+
     // Runtime environment for executing SQLite Wasm code based on GraalVM (Sqlite Embedder)
     testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-graalvm:0.1-alpha04")
 
@@ -45,19 +51,53 @@ dependencies {
     // It can be used to execute webassembly code instead of the GraalVM embedder
     testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-chicory:0.1-alpha04")
 
+    // Optional: implementation of the runtime environment based on the Chasm library. 
+    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-chasm:0.1-alpha04")
+
     // Sqlite WebAssembly binary
-    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-mt-pthread-346:0.1-alpha05")
+    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-346:0.1-alpha05")
 }
 ```
 
 ## Usage
+
+### SQLiteDriver implementation
+
+Create SQLite Driver using `WasmSQLiteDriver`:
+
+```kotlin
+import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmSqliteEmbedder
+
+val wasmSqliteDriver = WasmSQLiteDriver(GraalvmSqliteEmbedder) {
+}
+
+```
+
+This driver can be used either standalone or with Android Room (2.7+):
+
+```kotlin
+val mockContext = ContextWrapper(null)
+
+val db = Room.databaseBuilder(
+    name = dbFile.absolutePath,
+    factory = ::UserDatabase_Impl,
+    context = mockContext,
+)
+    .setJournalMode(WRITE_AHEAD_LOGGING)
+    .setDriver(wasmSqliteDriver)
+    .setQueryCoroutineContext(testScope.backgroundScope.coroutineContext)
+    .allowMainThreadQueries()
+    .build()
+```
+
+### SupportSQLiteOpenHelper implementation
 
 Create Factory using `WasmSqliteOpenHelperFactory`:
 
 ```kotlin
 import android.content.Context
 import androidx.sqlite.db.SupportSQLiteOpenHelper
-import ru.pixnews.wasm.sqlite.open.helper.Sqlite3Wasm.Emscripten
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperFactory
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmSqliteEmbedder
 
@@ -65,7 +105,7 @@ val factory : SupportSQLiteOpenHelper.Factory = WasmSqliteOpenHelperFactory(cont
 }
 ```
 
-The created factory can be used either standalone or with Android Room:
+The created factory can be used either standalone or with Android Room (2.6.x):
 
 ```kotlin
 db = Room.databaseBuilder(mockContext, TestDatabase::class.java, "test")
@@ -93,8 +133,7 @@ We use it as our primary option for executing WebAssembly code.
 
 Key features:
 
-- Compatible with Android API 26+ and any JVM JDK 21+.
-- Supports multithreading
+- Compatible with JVM JDK 21+.
 - Under certain conditions, allows JIT compilation for improved performance.
 
 Installation:
@@ -103,7 +142,7 @@ Installation:
 dependencies {
     testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-graalvm:0.1-alpha04")
 
-    // Sqlite WebAssembly binary with multithreading enabled 
+    // Sqlite WebAssembly binary compiled with multithreading enabled 
     testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-mt-pthread-345:0.1-alpha04")
 }
 ```
@@ -111,7 +150,7 @@ dependencies {
 Usage:
 
 ```
-val factory = WasmSqliteOpenHelperFactory(GraalvmSqliteEmbedder) {
+val driver = WasmSQLiteDriver(GraalvmSqliteEmbedder) {
     // Configuration of the Wasm embedder (GraalVM)
     embedder {
         // Instance of the GraalVM WebAssembly engine. Single instance of the Engine can be reused to
@@ -125,8 +164,25 @@ val factory = WasmSqliteOpenHelperFactory(GraalvmSqliteEmbedder) {
 }
 ```
 
-Our `SqliteOpenHelper` implementation leverages the 'Threads and Atomics' and 'Bulk memory operations' WebAssembly
-extensions to create SQLite connections from different threads.
+The GraalVM embedder works only on JVM and is not compatible with Android (although it can sometimes be used with 
+Android local unit tests).
+
+Additionally, the GraalVM embedder currently does not support multithreading. When integrating with Room,
+ensure you use a coroutine dispatcher that runs all tasks on the same thread where the driver was created.
+Alternatively, you can try to use the thread factory provided by the driver to run on a different thread:
+
+```kotlin
+val dispatcher = Executors.newSingleThreadScheduledExecutor(wasmSqliteDriver.runtime.managedThreadFactory)
+    .asCoroutineDispatcher()
+
+    dispatcher.use { queryContext ->
+        val db = Room.databaseBuilder()
+            .setDriver(wasmSqliteDriver)
+            .setQueryCoroutineContext(queryContext)
+            .build()
+        // …
+    }
+```
 
 By default, GraalVM executes code in interpreter mode, which can be slow. However, GraalVM offers runtime optimizations
 to improve performance. For more details, see this link: https://www.graalvm.org/latest/reference-manual/embed-languages/#runtime-optimization-support
@@ -165,9 +221,11 @@ The embedder implemented on it allows us to execute SQLite WebAssembly with mini
 
 Key Features:
 
-- Compatible with Android API 26+ and JVM JDK 17+.
+- Compatible with Android API 33+ and JVM JDK 17+.
 - Simple JVM-only runtime with minimal dependencies.
 - Single-threaded only.
+
+It can be used on Android API 33+.
 
 When using this embedder, you must use SQLite compiled without multithreading support.
 
@@ -176,7 +234,7 @@ Installation:
 ```kotlin
 dependencies {
     testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-chicory:0.1-alpha04")
-    
+
 	// Sqlite WebAssembly binary
     testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-346:0.1-alpha05")
 }
@@ -188,10 +246,23 @@ Usage:
 val factory = WasmSqliteOpenHelperFactory(ChicorySqliteEmbedder) {
     // Configuration of the Chicory embedder
     embedder {
-        sqlite3Binary = SqliteAndroidWasmEmscriptenIcu345
+        sqlite3Binary = SqliteAndroidWasmEmscriptenIcu346
     }
 }
 ```
+
+Make sure you are using a single threaded coroutine dispatcher when using with Room:
+
+```kotlin
+newSingleThreadContext("RoomDatabase").use { singleThreadContext ->
+    val db = Room.databaseBuilder()
+        .setDriver(wasmSqliteDriver)
+        .setQueryCoroutineContext(singleThreadContext)
+        .build()
+    // …    
+}
+```
+
 
 ### Chasm embedder
 
@@ -200,6 +271,7 @@ val factory = WasmSqliteOpenHelperFactory(ChicorySqliteEmbedder) {
 Key Features:
 
 - Kotlin Multiplatform solution.
+- Compatible with Android API 26+ and JVM JDK 17+.
 - Single threaded only.
 
 Installation:
@@ -223,6 +295,8 @@ val factory = WasmSqliteOpenHelperFactory(ChasmSqliteEmbedder) {
     }
 }
 ```
+
+Just like with the Chicory embedder, when used with a room, a single-threaded coroutine dispatcher should be used.
 
 ## SQLite binaries
 
@@ -279,7 +353,7 @@ val factory = WasmSqliteOpenHelperFactory(GraalvmSqliteEmbedder) {
         graalvmEngine = Engine.create("wasm")
 
         // Sets used Sqlite WebAssembly binary file
-        sqlite3Binary = SqliteAndroidWasmEmscriptenIcuMtPthread345
+        sqlite3Binary = SqliteAndroidWasmEmscriptenIcuMtPthread346
     }
 
     // Sets the debugging options
@@ -325,7 +399,7 @@ class DatabaseTest {
 
             embedder {
                 graalvmEngine = Engine.create("wasm")
-                sqlite3Binary = Emscripten.sqlite3_345_android_icu_mt_pthread
+                sqlite3Binary = SqliteAndroidWasmEmscriptenIcuMtPthread346
             }
 
             debug {
@@ -385,4 +459,5 @@ limitations under the License.
 [Chasm]: https://github.com/CharlieTap/chasm
 [Chicory]: https://github.com/dylibso/chicory
 [GraalWasm]: https://www.graalvm.org/latest/reference-manual/wasm/
-[SupportSQLiteOpenHelper]: https://developer.android.com/reference/androidx/sqlite/db/SupportSQLiteOpenHelper
+[androidx.sqlite.SQLiteDriver]: https://developer.android.com/reference/androidx/sqlite/SQLiteDriver
+[androidx.sqlite.SupportSQLiteOpenHelper]: https://developer.android.com/reference/androidx/sqlite/db/SupportSQLiteOpenHelper
