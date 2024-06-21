@@ -37,20 +37,26 @@ public abstract interface class ru/pixnews/wasm/sqlite/open/helper/WasmSQLiteOpe
 public final class ru/pixnews/wasm/sqlite/open/helper/WasmSQLiteOpenHelperFactoryKt {
 	public static final fun WasmSqliteOpenHelperFactory (Lru/pixnews/wasm/sqlite/open/helper/embedder/SqliteEmbedder;Landroid/content/Context;Lkotlin/jvm/functions/Function1;)Lru/pixnews/wasm/sqlite/open/helper/WasmSQLiteOpenHelperFactory;
 	public static final fun WasmSqliteOpenHelperFactory (Lru/pixnews/wasm/sqlite/open/helper/embedder/SqliteEmbedder;Lkotlin/jvm/functions/Function1;)Lru/pixnews/wasm/sqlite/open/helper/WasmSQLiteOpenHelperFactory;
+	public static synthetic fun WasmSqliteOpenHelperFactory$default (Lru/pixnews/wasm/sqlite/open/helper/embedder/SqliteEmbedder;Landroid/content/Context;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/WasmSQLiteOpenHelperFactory;
+	public static synthetic fun WasmSqliteOpenHelperFactory$default (Lru/pixnews/wasm/sqlite/open/helper/embedder/SqliteEmbedder;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/WasmSQLiteOpenHelperFactory;
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/dsl/DebugConfigBlock {
-	public fun <init> ()V
-	public final fun getLogSlowQueries ()Z
+public final class ru/pixnews/wasm/sqlite/open/helper/debug/SqliteSlowQueryLogger : ru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugFeature {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/debug/SqliteSlowQueryLogger$Companion;
+	public synthetic fun <init> (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getEnabled ()Z
+	public fun getKey ()Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Key;
+	public final fun getLogger ()Lkotlin/jvm/functions/Function1;
 	public final fun getSlowQueryThresholdProvider ()Lkotlin/jvm/functions/Function0;
-	public final fun getSqlLog ()Z
-	public final fun getSqlStatements ()Z
-	public final fun getSqlTime ()Z
-	public final fun setLogSlowQueries (Z)V
+	public final fun setEnabled (Z)V
+	public final fun setLogger (Lkotlin/jvm/functions/Function1;)V
 	public final fun setSlowQueryThresholdProvider (Lkotlin/jvm/functions/Function0;)V
-	public final fun setSqlLog (Z)V
-	public final fun setSqlStatements (Z)V
-	public final fun setSqlTime (Z)V
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/debug/SqliteSlowQueryLogger$Companion : ru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Key {
+	public fun create (Lru/pixnews/wasm/sqlite/open/helper/embedder/WasmSqliteCommonConfig;Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Factory$Type;)Lru/pixnews/wasm/sqlite/open/helper/debug/SqliteSlowQueryLogger;
+	public synthetic fun create (Lru/pixnews/wasm/sqlite/open/helper/embedder/WasmSqliteCommonConfig;Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Factory$Type;)Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugFeature;
+	public final fun createStatementLogger (Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;)Lkotlin/jvm/functions/Function1;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/dsl/OpenParamsBlock {

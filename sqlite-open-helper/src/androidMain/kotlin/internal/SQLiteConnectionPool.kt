@@ -16,6 +16,7 @@ package ru.pixnews.wasm.sqlite.open.helper.internal
 import androidx.core.os.CancellationSignal
 import androidx.core.os.OperationCanceledException
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
+import ru.pixnews.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfig
 import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard.CloseGuardFinalizeAction
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.AcquiredConnectionStatus.DISCARD
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.AcquiredConnectionStatus.NORMAL
@@ -67,7 +68,7 @@ import kotlin.time.Duration.Companion.seconds
 @Suppress("LargeClass")
 internal class SQLiteConnectionPool private constructor(
     configuration: SQLiteDatabaseConfiguration,
-    private val debugConfig: SQLiteDebug,
+    private val debugConfig: WasmSqliteDebugConfig,
     private val bindings: OpenHelperNativeBindings,
     rootLogger: Logger,
 ) : Closeable {
@@ -994,7 +995,7 @@ internal class SQLiteConnectionPool private constructor(
          */
         fun open(
             configuration: SQLiteDatabaseConfiguration,
-            debugConfig: SQLiteDebug,
+            debugConfig: WasmSqliteDebugConfig,
             bindings: OpenHelperNativeBindings,
             logger: Logger,
         ): SQLiteConnectionPool {

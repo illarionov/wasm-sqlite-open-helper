@@ -8,6 +8,9 @@ package ru.pixnews.wasm.sqlite.open.helper.base.util
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
+import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteSlowQueryLogger
+import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementLogger
+import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementProfileLogger
 import ru.pixnews.wasm.sqlite.open.helper.dsl.WasmSqliteOpenHelperFactoryConfigBlock
 import ru.pixnews.wasm.sqlite.open.helper.dsl.path.DatabasePathResolver
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
@@ -20,10 +23,9 @@ fun <E : SqliteEmbedderConfig> WasmSqliteOpenHelperFactoryConfigBlock<E>.default
     pathResolver = DatabasePathResolver { name -> File(dstDir, name).path }
     logger = dbLogger
     debug {
-        sqlLog = true
-        sqlTime = true
-        sqlStatements = true
-        logSlowQueries = true
+        set(SqliteStatementLogger)
+        set(SqliteStatementProfileLogger)
+        set(SqliteSlowQueryLogger)
     }
     openParams {
         locale = Locale("ru_RU")

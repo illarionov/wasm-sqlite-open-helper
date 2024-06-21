@@ -11,7 +11,7 @@ package ru.pixnews.wasm.sqlite.open.helper
 import android.content.Context
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
-import ru.pixnews.wasm.sqlite.open.helper.dsl.DebugConfigBlock
+import ru.pixnews.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfigBlock
 import ru.pixnews.wasm.sqlite.open.helper.dsl.OpenParamsBlock
 import ru.pixnews.wasm.sqlite.open.helper.dsl.WasmSqliteOpenHelperFactoryConfigBlock
 import ru.pixnews.wasm.sqlite.open.helper.dsl.path.AndroidDatabasePathResolver
@@ -37,7 +37,7 @@ import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard.Reporter
 public fun <E : SqliteEmbedderConfig, R : SqliteRuntimeInstance> WasmSqliteOpenHelperFactory(
     embedder: SqliteEmbedder<E, R>,
     context: Context,
-    block: WasmSqliteOpenHelperFactoryConfigBlock<E>.() -> Unit,
+    block: WasmSqliteOpenHelperFactoryConfigBlock<E>.() -> Unit = {},
 ): WasmSQLiteOpenHelperFactory<R> = WasmSqliteOpenHelperFactory(
     embedder = embedder,
     defaultPathResolver = AndroidDatabasePathResolver(context),
@@ -52,7 +52,7 @@ public fun <E : SqliteEmbedderConfig, R : SqliteRuntimeInstance> WasmSqliteOpenH
  */
 public fun <E : SqliteEmbedderConfig, R : SqliteRuntimeInstance> WasmSqliteOpenHelperFactory(
     embedder: SqliteEmbedder<E, R>,
-    block: WasmSqliteOpenHelperFactoryConfigBlock<E>.() -> Unit,
+    block: WasmSqliteOpenHelperFactoryConfigBlock<E>.() -> Unit = {},
 ): WasmSQLiteOpenHelperFactory<R> = WasmSqliteOpenHelperFactory(
     embedder = embedder,
     defaultPathResolver = JvmDatabasePathResolver(),
@@ -62,7 +62,7 @@ public fun <E : SqliteEmbedderConfig, R : SqliteRuntimeInstance> WasmSqliteOpenH
 internal fun <E : SqliteEmbedderConfig, R : SqliteRuntimeInstance> WasmSqliteOpenHelperFactory(
     embedder: SqliteEmbedder<E, R>,
     defaultPathResolver: DatabasePathResolver,
-    block: WasmSqliteOpenHelperFactoryConfigBlock<E>.() -> Unit,
+    block: WasmSqliteOpenHelperFactoryConfigBlock<E>.() -> Unit = {},
 ): WasmSQLiteOpenHelperFactory<R> {
     val config = WasmSqliteOpenHelperFactoryConfigBlock<E>(defaultPathResolver).apply(block)
     val commonConfig = object : WasmSqliteCommonConfig {
@@ -84,7 +84,7 @@ internal fun <E : SqliteEmbedderConfig, R : SqliteRuntimeInstance> WasmSqliteOpe
         memory = embedderEnv.memory,
         callbackStore = callbackStore,
         callbackFunctionIndexes = embedderEnv.callbackFunctionIndexes,
-        debugConfig = DebugConfigBlock().apply { config.debugConfigBlock(this) }.build(),
+        debugConfig = WasmSqliteDebugConfigBlock().apply { config.debugConfigBlock(this) }.build(commonConfig),
         rootLogger = config.logger,
         openParams = OpenParamsBlock().apply { config.openParams(this) },
     )

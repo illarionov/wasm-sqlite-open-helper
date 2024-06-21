@@ -6,21 +6,18 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.internal.connection
 
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDebug
+import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteSlowQueryLogger
 import ru.pixnews.wasm.sqlite.open.helper.io.lock.SynchronizedObject
 import ru.pixnews.wasm.sqlite.open.helper.io.lock.synchronized
 
 internal class OperationLog(
-    private val debugConfig: SQLiteDebug,
-    rootLogger: Logger,
+    private val slowQueryLogger: SqliteSlowQueryLogger,
     private val currentTimeProvider: () -> Long,
     private val uptimeProvider: () -> Long,
     private val pathProvider: () -> String,
     private val timestampFormatter: (Long) -> String,
     private val onStatementExecuted: (elapsedTime: Long) -> Unit,
 ) {
-    private val logger = rootLogger.withTag("OperationLog")
     private val operationsLock = SynchronizedObject()
     private val operations: Array<Operation?> = arrayOfNulls(MAX_RECENT_OPERATIONS)
     private var index: Int = 0
@@ -103,7 +100,7 @@ internal class OperationLog(
             operation.finished = true
             val execTime = operation.endTime - operation.startTime
             onStatementExecuted(execTime)
-            return debugConfig.sqlLog && debugConfig.shouldLogSlowQuery(execTime)
+            return slowQueryLogger.shouldLogSlowQuery(execTime)
         }
         return false
     }
@@ -113,14 +110,14 @@ internal class OperationLog(
         val operation = getOperationLocked(cookie) ?: return
         operation.resultString = resultString
         operation.resultLong = resultLong
-        logger.d {
+        slowQueryLogger.logger(
             buildString {
                 operation.describe(this, true)
                 if (detail != null) {
                     append(", ").append(detail)
                 }
-            }
-        }
+            },
+        )
     }
 
     private fun newOperationCookieLocked(index: Int): Int {

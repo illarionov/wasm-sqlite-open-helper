@@ -13,6 +13,11 @@ import ru.pixnews.wasm.sqlite.driver.dsl.OpenFlags
 import ru.pixnews.wasm.sqlite.driver.dsl.OpenParamsBlock
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.or
+import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteErrorLogger
+import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementLogger
+import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementLogger.TraceEvent
+import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementProfileLogger
+import ru.pixnews.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfig
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntimeInstance
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.io.lock.SynchronizedObject
@@ -32,13 +37,16 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3CApi
 
 internal class WasmSqliteDriverImpl<R : SqliteRuntimeInstance>(
-    private val debugConfig: SqliteDebug,
+    debugConfig: WasmSqliteDebugConfig,
     rootLogger: Logger,
     private val cApi: Sqlite3CApi,
     private val openParams: OpenParamsBlock,
     override val runtime: R,
 ) : WasmSQLiteDriver<R> {
     private val logger: Logger = rootLogger.withTag("WasmSqliteDriver")
+    private val sqliteErrorLogger = debugConfig.getOrCreateDefault(SqliteErrorLogger)
+    private val sqliteStatementLogger = debugConfig.getOrCreateDefault(SqliteStatementLogger)
+    private val sqliteStatementProfileLogger = debugConfig.getOrCreateDefault(SqliteStatementProfileLogger)
     private var isSqliteInitialized: Boolean = false
     private val lock = SynchronizedObject()
 
@@ -46,8 +54,8 @@ internal class WasmSqliteDriverImpl<R : SqliteRuntimeInstance>(
         initIfRequiredLocked()
         val connectionPtr: WasmPtr<SqliteDb> = nativeOpen(
             path = fileName,
-            enableTrace = debugConfig.logSqlStatements,
-            enableProfile = debugConfig.logSqlTime,
+            enableTrace = sqliteStatementLogger.enabled,
+            enableProfile = sqliteStatementProfileLogger.enabled,
             lookasideSlotSize = openParams.lookasideSlotSize,
             lookasideSlotCount = openParams.lookasideSlotCount,
         )
@@ -91,9 +99,10 @@ internal class WasmSqliteDriverImpl<R : SqliteRuntimeInstance>(
         }
 
         // Redirect SQLite log messages to the log.
-        val sqliteLogger = logger.withTag("sqlite3")
-        cApi.config.sqlite3SetLogger { errCode, message -> sqliteLogger.w { "$errCode: $message" } }
-            .throwOnError("sqliteSetLogger() failed")
+        if (sqliteErrorLogger.enabled) {
+            cApi.config.sqlite3SetLogger(sqliteErrorLogger.logger)
+                .throwOnError("sqliteSetLogger() failed")
+        }
 
         // The soft heap limit prevents the page cache allocations from growing
         // beyond the given limit, no matter what the max page cache sizes are
@@ -165,16 +174,25 @@ internal class WasmSqliteDriverImpl<R : SqliteRuntimeInstance>(
         }
     }
 
-    private fun sqliteTraceCallback(trace: SqliteTrace) {
-        when (trace) {
-            is SqliteTrace.TraceStmt -> logger.d { """${trace.db}: "${trace.unexpandedSql}"""" }
-            is SqliteTrace.TraceClose -> logger.d { """${trace.db} closed""" }
-            is SqliteTrace.TraceProfile -> logger.d {
-                val sql = cApi.statement.sqlite3ExpandedSql(trace.statement) ?: trace.statement.toString()
-                """${trace.db}: "$sql" took ${trace.time}"""
-            }
+    private fun sqliteTraceCallback(trace: SqliteTrace) = when (trace) {
+        is SqliteTrace.TraceStmt -> {
+            val event = TraceEvent.Statement(trace.db, trace.unexpandedSql ?: "")
+            sqliteStatementLogger.logger(event)
+        }
 
-            is SqliteTrace.TraceRow -> logger.v { """${trace.db} / ${trace.statement}: Received row""" }
+        is SqliteTrace.TraceClose -> {
+            val event = TraceEvent.Close(trace.db)
+            sqliteStatementLogger.logger(event)
+        }
+
+        is SqliteTrace.TraceProfile -> {
+            val sql = cApi.statement.sqlite3ExpandedSql(trace.statement) ?: trace.statement.toString()
+            sqliteStatementProfileLogger.logger(trace.db, sql, trace.time)
+        }
+
+        is SqliteTrace.TraceRow -> {
+            val event = TraceEvent.Row(trace.db, trace.statement)
+            sqliteStatementLogger.logger(event)
         }
     }
 
