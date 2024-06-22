@@ -91,7 +91,6 @@ kotlin {
         commonMain.dependencies {
             api(projects.commonApi)
             api(projects.sqliteCommon)
-            api(projects.sqliteDatabasePathResolver)
             api(libs.androidx.sqlite.sqlite)
             implementation(projects.commonCleaner)
             implementation(projects.commonLock)
