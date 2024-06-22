@@ -9,6 +9,8 @@ package ru.pixnews.wasm.sqlite.driver.base
 import ru.pixnews.wasm.sqlite.driver.dsl.WasmSqliteDriverConfigBlock
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
+import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementLogger
+import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementProfileLogger
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 
 internal fun <E : SqliteEmbedderConfig> WasmSqliteDriverConfigBlock<E>.defaultTestSqliteDriverConfig(
@@ -16,8 +18,8 @@ internal fun <E : SqliteEmbedderConfig> WasmSqliteDriverConfigBlock<E>.defaultTe
 ) {
     logger = dbLogger
     debug {
-        logSqlTime = true
-        logSqlStatements = true
+        set(SqliteStatementLogger)
+        set(SqliteStatementProfileLogger)
     }
     openParams {
         locale = Locale("ru_RU")
