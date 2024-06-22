@@ -21,6 +21,9 @@ version = wasmSqliteVersions.getSubmoduleVersionProvider(
 
 android {
     namespace = "ru.pixnews.wasm.sqlite.open.helper.database.path.resolver"
+    defaultConfig {
+        minSdk = 14
+    }
 }
 
 kotlin {

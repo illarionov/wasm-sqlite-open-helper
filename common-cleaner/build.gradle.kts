@@ -19,6 +19,9 @@ version = wasmSqliteVersions.getSubmoduleVersionProvider(
 
 android {
     namespace = "ru.pixnews.wasm.sqlite.open.helper.common.cleaner"
+    defaultConfig {
+        minSdk = 14
+    }
 }
 
 kotlin {
