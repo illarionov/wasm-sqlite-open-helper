@@ -86,7 +86,6 @@ kotlin {
         commonMain.dependencies {
             api(projects.commonApi)
             api(projects.sqliteCommon)
-            api(projects.sqliteDatabasePathResolver)
             implementation(projects.commonCleaner)
             implementation(projects.commonLock)
             implementation(projects.wasiEmscriptenHost)
