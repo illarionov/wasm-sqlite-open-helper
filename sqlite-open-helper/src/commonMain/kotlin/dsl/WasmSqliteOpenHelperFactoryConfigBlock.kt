@@ -8,6 +8,7 @@ package ru.pixnews.wasm.sqlite.open.helper.dsl
 
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
+import ru.pixnews.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfigBlock
 import ru.pixnews.wasm.sqlite.open.helper.dsl.path.DatabasePathResolver
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 
@@ -27,7 +28,7 @@ public class WasmSqliteOpenHelperFactoryConfigBlock<E : SqliteEmbedderConfig>(
      * Not used for in-memory databases.
      */
     public var pathResolver: DatabasePathResolver = defaultDatabasePathResolver
-    internal var debugConfigBlock: DebugConfigBlock.() -> Unit = { }
+    internal var debugConfigBlock: WasmSqliteDebugConfigBlock.() -> Unit = { }
         private set
     internal var openParams: OpenParamsBlock.() -> Unit = {}
         private set
@@ -48,7 +49,7 @@ public class WasmSqliteOpenHelperFactoryConfigBlock<E : SqliteEmbedderConfig>(
     /**
      * Sets the debugging options
      */
-    public fun debug(block: DebugConfigBlock.() -> Unit) {
+    public fun debug(block: WasmSqliteDebugConfigBlock.() -> Unit) {
         val old = this.debugConfigBlock
         debugConfigBlock = {
             old()

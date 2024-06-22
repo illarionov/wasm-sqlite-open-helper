@@ -15,6 +15,10 @@ package ru.pixnews.wasm.sqlite.open.helper
 
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
+import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteErrorLogger
+import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementLogger
+import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementProfileLogger
+import ru.pixnews.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfig
 import ru.pixnews.wasm.sqlite.open.helper.dsl.OpenParamsBlock
 import ru.pixnews.wasm.sqlite.open.helper.dsl.path.DatabasePathResolver
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntimeInstance
@@ -25,7 +29,6 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.internal.DatabaseErrorHandler
 import ru.pixnews.wasm.sqlite.open.helper.internal.OpenHelperNativeBindings
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDatabaseOpenParams
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDebug
 import ru.pixnews.wasm.sqlite.open.helper.internal.WasmSqliteOpenHelper
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3CApi
 
@@ -35,7 +38,7 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3CApi
  */
 internal class WasmSqliteOpenHelperFactoryImpl<R : SqliteRuntimeInstance>(
     private val pathResolver: DatabasePathResolver,
-    private val debugConfig: SQLiteDebug,
+    private val debugConfig: WasmSqliteDebugConfig,
     private val openParams: OpenParamsBlock,
     private val sqliteExports: SqliteExports,
     private val memory: Memory,
@@ -56,7 +59,13 @@ internal class WasmSqliteOpenHelperFactoryImpl<R : SqliteRuntimeInstance>(
             rootLogger = logger,
         )
 
-        val bindings = OpenHelperNativeBindings(cApi, logger)
+        val bindings = OpenHelperNativeBindings(
+            cApi,
+            debugConfig.getOrCreateDefault(SqliteStatementLogger),
+            debugConfig.getOrCreateDefault(SqliteStatementProfileLogger),
+            debugConfig.getOrCreateDefault(SqliteErrorLogger),
+            logger,
+        )
 
         val openParamsBuilder: SQLiteDatabaseOpenParams.Builder = SQLiteDatabaseOpenParams.Builder().apply {
             errorHandler = DatabaseErrorHandler { dbObj -> configuration.callback.onCorruption(dbObj) }

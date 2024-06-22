@@ -1,6 +1,108 @@
 public abstract interface annotation class ru/pixnews/wasm/sqlite/open/helper/WasmSqliteOpenHelperDsl : java/lang/annotation/Annotation {
 }
 
+public final class ru/pixnews/wasm/sqlite/open/helper/debug/EmbedderHostLogger : ru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugFeature {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/debug/EmbedderHostLogger$Companion;
+	public synthetic fun <init> (Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getEnabled ()Z
+	public final fun getLogger ()Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;
+	public final fun setEnabled (Z)V
+	public final fun setLogger (Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;)V
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/debug/EmbedderHostLogger$Companion : ru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Key {
+	public fun create (Lru/pixnews/wasm/sqlite/open/helper/embedder/WasmSqliteCommonConfig;Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Factory$Type;)Lru/pixnews/wasm/sqlite/open/helper/debug/EmbedderHostLogger;
+	public synthetic fun create (Lru/pixnews/wasm/sqlite/open/helper/embedder/WasmSqliteCommonConfig;Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Factory$Type;)Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugFeature;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/debug/SqliteErrorLogger : ru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugFeature {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/debug/SqliteErrorLogger$Companion;
+	public synthetic fun <init> (Lkotlin/jvm/functions/Function2;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getEnabled ()Z
+	public final fun getLogger ()Lkotlin/jvm/functions/Function2;
+	public final fun setEnabled (Z)V
+	public final fun setLogger (Lkotlin/jvm/functions/Function2;)V
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/debug/SqliteErrorLogger$Companion : ru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Key {
+	public fun create (Lru/pixnews/wasm/sqlite/open/helper/embedder/WasmSqliteCommonConfig;Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Factory$Type;)Lru/pixnews/wasm/sqlite/open/helper/debug/SqliteErrorLogger;
+	public synthetic fun create (Lru/pixnews/wasm/sqlite/open/helper/embedder/WasmSqliteCommonConfig;Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Factory$Type;)Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugFeature;
+	public final fun createStatementLogger (Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;)Lkotlin/jvm/functions/Function2;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/debug/SqliteStatementLogger : ru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugFeature {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/debug/SqliteStatementLogger$Companion;
+	public synthetic fun <init> (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getEnabled ()Z
+	public final fun getLogger ()Lkotlin/jvm/functions/Function1;
+	public final fun setEnabled (Z)V
+	public final fun setLogger (Lkotlin/jvm/functions/Function1;)V
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/debug/SqliteStatementLogger$Companion : ru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Key {
+	public fun create (Lru/pixnews/wasm/sqlite/open/helper/embedder/WasmSqliteCommonConfig;Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Factory$Type;)Lru/pixnews/wasm/sqlite/open/helper/debug/SqliteStatementLogger;
+	public synthetic fun create (Lru/pixnews/wasm/sqlite/open/helper/embedder/WasmSqliteCommonConfig;Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Factory$Type;)Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugFeature;
+	public final fun createStatementLogger (Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;)Lkotlin/jvm/functions/Function1;
+}
+
+public abstract class ru/pixnews/wasm/sqlite/open/helper/debug/SqliteStatementLogger$TraceEvent {
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/debug/SqliteStatementLogger$TraceEvent$Close : ru/pixnews/wasm/sqlite/open/helper/debug/SqliteStatementLogger$TraceEvent {
+	public fun <init> (Ljava/lang/Object;)V
+	public final fun getDb ()Ljava/lang/Object;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/debug/SqliteStatementLogger$TraceEvent$Row : ru/pixnews/wasm/sqlite/open/helper/debug/SqliteStatementLogger$TraceEvent {
+	public fun <init> (Ljava/lang/Object;Ljava/lang/Object;)V
+	public final fun getDb ()Ljava/lang/Object;
+	public final fun getStatementId ()Ljava/lang/Object;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/debug/SqliteStatementLogger$TraceEvent$Statement : ru/pixnews/wasm/sqlite/open/helper/debug/SqliteStatementLogger$TraceEvent {
+	public fun <init> (Ljava/lang/Object;Ljava/lang/String;)V
+	public final fun getDb ()Ljava/lang/Object;
+	public final fun getSql ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/debug/SqliteStatementProfileLogger : ru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugFeature {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/debug/SqliteStatementProfileLogger$Companion;
+	public synthetic fun <init> (Lkotlin/jvm/functions/Function3;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getEnabled ()Z
+	public final fun getLogger ()Lkotlin/jvm/functions/Function3;
+	public final fun setEnabled (Z)V
+	public final fun setLogger (Lkotlin/jvm/functions/Function3;)V
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/debug/SqliteStatementProfileLogger$Companion : ru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Key {
+	public fun create (Lru/pixnews/wasm/sqlite/open/helper/embedder/WasmSqliteCommonConfig;Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Factory$Type;)Lru/pixnews/wasm/sqlite/open/helper/debug/SqliteStatementProfileLogger;
+	public synthetic fun create (Lru/pixnews/wasm/sqlite/open/helper/embedder/WasmSqliteCommonConfig;Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Factory$Type;)Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugFeature;
+	public final fun createStatementLogger (Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;)Lkotlin/jvm/functions/Function3;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock {
+	public final fun set (Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Key;Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun set$default (Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock;Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Key;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Factory$Type : java/lang/Enum {
+	public static final field KEY_DEFINED Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Factory$Type;
+	public static final field KEY_UNDEFINED Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Factory$Type;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Factory$Type;
+	public static fun values ()[Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Factory$Type;
+}
+
+public abstract interface class ru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Key : ru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Factory {
+}
+
+public abstract interface class ru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugFeature {
+	public abstract fun getKey ()Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Key;
+}
+
 public abstract interface class ru/pixnews/wasm/sqlite/open/helper/embedder/SQLiteEmbedderRuntimeInfo {
 	public abstract fun getSupportMultithreading ()Z
 }

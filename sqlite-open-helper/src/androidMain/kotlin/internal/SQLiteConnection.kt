@@ -23,6 +23,10 @@ import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.CREATE_IF_NECESSAR
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.NO_LOCALIZED_COLLATORS
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
+import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteSlowQueryLogger
+import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementLogger
+import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementProfileLogger
+import ru.pixnews.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfig
 import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteCantOpenDatabaseException
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard.CloseGuardFinalizeAction
@@ -864,14 +868,16 @@ internal class SQLiteConnection private constructor(
             bindings: OpenHelperNativeBindings,
             connectionId: Int,
             primaryConnection: Boolean,
-            debugConfig: SQLiteDebug,
+            debugConfig: WasmSqliteDebugConfig,
             rootLogger: Logger,
             onStatementExecuted: (Long) -> Unit,
         ): SQLiteConnection {
+            val logSqlStatements = debugConfig.getOrCreateDefault(SqliteStatementLogger)
+            val profileSql = debugConfig.getOrCreateDefault(SqliteStatementProfileLogger)
+
             // The recent operations log.
             val recentOperations = OperationLog(
-                debugConfig = debugConfig,
-                rootLogger = rootLogger,
+                slowQueryLogger = debugConfig.getOrCreateDefault(SqliteSlowQueryLogger),
                 currentTimeProvider = System::currentTimeMillis,
                 uptimeProvider = { System.nanoTime() / 1_000_000 },
                 pathProvider = configuration::path,
@@ -885,8 +891,8 @@ internal class SQLiteConnection private constructor(
                     bindings.nativeOpen(
                         path = file,
                         openFlags = configuration.openFlags.toSqliteOpenFlags(),
-                        enableTrace = debugConfig.sqlStatements,
-                        enableProfile = debugConfig.sqlTime,
+                        enableTrace = logSqlStatements.enabled,
+                        enableProfile = profileSql.enabled,
                         lookasideSlotSize = configuration.lookasideSlotSize,
                         lookasideSlotCount = configuration.lookasideSlotCount,
                     )

@@ -9,6 +9,10 @@ package ru.pixnews.wasm.sqlite.open.helper.internal
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
 import ru.pixnews.wasm.sqlite.open.helper.common.api.or
+import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteErrorLogger
+import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementLogger
+import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementLogger.TraceEvent
+import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementProfileLogger
 import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteCantOpenDatabaseException
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.ext.encodedNullTerminatedStringLength
@@ -37,6 +41,9 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3Result
 
 internal class OpenHelperNativeBindings(
     private val cApi: Sqlite3CApi,
+    private val sqliteStatementLogger: SqliteStatementLogger,
+    private val sqliteStatementProfileLogger: SqliteStatementProfileLogger,
+    private val sqliteErrorLogger: SqliteErrorLogger,
     rootLogger: Logger,
 ) {
     private val logger = rootLogger.withTag("JvmSqlOpenHelperNativeBindings")
@@ -52,9 +59,10 @@ internal class OpenHelperNativeBindings(
         }
 
         // Redirect SQLite log messages to the log.
-        val sqliteLogger = logger.withTag("sqlite3")
-        cApi.config.sqlite3SetLogger { errCode, message -> sqliteLogger.w { "$errCode: $message" } }
-            .throwOnError("sqliteSetLogger() failed")
+        if (sqliteErrorLogger.enabled) {
+            cApi.config.sqlite3SetLogger(sqliteErrorLogger.logger)
+                .throwOnError("sqliteSetLogger() failed")
+        }
 
         // The soft heap limit prevents the page cache allocations from growing
         // beyond the given limit, no matter what the max page cache sizes are
@@ -505,14 +513,23 @@ internal class OpenHelperNativeBindings(
 
     private fun sqliteTraceCallback(trace: SqliteTrace) {
         when (trace) {
-            is SqliteTrace.TraceStmt -> logger.d { """${trace.db}: "${trace.unexpandedSql}"""" }
-            is SqliteTrace.TraceClose -> logger.d { """${trace.db} closed""" }
-            is SqliteTrace.TraceProfile -> logger.d {
+            is SqliteTrace.TraceStmt -> {
+                val event = TraceEvent.Statement(trace.db, trace.unexpandedSql ?: "")
+                sqliteStatementLogger.logger(event)
+            }
+            is SqliteTrace.TraceClose -> {
+                val event = TraceEvent.Close(trace.db)
+                sqliteStatementLogger.logger(event)
+            }
+            is SqliteTrace.TraceProfile -> {
                 val sql = cApi.statement.sqlite3ExpandedSql(trace.statement) ?: trace.statement.toString()
-                """${trace.db}: "$sql" took ${trace.time}"""
+                sqliteStatementProfileLogger.logger(trace.db, sql, trace.time)
             }
 
-            is SqliteTrace.TraceRow -> logger.v { """${trace.db} / ${trace.statement}: Received row""" }
+            is SqliteTrace.TraceRow -> {
+                val event = TraceEvent.Row(trace.db, trace.statement)
+                sqliteStatementLogger.logger(event)
+            }
         }
     }
 

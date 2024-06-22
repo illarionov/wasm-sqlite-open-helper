@@ -36,6 +36,7 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.common.api.clear
 import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
 import ru.pixnews.wasm.sqlite.open.helper.common.api.or
+import ru.pixnews.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfig
 import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteDatabaseCorruptException
 import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard.CloseGuardFinalizeAction
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.Companion.CONNECTION_FLAG_PRIMARY_CONNECTION_AFFINITY
@@ -71,7 +72,7 @@ import kotlin.collections.Map.Entry
  * to the current locale.
  */
 internal class SQLiteDatabase private constructor(
-    private val debugConfig: SQLiteDebug,
+    private val debugConfig: WasmSqliteDebugConfig,
     rootLogger: Logger,
     private val bindings: OpenHelperNativeBindings,
     path: String,
@@ -1322,7 +1323,7 @@ internal class SQLiteDatabase private constructor(
             defaultLocale: Locale,
             openParams: SQLiteDatabaseOpenParams,
             bindings: OpenHelperNativeBindings,
-            debugConfig: SQLiteDebug,
+            debugConfig: WasmSqliteDebugConfig,
             logger: Logger,
         ): SQLiteDatabase {
             val db = SQLiteDatabase(
@@ -1378,7 +1379,7 @@ internal class SQLiteDatabase private constructor(
         internal fun createInMemory(
             bindings: OpenHelperNativeBindings,
             openParams: SQLiteDatabaseOpenParams,
-            debugConfig: SQLiteDebug,
+            debugConfig: WasmSqliteDebugConfig,
             logger: Logger,
         ): SQLiteDatabase {
             val db = SQLiteDatabase(

@@ -20,6 +20,7 @@ import androidx.sqlite.db.SupportSQLiteOpenHelper
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.OPEN_READONLY
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
+import ru.pixnews.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfig
 import ru.pixnews.wasm.sqlite.open.helper.dsl.path.DatabasePathResolver
 import java.nio.file.FileSystems
 import java.nio.file.attribute.PosixFilePermissions
@@ -27,12 +28,11 @@ import kotlin.io.path.setPosixFilePermissions
 
 /**
  * A helper class to manage database creation and version management.
- *
  */
 internal class WasmSqliteOpenHelper(
     private val pathResolver: DatabasePathResolver,
     private val defaultLocale: Locale,
-    private val debugConfig: SQLiteDebug,
+    private val debugConfig: WasmSqliteDebugConfig,
     private val callback: SupportSQLiteOpenHelper.Callback,
     private val openParamsBuilder: SQLiteDatabaseOpenParams.Builder,
     rootLogger: Logger,
