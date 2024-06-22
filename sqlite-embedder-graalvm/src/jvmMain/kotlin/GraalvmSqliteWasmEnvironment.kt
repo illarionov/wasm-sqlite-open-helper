@@ -37,7 +37,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.include.StructPthread
 import java.util.concurrent.ThreadFactory
 
 internal class GraalvmSqliteWasmEnvironment internal constructor(
-    mainThreadGraalContext: Context,
+    private val mainThreadGraalContext: Context,
     internal val envModuleInstance: WasmInstance,
     host: EmbedderHost,
     embedderInfo: GraalvmEmbedderInfo,
@@ -46,16 +46,24 @@ internal class GraalvmSqliteWasmEnvironment internal constructor(
     internal val memoryWaiters: SharedMemoryWaiterListStore,
     private val embedderBuilder: GraalvmEmbedderBuilder,
 ) : SqliteWasmEnvironment<GraalvmRuntimeInstance>, ManagedThreadInitializer {
+    private val logger = host.rootLogger.withTag("GraalvmSqliteWasmEnvironment")
     private val _localGraalContext = ThreadLocal<Context>().also {
         it.set(mainThreadGraalContext)
     }
 
     private val localGraalContext: Context
-        get() = requireNotNull(_localGraalContext.get()) {
-            @Suppress("DEPRECATION")
-            "Graal Wasm environment is not initialized for thread " +
-                    "${Thread.currentThread().id} " +
-                    "and cannot be used to call WASM functions"
+        get() {
+            val threadContext = _localGraalContext.get()
+            if (threadContext != null) {
+                return threadContext
+            } else {
+                logger.e {
+                    "Graal Wasm environment is not initialized for thread ${Thread.currentThread().name} " +
+                            "and cannot be used to call WASM functions"
+                }
+                _localGraalContext.set(mainThreadGraalContext)
+                return mainThreadGraalContext
+            }
         }
 
     private val mainBindings: Value
