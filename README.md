@@ -358,22 +358,14 @@ val factory = WasmSqliteOpenHelperFactory(GraalvmSqliteEmbedder) {
 
     // Sets the debugging options
     debug {
-        // Controls the printing of informational SQL log messages.
-        sqlLog = true
-
         // Controls the printing of SQL statements as they are executed.
-        sqlStatements = true
+        set(SqliteStatementLogger)
 
         // Controls the printing of wall-clock time taken to execute SQL statements as they are executed.
-        sqlTime = true
+        set(SqliteStatementProfileLogger)
 
-        //  True to enable database performance testing instrumentation.
-        logSlowQueries = true
-
-        // Value of the "db.log.slow_query_threshold" system property, which can be changed by the user at any time.
-        // If the value is zero, then all queries will be considered slow.
-        // If the value does not exist or is negative, then no queries will be considered slow.
-        slowQueryThresholdProvider = { -1 }
+        //  Enables database performance testing instrumentation.
+        set(SqliteSlowQueryLogger)
     }
 }
 ```
@@ -403,7 +395,7 @@ class DatabaseTest {
             }
 
             debug {
-                sqlTime = true
+                set(SqliteSlowQueryLogger)
             }
         }
 
