@@ -12,24 +12,19 @@ import ru.pixnews.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfigBlock.Facto
 import ru.pixnews.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
 
 /**
- * Configures SQLite [Global error log](https://www.sqlite.org/errlog.html)
- *
+ * Configures a logger for messages from Wasi / Emscripten embedder host
  */
-public class SqliteErrorLogger private constructor(
-    public var logger: (errCode: Int, message: String) -> Unit,
+public class EmbedderHostLogger private constructor(
+    public var logger: Logger,
 ) : WasmSqliteDebugFeature {
     @InternalWasmSqliteHelperApi
     override val key: WasmSqliteDebugConfigBlock.Key<*> = Companion
     public var enabled: Boolean = true
 
-    public companion object : WasmSqliteDebugConfigBlock.Key<SqliteErrorLogger> {
-        override fun create(commonConfig: WasmSqliteCommonConfig, type: Type): SqliteErrorLogger {
-            val logger = commonConfig.logger.withTag("sqlite3")
-            return SqliteErrorLogger(createStatementLogger(logger))
+    public companion object : WasmSqliteDebugConfigBlock.Key<EmbedderHostLogger> {
+        override fun create(commonConfig: WasmSqliteCommonConfig, type: Type): EmbedderHostLogger {
+            val logger = commonConfig.logger.withTag("Embedder")
+            return EmbedderHostLogger(logger)
         }
-
-        public fun createStatementLogger(
-            logger: Logger,
-        ): (Int, String) -> Unit = { errCode, message -> logger.w { "$errCode: $message" } }
     }
 }

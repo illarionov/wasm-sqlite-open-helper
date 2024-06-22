@@ -1,6 +1,20 @@
 public abstract interface annotation class ru/pixnews/wasm/sqlite/open/helper/WasmSqliteOpenHelperDsl : java/lang/annotation/Annotation {
 }
 
+public final class ru/pixnews/wasm/sqlite/open/helper/debug/EmbedderHostLogger : ru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugFeature {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/debug/EmbedderHostLogger$Companion;
+	public synthetic fun <init> (Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getEnabled ()Z
+	public final fun getLogger ()Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;
+	public final fun setEnabled (Z)V
+	public final fun setLogger (Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;)V
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/debug/EmbedderHostLogger$Companion : ru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Key {
+	public fun create (Lru/pixnews/wasm/sqlite/open/helper/embedder/WasmSqliteCommonConfig;Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Factory$Type;)Lru/pixnews/wasm/sqlite/open/helper/debug/EmbedderHostLogger;
+	public synthetic fun create (Lru/pixnews/wasm/sqlite/open/helper/embedder/WasmSqliteCommonConfig;Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Factory$Type;)Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugFeature;
+}
+
 public final class ru/pixnews/wasm/sqlite/open/helper/debug/SqliteErrorLogger : ru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugFeature {
 	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/debug/SqliteErrorLogger$Companion;
 	public synthetic fun <init> (Lkotlin/jvm/functions/Function2;Lkotlin/jvm/internal/DefaultConstructorMarker;)V

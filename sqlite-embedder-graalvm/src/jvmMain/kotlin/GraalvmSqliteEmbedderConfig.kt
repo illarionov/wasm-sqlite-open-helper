@@ -20,7 +20,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.jvm.JvmEmbedderHost
  */
 @WasmSqliteOpenHelperDsl
 public class GraalvmSqliteEmbedderConfig internal constructor(
-    rootLogger: Logger,
+    embedderRootLogger: Logger,
 ) : SqliteEmbedderConfig {
     /**
      * Instance of the GraalVM WebAssembly engine. Single instance of the Engine can be reused to speed
@@ -40,5 +40,5 @@ public class GraalvmSqliteEmbedderConfig internal constructor(
     /**
      * Implementation of a host object that provides access from the WebAssembly to external host resources.
      */
-    public var host: EmbedderHost = JvmEmbedderHost(rootLogger = rootLogger)
+    public var host: EmbedderHost = JvmEmbedderHost(rootLogger = embedderRootLogger)
 }

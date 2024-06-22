@@ -11,6 +11,7 @@ package ru.pixnews.wasm.sqlite.open.helper
 import android.content.Context
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
+import ru.pixnews.wasm.sqlite.open.helper.debug.EmbedderHostLogger
 import ru.pixnews.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfigBlock
 import ru.pixnews.wasm.sqlite.open.helper.dsl.OpenParamsBlock
 import ru.pixnews.wasm.sqlite.open.helper.dsl.WasmSqliteOpenHelperFactoryConfigBlock
@@ -65,33 +66,26 @@ internal fun <E : SqliteEmbedderConfig, R : SqliteRuntimeInstance> WasmSqliteOpe
     block: WasmSqliteOpenHelperFactoryConfigBlock<E>.() -> Unit = {},
 ): WasmSQLiteOpenHelperFactory<R> {
     val config = WasmSqliteOpenHelperFactoryConfigBlock<E>(defaultPathResolver).apply(block)
-    val commonConfig = object : WasmSqliteCommonConfig {
+    val rootCommonConfig = object : WasmSqliteCommonConfig {
         override val logger: Logger = config.logger
     }
+    val debugConfig = WasmSqliteDebugConfigBlock().apply { config.debugConfigBlock(this) }.build(rootCommonConfig)
+    val embedderLogger = debugConfig.getOrCreateDefault(EmbedderHostLogger)
+    val embedderEnv = createEmbedder(embedder, embedderLogger, config.embedderConfig)
 
     setupCloseGuard(config.logger)
-
-    val callbackStore = SqliteCallbackStore()
-    val embedderEnv: SqliteWasmEnvironment<R> = embedder.createSqliteWasmEnvironment(
-        commonConfig = commonConfig,
-        embedderConfigBuilder = config.embedderConfig,
-    )
 
     return WasmSqliteOpenHelperFactoryImpl(
         pathResolver = config.pathResolver,
         sqliteExports = embedderEnv.sqliteExports,
         runtime = embedderEnv.runtimeInstance,
         memory = embedderEnv.memory,
-        callbackStore = callbackStore,
+        callbackStore = SqliteCallbackStore(),
         callbackFunctionIndexes = embedderEnv.callbackFunctionIndexes,
-        debugConfig = WasmSqliteDebugConfigBlock().apply { config.debugConfigBlock(this) }.build(commonConfig),
+        debugConfig = debugConfig,
         rootLogger = config.logger,
         openParams = OpenParamsBlock().apply { config.openParams(this) },
     )
-}
-
-public interface WasmSQLiteOpenHelperFactory<R : SqliteRuntimeInstance> : SupportSQLiteOpenHelper.Factory {
-    public val runtime: R
 }
 
 private fun setupCloseGuard(rootLogger: Logger) {
@@ -99,4 +93,27 @@ private fun setupCloseGuard(rootLogger: Logger) {
     CloseGuard.reporter = Reporter { message, allocationSite ->
         logger.w(allocationSite, message::toString)
     }
+}
+
+private fun <E : SqliteEmbedderConfig, R : SqliteRuntimeInstance> createEmbedder(
+    embedder: SqliteEmbedder<E, R>,
+    embedderLogger: EmbedderHostLogger,
+    embedderConfig: E.() -> Unit,
+): SqliteWasmEnvironment<R> {
+    val embedderCommonConfig = object : WasmSqliteCommonConfig {
+        override val logger: Logger = if (embedderLogger.enabled) {
+            embedderLogger.logger
+        } else {
+            Logger
+        }
+    }
+
+    return embedder.createSqliteWasmEnvironment(
+        commonConfig = embedderCommonConfig,
+        embedderConfigBuilder = embedderConfig,
+    )
+}
+
+public interface WasmSQLiteOpenHelperFactory<R : SqliteRuntimeInstance> : SupportSQLiteOpenHelper.Factory {
+    public val runtime: R
 }
