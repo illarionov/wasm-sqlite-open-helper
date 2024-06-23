@@ -32,7 +32,6 @@ public class JvmEmbedderHost(
     public override val timeZoneInfo: TimeZoneInfoProvider = JvmTimeZoneInfoProvider(),
     public override val entropySource: EntropySource = JvmEntropySource(),
 ) : EmbedderHost {
-
     internal object JvmSystemEnvProvider : SystemEnvProvider {
         override fun getSystemEnv(): Map<String, String> = System.getenv()
     }

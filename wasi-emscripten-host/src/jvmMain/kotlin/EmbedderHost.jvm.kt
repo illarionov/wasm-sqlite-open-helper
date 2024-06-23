@@ -26,5 +26,5 @@ internal actual fun createDefaultEmbedderHost(builder: Builder): EmbedderHost = 
     monotonicClock = builder.monotonicClock ?: JvmMonotonicClock,
     localTimeFormatter = builder.localTimeFormatter ?: JvmLocalTimeFormatter(),
     timeZoneInfo = builder.timeZoneInfo ?: JvmTimeZoneInfoProvider(),
-    entropySource = builder.entropySource ?: JvmEntropySource()
+    entropySource = builder.entropySource ?: JvmEntropySource(),
 )
