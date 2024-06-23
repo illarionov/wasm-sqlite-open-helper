@@ -63,6 +63,7 @@ android {
 kotlin {
     androidTarget()
     jvm()
+    // linuxX64()
 
     applyDefaultHierarchyTemplate()
 
@@ -97,6 +98,7 @@ kotlin {
             implementation(projects.wasiEmscriptenHost)
         }
         commonTest.dependencies {
+            implementation(projects.sqliteEmbedderChasm)
             implementation(projects.sqliteTests.sqliteTestUtils)
             implementation(libs.androidx.room.runtime)
             implementation(libs.androidx.room.testing)

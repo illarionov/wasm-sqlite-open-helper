@@ -9,6 +9,7 @@ package ru.pixnews.wasm.sqlite.open.helper.gradle.settings
 import ru.pixnews.wasm.sqlite.open.helper.gradle.settings.repository.chicoryMavenLocal
 import ru.pixnews.wasm.sqlite.open.helper.gradle.settings.repository.googleFiltered
 import ru.pixnews.wasm.sqlite.open.helper.gradle.settings.repository.pixnewsMaven
+import ru.pixnews.wasm.sqlite.open.helper.gradle.settings.repository.pixnewsMavenLocal
 
 /*
  * Settings convention plugin that configures repositories used in the application
@@ -40,6 +41,7 @@ pluginManagement {
 
 dependencyResolutionManagement {
     repositories {
+        pixnewsMavenLocal()
         chicoryMavenLocal()
         mavenCentral()
         googleFiltered()

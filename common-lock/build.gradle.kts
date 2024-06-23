@@ -5,6 +5,7 @@
  */
 
 plugins {
+    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.atomicfu")
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.lint.binary-compatibility-validator")
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.kotlin")
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.publish")
@@ -18,6 +19,7 @@ version = wasmSqliteVersions.getSubmoduleVersionProvider(
 
 kotlin {
     jvm()
+    linuxX64()
 
     sourceSets {
         commonMain.dependencies {

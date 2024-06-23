@@ -18,6 +18,7 @@ version = wasmSqliteVersions.getSubmoduleVersionProvider(
 
 kotlin {
     jvm()
+    linuxX64()
 
     sourceSets {
         commonMain.dependencies {

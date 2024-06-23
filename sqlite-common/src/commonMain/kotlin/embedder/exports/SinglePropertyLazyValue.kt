@@ -7,6 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.embedder.exports
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
+import kotlin.concurrent.Volatile
 import kotlin.reflect.KProperty
 
 private val MEMBER_NOT_INITIALIZED = Any()

@@ -9,6 +9,8 @@ package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.databaseresources
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.io.lock.SynchronizedObject
+import ru.pixnews.wasm.sqlite.open.helper.io.lock.synchronized
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteStatement
 
@@ -17,16 +19,16 @@ internal class SqliteDatabaseResourcesRegistry(
     rootLogger: Logger,
 ) {
     private val logger: Logger = rootLogger.withTag("SqliteOpenDatabaseResources")
-    private val lock = Any()
+    private val lock = SynchronizedObject()
     private val openedDatabases: MutableMap<WasmPtr<SqliteDb>, DbResources> = mutableMapOf()
 
     fun onDbOpened(
         db: WasmPtr<SqliteDb>,
     ): Unit = synchronized(lock) {
-        val old = openedDatabases.putIfAbsent(db, DbResources())
-        if (old != null) {
+        if (openedDatabases.containsKey(db)) {
             error("Database $db already registered")
         }
+        openedDatabases[db] = DbResources()
     }
 
     fun registerStatement(

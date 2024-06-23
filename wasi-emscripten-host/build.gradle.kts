@@ -21,11 +21,13 @@ kotlin {
     js {
         nodejs()
     }
+    linuxX64()
 
     sourceSets {
         commonMain.dependencies {
             api(projects.commonApi)
             implementation(libs.okio.okio)
+            implementation(libs.kotlinx.datetime)
         }
         commonTest.dependencies {
             implementation(projects.sqliteTests.sqliteTestUtils)

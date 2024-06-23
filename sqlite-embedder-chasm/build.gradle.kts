@@ -18,6 +18,7 @@ version = wasmSqliteVersions.getSubmoduleVersionProvider(
 
 kotlin {
     jvm()
+    // linuxX64()
 
     sourceSets {
         commonMain.dependencies {
@@ -30,7 +31,16 @@ kotlin {
             compileOnly(libs.chasm.validator)
             api(projects.sqliteCommon)
             implementation(projects.wasiEmscriptenHost)
-            implementation(libs.wsoh.sqlite.st)
+            implementation(libs.wsoh.binary.base)
+            // TODO implementation(libs.wsoh.sqlite.st)
+        }
+        linuxMain.dependencies {
+            api(libs.chasm.decoder)
+            api(libs.chasm.decoder.wasm)
+            api(libs.chasm.instantiator)
+            api(libs.chasm.memory)
+            api(libs.chasm.runtime)
+            api(libs.chasm.validator)
         }
     }
 }

@@ -6,7 +6,6 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chasm
 
-import ru.pixnews.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcu346
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
@@ -23,7 +22,7 @@ public class ChasmSqliteEmbedderConfig internal constructor(
     /**
      * Used Sqlite WebAssembly binary file
      */
-    public var sqlite3Binary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcu346
+    public var sqlite3Binary: WasmSqliteConfiguration = WasmSqliteConfiguration.UNSET
 
     /**
      * Implementation of a host object that provides access from the WebAssembly to external host resources.

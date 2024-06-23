@@ -27,6 +27,7 @@ android {
 kotlin {
     androidTarget()
     jvm()
+    linuxX64()
 
     applyDefaultHierarchyTemplate()
 
