@@ -6,6 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.jvm
 
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost.LocalTimeFormatter
 import ru.pixnews.wasm.sqlite.open.helper.host.include.StructTm
 import ru.pixnews.wasm.sqlite.open.helper.host.include.asTmIsdstValue
 import java.time.Instant
@@ -15,8 +16,8 @@ import kotlin.time.Duration
 
 public class JvmLocalTimeFormatter(
     public val localTimeZoneProvider: () -> ZoneId = ZoneId::systemDefault,
-) : (Duration) -> StructTm {
-    override fun invoke(epoch: Duration): StructTm {
+) : LocalTimeFormatter {
+    override fun format(epoch: Duration): StructTm {
         val instant = Instant.ofEpochMilli(epoch.inWholeMilliseconds)
 
         val date: ZonedDateTime = ZonedDateTime.ofInstant(

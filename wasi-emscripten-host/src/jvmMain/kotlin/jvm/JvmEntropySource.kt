@@ -6,10 +6,11 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.jvm
 
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost.EntropySource
 import java.security.SecureRandom
 
 public class JvmEntropySource(
     private val random: SecureRandom = SecureRandom(),
-) : (Int) -> ByteArray {
-    override fun invoke(size: Int): ByteArray = random.generateSeed(size)
+) : EntropySource {
+    override fun generateEntropy(size: Int): ByteArray = random.generateSeed(size)
 }

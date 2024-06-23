@@ -23,7 +23,7 @@ public class EnvironSizesGetFunctionHandle(
         environCountAddr: WasmPtr<Int>,
         environSizeAddr: WasmPtr<Int>,
     ): Errno {
-        val env = host.systemEnvProvider()
+        val env = host.systemEnvProvider.getSystemEnv()
         val count = env.size
         val dataLength = env.entries.sumOf { it.encodeEnvToWasi().encodedNullTerminatedStringLength() }
         memory.writeI32(

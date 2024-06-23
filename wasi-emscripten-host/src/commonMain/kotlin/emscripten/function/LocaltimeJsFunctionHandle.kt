@@ -23,7 +23,7 @@ public class LocaltimeJsFunctionHandle(
         time: Long,
         timePtr: WasmPtr<StructTm>,
     ) {
-        val localTime = host.localTimeFormatter(time.seconds)
+        val localTime = host.localTimeFormatter.format(time.seconds)
         logger.v { "localtimeJs($time): $localTime" }
 
         val bytes = localTime.pack()

@@ -21,7 +21,7 @@ public class GetentropyFunctionHandle(
         size: Int,
     ): Int {
         return try {
-            val entropy = host.entropySource.invoke(size)
+            val entropy = host.entropySource.generateEntropy(size)
             check(entropy.size == size)
             memory.write(buffer, entropy)
             0

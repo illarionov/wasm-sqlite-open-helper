@@ -6,6 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.jvm
 
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost.TimeZoneInfoProvider
 import ru.pixnews.wasm.sqlite.open.helper.host.include.TimeZoneInfo
 import java.time.Clock
 import java.time.Instant
@@ -14,10 +15,10 @@ import java.util.Locale
 
 public class JvmTimeZoneInfoProvider(
     private val clock: Clock = Clock.systemDefaultZone(),
-) : () -> TimeZoneInfo {
+) : TimeZoneInfoProvider {
     private val tzFormatter = DateTimeFormatter.ofPattern("zzz", Locale.ROOT)
 
-    override fun invoke(): TimeZoneInfo {
+    override fun getTimeZoneInfo(): TimeZoneInfo {
         val zone = clock.zone
         val now: Instant = clock.instant()
 

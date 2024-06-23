@@ -12,7 +12,6 @@ import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.host.jvm.JvmEmbedderHost
 
 /**
  * Configuration of the Chasm engine
@@ -29,5 +28,5 @@ public class ChasmSqliteEmbedderConfig internal constructor(
     /**
      * Implementation of a host object that provides access from the WebAssembly to external host resources.
      */
-    public var host: EmbedderHost = JvmEmbedderHost(rootLogger = rootLogger)
+    public var host: EmbedderHost = EmbedderHost.Builder().apply { this.rootLogger = rootLogger }.build()
 }
