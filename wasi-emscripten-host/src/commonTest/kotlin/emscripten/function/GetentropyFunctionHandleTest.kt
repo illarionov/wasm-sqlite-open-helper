@@ -9,6 +9,7 @@ package ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function
 import assertk.assertThat
 import assertk.assertions.isNotZero
 import assertk.assertions.isZero
+import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost.EntropySource
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.test.assertions.hasBytesAt
 import ru.pixnews.wasm.sqlite.open.helper.host.test.fixtures.TestEmbedderHost
@@ -24,7 +25,7 @@ class GetentropyFunctionHandleTest {
     fun getEntropy_success_case() {
         val testEntropySize = 32
         val testEntropy = ByteArray(testEntropySize) { (it + 3).toByte() }
-        host.entropySource = { size ->
+        host.entropySource = EntropySource { size ->
             check(size == testEntropySize)
             testEntropy
         }
@@ -38,7 +39,7 @@ class GetentropyFunctionHandleTest {
 
     @Test
     fun getEntropy_should_return_correct_code_on_fail() {
-        host.entropySource = { error("No entropy source") }
+        host.entropySource = EntropySource { error("No entropy source") }
         val bufPtr: WasmPtr<Byte> = WasmPtr(128)
         val code = getentropyHandle.execute(memory, bufPtr, -32)
         assertThat(code).isNotZero()

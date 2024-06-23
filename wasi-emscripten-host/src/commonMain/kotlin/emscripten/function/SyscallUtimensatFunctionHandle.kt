@@ -41,7 +41,7 @@ public class SyscallUtimensatFunctionHandle(
         val mtime: Duration?
         @Suppress("MagicNumber")
         if (times.isSqlite3Null()) {
-            atime = host.clock.invoke()
+            atime = host.clock.getCurrentTime()
             mtime = atime
         } else {
             val atimeSeconds = memory.readI64(times)
@@ -50,7 +50,7 @@ public class SyscallUtimensatFunctionHandle(
             val mtimeSeconds = memory.readI64(times + 16)
             val mtimeNanoseconds = memory.readI64(times + 24)
 
-            val now: Duration by lazy(NONE) { host.clock.invoke() }
+            val now: Duration by lazy(NONE) { host.clock.getCurrentTime() }
             atime = timesToDuration(atimeSeconds, atimeNanoseconds) { now }
             mtime = timesToDuration(mtimeSeconds, mtimeNanoseconds) { now }
         }

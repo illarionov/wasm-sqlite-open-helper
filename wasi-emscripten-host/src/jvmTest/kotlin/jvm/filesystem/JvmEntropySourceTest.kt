@@ -17,14 +17,14 @@ class JvmEntropySourceTest {
 
     @Test
     fun entropySource_successTestCase_check_size() {
-        val entropy = source.invoke(32)
+        val entropy = source.generateEntropy(32)
         assertThat(entropy).hasSize(32)
     }
 
     @Test
     fun entropySource_should_throw_on_incorrect_arg() {
         assertFails {
-            source.invoke(-1)
+            source.generateEntropy(-1)
         }
     }
 }

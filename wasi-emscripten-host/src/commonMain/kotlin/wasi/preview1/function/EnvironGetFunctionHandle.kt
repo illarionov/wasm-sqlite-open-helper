@@ -26,7 +26,7 @@ public class EnvironGetFunctionHandle(
     ): Errno {
         var pp = environPAddr
         var bufP = environBufAddr
-        host.systemEnvProvider()
+        host.systemEnvProvider.getSystemEnv()
             .entries
             .map { it.encodeEnvToWasi() }
             .forEach { envString ->
