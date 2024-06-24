@@ -13,5 +13,5 @@ import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
 public class EmscriptenDateNowFunctionHandle(
     host: EmbedderHost,
 ) : HostFunctionHandle(EmscriptenHostFunction.EMSCRIPTEN_DATE_NOW, host) {
-    public fun execute(): Double = host.clock.getCurrentTime().inWholeMilliseconds.toDouble()
+    public fun execute(): Double = host.clock.getCurrentTimeEpochMilliseconds().toDouble()
 }

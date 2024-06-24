@@ -34,7 +34,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost$Builder 
 }
 
 public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost$Clock {
-	public abstract fun getCurrentTime-UwyO8pc ()J
+	public abstract fun getCurrentTimeEpochMilliseconds ()J
 }
 
 public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost$CommandArgsProvider {
@@ -46,11 +46,11 @@ public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/Embedder
 }
 
 public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost$LocalTimeFormatter {
-	public abstract fun format-LRDsOJo (J)Lru/pixnews/wasm/sqlite/open/helper/host/include/StructTm;
+	public abstract fun format (J)Lru/pixnews/wasm/sqlite/open/helper/host/include/StructTm;
 }
 
 public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost$MonotonicClock {
-	public abstract fun getTimeMark-UwyO8pc ()J
+	public abstract fun getTimeMarkNanoseconds ()J
 }
 
 public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost$SystemEnvProvider {
@@ -556,7 +556,7 @@ public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/filesyst
 	public abstract fun resolveWhencePosition-z4h_Sj0 (IJLru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Whence;)J
 	public abstract fun rmdir (Ljava/lang/String;)V
 	public abstract fun seek-z4h_Sj0 (IJLru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Whence;)J
-	public abstract fun setTimesAt-5TNNnBA (Lru/pixnews/wasm/sqlite/open/helper/host/include/DirFd;Ljava/lang/String;Lkotlin/time/Duration;Lkotlin/time/Duration;Z)V
+	public abstract fun setTimesAt (Lru/pixnews/wasm/sqlite/open/helper/host/include/DirFd;Ljava/lang/String;Ljava/lang/Long;Ljava/lang/Long;Z)V
 	public abstract fun stat (Ljava/lang/String;Z)Lru/pixnews/wasm/sqlite/open/helper/host/include/sys/StructStat;
 	public abstract fun stat (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/Path;Z)Lru/pixnews/wasm/sqlite/open/helper/host/include/sys/StructStat;
 	public static synthetic fun stat$default (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/FileSystem;Ljava/lang/String;ZILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/host/include/sys/StructStat;
@@ -1033,7 +1033,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/jvm/JvmLocalTimeForma
 	public fun <init> ()V
 	public fun <init> (Lkotlin/jvm/functions/Function0;)V
 	public synthetic fun <init> (Lkotlin/jvm/functions/Function0;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun format-LRDsOJo (J)Lru/pixnews/wasm/sqlite/open/helper/host/include/StructTm;
+	public fun format (J)Lru/pixnews/wasm/sqlite/open/helper/host/include/StructTm;
 	public final fun getLocalTimeZoneProvider ()Lkotlin/jvm/functions/Function0;
 }
 
@@ -1074,7 +1074,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/jvm/filesystem/JvmFil
 	public fun resolveWhencePosition-z4h_Sj0 (IJLru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Whence;)J
 	public fun rmdir (Ljava/lang/String;)V
 	public fun seek-z4h_Sj0 (IJLru/pixnews/wasm/sqlite/open/helper/host/wasi/preview1/type/Whence;)J
-	public fun setTimesAt-5TNNnBA (Lru/pixnews/wasm/sqlite/open/helper/host/include/DirFd;Ljava/lang/String;Lkotlin/time/Duration;Lkotlin/time/Duration;Z)V
+	public fun setTimesAt (Lru/pixnews/wasm/sqlite/open/helper/host/include/DirFd;Ljava/lang/String;Ljava/lang/Long;Ljava/lang/Long;Z)V
 	public fun stat (Ljava/lang/String;Z)Lru/pixnews/wasm/sqlite/open/helper/host/include/sys/StructStat;
 	public synthetic fun stat (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/Path;Z)Lru/pixnews/wasm/sqlite/open/helper/host/include/sys/StructStat;
 	public fun stat-QH11QRI (Ljava/nio/file/Path;Z)Lru/pixnews/wasm/sqlite/open/helper/host/include/sys/StructStat;

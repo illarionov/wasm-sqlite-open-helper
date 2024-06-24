@@ -13,7 +13,6 @@ import ru.pixnews.wasm.sqlite.open.helper.host.include.StructFlock
 import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.StructStat
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Whence
-import kotlin.time.Duration
 
 public interface FileSystem<P : Path> {
     public fun stat(
@@ -101,8 +100,8 @@ public interface FileSystem<P : Path> {
     public fun setTimesAt(
         dirFd: DirFd,
         path: String,
-        atime: Duration?,
-        mtime: Duration?,
+        atimeNanoseconds: Long?,
+        mtimeNanoseconds: Long?,
         noFolowSymlinks: Boolean,
     )
 

@@ -90,7 +90,6 @@ import kotlin.io.path.isWritable
 import kotlin.io.path.pathString
 import kotlin.io.path.readAttributes
 import kotlin.io.path.setPosixFilePermissions
-import kotlin.time.Duration
 
 public class JvmFileSystem(
     rootLogger: Logger,
@@ -524,12 +523,12 @@ public class JvmFileSystem(
     override fun setTimesAt(
         dirFd: DirFd,
         path: String,
-        atime: Duration?,
-        mtime: Duration?,
+        atimeNanoseconds: Long?,
+        mtimeNanoseconds: Long?,
         noFolowSymlinks: Boolean,
     ): Unit = fsLock.withLock {
         val absolutePath = resolveAbsolutePath(dirFd, path)
-        logger.v { "utimensat($absolutePath, $atime, $mtime, $noFolowSymlinks)" }
+        logger.v { "utimensat($absolutePath, $atimeNanoseconds, $mtimeNanoseconds, $noFolowSymlinks)" }
         try {
             val options = if (noFolowSymlinks) {
                 arrayOf(NOFOLLOW_LINKS)
@@ -538,12 +537,14 @@ public class JvmFileSystem(
             }
             absolutePath.nio.fileAttributesView<BasicFileAttributeView>(options = options)
                 .setTimes(
-                    mtime?.let { FileTime.from(it.inWholeNanoseconds, NANOSECONDS) },
-                    atime?.let { FileTime.from(it.inWholeNanoseconds, NANOSECONDS) },
+                    atimeNanoseconds?.let { FileTime.from(it, NANOSECONDS) },
+                    mtimeNanoseconds?.let { FileTime.from(it, NANOSECONDS) },
                     null,
                 )
         } catch (ioe: IOException) {
-            logger.v(ioe) { "utimensat($absolutePath, $atime, $mtime, $noFolowSymlinks) error: $ioe" }
+            logger.v(ioe) {
+                "utimensat($absolutePath, $atimeNanoseconds, $mtimeNanoseconds, $noFolowSymlinks) error: $ioe"
+            }
             throw SysException(IO, ioe.message, ioe)
         }
     }

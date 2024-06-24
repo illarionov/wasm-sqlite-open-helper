@@ -12,13 +12,12 @@ import ru.pixnews.wasm.sqlite.open.helper.host.include.asTmIsdstValue
 import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime
-import kotlin.time.Duration
 
 public class JvmLocalTimeFormatter(
     public val localTimeZoneProvider: () -> ZoneId = ZoneId::systemDefault,
 ) : LocalTimeFormatter {
-    override fun format(epoch: Duration): StructTm {
-        val instant = Instant.ofEpochMilli(epoch.inWholeMilliseconds)
+    override fun format(epochSeconds: Long): StructTm {
+        val instant = Instant.ofEpochSecond(epochSeconds)
 
         val date: ZonedDateTime = ZonedDateTime.ofInstant(
             instant,

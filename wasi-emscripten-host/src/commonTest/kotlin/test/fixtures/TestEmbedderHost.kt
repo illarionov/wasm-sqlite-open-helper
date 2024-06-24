@@ -19,21 +19,20 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.include.StructTm
 import ru.pixnews.wasm.sqlite.open.helper.host.include.TimeZoneInfo
 import ru.pixnews.wasm.sqlite.test.utils.KermitLogger
-import kotlin.time.Duration
 
 open class TestEmbedderHost(
     override var rootLogger: Logger = KermitLogger(),
     override var systemEnvProvider: SystemEnvProvider = SystemEnvProvider { emptyMap() },
     override var commandArgsProvider: CommandArgsProvider = CommandArgsProvider { emptyList() },
     override var fileSystem: FileSystem<*> = TestFileSystem(),
-    override var monotonicClock: MonotonicClock = MonotonicClock { Duration.INFINITE },
-    override var clock: Clock = Clock { Duration.INFINITE },
+    override var monotonicClock: MonotonicClock = MonotonicClock { Long.MAX_VALUE },
+    override var clock: Clock = Clock { Long.MAX_VALUE },
     override var localTimeFormatter: LocalTimeFormatter = LocalTimeFormatter {
         StructTm(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1)
     },
     override var timeZoneInfo: TimeZoneInfoProvider = TimeZoneInfoProvider {
         TimeZoneInfo(-1, -1, "Dummy", "Dummy")
-                                                                           },
+    },
     override var entropySource: EntropySource = EntropySource { size ->
         ByteArray(size) { 4 }
     },

@@ -20,7 +20,6 @@ import ru.pixnews.wasm.sqlite.open.helper.host.include.Fcntl
 import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.SysStat.UTIME_NOW
 import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.SysStat.UTIME_OMIT
 import kotlin.LazyThreadSafetyMode.NONE
-import kotlin.time.Duration
 import kotlin.time.Duration.Companion.nanoseconds
 import kotlin.time.Duration.Companion.seconds
 
@@ -37,12 +36,12 @@ public class SyscallUtimensatFunctionHandle(
         val dirFd = DirFd(rawDirFd)
         val noFolowSymlinks: Boolean = (flags and Fcntl.AT_SYMLINK_NOFOLLOW) != 0U
         val path = memory.readNullTerminatedString(pathnamePtr)
-        var atime: Duration?
-        val mtime: Duration?
+        var atimeNs: Long?
+        val mtimeNs: Long?
         @Suppress("MagicNumber")
         if (times.isSqlite3Null()) {
-            atime = host.clock.getCurrentTime()
-            mtime = atime
+            atimeNs = host.clock.getCurrentTimeEpochMilliseconds()
+            mtimeNs = atimeNs
         } else {
             val atimeSeconds = memory.readI64(times)
             val atimeNanoseconds = memory.readI64(times + 8)
@@ -50,25 +49,25 @@ public class SyscallUtimensatFunctionHandle(
             val mtimeSeconds = memory.readI64(times + 16)
             val mtimeNanoseconds = memory.readI64(times + 24)
 
-            val now: Duration by lazy(NONE) { host.clock.getCurrentTime() }
-            atime = timesToDuration(atimeSeconds, atimeNanoseconds) { now }
-            mtime = timesToDuration(mtimeSeconds, mtimeNanoseconds) { now }
+            val now: Long by lazy(NONE) { host.clock.getCurrentTimeEpochMilliseconds() }
+            atimeNs = timesToDurationNs(atimeSeconds, atimeNanoseconds) { now }
+            mtimeNs = timesToDurationNs(mtimeSeconds, mtimeNanoseconds) { now }
         }
         try {
-            host.fileSystem.setTimesAt(dirFd, path, atime, mtime, noFolowSymlinks)
+            host.fileSystem.setTimesAt(dirFd, path, atimeNs, mtimeNs, noFolowSymlinks)
             return 0
         } catch (e: SysException) {
             return -e.errNo.code
         }
     }
 
-    private fun timesToDuration(
+    private fun timesToDurationNs(
         seconds: Long,
         nanoseconds: Long,
-        now: () -> Duration,
-    ): Duration? = when (nanoseconds) {
+        now: () -> Long,
+    ): Long? = when (nanoseconds) {
         UTIME_NOW.toLong() -> now()
         UTIME_OMIT.toLong() -> null
-        else -> seconds.seconds + nanoseconds.nanoseconds
+        else -> (seconds.seconds + nanoseconds.nanoseconds).inWholeNanoseconds
     }
 }
