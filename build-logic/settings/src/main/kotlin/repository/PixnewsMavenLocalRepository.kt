@@ -7,12 +7,14 @@
 package ru.pixnews.wasm.sqlite.open.helper.gradle.settings.repository
 
 import org.gradle.api.artifacts.dsl.RepositoryHandler
-import java.net.URI
 
-internal fun RepositoryHandler.pixnewsMaven() = maven {
-    name = "PixnewsMaven"
-    url = URI("https://maven.pixnews.ru")
+/**
+ * Repository for testing with local builds of wasm binaries
+ */
+fun RepositoryHandler.pixnewsMavenLocal() = mavenLocal {
+    name = "PixnewsMavenLocal"
     mavenContent {
         includeGroup("ru.pixnews.wasm-sqlite-open-helper")
+        snapshotsOnly()
     }
 }
