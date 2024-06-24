@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+@file:Suppress("OPT_IN_USAGE")
+
 plugins {
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.lint.binary-compatibility-validator")
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.android")
@@ -27,6 +29,21 @@ android {
 kotlin {
     androidTarget()
     jvm()
+    js(IR) {
+        browser()
+        nodejs()
+    }
+    wasmJs {
+        browser()
+        nodejs()
+    }
+    iosSimulatorArm64()
+    iosX64()
+    linuxArm64()
+    linuxX64()
+    macosArm64()
+    macosX64()
+    mingwX64()
 
     applyDefaultHierarchyTemplate()
 
