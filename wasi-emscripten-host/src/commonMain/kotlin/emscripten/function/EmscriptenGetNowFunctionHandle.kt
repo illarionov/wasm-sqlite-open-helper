@@ -14,5 +14,5 @@ public class EmscriptenGetNowFunctionHandle(
     host: EmbedderHost,
 ) : HostFunctionHandle(EmscriptenHostFunction.EMSCRIPTEN_GET_NOW, host) {
     @Suppress("MagicNumber")
-    public fun execute(): Double = host.monotonicClock.getTimeMark().inWholeNanoseconds / 1_000_000.0
+    public fun execute(): Double = host.monotonicClock.getTimeMarkNanoseconds() / 1_000_000.0
 }

@@ -12,7 +12,6 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.Path
 import ru.pixnews.wasm.sqlite.open.helper.host.include.StructTm
 import ru.pixnews.wasm.sqlite.open.helper.host.include.TimeZoneInfo
-import kotlin.time.Duration
 
 internal expect fun createDefaultEmbedderHost(builder: Builder): EmbedderHost
 
@@ -36,15 +35,15 @@ public interface EmbedderHost {
     }
 
     public fun interface Clock {
-        public fun getCurrentTime(): Duration
+        public fun getCurrentTimeEpochMilliseconds(): Long
     }
 
     public fun interface MonotonicClock {
-        public fun getTimeMark(): Duration
+        public fun getTimeMarkNanoseconds(): Long
     }
 
     public fun interface LocalTimeFormatter {
-        public fun format(epoch: Duration): StructTm
+        public fun format(epochSeconds: Long): StructTm
     }
 
     public fun interface TimeZoneInfoProvider {

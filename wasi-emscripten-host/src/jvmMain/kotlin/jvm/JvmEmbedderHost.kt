@@ -17,9 +17,6 @@ import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost.SystemEnvProvider
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost.TimeZoneInfoProvider
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.JvmFileSystem
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.nanoseconds
 
 public class JvmEmbedderHost(
     public override val rootLogger: Logger = Logger,
@@ -41,10 +38,10 @@ public class JvmEmbedderHost(
     }
 
     internal object JvmClock : Clock {
-        override fun getCurrentTime(): Duration = System.currentTimeMillis().milliseconds
+        override fun getCurrentTimeEpochMilliseconds(): Long = System.currentTimeMillis()
     }
 
     internal object JvmMonotonicClock : MonotonicClock {
-        override fun getTimeMark(): Duration = System.nanoTime().nanoseconds
+        override fun getTimeMarkNanoseconds(): Long = System.nanoTime()
     }
 }

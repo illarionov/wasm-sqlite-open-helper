@@ -13,18 +13,17 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.include.StructTm
 import ru.pixnews.wasm.sqlite.open.helper.host.include.pack
-import kotlin.time.Duration.Companion.seconds
 
 public class LocaltimeJsFunctionHandle(
     host: EmbedderHost,
 ) : HostFunctionHandle(EmscriptenHostFunction.LOCALTIME_JS, host) {
     public fun execute(
         memory: Memory,
-        time: Long,
+        timeSeconds: Long,
         timePtr: WasmPtr<StructTm>,
     ) {
-        val localTime = host.localTimeFormatter.format(time.seconds)
-        logger.v { "localtimeJs($time): $localTime" }
+        val localTime = host.localTimeFormatter.format(timeSeconds)
+        logger.v { "localtimeJs($timeSeconds): $localTime" }
 
         val bytes = localTime.pack()
         memory.write(timePtr, bytes)

@@ -17,7 +17,6 @@ import ru.pixnews.wasm.sqlite.open.helper.host.include.StructFlock
 import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.StructStat
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Whence
-import kotlin.time.Duration
 
 open class TestFileSystem : FileSystem<Path> {
     var readLinkAtHandler: (dirFd: DirFd, path: String) -> String = { _, _ ->
@@ -96,8 +95,14 @@ open class TestFileSystem : FileSystem<Path> {
         error("Not implemented")
     }
 
-    override fun setTimesAt(dirFd: DirFd, path: String, atime: Duration?, mtime: Duration?, noFolowSymlinks: Boolean) {
-        error("Not implemented")
+    override fun setTimesAt(
+        dirFd: DirFd,
+        path: String,
+        atimeNanoseconds: Long?,
+        mtimeNanoseconds: Long?,
+        noFolowSymlinks: Boolean,
+    ) {
+        error("Not yet implemented")
     }
 
     override fun rmdir(path: String) {
