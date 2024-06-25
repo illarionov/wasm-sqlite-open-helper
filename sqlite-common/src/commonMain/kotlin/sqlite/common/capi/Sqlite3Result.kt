@@ -8,6 +8,7 @@ package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi
 
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrorInfo
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
+import kotlin.jvm.JvmInline
 
 @Suppress("WRONG_ORDER_IN_CLASS_LIKE_STRUCTURES")
 public sealed interface Sqlite3Result<out R : Any> {
