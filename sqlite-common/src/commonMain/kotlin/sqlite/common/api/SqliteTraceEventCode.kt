@@ -7,6 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.SqliteUintBitMask
+import kotlin.jvm.JvmInline
 
 /**
  * SQL Trace Event Codes

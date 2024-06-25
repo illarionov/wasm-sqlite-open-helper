@@ -14,6 +14,7 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteExecCallback
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteLogCallback
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteProgressCallback
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceCallback
+import kotlin.jvm.JvmInline
 
 @InternalWasmSqliteHelperApi
 public interface SqliteCallbackStore {
