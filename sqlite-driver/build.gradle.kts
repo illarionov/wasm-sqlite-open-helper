@@ -75,18 +75,16 @@ kotlin {
         }
         androidInstrumentedTest.dependencies {
             implementation(libs.androidx.room.runtime)
-            implementation(libs.androidx.room.testing)
             implementation(libs.androidx.test.core)
             implementation(libs.androidx.test.runner)
             implementation(libs.androidx.test.rules)
-            implementation(libs.kotlinx.coroutines.test)
             implementation(libs.wsoh.sqlite.mt)
             implementation(libs.wsoh.sqlite.st)
             implementation(projects.sqliteEmbedderChasm)
             implementation(projects.sqliteEmbedderChicory)
             implementation(projects.sqliteEmbedderGraalvm)
-            implementation(projects.sqliteTests.sqliteDriverBaseTests)
             implementation(projects.sqliteTests.sqliteTestUtils)
+            implementation(projects.sqliteTests.sqliteDriverBaseTests)
         }
 
         commonMain.dependencies {
@@ -99,8 +97,13 @@ kotlin {
         }
         commonTest.dependencies {
             implementation(projects.sqliteTests.sqliteTestUtils)
+            implementation(projects.sqliteTests.sqliteDriverBaseTests)
+            implementation(projects.sqliteEmbedderChasm)
+            implementation(libs.kotlinx.coroutines.test)
             implementation(libs.androidx.room.runtime)
             implementation(libs.androidx.room.testing)
+            implementation(libs.kermit)
+            implementation(libs.wsoh.sqlite.st)
         }
 
         val jvmAndAndroidMain by creating {
@@ -116,17 +119,11 @@ kotlin {
             dependsOn(commonTest.get())
             dependencies {
                 kotlin(("test-junit"))
-                implementation(libs.kermit.jvm)
-                implementation(libs.kotlinx.coroutines.test)
-
                 implementation(libs.wsoh.sqlite.mt)
-                implementation(libs.wsoh.sqlite.st)
                 implementation(libs.androidx.sqlite.bundled)
-                implementation(projects.sqliteEmbedderChasm)
                 implementation(projects.sqliteEmbedderChicory)
                 implementation(projects.sqliteEmbedderGraalvm)
                 implementation(projects.sqliteTests.sqliteDriverBaseTests)
-                implementation(projects.sqliteTests.sqliteTestUtils)
             }
         }
         androidUnitTest.get().dependsOn(jvmAndAndroidTest)
