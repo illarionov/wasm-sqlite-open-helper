@@ -32,6 +32,7 @@ import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.getEmscri
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.ChasmSqlite3CallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.getSqliteCallbacksHostFunctions
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.wasi.getWasiPreview1HostFunctions
+import ru.pixnews.wasm.sqlite.open.helper.chasm.io.getBinaryReader
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
@@ -43,7 +44,6 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.DefaultWasiMemoryWrit
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WASM_MEMORY_PAGE_SIZE
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WASM_MEMORY_SQLITE_MAX_PAGES
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.stack.EmscriptenStack
-import java.net.URI
 
 internal class ChasmInstanceBuilder(
     private val host: EmbedderHost,
@@ -70,7 +70,7 @@ internal class ChasmInstanceBuilder(
             addAll(sqliteCallbacksHostFunctions)
         }
 
-        val sqliteBinaryBytes = URI(sqlite3Binary.sqliteUrl).toURL().readBytes()
+        val sqliteBinaryBytes = getBinaryReader().readBytes(sqlite3Binary.sqliteUrl)
         val sqliteModule = module(sqliteBinaryBytes).orThrow { "Can not decode $sqlite3Binary" }
 
         val instance: ModuleInstance = instance(store, sqliteModule, hostImports)
