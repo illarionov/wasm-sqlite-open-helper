@@ -17,7 +17,7 @@ public abstract class AbstractSqliteDriverTest<S : SQLiteDriver>(
     val driverFactory: TestSqliteDriverFactory<S>,
     dbLoggerSeverity: Severity = Severity.Info,
 ) {
-    protected open val logger: Logger = KermitLogger(this::class.java.simpleName)
+    protected open val logger: Logger = KermitLogger("AbstractSqliteDriverTest")
     protected open val dbLogger: Logger = KermitLogger(tag = "WasmSQLiteDriver", minSeverity = dbLoggerSeverity)
 
     abstract fun fileInTempDir(databaseName: String): String
