@@ -9,13 +9,15 @@ import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 plugins {
     id("com.google.devtools.ksp")
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.kotlin")
-    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.kotlin-with-java")
 }
 
 group = "ru.pixnews.wasm-sqlite-open-helper"
 
 kotlin {
     explicitApi = ExplicitApiMode.Disabled
+
+    jvm()
+    linuxX64()
 
     sourceSets {
         commonMain.dependencies {
@@ -28,6 +30,7 @@ kotlin {
             implementation(libs.androidx.room.runtime)
             implementation(libs.androidx.room.testing)
             implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.kotlinx.datetime)
         }
         jvmMain.dependencies {
             compileOnly(kotlin("test-junit"))
@@ -36,6 +39,5 @@ kotlin {
 }
 
 dependencies {
-    add("annotationProcessor", libs.androidx.room.compiler)
     ksp(libs.androidx.room.compiler)
 }
