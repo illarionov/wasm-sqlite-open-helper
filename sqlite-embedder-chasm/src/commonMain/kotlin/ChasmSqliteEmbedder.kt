@@ -24,7 +24,6 @@ import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.EmscriptenRuntime
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.stack.EmscriptenStack
-import java.util.concurrent.atomic.AtomicReference
 
 public object ChasmSqliteEmbedder : SqliteEmbedder<ChasmSqliteEmbedderConfig, ChasmRuntimeInstance> {
     @InternalWasmSqliteHelperApi
@@ -49,12 +48,12 @@ public object ChasmSqliteEmbedder : SqliteEmbedder<ChasmSqliteEmbedderConfig, Ch
         }
 
         val callbackStore = SqliteCallbackStore()
-        val emscriptenStackRef: AtomicReference<EmscriptenStack> = AtomicReference()
+        lateinit var emscriptenStack: EmscriptenStack
         val chasmInstance: ChasmInstance = ChasmInstanceBuilder(
             host = host,
             callbackStore = callbackStore,
             minMemorySize = sqlite3Binary.wasmMinMemorySize,
-            emscriptenStackRef = emscriptenStackRef::get,
+            emscriptenStackRef = { emscriptenStack },
         ).setupChasmInstance(sqlite3Binary)
 
         val emscriptenRuntime = EmscriptenRuntime.emscriptenSingleThreadedRuntime(
@@ -63,7 +62,7 @@ public object ChasmSqliteEmbedder : SqliteEmbedder<ChasmSqliteEmbedderConfig, Ch
             memory = chasmInstance.memory,
             logger = host.rootLogger,
         )
-        emscriptenStackRef.set(emscriptenRuntime.stack)
+        emscriptenStack = emscriptenRuntime.stack
 
         emscriptenRuntime.initMainThread()
 
