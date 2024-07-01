@@ -20,6 +20,7 @@ plugins {
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.atomicfu")
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.kotlin")
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.publish")
+    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.resources")
 }
 
 group = "ru.pixnews.wasm-sqlite-open-helper"
@@ -94,6 +95,7 @@ kotlin {
             implementation(projects.commonCleaner)
             implementation(projects.commonLock)
             implementation(projects.wasiEmscriptenHost)
+            implementation(libs.wsoh.sqlite.st) // TODO: added for resources
         }
         commonTest.dependencies {
             implementation(projects.sqliteTests.sqliteTestUtils)

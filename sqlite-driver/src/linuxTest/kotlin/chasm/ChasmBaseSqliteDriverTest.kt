@@ -38,7 +38,6 @@ class ChasmBaseSqliteDriverTest : AbstractBasicSqliteDriverTest<SQLiteDriver>(
     }
 
     @Test
-    @Ignore
     override fun Driver_initialization_with_in_memory_database_should_work() {
         super.Driver_initialization_with_in_memory_database_should_work()
     }
