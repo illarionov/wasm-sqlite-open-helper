@@ -8,6 +8,7 @@ plugins {
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.lint.binary-compatibility-validator")
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.kotlin")
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.publish")
+    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.resources")
 }
 
 group = "ru.pixnews.wasm-sqlite-open-helper"
