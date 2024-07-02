@@ -6,20 +6,17 @@
 
 @file:Suppress("UnstableApiUsage")
 
-import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
-import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
-import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
-import org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_ERROR
-import org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_OUT
-
 plugins {
     id("com.google.devtools.ksp")
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.lint.binary-compatibility-validator")
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.android")
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.android-instrumented-test")
+    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.test.jvm")
+    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.test.native")
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.atomicfu")
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.kotlin")
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.publish")
+    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.resources")
 }
 
 group = "ru.pixnews.wasm-sqlite-open-helper"
@@ -75,18 +72,16 @@ kotlin {
         }
         androidInstrumentedTest.dependencies {
             implementation(libs.androidx.room.runtime)
-            implementation(libs.androidx.room.testing)
             implementation(libs.androidx.test.core)
             implementation(libs.androidx.test.runner)
             implementation(libs.androidx.test.rules)
-            implementation(libs.kotlinx.coroutines.test)
             implementation(libs.wsoh.sqlite.mt)
             implementation(libs.wsoh.sqlite.st)
             implementation(projects.sqliteEmbedderChasm)
             implementation(projects.sqliteEmbedderChicory)
             implementation(projects.sqliteEmbedderGraalvm)
-            implementation(projects.sqliteTests.sqliteDriverBaseTests)
             implementation(projects.sqliteTests.sqliteTestUtils)
+            implementation(projects.sqliteTests.sqliteDriverBaseTests)
         }
 
         commonMain.dependencies {
@@ -96,11 +91,17 @@ kotlin {
             implementation(projects.commonCleaner)
             implementation(projects.commonLock)
             implementation(projects.wasiEmscriptenHost)
+            implementation(libs.wsoh.sqlite.st) // TODO: Shouldn't be here, added for resources in tests
         }
         commonTest.dependencies {
             implementation(projects.sqliteTests.sqliteTestUtils)
+            implementation(projects.sqliteTests.sqliteDriverBaseTests)
+            implementation(projects.sqliteEmbedderChasm)
+            implementation(libs.kotlinx.coroutines.test)
             implementation(libs.androidx.room.runtime)
             implementation(libs.androidx.room.testing)
+            implementation(libs.kermit)
+            implementation(libs.wsoh.sqlite.st)
         }
 
         val jvmAndAndroidMain by creating {
@@ -116,17 +117,11 @@ kotlin {
             dependsOn(commonTest.get())
             dependencies {
                 kotlin(("test-junit"))
-                implementation(libs.kermit.jvm)
-                implementation(libs.kotlinx.coroutines.test)
-
                 implementation(libs.wsoh.sqlite.mt)
-                implementation(libs.wsoh.sqlite.st)
                 implementation(libs.androidx.sqlite.bundled)
-                implementation(projects.sqliteEmbedderChasm)
                 implementation(projects.sqliteEmbedderChicory)
                 implementation(projects.sqliteEmbedderGraalvm)
                 implementation(projects.sqliteTests.sqliteDriverBaseTests)
-                implementation(projects.sqliteTests.sqliteTestUtils)
             }
         }
         androidUnitTest.get().dependsOn(jvmAndAndroidTest)
@@ -141,12 +136,4 @@ kotlin {
 
 dependencies {
     coreLibraryDesugaring(libs.desugar.jdk.libs)
-}
-
-tasks.withType<Test> {
-    useJUnit()
-    maxHeapSize = "2G"
-    testLogging {
-        events = setOf(FAILED, PASSED, SKIPPED, STANDARD_ERROR, STANDARD_OUT)
-    }
 }

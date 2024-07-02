@@ -14,6 +14,8 @@ dependencies {
     implementation(project(":lint"))
     implementation(libs.agp.plugin.api)
     implementation(libs.atomicfu.plugin)
+    implementation(libs.compose.plugin)
+    implementation(libs.compose.compiler.plugin)
     implementation(libs.ksp.plugin)
     implementation(libs.dokka.plugin)
     implementation(libs.gradle.maven.publish.plugin)
