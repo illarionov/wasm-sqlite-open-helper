@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-@file:JvmName("WasmSQLiteDriverBuilder")
+@file:kotlin.jvm.JvmName("WasmSQLiteDriverBuilder")
 
 package ru.pixnews.wasm.sqlite.driver
 
