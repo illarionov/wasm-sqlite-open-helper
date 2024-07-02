@@ -13,12 +13,11 @@ import assertk.assertions.isBetween
 import assertk.assertions.isEqualTo
 import assertk.assertions.startsWith
 import co.touchlab.kermit.Severity
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.todayIn
 import ru.pixnews.wasm.sqlite.driver.test.base.util.queryForLong
 import ru.pixnews.wasm.sqlite.driver.test.base.util.queryForString
-import java.text.SimpleDateFormat
-import java.time.Instant
-import java.util.Date
-import java.util.TimeZone
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -48,18 +47,15 @@ public abstract class AbstractTimeFunctionsTest<S : SQLiteDriver>(
 
     @Test
     open fun date_should_work() {
+        val nowDateUtc = Clock.System.todayIn(TimeZone.UTC).toString()
         val dateString = connection.queryForString("""SELECT date()""")
 
-        assertThat(dateString).isEqualTo(
-            SimpleDateFormat("YYYY-MM-dd").apply {
-                timeZone = TimeZone.getTimeZone("UTC")
-            }.format(Date()),
-        )
+        assertThat(dateString).isEqualTo(nowDateUtc)
     }
 
     @Test
     open fun unixepoch_should_work() {
-        val timestampNow = Instant.now().epochSecond
+        val timestampNow = Clock.System.now().epochSeconds
         val unixEpoch = connection.queryForLong("""SELECT unixepoch()""") ?: error("Null epoch")
 
         assertThat(unixEpoch).isBetween(timestampNow, timestampNow + 10.minutes.inWholeSeconds)
