@@ -21,6 +21,7 @@ kotlin {
     js {
         nodejs()
     }
+    linuxX64()
 
     sourceSets {
         commonMain.dependencies {
