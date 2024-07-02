@@ -6,17 +6,13 @@
 
 @file:Suppress("UnstableApiUsage")
 
-import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
-import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
-import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
-import org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_ERROR
-import org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_OUT
-
 plugins {
     id("com.google.devtools.ksp")
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.lint.binary-compatibility-validator")
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.android")
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.android-instrumented-test")
+    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.test.jvm")
+    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.test.native")
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.atomicfu")
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.kotlin")
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.publish")
@@ -95,7 +91,7 @@ kotlin {
             implementation(projects.commonCleaner)
             implementation(projects.commonLock)
             implementation(projects.wasiEmscriptenHost)
-            implementation(libs.wsoh.sqlite.st) // TODO: added for resources
+            implementation(libs.wsoh.sqlite.st) // TODO: Shouldn't be here, added for resources in tests
         }
         commonTest.dependencies {
             implementation(projects.sqliteTests.sqliteTestUtils)
@@ -140,12 +136,4 @@ kotlin {
 
 dependencies {
     coreLibraryDesugaring(libs.desugar.jdk.libs)
-}
-
-tasks.withType<Test> {
-    useJUnit()
-    maxHeapSize = "2G"
-    testLogging {
-        events = setOf(FAILED, PASSED, SKIPPED, STANDARD_ERROR, STANDARD_OUT)
-    }
 }
