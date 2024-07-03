@@ -10,7 +10,7 @@ package ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform
  * Convention plugin that configures Atomicfu
  */
 plugins {
-    id("kotlinx-atomicfu")
+    id("org.jetbrains.kotlinx.atomicfu")
 }
 
 atomicfu {
