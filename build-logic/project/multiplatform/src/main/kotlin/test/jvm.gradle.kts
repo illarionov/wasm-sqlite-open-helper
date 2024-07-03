@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform
+package ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.test
 
 import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
 
@@ -12,7 +12,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
  * Convention plugin that configures unit tests in projects with the Kotlin Multiplatform plugin
  */
 tasks.withType<Test> {
-    useJUnitPlatform()
+    useJUnit()
     maxHeapSize = "2G"
     testLogging {
         events = mutableSetOf(
