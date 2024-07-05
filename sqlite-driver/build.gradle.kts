@@ -93,6 +93,7 @@ kotlin {
             implementation(projects.wasiEmscriptenHost)
             implementation(libs.wsoh.sqlite.st) // TODO: Shouldn't be here, added for resources in tests
         }
+
         commonTest.dependencies {
             implementation(projects.sqliteTests.sqliteTestUtils)
             implementation(projects.sqliteTests.sqliteDriverBaseTests)

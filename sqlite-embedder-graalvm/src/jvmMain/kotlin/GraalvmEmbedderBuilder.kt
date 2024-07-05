@@ -9,8 +9,11 @@ package ru.pixnews.wasm.sqlite.open.helper.graalvm
 import org.graalvm.polyglot.Context
 import org.graalvm.polyglot.Engine
 import org.graalvm.polyglot.Source
+import org.graalvm.polyglot.io.ByteSequence
 import org.graalvm.wasm.WasmInstance
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
+import ru.pixnews.wasm.sqlite.binary.reader.WasmSourceReader
+import ru.pixnews.wasm.sqlite.binary.reader.readBytesOrThrow
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SQLiteEmbedderRuntimeInfo
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.SharedMemoryWaiterListStore
@@ -21,7 +24,6 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.wasi.WasiSnapshotP
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.GraalvmPthreadManager
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.stack.EmscriptenStack
-import java.net.URI
 import java.util.concurrent.atomic.AtomicReference
 
 internal class GraalvmEmbedderBuilder(
@@ -31,11 +33,12 @@ internal class GraalvmEmbedderBuilder(
 ) {
     val logger = host.rootLogger
     val sqliteSource: Source by lazy(LazyThreadSafetyMode.NONE) {
-        Source.newBuilder("wasm", URI(sqlite3Binary.sqliteUrl).toURL())
+        val bytes = WasmSourceReader.readBytesOrThrow(sqlite3Binary.sqliteUrl)
+        Source.newBuilder("wasm", ByteSequence.create(bytes), SQLITE3_SOURCE_NAME)
             .name(SQLITE3_SOURCE_NAME)
             .build()
     }
-    val useSharedMemory = USE_UNSAFE_MEMORY || sqlite3Binary.requireSharedMemory
+    val useSharedMemory = USE_UNSAFE_MEMORY || sqlite3Binary.requireThreads
     val wasmThreadsEnabled = sqlite3Binary.requireThreads
 
     fun createEnvironment(): GraalvmSqliteWasmEnvironment {
@@ -138,7 +141,7 @@ internal class GraalvmEmbedderBuilder(
             emscriptenModuleBuilder.setupModule(
                 graalContext = graalContext,
                 minMemorySize = sqlite3Binary.wasmMinMemorySize,
-                sharedMemory = sqlite3Binary.requireSharedMemory,
+                sharedMemory = sqlite3Binary.requireThreads,
                 useUnsafeMemory = useSharedMemory,
             )
         } else {
@@ -149,7 +152,7 @@ internal class GraalvmEmbedderBuilder(
         }
 
         WasiSnapshotPreview1ModuleBuilder(graalContext, host).setupModule(
-            sharedMemory = sqlite3Binary.requireSharedMemory,
+            sharedMemory = sqlite3Binary.requireThreads,
             useUnsafeMemory = useSharedMemory,
         )
 
@@ -159,7 +162,7 @@ internal class GraalvmEmbedderBuilder(
             callbackStore = callbackStore,
         )
         sqliteCallbacksModuleBuilder.setupModule(
-            sharedMemory = sqlite3Binary.requireSharedMemory,
+            sharedMemory = sqlite3Binary.requireThreads,
             useUnsafeMemory = useSharedMemory,
         )
         return WasmModuleInstances(

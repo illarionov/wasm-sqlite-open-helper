@@ -7,12 +7,14 @@
 package ru.pixnews.wasm.sqlite.open.helper.chasm.host
 
 import com.github.michaelbull.result.getOrThrow
+import io.github.charlietap.chasm.ast.module.Module
 import io.github.charlietap.chasm.ast.type.Limits
 import io.github.charlietap.chasm.ast.type.MemoryType
 import io.github.charlietap.chasm.embedding.instance
 import io.github.charlietap.chasm.embedding.memory
 import io.github.charlietap.chasm.embedding.module
 import io.github.charlietap.chasm.embedding.store
+import io.github.charlietap.chasm.error.ChasmError.DecodeError
 import io.github.charlietap.chasm.executor.runtime.ext.grow
 import io.github.charlietap.chasm.executor.runtime.ext.table
 import io.github.charlietap.chasm.executor.runtime.ext.tableAddress
@@ -23,16 +25,21 @@ import io.github.charlietap.chasm.executor.runtime.instance.TableInstance
 import io.github.charlietap.chasm.executor.runtime.store.Address
 import io.github.charlietap.chasm.executor.runtime.store.Store
 import io.github.charlietap.chasm.executor.runtime.value.ReferenceValue
+import io.github.charlietap.chasm.fold
 import io.github.charlietap.chasm.import.Import
+import okio.buffer
+import okio.use
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
+import ru.pixnews.wasm.sqlite.binary.reader.WasmSourceReader
+import ru.pixnews.wasm.sqlite.binary.reader.readOrThrow
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.orThrow
+import ru.pixnews.wasm.sqlite.open.helper.chasm.host.exception.ChasmErrorException
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.exception.ChasmModuleRuntimeErrorException
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.memory.ChasmMemoryAdapter
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.getEmscriptenHostFunctions
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.ChasmSqlite3CallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.getSqliteCallbacksHostFunctions
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.wasi.getWasiPreview1HostFunctions
-import ru.pixnews.wasm.sqlite.open.helper.chasm.io.getBinaryReader
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
@@ -70,8 +77,17 @@ internal class ChasmInstanceBuilder(
             addAll(sqliteCallbacksHostFunctions)
         }
 
-        val sqliteBinaryBytes = getBinaryReader().readBytes(sqlite3Binary.sqliteUrl)
-        val sqliteModule = module(sqliteBinaryBytes).orThrow { "Can not decode $sqlite3Binary" }
+        val sqliteModule: Module = WasmSourceReader.readOrThrow(sqlite3Binary.sqliteUrl) { source, _ ->
+            val readModuleResult: Result<Module> = source.buffer().use {
+                module(OkioSourceReader(it))
+            }.fold(
+                onSuccess = { Result.success(it) },
+                onError = { error: DecodeError ->
+                    Result.failure(ChasmErrorException(error, "Can not decode $sqlite3Binary; $error"))
+                },
+            )
+            readModuleResult
+        }
 
         val instance: ModuleInstance = instance(store, sqliteModule, hostImports)
             .orThrow { "Can not instantiate $sqlite3Binary" }

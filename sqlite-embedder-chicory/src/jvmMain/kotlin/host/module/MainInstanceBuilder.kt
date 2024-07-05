@@ -16,7 +16,10 @@ import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.runtime.Module
 import com.dylibso.chicory.runtime.Module.START_FUNCTION_NAME
 import com.dylibso.chicory.wasm.types.MemoryLimits
+import okio.buffer
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
+import ru.pixnews.wasm.sqlite.binary.reader.WasmSourceReader
+import ru.pixnews.wasm.sqlite.binary.reader.readOrThrow
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.memory.ChicoryMemoryAdapter
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.memory.ChicoryWasiMemoryReader
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.memory.ChicoryWasiMemoryWriter
@@ -33,7 +36,6 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WASM_MEMORY_SQLITE_MA
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WasiMemoryReader
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WasiMemoryWriter
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.stack.EmscriptenStack
-import java.net.URI
 import com.dylibso.chicory.log.Logger as ChicoryLogger
 import com.dylibso.chicory.runtime.Memory as ChicoryMemory
 
@@ -80,11 +82,15 @@ internal class MainInstanceBuilder(
             arrayOf<HostTable>(),
         )
 
-        val sqlite3Module: Module = URI(sqlite3Binary.sqliteUrl).toURL().openStream().use {
-            Module
-                .builder(it)
-                .withLogger(chicoryLogger)
-                .build()
+        val sqlite3Module: Module = WasmSourceReader.readOrThrow(sqlite3Binary.sqliteUrl) { source, _ ->
+            runCatching {
+                source.buffer().inputStream().use {
+                    Module
+                        .builder(it)
+                        .withLogger(chicoryLogger)
+                        .build()
+                }
+            }
         }
 
         val instance = sqlite3Module
