@@ -12,20 +12,20 @@ import assertk.assertions.support.appendName
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.test.fixtures.TestMemory
 
-fun Assert<TestMemory>.bytesAt(
+public fun Assert<TestMemory>.bytesAt(
     address: WasmPtr<Byte>,
     size: Int,
-) = transform(appendName("TestMemory{$address}", separator = ".")) { testMemory ->
+): Assert<ByteArray> = transform(appendName("TestMemory{$address}", separator = ".")) { testMemory ->
     ByteArray(size).also { testMemory.read(address, it) }
 }
 
-fun Assert<TestMemory>.hasBytesAt(
+public fun Assert<TestMemory>.hasBytesAt(
     address: WasmPtr<Byte>,
     expectedBytes: ByteArray,
-) = bytesAt(address, expectedBytes.size).isEqualTo(expectedBytes)
+): Unit = bytesAt(address, expectedBytes.size).isEqualTo(expectedBytes)
 
-fun Assert<TestMemory>.byteAt(
+public fun Assert<TestMemory>.byteAt(
     address: WasmPtr<Byte>,
-) = transform(appendName("TestMemory{$address}", separator = ".")) {
+): Assert<Byte> = transform(appendName("TestMemory{$address}", separator = ".")) {
     it.readI8(address)
 }

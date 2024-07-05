@@ -30,10 +30,11 @@ internal class GraalvmEmbedderBuilder(
     private val graalvmEngine: Engine,
     private val host: EmbedderHost,
     private val sqlite3Binary: WasmSqliteConfiguration,
+    private val wasmSourceReader: WasmSourceReader,
 ) {
     val logger = host.rootLogger
     val sqliteSource: Source by lazy(LazyThreadSafetyMode.NONE) {
-        val bytes = WasmSourceReader.readBytesOrThrow(sqlite3Binary.sqliteUrl)
+        val bytes = wasmSourceReader.readBytesOrThrow(sqlite3Binary.sqliteUrl)
         Source.newBuilder("wasm", ByteSequence.create(bytes), SQLITE3_SOURCE_NAME)
             .name(SQLITE3_SOURCE_NAME)
             .build()

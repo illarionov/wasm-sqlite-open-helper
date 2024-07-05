@@ -10,9 +10,18 @@ public object TestEnv {
     public fun prepareTestEnvBeforeTest() {
         setupInputStreamBuffering()
     }
+
+    public fun afterTest() {
+        flushBuffers()
+    }
 }
 
 /**
  * Workaround for https://youtrack.jetbrains.com/issue/KT-69709/
  */
 public expect fun setupInputStreamBuffering()
+
+/**
+ * Workaround for https://youtrack.jetbrains.com/issue/KT-69709/
+ */
+public expect fun flushBuffers()

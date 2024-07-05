@@ -4,10 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.host.test.fixtures
+@file:Suppress("FILE_CONTAINS_ONLY_COMMENTS", "FILE_NO_BLANK_LINE_BETWEEN_BLOCKS")
 
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.Path
-
-open class TestPath : Path {
-    override val pathString: String get() = "nonexistent"
-}
+// Workaround for https://youtrack.jetbrains.com/issue/KTIJ-15797
+package ru.pixnews.wasm.sqlite.open.helper.host.test

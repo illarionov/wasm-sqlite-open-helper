@@ -44,13 +44,12 @@ internal class MainInstanceBuilder(
     private val host: EmbedderHost,
     private val chicoryLogger: ChicoryLogger,
     private val callbackStore: SqliteCallbackStore,
+    private val sqlite3Binary: WasmSqliteConfiguration,
+    private val wasmSourceReader: WasmSourceReader,
     private val stackBindingsRef: () -> EmscriptenStack,
-    private val minMemorySize: Long = 50_331_648L,
 ) {
-    fun setupModule(
-        sqlite3Binary: WasmSqliteConfiguration,
-    ): ChicoryInstance {
-        val memory = setupMemory(minMemorySize)
+    fun setupModule(): ChicoryInstance {
+        val memory = setupMemory(sqlite3Binary.wasmMinMemorySize)
 
         val memoryAdapter = ChicoryMemoryAdapter(memory.memory())
         val wasiMemoryReader: WasiMemoryReader = ChicoryWasiMemoryReader.createOrDefault(
@@ -82,7 +81,7 @@ internal class MainInstanceBuilder(
             arrayOf<HostTable>(),
         )
 
-        val sqlite3Module: Module = WasmSourceReader.readOrThrow(sqlite3Binary.sqliteUrl) { source, _ ->
+        val sqlite3Module: Module = wasmSourceReader.readOrThrow(sqlite3Binary.sqliteUrl) { source, _ ->
             runCatching {
                 source.buffer().inputStream().use {
                     Module

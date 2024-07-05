@@ -8,6 +8,7 @@ package ru.pixnews.wasm.sqlite.open.helper.chicory
 
 import com.dylibso.chicory.log.Logger.Level
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
+import ru.pixnews.wasm.sqlite.binary.reader.WasmSourceReader
 import ru.pixnews.wasm.sqlite.open.helper.chicory.exports.ChicoryEmscriptenMainExports
 import ru.pixnews.wasm.sqlite.open.helper.chicory.exports.ChicoryEmscriptenStackExports
 import ru.pixnews.wasm.sqlite.open.helper.chicory.exports.ChicorySqliteExports
@@ -34,17 +35,27 @@ public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig
         commonConfig: WasmSqliteCommonConfig,
         embedderConfigBuilder: ChicorySqliteEmbedderConfig.() -> Unit,
     ): SqliteWasmEnvironment<ChicoryRuntimeInstance> {
-        val config = ChicorySqliteEmbedderConfig(commonConfig.logger).apply(embedderConfigBuilder)
+        val config = mergeConfig(commonConfig, embedderConfigBuilder)
         return createChicorySqliteWasmEnvironment(
             config.host,
             config.sqlite3Binary,
+            config.wasmSourceReader,
             config.logSeverity,
         )
     }
 
+    internal fun mergeConfig(
+        commonConfig: WasmSqliteCommonConfig,
+        embedderConfigBuilder: ChicorySqliteEmbedderConfig.() -> Unit,
+    ): ChicorySqliteEmbedderConfig = ChicorySqliteEmbedderConfig(
+        rootLogger = commonConfig.logger,
+        defaultWasmSourceReader = WasmSourceReader,
+    ).apply(embedderConfigBuilder)
+
     private fun createChicorySqliteWasmEnvironment(
         host: EmbedderHost,
         sqlite3Binary: WasmSqliteConfiguration,
+        wasmSourceReader: WasmSourceReader,
         logSeverity: Level,
     ): SqliteWasmEnvironment<ChicoryRuntimeInstance> {
         require(!sqlite3Binary.requireThreads) {
@@ -63,8 +74,9 @@ public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig
             callbackStore = callbackStore,
             chicoryLogger = chicoryLogger,
             stackBindingsRef = stackBindingsRef::get,
-            minMemorySize = sqlite3Binary.wasmMinMemorySize,
-        ).setupModule(sqlite3Binary)
+            sqlite3Binary = sqlite3Binary,
+            wasmSourceReader = wasmSourceReader,
+        ).setupModule()
 
         val emscriptenRuntime = EmscriptenRuntime.emscriptenSingleThreadedRuntime(
             mainExports = ChicoryEmscriptenMainExports(chicoryInstance.instance),

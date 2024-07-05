@@ -14,12 +14,25 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.writeNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.host.test.fixtures.TestEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.test.fixtures.TestMemory
+import ru.pixnews.wasm.sqlite.test.utils.TestEnv
 import ru.pixnews.wasm.sqlite.test.utils.TestLogger
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 class EmscriptenConsoleErrorFunctionHandleTest {
     private val host = TestEmbedderHost()
     private val memory = TestMemory()
+
+    @BeforeTest
+    fun setup() {
+        TestEnv.prepareTestEnvBeforeTest()
+    }
+
+    @AfterTest
+    fun cleanup() {
+        TestEnv.afterTest()
+    }
 
     @Test
     fun consoleErrorLog_success_case() {

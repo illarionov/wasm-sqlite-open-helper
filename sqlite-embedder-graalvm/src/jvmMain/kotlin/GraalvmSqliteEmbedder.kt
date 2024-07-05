@@ -6,6 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm
 
+import ru.pixnews.wasm.sqlite.binary.reader.WasmSourceReader
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedder
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteWasmEnvironment
@@ -17,11 +18,20 @@ public object GraalvmSqliteEmbedder : SqliteEmbedder<GraalvmSqliteEmbedderConfig
         commonConfig: WasmSqliteCommonConfig,
         embedderConfigBuilder: GraalvmSqliteEmbedderConfig.() -> Unit,
     ): SqliteWasmEnvironment<GraalvmRuntimeInstance> {
-        val config = GraalvmSqliteEmbedderConfig(commonConfig.logger).apply(embedderConfigBuilder)
+        val config = mergeConfig(commonConfig, embedderConfigBuilder)
         return GraalvmEmbedderBuilder(
             config.graalvmEngine,
             config.host,
             config.sqlite3Binary,
+            config.wasmSourceReader,
         ).createEnvironment()
     }
+
+    internal fun mergeConfig(
+        commonConfig: WasmSqliteCommonConfig,
+        embedderConfigBuilder: GraalvmSqliteEmbedderConfig.() -> Unit,
+    ): GraalvmSqliteEmbedderConfig = GraalvmSqliteEmbedderConfig(
+        embedderRootLogger = commonConfig.logger,
+        defaultWasmSourceReader = WasmSourceReader,
+    ).apply(embedderConfigBuilder)
 }

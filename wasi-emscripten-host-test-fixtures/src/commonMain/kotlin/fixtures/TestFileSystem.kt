@@ -18,8 +18,8 @@ import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.StructStat
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Whence
 
-open class TestFileSystem : FileSystem<Path> {
-    var readLinkAtHandler: (dirFd: DirFd, path: String) -> String = { _, _ ->
+public open class TestFileSystem : FileSystem<Path> {
+    public var readLinkAtHandler: (dirFd: DirFd, path: String) -> String = { _, _ ->
         error("Not implemented")
     }
 

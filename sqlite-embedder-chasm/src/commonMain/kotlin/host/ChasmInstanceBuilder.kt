@@ -56,14 +56,13 @@ internal class ChasmInstanceBuilder(
     private val host: EmbedderHost,
     private val callbackStore: SqliteCallbackStore,
     private val emscriptenStackRef: () -> EmscriptenStack,
-    private val minMemorySize: Long = 50_331_648L,
+    private val sqlite3Binary: WasmSqliteConfiguration,
+    private val sourceReader: WasmSourceReader,
 ) {
-    fun setupChasmInstance(
-        sqlite3Binary: WasmSqliteConfiguration,
-    ): ChasmInstance {
+    fun setupChasmInstance(): ChasmInstance {
         val store: Store = store()
 
-        val memoryImport = setupMemory(store, minMemorySize)
+        val memoryImport = setupMemory(store, sqlite3Binary.wasmMinMemorySize)
         val memory = ChasmMemoryAdapter(store, (memoryImport.value as Memory).address)
         val wasiMemoryReader = DefaultWasiMemoryReader(memory, host.fileSystem, host.rootLogger)
         val wasiMemoryWriter = DefaultWasiMemoryWriter(memory, host.fileSystem, host.rootLogger)
@@ -77,7 +76,7 @@ internal class ChasmInstanceBuilder(
             addAll(sqliteCallbacksHostFunctions)
         }
 
-        val sqliteModule: Module = WasmSourceReader.readOrThrow(sqlite3Binary.sqliteUrl) { source, _ ->
+        val sqliteModule: Module = sourceReader.readOrThrow(sqlite3Binary.sqliteUrl) { source, _ ->
             val readModuleResult: Result<Module> = source.buffer().use {
                 module(OkioSourceReader(it))
             }.fold(
