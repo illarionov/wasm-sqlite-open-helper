@@ -26,6 +26,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(projects.sqliteCommon)
+            implementation(libs.wsoh.binary.reader)
             implementation(libs.wsoh.sqlite.mt)
             implementation(projects.wasiEmscriptenHost)
         }

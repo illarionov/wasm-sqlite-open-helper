@@ -23,6 +23,7 @@ kotlin {
         commonMain.dependencies {
             api(projects.sqliteCommon)
             implementation(libs.chicory)
+            implementation(libs.wsoh.binary.reader)
             implementation(libs.wsoh.sqlite.st)
             implementation(projects.wasiEmscriptenHost)
         }

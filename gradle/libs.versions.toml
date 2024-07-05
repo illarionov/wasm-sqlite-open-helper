@@ -29,7 +29,7 @@ kermit = "2.0.4"
 ksp = "2.0.20-Beta1-1.0.22"
 okio = "3.9.0"
 spotless = "7.0.0.BETA1"
-sqlite-wasm-binary = "0.1-alpha06"
+sqlite-wasm-binary = "0.1-alpha07"
 
 [libraries]
 androidx-collection = { group = "androidx.collection", name = "collection", version.ref = "androidx-collection" }
@@ -77,6 +77,7 @@ okio-okio = { group = "com.squareup.okio", name = "okio", version.ref = "okio" }
 wsoh-sqlite-mt = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-android-wasm-emscripten-icu-mt-pthread-346", version.ref = "sqlite-wasm-binary" }
 wsoh-sqlite-st = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-android-wasm-emscripten-icu-346", version.ref = "sqlite-wasm-binary" }
 wsoh-binary-base = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-binary-api", version.ref = "sqlite-wasm-binary" }
+wsoh-binary-reader = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "wasm-binary-reader", version.ref = "sqlite-wasm-binary" }
 
 # Dependencies of the included build-logic
 agp-plugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }

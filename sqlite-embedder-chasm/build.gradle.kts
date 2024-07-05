@@ -33,6 +33,7 @@ kotlin {
             compileOnly(libs.chasm.validator)
             api(projects.sqliteCommon)
             implementation(projects.wasiEmscriptenHost)
+            implementation(libs.wsoh.binary.reader)
             implementation(libs.wsoh.sqlite.st)
         }
     }
