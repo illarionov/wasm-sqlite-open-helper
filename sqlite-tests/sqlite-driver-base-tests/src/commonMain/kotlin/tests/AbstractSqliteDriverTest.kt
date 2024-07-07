@@ -11,6 +11,7 @@ import co.touchlab.kermit.Severity
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.test.utils.KermitLogger
+import ru.pixnews.wasm.sqlite.test.utils.TestEnv
 import kotlin.test.BeforeTest
 
 public abstract class AbstractSqliteDriverTest<S : SQLiteDriver>(
@@ -27,6 +28,7 @@ public abstract class AbstractSqliteDriverTest<S : SQLiteDriver>(
 
     @BeforeTest
     fun preSetup() {
+        TestEnv.prepareTestEnvBeforeTest()
         beforeSetup()
     }
 
