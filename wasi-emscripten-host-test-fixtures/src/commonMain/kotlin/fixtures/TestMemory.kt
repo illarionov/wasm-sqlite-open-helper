@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+@file:Suppress("MagicNumber")
+
 package ru.pixnews.wasm.sqlite.open.helper.host.test.fixtures
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
@@ -14,16 +16,16 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
 import ru.pixnews.wasm.sqlite.test.utils.KermitLogger
 
-open class TestMemory(
-    val size: Int = 1_048_576,
-    val fileSystem: FileSystem<*> = TestFileSystem(),
-    val logger: Logger = KermitLogger(),
+public open class TestMemory(
+    public val size: Int = 1_048_576,
+    public val fileSystem: FileSystem<*> = TestFileSystem(),
+    public val logger: Logger = KermitLogger(),
 ) : Memory {
-    val bytes = ByteArray(size) { 0xdc.toByte() }
-    val memoryReader = DefaultWasiMemoryReader(this, fileSystem, logger)
-    val memoryWriter = DefaultWasiMemoryWriter(this, fileSystem, logger)
+    public val bytes: ByteArray = ByteArray(size) { 0xdc.toByte() }
+    public val memoryReader: DefaultWasiMemoryReader = DefaultWasiMemoryReader(this, fileSystem, logger)
+    public val memoryWriter: DefaultWasiMemoryWriter = DefaultWasiMemoryWriter(this, fileSystem, logger)
 
-    fun fill(value: Byte) {
+    public fun fill(value: Byte) {
         bytes.fill(value)
     }
 

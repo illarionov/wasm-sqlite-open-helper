@@ -7,6 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.chasm
 
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
+import ru.pixnews.wasm.sqlite.binary.reader.WasmSourceReader
 import ru.pixnews.wasm.sqlite.open.helper.chasm.exports.ChasmEmscriptenMainExports
 import ru.pixnews.wasm.sqlite.open.helper.chasm.exports.ChasmSqliteExports
 import ru.pixnews.wasm.sqlite.open.helper.chasm.exports.ChicoryEmscriptenStackExports
@@ -31,16 +32,28 @@ public object ChasmSqliteEmbedder : SqliteEmbedder<ChasmSqliteEmbedderConfig, Ch
         commonConfig: WasmSqliteCommonConfig,
         embedderConfigBuilder: ChasmSqliteEmbedderConfig.() -> Unit,
     ): SqliteWasmEnvironment<ChasmRuntimeInstance> {
-        val config = ChasmSqliteEmbedderConfig(commonConfig.logger).apply(embedderConfigBuilder)
+        val config = mergeConfig(commonConfig, embedderConfigBuilder)
         return createChasmSqliteWasmEnvironment(
             config.host,
             config.sqlite3Binary,
+            config.wasmSourceReader,
         )
+    }
+
+    internal fun mergeConfig(
+        commonConfig: WasmSqliteCommonConfig,
+        embedderConfigBuilder: ChasmSqliteEmbedderConfig.() -> Unit,
+    ): ChasmSqliteEmbedderConfig {
+        return ChasmSqliteEmbedderConfig(
+            rootLogger = commonConfig.logger,
+            defaultWasmSourceReader = WasmSourceReader,
+        ).apply(embedderConfigBuilder)
     }
 
     private fun createChasmSqliteWasmEnvironment(
         host: EmbedderHost,
         sqlite3Binary: WasmSqliteConfiguration,
+        sourceReader: WasmSourceReader,
     ): SqliteWasmEnvironment<ChasmRuntimeInstance> {
         require(!sqlite3Binary.requireThreads) {
             "The specified SQLite binary is compiled with threading support, which is not compatible with the " +
@@ -52,9 +65,10 @@ public object ChasmSqliteEmbedder : SqliteEmbedder<ChasmSqliteEmbedderConfig, Ch
         val chasmInstance: ChasmInstance = ChasmInstanceBuilder(
             host = host,
             callbackStore = callbackStore,
-            minMemorySize = sqlite3Binary.wasmMinMemorySize,
             emscriptenStackRef = { emscriptenStack },
-        ).setupChasmInstance(sqlite3Binary)
+            sqlite3Binary = sqlite3Binary,
+            sourceReader = sourceReader,
+        ).setupChasmInstance()
 
         val emscriptenRuntime = EmscriptenRuntime.emscriptenSingleThreadedRuntime(
             mainExports = ChasmEmscriptenMainExports(chasmInstance),

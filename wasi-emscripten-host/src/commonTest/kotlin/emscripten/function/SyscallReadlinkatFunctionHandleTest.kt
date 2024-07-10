@@ -19,6 +19,9 @@ import ru.pixnews.wasm.sqlite.open.helper.host.test.fixtures.TestEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.test.fixtures.TestFileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.test.fixtures.TestMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
+import ru.pixnews.wasm.sqlite.test.utils.TestEnv
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 class SyscallReadlinkatFunctionHandleTest {
@@ -26,6 +29,16 @@ class SyscallReadlinkatFunctionHandleTest {
     private val host = TestEmbedderHost(fileSystem = fileSystem)
     private val memory = TestMemory(fileSystem = host.fileSystem)
     private val readlinkatFunctionHandle = SyscallReadlinkatFunctionHandle(host)
+
+    @BeforeTest
+    fun setup() {
+        TestEnv.prepareTestEnvBeforeTest()
+    }
+
+    @AfterTest
+    fun cleanup() {
+        TestEnv.afterTest()
+    }
 
     @Test
     fun readlinkAt_test_success_case() {

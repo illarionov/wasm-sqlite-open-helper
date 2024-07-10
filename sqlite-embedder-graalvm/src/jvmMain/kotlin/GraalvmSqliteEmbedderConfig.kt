@@ -9,6 +9,7 @@ package ru.pixnews.wasm.sqlite.open.helper.graalvm
 import org.graalvm.polyglot.Engine
 import ru.pixnews.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcuMtPthread346
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
+import ru.pixnews.wasm.sqlite.binary.reader.WasmSourceReader
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
@@ -20,6 +21,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 @WasmSqliteOpenHelperDsl
 public class GraalvmSqliteEmbedderConfig internal constructor(
     embedderRootLogger: Logger,
+    defaultWasmSourceReader: WasmSourceReader,
 ) : SqliteEmbedderConfig {
     /**
      * Instance of the GraalVM WebAssembly engine. Single instance of the Engine can be reused to speed
@@ -35,6 +37,14 @@ public class GraalvmSqliteEmbedderConfig internal constructor(
      * Sets used Sqlite WebAssembly binary file
      */
     public var sqlite3Binary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcuMtPthread346
+
+    /**
+     * Sets the Wasm source reader responsible for reading a WebAssembly binary.
+     * This can be overridden to read Wasm files from non-standard locations.
+     * See [JvmResourcesWasmBinaryReader][ru.pixnews.wasm.sqlite.binary.reader.JvmResourcesWasmBinaryReader] for
+     * example of custom implementations.
+     */
+    public var wasmSourceReader: WasmSourceReader = defaultWasmSourceReader
 
     /**
      * Implementation of a host object that provides access from the WebAssembly to external host resources.

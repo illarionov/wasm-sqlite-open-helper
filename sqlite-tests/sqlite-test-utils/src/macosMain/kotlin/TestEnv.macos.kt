@@ -12,3 +12,10 @@ package ru.pixnews.wasm.sqlite.test.utils
 public actual fun setupInputStreamBuffering() {
     // Not verified, assume it is not required
 }
+
+/**
+ * Workaround for https://youtrack.jetbrains.com/issue/KT-69709/
+ */
+public actual fun flushBuffers() {
+    // Not verified, assume it is not required
+}

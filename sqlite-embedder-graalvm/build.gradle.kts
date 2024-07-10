@@ -26,7 +26,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(projects.sqliteCommon)
-            implementation(libs.wsoh.binary.reader)
+            api(libs.wsoh.binary.reader)
             implementation(libs.wsoh.sqlite.mt)
             implementation(projects.wasiEmscriptenHost)
         }
@@ -35,6 +35,12 @@ kotlin {
             compileOnly(libs.graalvm.wasm.language)
             implementation(libs.graalvm.polyglot.wasm)
             implementation(libs.graalvm.truffle.api)
+        }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(libs.assertk)
+            implementation(projects.sqliteTests.sqliteTestUtils)
+            implementation(projects.wasiEmscriptenHostTestFixtures)
         }
     }
 }

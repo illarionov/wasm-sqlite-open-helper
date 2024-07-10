@@ -14,12 +14,25 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.test.assertions.hasBytesAt
 import ru.pixnews.wasm.sqlite.open.helper.host.test.fixtures.TestEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.test.fixtures.TestMemory
+import ru.pixnews.wasm.sqlite.test.utils.TestEnv
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 class GetentropyFunctionHandleTest {
     private val host = TestEmbedderHost()
     private val memory = TestMemory()
     private val getentropyHandle = GetentropyFunctionHandle(host)
+
+    @BeforeTest
+    fun setup() {
+        TestEnv.prepareTestEnvBeforeTest()
+    }
+
+    @AfterTest
+    fun cleanup() {
+        TestEnv.afterTest()
+    }
 
     @Test
     fun getEntropy_success_case() {

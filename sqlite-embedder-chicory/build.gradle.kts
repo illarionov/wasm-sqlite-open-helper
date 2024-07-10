@@ -22,10 +22,16 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(projects.sqliteCommon)
+            api(libs.wsoh.binary.reader)
             implementation(libs.chicory)
-            implementation(libs.wsoh.binary.reader)
             implementation(libs.wsoh.sqlite.st)
             implementation(projects.wasiEmscriptenHost)
+        }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(libs.assertk)
+            implementation(projects.sqliteTests.sqliteTestUtils)
+            implementation(projects.wasiEmscriptenHostTestFixtures)
         }
     }
 }

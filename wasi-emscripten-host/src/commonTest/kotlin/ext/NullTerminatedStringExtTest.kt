@@ -9,10 +9,17 @@ package ru.pixnews.wasm.sqlite.open.helper.host.ext
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.tableOf
+import ru.pixnews.wasm.sqlite.test.utils.TestEnv
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 
 class NullTerminatedStringExtTest {
+    @BeforeTest
+    fun setup() {
+        TestEnv.prepareTestEnvBeforeTest()
+    }
+
     @Test
     fun encodeToNullTerminatedByteArray_test() {
         // TODO: correctly truncate on utf-8 character border

@@ -20,7 +20,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.include.StructTm
 import ru.pixnews.wasm.sqlite.open.helper.host.include.TimeZoneInfo
 import ru.pixnews.wasm.sqlite.test.utils.KermitLogger
 
-open class TestEmbedderHost(
+public open class TestEmbedderHost(
     override var rootLogger: Logger = KermitLogger(),
     override var systemEnvProvider: SystemEnvProvider = SystemEnvProvider { emptyMap() },
     override var commandArgsProvider: CommandArgsProvider = CommandArgsProvider { emptyList() },
