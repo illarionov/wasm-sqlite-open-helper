@@ -27,6 +27,7 @@
          <trusted-key id="0785B3EFF60B1B1BEA94E0BB7C25280EAE63EBE5" group="org.apache.httpcomponents"/>
          <trusted-key id="08F0AAB4D0C1A4BDDE340765B341DDB020FCB6AB" group="org.bouncycastle"/>
          <trusted-key id="0D35D3F60078655126908E8AF3D1600878E85A3D" group="io.netty"/>
+         <trusted-key id="19BEAB2D799C020F17C69126B16698A4ADF4D638" group="org.checkerframework" name="checker-qual"/>
          <trusted-key id="1D2C7EF8ADA0F794B58C7C63436902AF59EDF60E" group="dev.equo.ide" name="solstice"/>
          <trusted-key id="1D63A77F7270FE07D46B3EB514D68971286170CB" group="io.github.charlietap.chasm"/>
          <trusted-key id="20723A6399BC060154283B37CFAE163B64AC9189" group="^org[.]jetbrains($|([.].*))" regex="true"/>
@@ -134,6 +135,11 @@
       <component group="com.google.errorprone" name="error_prone_annotations" version="2.11.0">
          <artifact name="error_prone_annotations-2.11.0.jar">
             <pgp value="E77417AC194160A3FABD04969A259C7EE636C5ED"/>
+         </artifact>
+      </component>
+      <component group="com.google.errorprone" name="error_prone_annotations" version="2.26.1">
+         <artifact name="error_prone_annotations-2.26.1.jar">
+            <pgp value="EE0CA873074092F806F59B65D364ABAA39A47320"/>
          </artifact>
       </component>
       <component group="com.google.flatbuffers" name="flatbuffers-java" version="1.12.0">
