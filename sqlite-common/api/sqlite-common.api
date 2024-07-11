@@ -189,7 +189,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/embedder/sqlitecb/SqliteCa
 
 public final class ru/pixnews/wasm/sqlite/open/helper/embedder/sqlitecb/function/Sqlite3LoggingFunctionHandler : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
 	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;Lkotlin/jvm/functions/Function0;)V
-	public final fun execute-TCp78Vo (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory;II)V
+	public final fun execute-TCp78Vo (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/ReadOnlyMemory;II)V
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/embedder/sqlitecb/function/Sqlite3ProgressFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
@@ -199,7 +199,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/embedder/sqlitecb/function
 
 public final class ru/pixnews/wasm/sqlite/open/helper/embedder/sqlitecb/function/Sqlite3TraceFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
 	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;Lkotlin/jvm/functions/Function1;)V
-	public final fun execute-0B3G4p4 (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory;IIIJ)I
+	public final fun execute-0B3G4p4 (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/ReadOnlyMemory;IIIJ)I
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteColumnType {

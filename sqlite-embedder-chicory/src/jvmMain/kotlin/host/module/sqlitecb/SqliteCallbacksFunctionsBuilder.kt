@@ -23,10 +23,10 @@ import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmModules.SQLITE3_CALLBACK_MANAGER_MODULE_NAME
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmValueType
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.IndirectFunctionTableIndex
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
 
 internal class SqliteCallbacksFunctionsBuilder(
-    private val memory: Memory,
+    private val memory: ReadOnlyMemory,
     private val host: EmbedderHost,
     private val callbackStore: SqliteCallbackStore,
 ) {
@@ -56,7 +56,7 @@ internal class SqliteCallbacksFunctionsBuilder(
     internal companion object {
         private fun SqliteCallbacksModuleFunction.createFunctionHandle(
             host: EmbedderHost,
-            memory: Memory,
+            memory: ReadOnlyMemory,
             callbackStore: SqliteCallbackStore,
         ): WasmFunctionHandle = when (this) {
             SQLITE3_TRACE_CALLBACK -> Sqlite3TraceAdapter(

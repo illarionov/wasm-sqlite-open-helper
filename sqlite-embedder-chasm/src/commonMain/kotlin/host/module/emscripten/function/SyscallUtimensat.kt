@@ -13,12 +13,12 @@ import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.asUInt
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.asWasmAddr
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.EmscriptenHostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.SyscallUtimensatFunctionHandle
 
 internal class SyscallUtimensat(
     host: EmbedderHost,
-    private val memory: Memory,
+    private val memory: ReadOnlyMemory,
 ) : EmscriptenHostFunctionHandle {
     private val handle = SyscallUtimensatFunctionHandle(host)
 

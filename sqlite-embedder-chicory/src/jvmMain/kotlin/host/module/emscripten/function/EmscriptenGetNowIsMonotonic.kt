@@ -10,13 +10,9 @@ import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.wasm.types.Value
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.EmscriptenHostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.EmscriptenGetNowIsMonotonicFunctionHandle
 
-internal class EmscriptenGetNowIsMonotonic(
-    host: EmbedderHost,
-    @Suppress("UNUSED_PARAMETER") memory: Memory,
-) : EmscriptenHostFunctionHandle {
+internal class EmscriptenGetNowIsMonotonic(host: EmbedderHost) : EmscriptenHostFunctionHandle {
     private val handle = EmscriptenGetNowIsMonotonicFunctionHandle(host)
 
     override fun apply(instance: Instance, vararg args: Value): Value {

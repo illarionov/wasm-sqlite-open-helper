@@ -9,7 +9,7 @@ package ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
@@ -20,7 +20,7 @@ public class SyscallChmodFunctionHandle(
     host: EmbedderHost,
 ) : HostFunctionHandle(EmscriptenHostFunction.SYSCALL_CHMOD, host) {
     public fun execute(
-        memory: Memory,
+        memory: ReadOnlyMemory,
         pathnamePtr: WasmPtr<Byte>,
         mode: UInt,
     ): Int {

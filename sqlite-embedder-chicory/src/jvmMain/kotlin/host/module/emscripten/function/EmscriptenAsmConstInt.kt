@@ -11,13 +11,9 @@ import com.dylibso.chicory.wasm.types.Value
 import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.asWasmAddr
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.EmscriptenHostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.EmscriptenAsmConstIntFunctionHandle
 
-internal class EmscriptenAsmConstInt(
-    host: EmbedderHost,
-    @Suppress("UnusedPrivateProperty") private val memory: Memory,
-) : EmscriptenHostFunctionHandle {
+internal class EmscriptenAsmConstInt(host: EmbedderHost) : EmscriptenHostFunctionHandle {
     private val handle = EmscriptenAsmConstIntFunctionHandle(host)
 
     override fun apply(instance: Instance, vararg args: Value): Value? {

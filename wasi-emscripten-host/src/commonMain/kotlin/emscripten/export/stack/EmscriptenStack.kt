@@ -9,6 +9,7 @@ package ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.stack
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
 
 /**
  * Emscripten Stack bindings.
@@ -122,7 +123,7 @@ public class EmscriptenStack(
     }
 
     @Suppress("MagicNumber")
-    public fun checkStackCookie(memory: Memory) {
+    public fun checkStackCookie(memory: ReadOnlyMemory) {
         if (exports.emscripten_stack_get_end == null) {
             return
         }

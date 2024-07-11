@@ -13,13 +13,13 @@ import com.dylibso.chicory.wasm.types.Value
 import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.asWasmAddr
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.EmscriptenHostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readU32
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.SyscallOpenatFunctionHandle
 
 internal class SyscallOpenat(
     host: EmbedderHost,
-    private val memory: Memory,
+    private val memory: ReadOnlyMemory,
 ) : EmscriptenHostFunctionHandle {
     private val handle: SyscallOpenatFunctionHandle = SyscallOpenatFunctionHandle(host)
 
