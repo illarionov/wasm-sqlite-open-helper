@@ -11,6 +11,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WasiMemoryReader
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.plus
@@ -65,7 +66,7 @@ public class FdReadFdPreadFunctionHandle private constructor(
         )
 
         private fun readIovecs(
-            memory: Memory,
+            memory: ReadOnlyMemory,
             pIov: WasmPtr<Iovec>,
             iovCnt: Int,
         ): IovecArray {

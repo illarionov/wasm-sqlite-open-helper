@@ -12,12 +12,12 @@ import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.asWasmAddr
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.EmscriptenHostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.function.Sqlite3LoggingFunctionHandler
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteLogCallback
 
 internal class Sqlite3LoggingAdapter(
     host: EmbedderHost,
-    private val memory: Memory,
+    private val memory: ReadOnlyMemory,
     logCallbackStore: () -> SqliteLogCallback?,
 ) : EmscriptenHostFunctionHandle {
     private val handle = Sqlite3LoggingFunctionHandler(host, logCallbackStore)

@@ -11,12 +11,12 @@ import io.github.charlietap.chasm.executor.runtime.value.NumberValue.I32
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.asWasmAddr
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.EmscriptenHostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.SyscallRmdirFunctionHandle
 
 internal class SyscallRmdir(
     host: EmbedderHost,
-    private val memory: Memory,
+    private val memory: ReadOnlyMemory,
 ) : EmscriptenHostFunctionHandle {
     private val handle = SyscallRmdirFunctionHandle(host)
 

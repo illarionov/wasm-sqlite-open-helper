@@ -22,7 +22,7 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModul
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction.SQLITE3_TRACE_CALLBACK
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmModules.SQLITE3_CALLBACK_MANAGER_MODULE_NAME
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
 
 internal fun getSqliteCallbacksHostFunctions(
     store: Store,
@@ -49,7 +49,7 @@ internal fun getSqliteCallbacksHostFunctions(
 
 private fun SqliteCallbacksModuleFunction.createChasmHostFunction(
     host: EmbedderHost,
-    memory: Memory,
+    memory: ReadOnlyMemory,
     callbackStore: SqliteCallbackStore,
 ): EmscriptenHostFunctionHandle = when (this) {
     SQLITE3_TRACE_CALLBACK -> Sqlite3TraceAdapter(

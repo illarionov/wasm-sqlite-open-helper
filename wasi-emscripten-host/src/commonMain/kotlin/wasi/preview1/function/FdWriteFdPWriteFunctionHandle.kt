@@ -11,6 +11,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WasiMemoryWriter
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.plus
@@ -66,7 +67,7 @@ public class FdWriteFdPWriteFunctionHandle private constructor(
 
         @Suppress("UNCHECKED_CAST")
         private fun readCiovecs(
-            memory: Memory,
+            memory: ReadOnlyMemory,
             pCiov: WasmPtr<CioVec>,
             ciovCnt: Int,
         ): CiovecArray {

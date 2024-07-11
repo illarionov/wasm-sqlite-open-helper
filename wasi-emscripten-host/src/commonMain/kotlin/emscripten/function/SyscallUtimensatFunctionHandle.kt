@@ -10,7 +10,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.base.isSqlite3Null
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.host.base.plus
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
@@ -27,7 +27,7 @@ public class SyscallUtimensatFunctionHandle(
     host: EmbedderHost,
 ) : HostFunctionHandle(EmscriptenHostFunction.SYSCALL_UTIMENSAT, host) {
     public fun execute(
-        memory: Memory,
+        memory: ReadOnlyMemory,
         rawDirFd: Int,
         pathnamePtr: WasmPtr<Byte>,
         times: WasmPtr<Byte>,

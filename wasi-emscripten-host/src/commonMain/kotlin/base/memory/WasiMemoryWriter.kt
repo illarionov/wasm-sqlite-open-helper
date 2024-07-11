@@ -22,7 +22,7 @@ public fun interface WasiMemoryWriter {
 }
 
 public class DefaultWasiMemoryWriter(
-    private val memory: Memory,
+    private val memory: ReadOnlyMemory,
     private val fileSystem: FileSystem<*>,
     logger: Logger,
 ) : WasiMemoryWriter {
@@ -34,7 +34,7 @@ public class DefaultWasiMemoryWriter(
     }
 
     private fun CiovecArray.toByteBuffers(
-        memory: Memory,
+        memory: ReadOnlyMemory,
     ): List<FileSystemByteBuffer> = List(ciovecList.size) { idx ->
         val ciovec = ciovecList[idx]
         val bytes = ByteArray(ciovec.bufLen.value.toInt()).also {

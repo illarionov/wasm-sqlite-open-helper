@@ -8,7 +8,7 @@ package ru.pixnews.wasm.sqlite.open.helper.host.emscripten
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
@@ -27,7 +27,7 @@ internal class FcntlHandler(
     )
 
     fun invoke(
-        memory: Memory,
+        memory: ReadOnlyMemory,
         fd: Fd,
         operation: UInt,
         thirdArg: Int?,
@@ -41,7 +41,7 @@ internal class FcntlHandler(
 
     internal fun interface FcntlOperationHandler {
         fun invoke(
-            memory: Memory,
+            memory: ReadOnlyMemory,
             fd: Fd,
             varArgs: Int?,
         ): Int
@@ -50,7 +50,7 @@ internal class FcntlHandler(
     @Suppress("OBJECT_IS_PREFERRED")
     internal inner class FcntlSetLockOperation : FcntlOperationHandler {
         override fun invoke(
-            memory: Memory,
+            memory: ReadOnlyMemory,
             fd: Fd,
             varArgs: Int?,
         ): Int {

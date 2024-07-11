@@ -9,7 +9,7 @@ package ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.AssertionFailedException
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
@@ -18,7 +18,7 @@ public class AssertFailFunctionHandle(
     host: EmbedderHost,
 ) : HostFunctionHandle(EmscriptenHostFunction.ASSERT_FAIL, host) {
     public fun execute(
-        memory: Memory,
+        memory: ReadOnlyMemory,
         condition: WasmPtr<Byte>,
         filename: WasmPtr<Byte>,
         line: Int,

@@ -8,7 +8,7 @@ package ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.pthread
 
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.IndirectFunctionTableIndex
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.memory.DynamicMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.memory.freeSilent
 import ru.pixnews.wasm.sqlite.open.helper.host.include.pthread_t
@@ -16,7 +16,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.include.pthread_t
 public class EmscriptenPthread(
     private val exports: EmscriptenPthreadExports,
     private val dynamicMemory: DynamicMemory,
-    private val memory: Memory,
+    private val memory: ReadOnlyMemory,
 ) {
     public fun pthreadSelf(): pthread_t {
         return exports.pthread_self.executeForLong().toULong()

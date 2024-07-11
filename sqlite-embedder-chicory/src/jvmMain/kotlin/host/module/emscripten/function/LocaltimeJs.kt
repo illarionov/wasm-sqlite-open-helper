@@ -16,7 +16,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.LocaltimeJsFu
 
 internal class LocaltimeJs(
     host: EmbedderHost,
-    @Suppress("UnusedPrivateProperty") private val memory: Memory,
+    private val memory: Memory,
 ) : EmscriptenHostFunctionHandle {
     private val handle = LocaltimeJsFunctionHandle(host)
 

@@ -10,7 +10,7 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModul
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteLogCallback
 
@@ -19,7 +19,7 @@ public class Sqlite3LoggingFunctionHandler(
     private val logCallbackStore: () -> SqliteLogCallback?,
 ) : HostFunctionHandle(SqliteCallbacksModuleFunction.SQLITE3_LOGGING_CALLBACK, host) {
     public fun execute(
-        memory: Memory,
+        memory: ReadOnlyMemory,
         errCode: Int,
         messagePointer: WasmPtr<Byte>,
     ) {

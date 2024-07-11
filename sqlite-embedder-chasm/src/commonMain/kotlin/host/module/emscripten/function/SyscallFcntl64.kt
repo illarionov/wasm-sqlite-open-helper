@@ -11,13 +11,13 @@ import io.github.charlietap.chasm.executor.runtime.value.NumberValue.I32
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.asInt
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.EmscriptenHostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.SyscallFcntl64FunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 
 internal class SyscallFcntl64(
     host: EmbedderHost,
-    private val memory: Memory,
+    private val memory: ReadOnlyMemory,
 ) : EmscriptenHostFunctionHandle {
     private val handle = SyscallFcntl64FunctionHandle(host)
 

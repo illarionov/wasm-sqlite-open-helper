@@ -156,7 +156,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/base/memory/DefaultWa
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/base/memory/DefaultWasiMemoryWriter : ru/pixnews/wasm/sqlite/open/helper/host/base/memory/WasiMemoryWriter {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/FileSystem;Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;)V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/ReadOnlyMemory;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/FileSystem;Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;)V
 	public fun write-xfxaLn8 (ILru/pixnews/wasm/sqlite/open/helper/host/filesystem/ReadWriteStrategy;Ljava/util/List;)J
 }
 
@@ -283,7 +283,7 @@ public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/emscript
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/pthread/EmscriptenPthread {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/pthread/EmscriptenPthreadExports;Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/memory/DynamicMemory;Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory;)V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/pthread/EmscriptenPthreadExports;Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/memory/DynamicMemory;Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/ReadOnlyMemory;)V
 	public final fun pthreadCreate-aBIk1Bo (III)J
 	public final fun pthreadExit-3UaoRD8 (I)V
 	public final fun pthreadSelf-s-VKNKU ()J
@@ -343,7 +343,7 @@ public class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/pthread/P
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/stack/EmscriptenStack {
 	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/emscripten/export/stack/EmscriptenStackExports;Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;)V
-	public final fun checkStackCookie (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory;)V
+	public final fun checkStackCookie (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/ReadOnlyMemory;)V
 	public final fun emscriptenStackRestore-3UaoRD8 (I)V
 	public final fun emscriptenStackSetLimits-L6k8FUg (II)V
 	public final fun getEmscriptenStackBase-SaHgrxE ()I
@@ -380,7 +380,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/A
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/AssertFailFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
 	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
-	public final fun execute-qnnoFK8 (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory;IIII)Ljava/lang/Void;
+	public final fun execute-qnnoFK8 (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/ReadOnlyMemory;IIII)Ljava/lang/Void;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/EmscriptenAsmConstAsyncOnMainThreadFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
@@ -395,7 +395,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/E
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/EmscriptenConsoleErrorFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
 	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
-	public final fun execute-mr_6yCQ (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory;I)V
+	public final fun execute-mr_6yCQ (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/ReadOnlyMemory;I)V
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/EmscriptenDateNowFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
@@ -449,12 +449,12 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/M
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/SyscallChmodFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
 	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
-	public final fun execute-8mVABPk (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory;II)I
+	public final fun execute-8mVABPk (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/ReadOnlyMemory;II)I
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/SyscallFaccessatFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
 	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
-	public final fun execute-CApExvo (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory;IIII)I
+	public final fun execute-CApExvo (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/ReadOnlyMemory;IIII)I
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/SyscallFchmodFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
@@ -469,7 +469,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/S
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/SyscallFcntl64FunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
 	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
-	public final fun execute-tdD0SJw (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory;III)I
+	public final fun execute-tdD0SJw (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/ReadOnlyMemory;III)I
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/SyscallFstat64FunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
@@ -489,12 +489,12 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/S
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/SyscallMkdiratFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
 	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
-	public final fun execute-zBTFInM (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory;III)I
+	public final fun execute-zBTFInM (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/ReadOnlyMemory;III)I
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/SyscallOpenatFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
 	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
-	public final fun execute-CApExvo (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory;IIII)I
+	public final fun execute-CApExvo (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/ReadOnlyMemory;IIII)I
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/SyscallReadlinkatFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
@@ -504,7 +504,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/S
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/SyscallRmdirFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
 	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
-	public final fun execute-mr_6yCQ (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory;I)I
+	public final fun execute-mr_6yCQ (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/ReadOnlyMemory;I)I
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/SyscallStatLstat64FunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
@@ -520,12 +520,12 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/S
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/SyscallUnlinkatFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
 	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
-	public final fun execute-zBTFInM (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory;III)I
+	public final fun execute-zBTFInM (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/ReadOnlyMemory;III)I
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/SyscallUtimensatFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {
 	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
-	public final fun execute-nRRGbhQ (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory;IIII)I
+	public final fun execute-nRRGbhQ (Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/ReadOnlyMemory;IIII)I
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/emscripten/function/TzsetJsFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/host/base/function/HostFunctionHandle {

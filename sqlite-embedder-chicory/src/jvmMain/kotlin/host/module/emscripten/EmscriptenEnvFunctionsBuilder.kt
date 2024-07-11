@@ -59,28 +59,31 @@ internal class EmscriptenEnvFunctionsBuilder(
 ) {
     private val EmscriptenHostFunction.functionFactory: EmscriptenHostFunctionHandleFactory
         get() = when (this) {
-            EmscriptenHostFunction.ABORT_JS -> ::AbortJs
+            EmscriptenHostFunction.ABORT_JS -> { host, _ -> AbortJs(host) }
             EmscriptenHostFunction.ASSERT_FAIL -> ::AssertFail
-            EmscriptenHostFunction.EMSCRIPTEN_ASM_CONST_ASYNC_ON_MAIN_THREAD -> ::EmscriptenAsmConstAsyncOnMainThread
-            EmscriptenHostFunction.EMSCRIPTEN_ASM_CONST_INT -> ::EmscriptenAsmConstInt
+            EmscriptenHostFunction.EMSCRIPTEN_ASM_CONST_ASYNC_ON_MAIN_THREAD -> { host, _ ->
+                EmscriptenAsmConstAsyncOnMainThread(host)
+            }
+
+            EmscriptenHostFunction.EMSCRIPTEN_ASM_CONST_INT -> { host, _ -> EmscriptenAsmConstInt(host) }
             EmscriptenHostFunction.EMSCRIPTEN_CONSOLE_ERROR -> ::EmscriptenConsoleError
-            EmscriptenHostFunction.EMSCRIPTEN_DATE_NOW -> ::EmscriptenDateNow
-            EmscriptenHostFunction.EMSCRIPTEN_GET_NOW -> ::EmscriptenGetNow
-            EmscriptenHostFunction.EMSCRIPTEN_GET_NOW_IS_MONOTONIC -> ::EmscriptenGetNowIsMonotonic
-            EmscriptenHostFunction.EMSCRIPTEN_RESIZE_HEAP -> ::EmscriptenResizeHeap
+            EmscriptenHostFunction.EMSCRIPTEN_DATE_NOW -> { host, _ -> EmscriptenDateNow(host) }
+            EmscriptenHostFunction.EMSCRIPTEN_GET_NOW -> { host, _ -> EmscriptenGetNow(host) }
+            EmscriptenHostFunction.EMSCRIPTEN_GET_NOW_IS_MONOTONIC -> { host, _ -> EmscriptenGetNowIsMonotonic(host) }
+            EmscriptenHostFunction.EMSCRIPTEN_RESIZE_HEAP -> { host, _ -> EmscriptenResizeHeap(host) }
             EmscriptenHostFunction.GETENTROPY -> ::Getentropy
             EmscriptenHostFunction.HANDLE_STACK_OVERFLOW -> { host, _ -> HandleStackOverflow(host, stackBindingsRef) }
             EmscriptenHostFunction.LOCALTIME_JS -> ::LocaltimeJs
-            EmscriptenHostFunction.MMAP_JS -> ::MmapJs
-            EmscriptenHostFunction.MUNMAP_JS -> ::MunmapJs
+            EmscriptenHostFunction.MMAP_JS -> { host, _ -> MmapJs(host) }
+            EmscriptenHostFunction.MUNMAP_JS -> { host, _ -> MunmapJs(host) }
             EmscriptenHostFunction.SYSCALL_CHMOD -> ::SyscallChmod
             EmscriptenHostFunction.SYSCALL_FACCESSAT -> ::SyscallFaccessat
-            EmscriptenHostFunction.SYSCALL_FCHMOD -> ::SyscallFchmod
-            EmscriptenHostFunction.SYSCALL_FCHOWN32 -> ::SyscallFchown32
+            EmscriptenHostFunction.SYSCALL_FCHMOD -> { host, _ -> SyscallFchmod(host) }
+            EmscriptenHostFunction.SYSCALL_FCHOWN32 -> { host, _ -> SyscallFchown32(host) }
             EmscriptenHostFunction.SYSCALL_FCNTL64 -> ::SyscallFcntl64
-            EmscriptenHostFunction.SYSCALL_FDATASYNC -> ::SyscallFdatasync
+            EmscriptenHostFunction.SYSCALL_FDATASYNC -> { host, _ -> SyscallFdatasync(host) }
             EmscriptenHostFunction.SYSCALL_FSTAT64 -> ::SyscallFstat64
-            EmscriptenHostFunction.SYSCALL_FTRUNCATE64 -> ::SyscallFtruncate64
+            EmscriptenHostFunction.SYSCALL_FTRUNCATE64 -> { host, _ -> SyscallFtruncate64(host) }
             EmscriptenHostFunction.SYSCALL_GETCWD -> ::SyscallGetcwd
             EmscriptenHostFunction.SYSCALL_IOCTL -> notImplementedEmscriptenHostFunction
             EmscriptenHostFunction.SYSCALL_LSTAT64 -> ::syscallLstat64
@@ -104,7 +107,7 @@ internal class EmscriptenEnvFunctionsBuilder(
             EmscriptenHostFunction.EMSCRIPTEN_UNWIND_TO_JS_EVENT_LOOP,
             EmscriptenHostFunction.EXIT,
             EmscriptenHostFunction.PTHREAD_CREATE_JS,
-            -> notImplementedEmscriptenHostFunction
+                -> notImplementedEmscriptenHostFunction
         }
 
     fun asChicoryHostFunctions(
