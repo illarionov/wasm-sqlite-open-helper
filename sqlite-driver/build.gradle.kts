@@ -89,7 +89,12 @@ kotlin {
             implementation(projects.commonCleaner)
             implementation(projects.commonLock)
             implementation(projects.wasiEmscriptenHost)
-            implementation(libs.wsoh.sqlite.st) // TODO: Shouldn't be here, added for resources in tests
+        }
+
+        linuxMain.dependencies {
+            // TODO: Shouldn't be here, added for resources in tests
+            // https://github.com/JetBrains/compose-multiplatform/issues/4442
+            implementation(libs.wsoh.sqlite.st)
         }
 
         commonTest.dependencies {
