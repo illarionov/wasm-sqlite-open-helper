@@ -6,10 +6,10 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chasm.host.exception
 
-import io.github.charlietap.chasm.executor.runtime.error.ModuleRuntimeError
+import io.github.charlietap.chasm.executor.runtime.error.InvocationError
 
 public class ChasmModuleRuntimeErrorException(
-    public val error: ModuleRuntimeError,
+    public val error: InvocationError,
     message: String? = null,
     cause: Throwable? = null,
 ) : ChasmException(message, cause)
