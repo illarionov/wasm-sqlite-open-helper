@@ -15,7 +15,7 @@ import io.github.charlietap.chasm.embedding.memory
 import io.github.charlietap.chasm.embedding.module
 import io.github.charlietap.chasm.embedding.store
 import io.github.charlietap.chasm.error.ChasmError.DecodeError
-import io.github.charlietap.chasm.executor.runtime.ext.grow
+import io.github.charlietap.chasm.executor.runtime.ext.asRange
 import io.github.charlietap.chasm.executor.runtime.ext.table
 import io.github.charlietap.chasm.executor.runtime.ext.tableAddress
 import io.github.charlietap.chasm.executor.runtime.instance.ExternalValue
@@ -26,7 +26,6 @@ import io.github.charlietap.chasm.executor.runtime.store.Address
 import io.github.charlietap.chasm.executor.runtime.store.Store
 import io.github.charlietap.chasm.executor.runtime.value.ReferenceValue
 import io.github.charlietap.chasm.fold
-import io.github.charlietap.chasm.import.Import
 import okio.buffer
 import okio.use
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
@@ -34,6 +33,7 @@ import ru.pixnews.wasm.sqlite.binary.reader.WasmSourceReader
 import ru.pixnews.wasm.sqlite.binary.reader.readOrThrow
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.orThrow
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.exception.ChasmErrorException
+import ru.pixnews.wasm.sqlite.open.helper.chasm.host.exception.ChasmException
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.exception.ChasmModuleRuntimeErrorException
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.memory.ChasmMemoryAdapter
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.getEmscriptenHostFunctions
@@ -51,6 +51,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.DefaultWasiMemoryWrit
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WASM_MEMORY_PAGE_SIZE
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WASM_MEMORY_SQLITE_MAX_PAGES
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.stack.EmscriptenStack
+import io.github.charlietap.chasm.import.Import as ChasmImport
 
 internal class ChasmInstanceBuilder(
     private val host: EmbedderHost,
@@ -99,7 +100,7 @@ internal class ChasmInstanceBuilder(
     private fun setupMemory(
         store: Store,
         minMemorySize: Long,
-    ): Import {
+    ): ChasmImport {
         val memory: Memory = memory(
             store,
             MemoryType(
@@ -110,38 +111,49 @@ internal class ChasmInstanceBuilder(
             ),
         )
 
-        return Import(ENV_MODULE_NAME, "memory", memory)
+        return ChasmImport(ENV_MODULE_NAME, "memory", memory)
     }
 
     private fun setupIndirectFunctionIndexes(
         store: Store,
         instance: ModuleInstance,
-        callbackHostFunctions: List<Import>,
+        callbackHostFunctions: List<ChasmImport>,
     ): Sqlite3CallbackFunctionIndexes {
         val tableAddress = instance.tableAddress(0)
         val table: TableInstance = store.table(tableAddress.value).getOrThrow {
             ChasmModuleRuntimeErrorException(it)
         }
         val oldSize = table.elements.size
-        val newTable = table.grow(
+        table.grow(
             callbackHostFunctions.size,
             ReferenceValue.Function(Address.Function(0)),
-        ).getOrThrow {
-            ChasmModuleRuntimeErrorException(it)
-        }
-
+        )
         val indirectIndexes: Map<SqliteCallbacksModuleFunction, IndirectFunctionTableIndex> =
-            callbackHostFunctions.mapIndexed { index, import ->
+            callbackHostFunctions.mapIndexed { index: Int, import: ChasmImport ->
                 val hostFunction = SqliteCallbacksModuleFunction.byWasmName.getValue(import.entityName)
                 val indirectIndex = oldSize + index
                 val functionAddress = (import.value as ExternalValue.Function).address
-                newTable.elements[indirectIndex] = ReferenceValue.Function(functionAddress)
+                table.elements[indirectIndex] = ReferenceValue.Function(functionAddress)
                 hostFunction to IndirectFunctionTableIndex(indirectIndex)
             }.toMap()
 
-        store.tables[tableAddress.value.address] = newTable
-
         return ChasmSqlite3CallbackFunctionIndexes(indirectIndexes)
+    }
+
+    private fun TableInstance.grow(
+        elementsToAdd: Int,
+        referenceValue: ReferenceValue,
+    ) {
+        val proposedLength = (elements.size + elementsToAdd).toUInt()
+        if (proposedLength !in type.limits.asRange()) {
+            throw ChasmException("Failed to grow table to $proposedLength")
+        }
+        type = type.copy(
+            limits = type.limits.copy(
+                min = proposedLength,
+            ),
+        )
+        elements += Array(elementsToAdd) { referenceValue }
     }
 
     internal class ChasmInstance(

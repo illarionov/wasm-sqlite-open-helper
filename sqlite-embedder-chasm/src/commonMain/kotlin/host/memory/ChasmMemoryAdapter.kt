@@ -16,7 +16,7 @@ import io.github.charlietap.chasm.executor.memory.read.MemoryInstanceIntReaderIm
 import io.github.charlietap.chasm.executor.memory.read.MemoryInstanceLongReaderImpl
 import io.github.charlietap.chasm.executor.memory.write.MemoryInstanceIntWriterImpl
 import io.github.charlietap.chasm.executor.memory.write.MemoryInstanceLongWriterImpl
-import io.github.charlietap.chasm.executor.runtime.error.ModuleRuntimeError
+import io.github.charlietap.chasm.executor.runtime.error.InvocationError
 import io.github.charlietap.chasm.executor.runtime.ext.memory
 import io.github.charlietap.chasm.executor.runtime.store.Address
 import io.github.charlietap.chasm.executor.runtime.store.Store
@@ -81,6 +81,6 @@ internal class ChasmMemoryAdapter(
     }
 }
 
-private fun <T : Any, E : ModuleRuntimeError> Result<T, E>.getOrThrow(): T = getOrThrow {
+private fun <T : Any, E : InvocationError> Result<T, E>.getOrThrow(): T = getOrThrow {
     ChasmModuleRuntimeErrorException(it)
 }
