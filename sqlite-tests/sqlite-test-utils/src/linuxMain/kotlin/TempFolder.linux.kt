@@ -4,8 +4,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
-
 package ru.pixnews.wasm.sqlite.test.utils
 
 import kotlinx.cinterop.cstr
@@ -20,10 +18,12 @@ import platform.posix.mkdtemp
 import platform.posix.nftw
 import platform.posix.remove
 
-public class TempFolder private constructor(
-    public val path: String,
-) {
-    public fun delete() {
+internal actual fun createPlatformTempFolder(namePrefix: String): TempFolder = LinuxTempFolder.create(namePrefix)
+
+public class LinuxTempFolder private constructor(
+    override val path: String,
+) : TempFolder {
+    override fun delete() {
         val code = nftw(
             path,
             @Suppress("UNUSED_ANONYMOUS_PARAMETER")
@@ -41,12 +41,12 @@ public class TempFolder private constructor(
     }
 
     // TODO: escape name
-    public fun resolve(name: String): String = "$path/$name"
+    override fun resolve(name: String): String = "$path/$name"
 
     public companion object {
         public fun create(
-            namePrefix: String = "wsohTest",
-        ): TempFolder {
+            namePrefix: String,
+        ): LinuxTempFolder {
             val tmpdir = getenv("TMPDIR")?.toKString() ?: "/tmp"
             val template = "$tmpdir/${namePrefix}XXXXXX"
             val path = memScoped {
@@ -54,7 +54,7 @@ public class TempFolder private constructor(
                 val newPath = mkdtemp(nativeTemplate) ?: error("Can not create temp dir: error $errno")
                 newPath.toKString()
             }
-            return TempFolder(path)
+            return LinuxTempFolder(path)
         }
     }
 }

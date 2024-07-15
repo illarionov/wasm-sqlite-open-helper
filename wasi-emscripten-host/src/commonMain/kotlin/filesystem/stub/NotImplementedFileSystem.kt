@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.host.linux.filesystem
+package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.stub
 
+import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystemByteBuffer
@@ -18,9 +19,10 @@ import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.StructStat
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Whence
 
-internal class PosixFileSystem(
+@InternalWasmSqliteHelperApi
+public class NotImplementedFileSystem(
     rootLogger: Logger,
-) : FileSystem<PosixPath> {
+) : FileSystem<NotImplementedPath> {
     @Suppress("UnusedPrivateProperty") private val logger = rootLogger.withTag("PosixFileSystem")
     override fun stat(path: String, followSymlinks: Boolean): StructStat {
         TODO("Not yet implemented")
@@ -30,15 +32,15 @@ internal class PosixFileSystem(
         TODO("Not yet implemented")
     }
 
-    override fun resolveAbsolutePath(dirFd: DirFd, path: String, allowEmpty: Boolean): PosixPath {
+    override fun resolveAbsolutePath(dirFd: DirFd, path: String, allowEmpty: Boolean): NotImplementedPath {
         TODO("Not yet implemented")
     }
 
-    override fun getPath(fd: Fd): PosixPath {
+    override fun getPath(fd: Fd): NotImplementedPath {
         TODO("Not yet implemented")
     }
 
-    override fun getCwdPath(): PosixPath {
+    override fun getCwdPath(): NotImplementedPath {
         TODO("Not yet implemented")
     }
 
@@ -124,15 +126,15 @@ internal class PosixFileSystem(
         TODO("Not yet implemented")
     }
 
-    override fun chmod(javaPath: PosixPath, mode: FileMode) {
+    override fun chmod(javaPath: NotImplementedPath, mode: FileMode) {
         TODO("Not yet implemented")
     }
 
-    override fun open(path: PosixPath, flags: UInt, mode: FileMode): Fd {
+    override fun open(path: NotImplementedPath, flags: UInt, mode: FileMode): Fd {
         TODO("Not yet implemented")
     }
 
-    override fun stat(filePath: PosixPath, followSymlinks: Boolean): StructStat {
+    override fun stat(filePath: NotImplementedPath, followSymlinks: Boolean): StructStat {
         TODO("Not yet implemented")
     }
 }

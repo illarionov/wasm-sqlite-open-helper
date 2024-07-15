@@ -59,6 +59,8 @@ kotlin {
     androidTarget()
     jvm()
     linuxX64()
+    macosArm64()
+    macosX64()
 
     applyDefaultHierarchyTemplate()
 
@@ -91,10 +93,15 @@ kotlin {
             implementation(projects.wasiEmscriptenHost)
         }
 
-        linuxMain.dependencies {
-            // TODO: Shouldn't be here, added for resources in tests
-            // https://github.com/JetBrains/compose-multiplatform/issues/4442
-            implementation(libs.wsoh.sqlite.st)
+        listOf(
+            linuxMain,
+            macosMain,
+        ).forEach { target ->
+            target.dependencies {
+                // TODO: Shouldn't be here, added for resources in tests
+                // https://github.com/JetBrains/compose-multiplatform/issues/4442
+                implementation(libs.wsoh.sqlite.st)
+            }
         }
 
         commonTest.dependencies {

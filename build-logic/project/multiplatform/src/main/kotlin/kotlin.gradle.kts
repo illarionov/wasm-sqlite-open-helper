@@ -35,6 +35,7 @@ kotlin {
                 apiVersion = "1.9"
                 listOf(
                     "kotlin.RequiresOptIn",
+                    "kotlinx.cinterop.ExperimentalForeignApi",
                     "ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi",
                 ).forEach(::optIn)
             }

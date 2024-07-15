@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPub
  */
 @OptIn(ComposeKotlinGradlePluginApi::class)
 plugins.withId("org.jetbrains.kotlin.multiplatform") {
-    val platformsForSetupCompilation = listOf(KotlinPlatformType.native, KotlinPlatformType.js, KotlinPlatformType.wasm)
+    val platformsForSetupCompilation = setOf(KotlinPlatformType.native, KotlinPlatformType.js, KotlinPlatformType.wasm)
     val kotlinExtension: KotlinMultiplatformExtension = extensions.getByType()
     val kmpResources = extraProperties.get("multiplatformResourcesPublication") as KotlinTargetResourcesPublication
 
