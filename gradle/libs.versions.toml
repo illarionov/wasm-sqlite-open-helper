@@ -28,7 +28,7 @@ kermit = "2.0.4"
 ksp = "2.0.20-Beta1-1.0.22"
 okio = "3.9.0"
 spotless = "7.0.0.BETA1"
-sqlite-wasm-binary = "0.1-alpha08-SNAPSHOT"
+sqlite-wasm-binary = "0.1-alpha08"
 
 [libraries]
 androidx-collection = { group = "androidx.collection", name = "collection", version.ref = "androidx-collection" }
