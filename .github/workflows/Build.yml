@@ -32,17 +32,11 @@ permissions:
 jobs:
   assemble:
     name: Assemble, run tests
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     timeout-minutes: 60
     if: ${{ !contains(github.event.head_commit.message, '[ci skip]') }}
 
     steps:
-      - name: Enable KVM group perms
-        run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
-
       - name: Checkout sources
         uses: actions/checkout@v4
         with:
@@ -102,7 +96,7 @@ jobs:
             ./gradlew uninstallAll;
 
       - name: Publish test results
-        uses: EnricoMi/publish-unit-test-result-action@v2
+        uses: EnricoMi/publish-unit-test-result-action/macos@v2
         if: ${{ !cancelled() && (github.actor != 'dependabot[bot]') }}
         with:
           comment_mode: off
@@ -115,7 +109,7 @@ jobs:
           find . \(
           -type d -path '*/build/reports'  -o -type d -path '*/build/outputs'
           \) -print0
-          | xargs -0 tar -c -I 'zstd -19 -T0' -f test-reports.tar.zst
+          | xargs -0 tar -c --zstd --options zstd:compression-level=20 -f test-reports.tar.zst
 
       - name: Upload test reports
         uses: actions/upload-artifact@v4
