@@ -16,15 +16,15 @@ import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost.MonotonicClock
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost.SystemEnvProvider
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost.TimeZoneInfoProvider
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.stub.NotImplementedFileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.internal.CommonClock
 import ru.pixnews.wasm.sqlite.open.helper.host.internal.CommonMonotonicClock
-import ru.pixnews.wasm.sqlite.open.helper.host.linux.filesystem.PosixFileSystem
 
 public class LinuxEmbedderHost(
     override val rootLogger: Logger,
     override val systemEnvProvider: SystemEnvProvider = NativeSystemEnvProvider,
     override val commandArgsProvider: CommandArgsProvider = NativeCommandArgsProvider,
-    override val fileSystem: FileSystem<*> = PosixFileSystem(rootLogger),
+    override val fileSystem: FileSystem<*> = NotImplementedFileSystem(rootLogger),
     override val monotonicClock: MonotonicClock = CommonMonotonicClock(),
     override val clock: Clock = CommonClock(),
     override val localTimeFormatter: LocalTimeFormatter = LinuxLocalTimeFormatter(),

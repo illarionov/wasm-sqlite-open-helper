@@ -38,7 +38,7 @@ public abstract class AbstractBasicSqliteDriverTest<S : SQLiteDriver>(
         connection.use(::testDb)
     }
 
-    private fun testDb(db: SQLiteConnection) {
+    public fun testDb(db: SQLiteConnection) {
         val version = db.queryForString("SELECT sqlite_version()")
         logger.i { "Version: $version" }
 

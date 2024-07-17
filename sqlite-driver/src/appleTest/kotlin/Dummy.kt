@@ -4,10 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.host.linux.filesystem
+@file:Suppress("FILE_CONTAINS_ONLY_COMMENTS", "FILE_NO_BLANK_LINE_BETWEEN_BLOCKS")
 
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.Path
-
-internal class PosixPath : Path {
-    override val pathString: String get() = error("Not implemented")
-}
+// Workaround for https://youtrack.jetbrains.com/issue/KTIJ-15797
+package ru.pixnews.wasm.sqlite.driver
