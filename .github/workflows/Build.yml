@@ -31,12 +31,18 @@ permissions:
 
 jobs:
   assemble:
-    name: Assemble, run tests
-    runs-on: macos-latest
+    name: Assemble, run tests on Linux
+    runs-on: ubuntu-latest
     timeout-minutes: 60
     if: ${{ !contains(github.event.head_commit.message, '[ci skip]') }}
 
     steps:
+      - name: Enable KVM group perms
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
       - name: Checkout sources
         uses: actions/checkout@v4
         with:
@@ -109,7 +115,7 @@ jobs:
           find . \(
           -type d -path '*/build/reports'  -o -type d -path '*/build/outputs'
           \) -print0
-          | xargs -0 tar -c --zstd --options zstd:compression-level=20 -f test-reports.tar.zst
+          | xargs -0 tar -c -I 'zstd -19 -T0' -f test-reports.tar.zst
 
       - name: Upload test reports
         uses: actions/upload-artifact@v4
@@ -117,6 +123,72 @@ jobs:
         with:
           name: test-reports
           path: test-reports.tar.zst
+
+      - name: Save Kotlin Native Cache
+        uses: actions/cache/save@v4
+        if: github.ref_name == 'main'
+        with:
+          path: ~/.konan
+          key: ${{ runner.os }}-konan-${{ hashFiles('**/*.gradle.kts', 'buildSrc') }}
+
+  test-macos:
+    name: Run tests on MacOS
+    runs-on: macos-latest
+    timeout-minutes: 60
+    if: ${{ !contains(github.event.head_commit.message, '[ci skip]') }}
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '22'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          cache-encryption-key: ${{ secrets.GradleEncryptionKey }}
+          dependency-graph: generate
+
+      - name: Restore Kotlin Native Cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/.konan
+          key: ${{ runner.os }}-konan-${{ hashFiles('**/*.gradle.kts', 'buildSrc') }}
+          restore-keys: ${{ runner.os }}-konan-
+
+      - name: Assemble debug build, run tests
+        run: >
+          ./gradlew -Pkotlin.daemon.jvmargs="${{ env.KOTLIN_DAEMON_JVMARGS }}"
+          test --stacktrace --scan
+
+      - name: Publish test results
+        uses: EnricoMi/publish-unit-test-result-action/macos@v2
+        if: ${{ !cancelled() && (github.actor != 'dependabot[bot]') }}
+        with:
+          comment_mode: off
+          junit_files: '**/build/*test-results/**/*.xml'
+          check_name: "Test results"
+
+      - name: Bundle the test reports and outputs
+        if: failure()
+        run: >
+          find . \(
+          -type d -path '*/build/reports'  -o -type d -path '*/build/outputs'
+          \) -print0
+          | xargs -0 tar -c --zstd --options zstd:compression-level=20 -f test-reports-macos.tar.zst
+
+      - name: Upload test reports
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-reports-macos
+          path: test-reports-macos.tar.zst
 
       - name: Save Kotlin Native Cache
         uses: actions/cache/save@v4
