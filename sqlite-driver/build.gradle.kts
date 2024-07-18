@@ -57,6 +57,9 @@ android {
 
 kotlin {
     androidTarget()
+    iosSimulatorArm64()
+    iosArm64()
+    iosX64()
     jvm()
     linuxX64()
     macosArm64()
@@ -96,6 +99,7 @@ kotlin {
         listOf(
             linuxMain,
             macosMain,
+            iosMain,
         ).forEach { target ->
             target.dependencies {
                 // TODO: Shouldn't be here, added for resources in tests

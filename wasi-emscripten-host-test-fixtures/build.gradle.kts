@@ -11,6 +11,9 @@ plugins {
 group = "ru.pixnews.wasm-sqlite-open-helper"
 
 kotlin {
+    iosSimulatorArm64()
+    iosArm64()
+    iosX64()
     jvm()
     linuxX64()
     macosArm64()
