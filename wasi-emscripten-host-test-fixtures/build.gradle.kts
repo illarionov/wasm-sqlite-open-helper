@@ -12,12 +12,10 @@ group = "ru.pixnews.wasm-sqlite-open-helper"
 
 kotlin {
     jvm()
-    js(IR) {
-        nodejs()
-    }
     linuxX64()
     macosArm64()
     macosX64()
+    mingwX64()
 
     sourceSets {
         commonMain.dependencies {
