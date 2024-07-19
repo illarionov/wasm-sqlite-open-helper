@@ -10,9 +10,13 @@ import org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.TestExecutable
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
+import ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.ext.capitalizeAscii
 
 /*
  * Convention plugin that activates kotlin multiplatform resources
@@ -35,6 +39,7 @@ plugins.withId("org.jetbrains.kotlin.multiplatform") {
                 }
             }
         }
+    configureAppleTestResources(kotlinExtension)
 }
 
 /**
@@ -42,7 +47,7 @@ plugins.withId("org.jetbrains.kotlin.multiplatform") {
  * It is required for JS and Native targets.
  * For JVM and Android it works automatically via jar files
  */
-private fun Project.configureResourcesForCompilation(
+private fun configureResourcesForCompilation(
     compilation: KotlinCompilation<*>,
     directoryWithAllResourcesForCompilation: Provider<File>,
 ) {
@@ -52,6 +57,48 @@ private fun Project.configureResourcesForCompilation(
     if (compilation is KotlinJsCompilation) {
         tasks.named(compilation.processResourcesTaskName).configure {
             dependsOn(directoryWithAllResourcesForCompilation)
+        }
+    }
+}
+
+/**
+ * Place resources into the test binary's output directory on Apple platforms so that they can be accessed using
+ * NSBundle.mainBundle.
+ */
+private fun configureAppleTestResources(
+    kotlinExtension: KotlinMultiplatformExtension,
+) {
+    val appleTargetsWithResources = setOf("iosSimulatorArm64", "iosArm64", "iosX64", "macosArm64", "macosX64")
+    kotlinExtension.targets
+        .withType(KotlinNativeTarget::class.java)
+        .matching { target -> target.name in appleTargetsWithResources }
+        .configureEach {
+            configureCopyTestResources(this)
+        }
+}
+
+private fun configureCopyTestResources(
+    nativeTarget: KotlinNativeTarget,
+) {
+    @Suppress("GENERIC_VARIABLE_WRONG_DECLARATION")
+    val copyResourcesTask = tasks.register<Copy>(
+        "copyTestComposeResourcesFor${nativeTarget.name.capitalizeAscii()}",
+    )
+
+    nativeTarget.binaries.withType(TestExecutable::class.java).all {
+        val testExec = this
+        val resourcesDirectories: Provider<List<SourceDirectorySet>> = provider {
+            (testExec.compilation.associatedCompilations + testExec.compilation).flatMap {
+                it.allKotlinSourceSets.map(KotlinSourceSet::resources)
+            }
+        }
+        copyResourcesTask.configure {
+            from(resourcesDirectories)
+            into(testExec.outputDirectory.resolve("wsoh-resources"))
+        }
+
+        testExec.linkTaskProvider.configure {
+            dependsOn(copyResourcesTask)
         }
     }
 }

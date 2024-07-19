@@ -19,6 +19,9 @@ version = wasmSqliteVersions.getSubmoduleVersionProvider(
 
 kotlin {
     jvm()
+    iosSimulatorArm64()
+    iosArm64()
+    iosX64()
     linuxX64()
     macosArm64()
     macosX64()

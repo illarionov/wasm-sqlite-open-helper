@@ -165,7 +165,7 @@ jobs:
       - name: Assemble debug build, run tests
         run: >
           ./gradlew -Pkotlin.daemon.jvmargs="${{ env.KOTLIN_DAEMON_JVMARGS }}"
-          test --stacktrace --scan
+          check --stacktrace --scan
 
       - name: Publish test results
         uses: EnricoMi/publish-unit-test-result-action/macos@v2

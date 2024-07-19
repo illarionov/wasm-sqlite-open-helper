@@ -16,6 +16,9 @@ group = "ru.pixnews.wasm-sqlite-open-helper"
 kotlin {
     explicitApi = ExplicitApiMode.Disabled
 
+    iosSimulatorArm64()
+    iosArm64()
+    iosX64()
     jvm()
     linuxX64()
     macosArm64()
