@@ -26,8 +26,8 @@ import io.github.charlietap.chasm.executor.runtime.store.Address
 import io.github.charlietap.chasm.executor.runtime.store.Store
 import io.github.charlietap.chasm.executor.runtime.value.ReferenceValue
 import io.github.charlietap.chasm.fold
-import okio.buffer
-import okio.use
+import kotlinx.io.RawSource
+import kotlinx.io.buffered
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.binary.reader.WasmSourceReader
 import ru.pixnews.wasm.sqlite.binary.reader.readOrThrow
@@ -77,16 +77,14 @@ internal class ChasmInstanceBuilder(
             addAll(sqliteCallbacksHostFunctions)
         }
 
-        val sqliteModule: Module = sourceReader.readOrThrow(sqlite3Binary.sqliteUrl) { source, _ ->
-            val readModuleResult: Result<Module> = source.buffer().use {
-                module(OkioSourceReader(it))
-            }.fold(
-                onSuccess = { Result.success(it) },
-                onError = { error: DecodeError ->
-                    Result.failure(ChasmErrorException(error, "Can not decode $sqlite3Binary; $error"))
-                },
-            )
-            readModuleResult
+        val sqliteModule: Module = sourceReader.readOrThrow(sqlite3Binary.sqliteUrl) { source: RawSource, _ ->
+            module(source.buffered().toChasmSourceReader())
+                .fold(
+                    onSuccess = { Result.success(it) },
+                    onError = { error: DecodeError ->
+                        Result.failure(ChasmErrorException(error, "Can not decode $sqlite3Binary; $error"))
+                    },
+                )
         }
 
         val instance: ModuleInstance = instance(store, sqliteModule, hostImports)

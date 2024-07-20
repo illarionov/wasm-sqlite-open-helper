@@ -6,7 +6,8 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.base.memory
 
-import okio.Buffer
+import kotlinx.io.Buffer
+import kotlinx.io.readString
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.isSqlite3Null
@@ -58,8 +59,8 @@ public fun ReadOnlyMemory.readNullTerminatedString(offset: WasmPtr<Byte>): Strin
         if (byte == 0.toByte()) {
             break
         }
-        mem.writeByte(byte.toInt())
+        mem.writeByte(byte)
     } while (true)
 
-    return mem.readByteString().utf8()
+    return mem.readString()
 }

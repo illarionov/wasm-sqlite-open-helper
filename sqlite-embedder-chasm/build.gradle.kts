@@ -35,7 +35,7 @@ kotlin {
         commonMain.dependencies {
             api(libs.wsoh.binary.reader)
             implementation(libs.chasm)
-            implementation(libs.okio.okio)
+            implementation(libs.kotlinx.io)
             compileOnly(libs.chasm.decoder)
             compileOnly(libs.chasm.decoder.wasm)
             compileOnly(libs.chasm.instantiator)

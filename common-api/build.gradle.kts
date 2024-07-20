@@ -39,7 +39,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(libs.okio.okio)
+            implementation(libs.kotlinx.io)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))

@@ -8,7 +8,10 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.include.sys
 
-import okio.Buffer
+import kotlinx.io.Buffer
+import kotlinx.io.readByteArray
+import kotlinx.io.writeIntLe
+import kotlinx.io.writeLongLe
 import ru.pixnews.wasm.sqlite.open.helper.host.include.FileMode
 import ru.pixnews.wasm.sqlite.open.helper.host.include.StructTimespec
 import ru.pixnews.wasm.sqlite.open.helper.host.include.blkcnt_t
