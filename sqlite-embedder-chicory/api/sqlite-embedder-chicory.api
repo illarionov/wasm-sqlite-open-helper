@@ -8,10 +8,12 @@ public final class ru/pixnews/wasm/sqlite/open/helper/chicory/ChicorySqliteEmbed
 public final class ru/pixnews/wasm/sqlite/open/helper/chicory/ChicorySqliteEmbedderConfig : ru/pixnews/wasm/sqlite/open/helper/embedder/SqliteEmbedderConfig {
 	public final fun getHost ()Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;
 	public final fun getLogSeverity ()Lcom/dylibso/chicory/log/Logger$Level;
+	public final fun getMachineFactory ()Lkotlin/jvm/functions/Function1;
 	public final fun getSqlite3Binary ()Lru/pixnews/wasm/sqlite/binary/base/WasmSqliteConfiguration;
 	public final fun getWasmSourceReader ()Lru/pixnews/wasm/sqlite/binary/reader/WasmSourceReader;
 	public final fun setHost (Lru/pixnews/wasm/sqlite/open/helper/host/EmbedderHost;)V
 	public final fun setLogSeverity (Lcom/dylibso/chicory/log/Logger$Level;)V
+	public final fun setMachineFactory (Lkotlin/jvm/functions/Function1;)V
 	public final fun setSqlite3Binary (Lru/pixnews/wasm/sqlite/binary/base/WasmSqliteConfiguration;)V
 	public final fun setWasmSourceReader (Lru/pixnews/wasm/sqlite/binary/reader/WasmSourceReader;)V
 }

@@ -14,6 +14,7 @@ import com.dylibso.chicory.wasm.types.ValueType.F64
 import com.dylibso.chicory.wasm.types.ValueType.FuncRef
 import com.dylibso.chicory.wasm.types.ValueType.I32
 import com.dylibso.chicory.wasm.types.ValueType.I64
+import com.dylibso.chicory.wasm.types.ValueType.UNKNOWN
 import com.dylibso.chicory.wasm.types.ValueType.V128
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 
@@ -26,7 +27,6 @@ internal fun Value?.isNull(): Boolean {
         null -> true
         F64, F32, I64, I32 -> this.asLong() == -1L
         V128 -> error("Not implemented")
-        FuncRef -> this.asFuncRef() == REF_NULL_VALUE
-        ExternRef -> this.asExtRef() == REF_NULL_VALUE
+        FuncRef, ExternRef, UNKNOWN -> this.asExtRef() == REF_NULL_VALUE
     }
 }

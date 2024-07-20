@@ -13,7 +13,7 @@ androidx-test = "1.6.1"
 atomicfu = "0.25.0"
 assertk = "0.28.1"
 chasm = "0.7.0"
-chicory = "0.0.10"
+chicory = "0.0.12"
 desugar_jdk_libs = "2.0.4"
 detekt = "1.23.6"
 diktat = "2.0.0"
@@ -55,7 +55,8 @@ chasm-instantiator = { group = "io.github.charlietap.chasm", name = "instantiato
 chasm-memory = { group = "io.github.charlietap.chasm", name = "memory", version.ref = "chasm" }
 chasm-runtime = { group = "io.github.charlietap.chasm", name = "runtime", version.ref = "chasm" }
 chasm-validator = { group = "io.github.charlietap.chasm", name = "validator", version.ref = "chasm" }
-chicory = { group = "com.dylibso.chicory", name = "runtime", version.ref = "chicory" }
+chicory-runtime = { group = "com.dylibso.chicory", name = "runtime", version.ref = "chicory" }
+chicory-aot = { group = "com.dylibso.chicory", name = "aot", version.ref = "chicory" }
 desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
 graalvm-polyglot-js = { group = "org.graalvm.polyglot", name = "js-community", version.ref = "graalvm" }
 graalvm-polyglot-polyglot = { group = "org.graalvm.polyglot", name = "polyglot", version.ref = "graalvm" }
