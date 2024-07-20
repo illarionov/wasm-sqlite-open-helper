@@ -6,7 +6,10 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.include
 
-import okio.Buffer
+import kotlinx.io.Buffer
+import kotlinx.io.readIntLe
+import kotlinx.io.readLongLe
+import kotlinx.io.readShortLe
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Whence
 
 /**

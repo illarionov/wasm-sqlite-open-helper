@@ -7,16 +7,16 @@
 package ru.pixnews.wasm.sqlite.open.helper.chasm.host
 
 import io.github.charlietap.chasm.decoder.SourceReader
-import okio.BufferedSource
+import kotlinx.io.Source
+import kotlinx.io.readByteArray
 
-internal class OkioSourceReader(
-    private val source: BufferedSource,
+internal fun Source.toChasmSourceReader(): SourceReader = IoSourceReader(this)
+
+private class IoSourceReader(
+    private val source: Source,
 ) : SourceReader {
     override fun byte(): Byte = source.readByte()
-
-    override fun bytes(amount: Int): ByteArray = source.readByteArray(amount.toLong())
-
+    override fun bytes(amount: Int): ByteArray = source.readByteArray(amount)
     override fun exhausted(): Boolean = source.exhausted()
-
-    override fun peek(): SourceReader = OkioSourceReader(source.peek())
+    override fun peek(): SourceReader = IoSourceReader(source.peek())
 }

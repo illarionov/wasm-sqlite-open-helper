@@ -8,7 +8,9 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.include
 
-import okio.Buffer
+import kotlinx.io.Buffer
+import kotlinx.io.readByteArray
+import kotlinx.io.writeIntLe
 import ru.pixnews.wasm.sqlite.open.helper.host.include.StructTm.IsDstFlag
 
 /**
@@ -79,7 +81,7 @@ public fun StructTm.pack(): ByteArray {
         writeIntLe(tm_wday) // 24
         writeIntLe(tm_yday) // 28
         writeIntLe(tm_isdst) // 32
-        writeIntLe(tm_gmtoff.toInt()) // 36
+        writeIntLe(tm_gmtoff) // 36
         readByteArray()
     }
     check(bytes.size == 40)

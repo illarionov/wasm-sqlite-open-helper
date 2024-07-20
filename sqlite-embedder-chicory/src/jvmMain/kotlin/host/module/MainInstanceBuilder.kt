@@ -16,7 +16,8 @@ import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.runtime.Module
 import com.dylibso.chicory.runtime.Module.START_FUNCTION_NAME
 import com.dylibso.chicory.wasm.types.MemoryLimits
-import okio.buffer
+import kotlinx.io.asInputStream
+import kotlinx.io.buffered
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.binary.reader.WasmSourceReader
 import ru.pixnews.wasm.sqlite.binary.reader.readOrThrow
@@ -83,7 +84,7 @@ internal class MainInstanceBuilder(
 
         val sqlite3Module: Module = wasmSourceReader.readOrThrow(sqlite3Binary.sqliteUrl) { source, _ ->
             runCatching {
-                source.buffer().inputStream().use {
+                source.buffered().asInputStream().use {
                     Module
                         .builder(it)
                         .withLogger(chicoryLogger)

@@ -24,7 +24,7 @@ kotlin {
         commonMain.dependencies {
             api(projects.wasiEmscriptenHost)
             api(projects.sqliteTests.sqliteTestUtils)
-            implementation(libs.okio.okio)
+            implementation(libs.kotlinx.io)
             implementation(libs.kotlinx.datetime)
         }
     }
