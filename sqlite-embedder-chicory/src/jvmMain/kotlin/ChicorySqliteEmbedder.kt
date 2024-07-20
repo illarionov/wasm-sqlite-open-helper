@@ -55,6 +55,7 @@ public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig
         defaultWasmSourceReader = WasmSourceReader,
     ).apply(embedderConfigBuilder)
 
+    @Suppress("LAMBDA_IS_NOT_LAST_PARAMETER")
     private fun createChicorySqliteWasmEnvironment(
         host: EmbedderHost,
         sqlite3Binary: WasmSqliteConfiguration,

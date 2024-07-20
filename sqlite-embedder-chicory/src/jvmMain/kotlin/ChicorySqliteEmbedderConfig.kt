@@ -44,7 +44,7 @@ public class ChicorySqliteEmbedderConfig internal constructor(
      *
      * See: [https://github.com/dylibso/chicory/tree/main/aot](https://github.com/dylibso/chicory/tree/main/aot)
      */
-    public var machineFactory: ((Instance) ->  Machine)? = null
+    public var machineFactory: ((Instance) -> Machine)? = null
 
     /**
      * Implementation of a host object that provides access from the WebAssembly to external host resources.

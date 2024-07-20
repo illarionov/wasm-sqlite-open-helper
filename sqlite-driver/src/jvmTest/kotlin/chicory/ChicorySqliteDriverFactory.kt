@@ -6,6 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.driver.chicory
 
+import com.dylibso.chicory.aot.AotMachine
 import ru.pixnews.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcu346
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
@@ -15,7 +16,9 @@ import ru.pixnews.wasm.sqlite.open.helper.chicory.ChicoryRuntimeInstance
 import ru.pixnews.wasm.sqlite.open.helper.chicory.ChicorySqliteEmbedder
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 
-object ChicorySqliteDriverFactory : TestSqliteDriverFactory<WasmSQLiteDriver<ChicoryRuntimeInstance>> {
+class ChicorySqliteDriverFactory(
+    private val useAot: Boolean = false,
+) : TestSqliteDriverFactory<WasmSQLiteDriver<ChicoryRuntimeInstance>> {
     override val defaultSqliteBinary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcu346
 
     override fun create(
@@ -26,6 +29,9 @@ object ChicorySqliteDriverFactory : TestSqliteDriverFactory<WasmSQLiteDriver<Chi
             defaultTestSqliteDriverConfig(dbLogger)
             embedder {
                 this.sqlite3Binary = sqlite3Binary
+                if (useAot) {
+                    this.machineFactory = ::AotMachine
+                }
             }
         }
     }
