@@ -12,7 +12,7 @@ import kotlinx.cinterop.alloc
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
 import kotlinx.cinterop.value
-import okio.IOException
+import kotlinx.io.IOException
 import platform.Foundation.NSCachesDirectory
 import platform.Foundation.NSError
 import platform.Foundation.NSFileManager
