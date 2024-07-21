@@ -9,7 +9,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.host.include
 
 import kotlinx.io.Buffer
-import kotlinx.io.readByteArray
+import kotlinx.io.Sink
 import kotlinx.io.writeIntLe
 import ru.pixnews.wasm.sqlite.open.helper.host.include.StructTm.IsDstFlag
 
@@ -70,20 +70,20 @@ public fun IsDstFlag.asTmIsdstValue(): Int = when (this) {
     IsDstFlag.UNKNOWN -> -1
 }
 
-public fun StructTm.pack(): ByteArray {
-    val bytes: ByteArray = Buffer().run {
-        writeIntLe(tm_sec) // 0
-        writeIntLe(tm_min) // 4
-        writeIntLe(tm_hour) // 8
-        writeIntLe(tm_mday) // 12
-        writeIntLe(tm_mon) // 16
-        writeIntLe(tm_year) // 20
-        writeIntLe(tm_wday) // 24
-        writeIntLe(tm_yday) // 28
-        writeIntLe(tm_isdst) // 32
-        writeIntLe(tm_gmtoff) // 36
-        readByteArray()
-    }
-    check(bytes.size == 40)
-    return bytes
+public fun StructTm.packTo(sink: Sink): Unit = sink.run {
+    writeIntLe(tm_sec) // 0
+    writeIntLe(tm_min) // 4
+    writeIntLe(tm_hour) // 8
+    writeIntLe(tm_mday) // 12
+    writeIntLe(tm_mon) // 16
+    writeIntLe(tm_year) // 20
+    writeIntLe(tm_wday) // 24
+    writeIntLe(tm_yday) // 28
+    writeIntLe(tm_isdst) // 32
+    writeIntLe(tm_gmtoff) // 36
+}
+
+public fun StructTm.pack(): Buffer = Buffer().also {
+    packTo(it)
+    check(it.size == 40L)
 }

@@ -6,6 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.base.memory
 
+import kotlinx.io.Buffer
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystemByteBuffer
@@ -41,12 +42,13 @@ public class DefaultWasiMemoryReader(
                 break
             }
             val size = minOf(bbuf.length, bytesLeft.toInt())
-            memory.write(
-                vec.buf,
-                bbuf.array,
-                bbuf.offset,
-                size,
-            )
+
+            // XXX: too many memory copies
+            val buffer = Buffer().also {
+                it.write(bbuf.array, bbuf.offset, bbuf.offset + size)
+            }
+
+            memory.write(buffer, vec.buf, size)
             bytesLeft -= size
         }
         return readBytes

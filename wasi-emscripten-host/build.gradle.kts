@@ -29,7 +29,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(projects.commonApi)
-            implementation(libs.kotlinx.io)
+            api(libs.kotlinx.io)
             implementation(libs.kotlinx.datetime)
         }
         commonTest.dependencies {

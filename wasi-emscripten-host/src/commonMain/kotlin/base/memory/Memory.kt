@@ -6,6 +6,9 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.base.memory
 
+import kotlinx.io.Buffer
+import kotlinx.io.RawSource
+import kotlinx.io.writeString
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 
@@ -15,10 +18,9 @@ public interface Memory : ReadOnlyMemory {
     public fun writeI32(addr: WasmPtr<*>, data: Int)
     public fun writeI64(addr: WasmPtr<*>, data: Long)
     public fun write(
-        addr: WasmPtr<*>,
-        source: ByteArray,
-        sourceOffset: Int = 0,
-        writeBytes: Int = source.size,
+        fromSource: RawSource,
+        toAddr: WasmPtr<*>,
+        writeBytes: Int,
     )
 }
 
@@ -39,8 +41,11 @@ public fun Memory.writeNullTerminatedString(
     offset: WasmPtr<*>,
     value: String,
 ): Int {
-    val encoded = value.encodeToByteArray()
-    write(offset, encoded)
-    writeI8(WasmPtr<Unit>(offset.addr + encoded.size), 0)
-    return encoded.size + 1
+    val buffer = Buffer().apply {
+        writeString(value)
+    }
+    val encodedSize = buffer.size.toInt()
+    write(buffer, offset, encodedSize)
+    writeI8(WasmPtr<Unit>(offset.addr + encodedSize), 0)
+    return encodedSize + 1
 }

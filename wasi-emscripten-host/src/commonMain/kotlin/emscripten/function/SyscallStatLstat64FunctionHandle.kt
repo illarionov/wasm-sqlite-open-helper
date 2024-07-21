@@ -25,7 +25,7 @@ public class SyscallStatLstat64FunctionHandle private constructor(
     public fun execute(
         memory: Memory,
         pathnamePtr: WasmPtr<Byte>,
-        dst: WasmPtr<StructStat>,
+        dstAddr: WasmPtr<StructStat>,
     ): Int {
         var path = ""
         try {
@@ -36,7 +36,7 @@ public class SyscallStatLstat64FunctionHandle private constructor(
             ).also {
                 logger.v { "`$path`: $it" }
             }.pack()
-            memory.write(dst, stat)
+            memory.write(stat, dstAddr, stat.size.toInt())
         } catch (e: SysException) {
             logger.v { "`$path`: error ${e.errNo}" }
             return -e.errNo.code

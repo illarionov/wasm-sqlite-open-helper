@@ -763,7 +763,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/include/StructFlock {
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/include/StructFlock$Companion {
-	public final fun unpack ([B)Lru/pixnews/wasm/sqlite/open/helper/host/include/StructFlock;
+	public final fun unpack (Lkotlinx/io/Source;)Lru/pixnews/wasm/sqlite/open/helper/host/include/StructFlock;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/include/StructPthread {
@@ -862,7 +862,8 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/include/StructTm$IsDs
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/include/StructTmKt {
 	public static final fun asTmIsdstValue (Lru/pixnews/wasm/sqlite/open/helper/host/include/StructTm$IsDstFlag;)I
-	public static final fun pack (Lru/pixnews/wasm/sqlite/open/helper/host/include/StructTm;)[B
+	public static final fun pack (Lru/pixnews/wasm/sqlite/open/helper/host/include/StructTm;)Lkotlinx/io/Buffer;
+	public static final fun packTo (Lru/pixnews/wasm/sqlite/open/helper/host/include/StructTm;Lkotlinx/io/Sink;)V
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/include/TimeZoneInfo {
@@ -918,7 +919,8 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/include/sys/StructSta
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/include/sys/StructStatKt {
-	public static final fun pack (Lru/pixnews/wasm/sqlite/open/helper/host/include/sys/StructStat;)[B
+	public static final fun pack (Lru/pixnews/wasm/sqlite/open/helper/host/include/sys/StructStat;)Lkotlinx/io/Buffer;
+	public static final fun packTo (Lru/pixnews/wasm/sqlite/open/helper/host/include/sys/StructStat;Lkotlinx/io/Sink;)V
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/include/sys/SysMmanMapFlags : ru/pixnews/wasm/sqlite/open/helper/common/api/SqliteUintBitMask {

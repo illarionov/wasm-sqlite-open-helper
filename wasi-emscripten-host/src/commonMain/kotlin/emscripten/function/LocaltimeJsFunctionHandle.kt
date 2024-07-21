@@ -25,7 +25,7 @@ public class LocaltimeJsFunctionHandle(
         val localTime = host.localTimeFormatter.format(timeSeconds)
         logger.v { "localtimeJs($timeSeconds): $localTime" }
 
-        val bytes = localTime.pack()
-        memory.write(timePtr, bytes)
+        val bytesBuffer = localTime.pack()
+        memory.write(bytesBuffer, timePtr, bytesBuffer.size.toInt())
     }
 }

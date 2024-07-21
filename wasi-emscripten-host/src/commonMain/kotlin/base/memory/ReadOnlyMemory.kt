@@ -7,6 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.host.base.memory
 
 import kotlinx.io.Buffer
+import kotlinx.io.RawSink
 import kotlinx.io.readString
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
@@ -18,10 +19,9 @@ public interface ReadOnlyMemory {
     public fun readI32(addr: WasmPtr<*>): Int
     public fun readI64(addr: WasmPtr<*>): Long
     public fun read(
-        addr: WasmPtr<*>,
-        destination: ByteArray,
-        destinationOffset: Int = 0,
-        readBytes: Int = destination.size,
+        fromAddr: WasmPtr<*>,
+        toSink: RawSink,
+        readBytes: Int,
     )
 }
 

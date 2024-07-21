@@ -6,13 +6,16 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi
 
+import kotlinx.io.Buffer
+import kotlinx.io.readByteArray
+import kotlinx.io.writeString
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.sqliteFreeSilent
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readNullableNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readPtr
-import ru.pixnews.wasm.sqlite.open.helper.host.base.plus
+import ru.pixnews.wasm.sqlite.open.helper.host.ext.encodeToNullTerminatedBuffer
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteColumnType
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDestructorType
@@ -38,14 +41,13 @@ public class Sqlite3StatementFunctions internal constructor(
         var ppStatement: WasmPtr<WasmPtr<SqliteStatement>> = WasmPtr.sqlite3Null()
 
         try {
-            val sqlEncoded = sql.encodeToByteArray()
-            val nullTerminatedSqlSize = sqlEncoded.size + 1
+            val sqlEncoded: Buffer = sql.encodeToNullTerminatedBuffer()
+            val nullTerminatedSqlSize = sqlEncoded.size.toInt()
 
             sqlBytesPtr = memoryBindings.sqliteAllocOrThrow(nullTerminatedSqlSize.toUInt())
             ppStatement = memoryBindings.sqliteAllocOrThrow(WasmPtr.WASM_SIZEOF_PTR)
 
-            memory.write(sqlBytesPtr, sqlEncoded)
-            memory.writeI8(sqlBytesPtr + sqlEncoded.size, 0)
+            memory.write(sqlEncoded, sqlBytesPtr, nullTerminatedSqlSize)
 
             val errCode = sqliteExports.sqlite3_prepare_v2.executeForSqliteResultCode(
                 sqliteDb.addr,
@@ -104,7 +106,10 @@ public class Sqlite3StatementFunctions internal constructor(
         value: ByteArray,
     ): SqliteResultCode {
         val pValue: WasmPtr<Byte> = memoryBindings.sqliteAllocOrThrow(value.size.toUInt())
-        memory.write(pValue, value, 0, value.size)
+        val valueBuffer = Buffer().apply {
+            write(value)
+        }
+        memory.write(valueBuffer, pValue, valueBuffer.size.toInt())
         val errCode = try {
             sqliteExports.sqlite3_bind_blob.executeForSqliteResultCode(
                 statement.addr,
@@ -125,11 +130,11 @@ public class Sqlite3StatementFunctions internal constructor(
         index: Int,
         value: String,
     ): SqliteResultCode {
-        val encoded = value.encodeToByteArray()
-        val size = encoded.size
+        val encoded = Buffer().apply { writeString(value) }
+        val size = encoded.size.toInt()
 
         val pValue: WasmPtr<Byte> = memoryBindings.sqliteAllocOrThrow(size.toUInt())
-        memory.write(pValue, encoded, 0, size)
+        memory.write(encoded, pValue, size)
         val errCode = try {
             sqliteExports.sqlite3_bind_text.executeForInt(
                 statement.addr,
@@ -239,10 +244,10 @@ public class Sqlite3StatementFunctions internal constructor(
             statement.addr,
             columnIndex,
         )
-        val bytes = sqliteExports.sqlite3_column_bytes.executeForInt(
+        val bytes: Int = sqliteExports.sqlite3_column_bytes.executeForInt(
             statement.addr,
             columnIndex,
         )
-        return ByteArray(bytes).also { memory.read(ptr, it) }
+        return Buffer().also { memory.read(ptr, it, bytes) }.readByteArray()
     }
 }

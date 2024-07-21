@@ -6,6 +6,8 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function
 
+import kotlinx.io.Buffer
+import kotlinx.io.writeString
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
@@ -39,9 +41,9 @@ public class SyscallReadlinkatFunctionHandle(
 
         return try {
             val linkPath = fs.readLinkAt(dirFd, path)
-            val linkpathByteArray = linkPath.encodeToByteArray()
-            val len = linkpathByteArray.size.coerceAtMost(bufSize)
-            memory.write(buf, linkpathByteArray, 0, len)
+            val linkpathBuffer = Buffer().also { it.writeString(linkPath) }
+            val len = linkpathBuffer.size.toInt().coerceAtMost(bufSize)
+            memory.write(linkpathBuffer, buf, len)
             len
         } catch (e: SysException) {
             logger.v {
