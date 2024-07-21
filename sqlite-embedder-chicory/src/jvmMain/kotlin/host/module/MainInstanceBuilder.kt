@@ -13,6 +13,7 @@ import com.dylibso.chicory.runtime.HostImports
 import com.dylibso.chicory.runtime.HostMemory
 import com.dylibso.chicory.runtime.HostTable
 import com.dylibso.chicory.runtime.Instance
+import com.dylibso.chicory.runtime.Machine
 import com.dylibso.chicory.runtime.Module
 import com.dylibso.chicory.runtime.Module.START_FUNCTION_NAME
 import com.dylibso.chicory.wasm.types.MemoryLimits
@@ -37,6 +38,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WASM_MEMORY_SQLITE_MA
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WasiMemoryReader
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WasiMemoryWriter
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.stack.EmscriptenStack
+import java.io.InputStream
 import com.dylibso.chicory.log.Logger as ChicoryLogger
 import com.dylibso.chicory.runtime.Memory as ChicoryMemory
 
@@ -47,6 +49,7 @@ internal class MainInstanceBuilder(
     private val callbackStore: SqliteCallbackStore,
     private val sqlite3Binary: WasmSqliteConfiguration,
     private val wasmSourceReader: WasmSourceReader,
+    private val machineFactory: ((Instance) -> Machine)?,
     private val stackBindingsRef: () -> EmscriptenStack,
 ) {
     fun setupModule(): ChicoryInstance {
@@ -84,20 +87,26 @@ internal class MainInstanceBuilder(
 
         val sqlite3Module: Module = wasmSourceReader.readOrThrow(sqlite3Binary.sqliteUrl) { source, _ ->
             runCatching {
-                source.buffered().asInputStream().use {
+                source.buffered().asInputStream().use { sourceStream: InputStream ->
                     Module
-                        .builder(it)
+                        .builder(sourceStream)
                         .withLogger(chicoryLogger)
+                        .withHostImports(hostImports)
+                        .withInitialize(true)
+                        .withStart(false)
+                        .run {
+                            if (machineFactory != null) {
+                                withMachineFactory(machineFactory)
+                            } else {
+                                this
+                            }
+                        }
                         .build()
                 }
             }
         }
 
-        val instance = sqlite3Module
-            .withHostImports(hostImports)
-            .withInitialize(true)
-            .withStart(false)
-            .instantiate()
+        val instance = sqlite3Module.instantiate()
         val indirectFunctionTableIndexes = setupIndirectFunctionIndexes(instance)
         instance.export(START_FUNCTION_NAME).apply()
 

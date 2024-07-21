@@ -4,15 +4,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.chicory
+package ru.pixnews.wasm.sqlite.driver.chicory.interpreter
 
 import androidx.sqlite.SQLiteDriver
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
-import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractIcuCollationTest
+import ru.pixnews.wasm.sqlite.driver.base.JvmDatabaseFactory
+import ru.pixnews.wasm.sqlite.driver.chicory.ChicorySqliteDriverFactory
+import ru.pixnews.wasm.sqlite.driver.test.base.tests.room.AbstractBasicRoomTest
 
-class ChicoryIcuCollationTest : AbstractIcuCollationTest<SQLiteDriver>(
-    driverCreator = ChicorySqliteDriverFactory,
+class ChicoryBasicRoomTest : AbstractBasicRoomTest<SQLiteDriver>(
+    driverFactory = ChicorySqliteDriverFactory(),
+    databaseFactory = JvmDatabaseFactory,
 ) {
     @JvmField
     @Rule

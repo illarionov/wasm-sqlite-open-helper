@@ -15,7 +15,8 @@ import ru.pixnews.wasm.sqlite.open.helper.chicory.ChicoryRuntimeInstance
 import ru.pixnews.wasm.sqlite.open.helper.chicory.ChicorySqliteEmbedder
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 
-object ChicorySqliteDriverFactory : TestSqliteDriverFactory<WasmSQLiteDriver<ChicoryRuntimeInstance>> {
+object ChicoryAndroidInstrumentedSqliteDriverFactory :
+    TestSqliteDriverFactory<WasmSQLiteDriver<ChicoryRuntimeInstance>> {
     override val defaultSqliteBinary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcu346
     override fun create(
         dbLogger: Logger,

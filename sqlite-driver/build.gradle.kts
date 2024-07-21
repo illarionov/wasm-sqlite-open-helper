@@ -78,6 +78,7 @@ kotlin {
             implementation(libs.androidx.test.core)
             implementation(libs.androidx.test.runner)
             implementation(libs.androidx.test.rules)
+            implementation(libs.chicory.runtime)
             implementation(libs.wsoh.sqlite.mt)
             implementation(libs.wsoh.sqlite.st)
             implementation(projects.sqliteEmbedderChasm)
@@ -143,6 +144,7 @@ kotlin {
         jvmTest {
             dependsOn(jvmAndAndroidTest)
             dependencies {
+                implementation(libs.chicory.aot)
                 implementation(libs.kotlinx.coroutines.debug)
             }
         }
