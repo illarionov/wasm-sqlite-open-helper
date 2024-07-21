@@ -7,6 +7,12 @@
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory
 
 import com.oracle.truffle.api.nodes.Node
+import kotlinx.io.IOException
+import kotlinx.io.RawSink
+import kotlinx.io.RawSource
+import kotlinx.io.asInputStream
+import kotlinx.io.asOutputStream
+import kotlinx.io.buffered
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
@@ -39,6 +45,12 @@ internal class GraalvmWasmHostMemoryAdapter(
         return wasmMemory.load_i64(node, addr.addr.toLong())
     }
 
+    override fun read(fromAddr: WasmPtr<*>, toSink: RawSink, readBytes: Int) {
+        val outputStream = toSink.buffered().asOutputStream()
+        wasmMemory.copyToStream(node, outputStream, fromAddr.addr, readBytes)
+        outputStream.flush()
+    }
+
     override fun read(addr: WasmPtr<*>, destination: ByteArray, destinationOffset: Int, readBytes: Int) {
         val bous = object : ByteArrayOutputStream(readBytes) {
             fun copyInto(destination: ByteArray, destinationOffset: Int) {
@@ -59,6 +71,14 @@ internal class GraalvmWasmHostMemoryAdapter(
 
     override fun writeI64(addr: WasmPtr<*>, data: Long) {
         wasmMemory.store_i64(node, addr.addr.toLong(), data)
+    }
+
+    override fun write(fromSource: RawSource, toAddr: WasmPtr<*>, writeBytes: Int) {
+        val inputStream = fromSource.buffered().asInputStream()
+        val read = wasmMemory.copyFromStream(null, inputStream, toAddr.addr, writeBytes)
+        if (read < 0) {
+            throw IOException("End of the stream has been reached")
+        }
     }
 
     override fun write(addr: WasmPtr<*>, source: ByteArray, sourceOffset: Int, writeBytes: Int) {

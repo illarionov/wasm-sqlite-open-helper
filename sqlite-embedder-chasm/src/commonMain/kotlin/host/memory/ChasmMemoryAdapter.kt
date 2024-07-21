@@ -20,6 +20,10 @@ import io.github.charlietap.chasm.executor.runtime.error.InvocationError
 import io.github.charlietap.chasm.executor.runtime.ext.memory
 import io.github.charlietap.chasm.executor.runtime.store.Address
 import io.github.charlietap.chasm.executor.runtime.store.Store
+import kotlinx.io.Buffer
+import kotlinx.io.RawSink
+import kotlinx.io.RawSource
+import kotlinx.io.buffered
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.orThrow
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.exception.ChasmModuleRuntimeErrorException
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
@@ -43,6 +47,22 @@ internal class ChasmMemoryAdapter(
         return MemoryInstanceLongReaderImpl(memoryInstance, addr.addr, 8).getOrThrow()
     }
 
+    override fun read(fromAddr: WasmPtr<*>, toSink: RawSink, readBytes: Int) {
+        val sinkBuffered = if (toSink is Buffer) {
+            toSink
+        } else {
+            toSink.buffered()
+        }
+        try {
+            for (addr in fromAddr.addr..<fromAddr.addr + readBytes) {
+                val byte = readMemory(store, memoryAddress, addr).orThrow()
+                sinkBuffered.writeByte(byte)
+            }
+        } finally {
+            sinkBuffered.flush()
+        }
+    }
+
     override fun read(addr: WasmPtr<*>, destination: ByteArray, destinationOffset: Int, readBytes: Int) {
         repeat(readBytes) { offset ->
             destination[destinationOffset + offset] = readMemory(store, memoryAddress, addr.addr + offset).orThrow()
@@ -59,6 +79,17 @@ internal class ChasmMemoryAdapter(
 
     override fun writeI64(addr: WasmPtr<*>, data: Long) {
         return MemoryInstanceLongWriterImpl(memoryInstance, data, addr.addr, 8).getOrThrow()
+    }
+
+    override fun write(fromSource: RawSource, toAddr: WasmPtr<*>, writeBytes: Int) {
+        val fromSourceBuffered = if (fromSource is Buffer) {
+            fromSource
+        } else {
+            fromSource.buffered()
+        }
+        for (addr in toAddr.addr until toAddr.addr + writeBytes) {
+            writeMemory(store, memoryAddress, addr, fromSourceBuffered.readByte())
+        }
     }
 
     override fun write(addr: WasmPtr<*>, source: ByteArray, sourceOffset: Int, writeBytes: Int) {

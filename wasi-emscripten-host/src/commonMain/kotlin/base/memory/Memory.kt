@@ -6,6 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.base.memory
 
+import kotlinx.io.RawSource
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 
@@ -14,6 +15,11 @@ public interface Memory : ReadOnlyMemory {
     public fun writeI8(addr: WasmPtr<*>, data: Byte)
     public fun writeI32(addr: WasmPtr<*>, data: Int)
     public fun writeI64(addr: WasmPtr<*>, data: Long)
+    public fun write(
+        fromSource: RawSource,
+        toAddr: WasmPtr<*>,
+        writeBytes: Int,
+    )
     public fun write(
         addr: WasmPtr<*>,
         source: ByteArray,
