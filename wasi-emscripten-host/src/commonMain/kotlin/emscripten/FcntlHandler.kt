@@ -6,6 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.emscripten
 
+import kotlinx.io.Buffer
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
@@ -55,8 +56,12 @@ internal class FcntlHandler(
             varArgs: Int?,
         ): Int {
             val structStatPtr: WasmPtr<StructFlock> = memory.readPtr(WasmPtr(checkNotNull(varArgs)))
-            val flockPacked = ByteArray(StructFlock.STRUCT_FLOCK_SIZE).also {
-                memory.read(structStatPtr, it)
+            val flockPacked = Buffer().also {
+                memory.read(
+                    fromAddr = structStatPtr,
+                    toSink = it,
+                    readBytes = StructFlock.STRUCT_FLOCK_SIZE,
+                )
             }
             val flock = StructFlock.unpack(flockPacked)
 

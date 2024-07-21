@@ -61,15 +61,6 @@ public open class TestMemory(
         toSinkBuffered.emit()
     }
 
-    override fun read(addr: WasmPtr<*>, destination: ByteArray, destinationOffset: Int, readBytes: Int) {
-        bytes.copyInto(
-            destination = destination,
-            destinationOffset = destinationOffset,
-            startIndex = addr.addr,
-            endIndex = addr.addr + readBytes,
-        )
-    }
-
     override fun writeI8(addr: WasmPtr<*>, data: Byte) {
         bytes[addr.addr] = data
     }
@@ -99,12 +90,6 @@ public open class TestMemory(
             startIndex = toAddr.addr,
             endIndex = toAddr.addr + writeBytes,
         )
-    }
-
-    override fun write(addr: WasmPtr<*>, source: ByteArray, sourceOffset: Int, writeBytes: Int) {
-        for (i in 0 until writeBytes) {
-            bytes[addr.addr + i] = source[sourceOffset + i]
-        }
     }
 
     override fun toString(): String {

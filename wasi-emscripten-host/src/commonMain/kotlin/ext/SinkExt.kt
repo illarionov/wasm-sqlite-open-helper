@@ -6,15 +6,18 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.ext
 
-import kotlinx.io.Buffer
+import kotlinx.io.Sink
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
 
 @InternalWasmSqliteHelperApi
-public fun String.encodeToNullTerminatedBuffer(
+public fun Sink.writeNullTerminatedString(
+    string: String,
     truncateAtSize: Int = Int.MAX_VALUE,
-): Buffer = Buffer().also { buffer ->
-    buffer.writeNullTerminatedString(this, truncateAtSize)
+): Int {
+    require(truncateAtSize > 0)
+    val raw = string.encodeToByteArray()
+    val rawSize = raw.size.coerceAtMost(truncateAtSize - 1)
+    write(raw, 0, rawSize)
+    writeByte(0)
+    return rawSize + 1
 }
-
-@InternalWasmSqliteHelperApi
-public fun String.encodedNullTerminatedStringLength(): Int = this.encodeToByteArray().size + 1

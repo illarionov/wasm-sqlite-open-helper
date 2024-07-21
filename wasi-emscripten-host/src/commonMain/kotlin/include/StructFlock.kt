@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.include
 
-import kotlinx.io.Buffer
+import kotlinx.io.Source
 import kotlinx.io.readIntLe
 import kotlinx.io.readLongLe
 import kotlinx.io.readShortLe
@@ -32,15 +32,14 @@ public data class StructFlock(
         public const val STRUCT_FLOCK_SIZE: Int = 32
 
         public fun unpack(
-            bytes: ByteArray,
+            source: Source,
         ): StructFlock {
-            val buffer = Buffer().apply { write(bytes) }
-            val type = buffer.readShortLe() // 0
-            val whence = buffer.readShortLe() // 2
-            buffer.readIntLe() // 4, padding?
-            val start = buffer.readLongLe() // 8
-            val len = buffer.readLongLe() // 16
-            val pid = buffer.readIntLe() // 24
+            val type = source.readShortLe() // 0
+            val whence = source.readShortLe() // 2
+            source.readIntLe() // 4, padding?
+            val start = source.readLongLe() // 8
+            val len = source.readLongLe() // 16
+            val pid = source.readIntLe() // 24
 
             return StructFlock(
                 l_type = type,

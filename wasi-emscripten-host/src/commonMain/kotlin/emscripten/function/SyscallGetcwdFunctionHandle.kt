@@ -11,7 +11,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.ext.encodeToNullTerminatedByteArray
+import ru.pixnews.wasm.sqlite.open.helper.host.ext.encodeToNullTerminatedBuffer
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 
 public class SyscallGetcwdFunctionHandle(
@@ -28,13 +28,13 @@ public class SyscallGetcwdFunctionHandle(
         }
 
         val path = host.fileSystem.getCwdPath().pathString
-        val pathBytes: ByteArray = path.encodeToNullTerminatedByteArray()
+        val pathBuffer = path.encodeToNullTerminatedBuffer()
 
-        if (size < pathBytes.size) {
+        if (size < pathBuffer.size) {
             return -Errno.RANGE.code
         }
-        memory.write(dst, pathBytes)
+        memory.write(pathBuffer, dst, pathBuffer.size.toInt())
 
-        return pathBytes.size
+        return pathBuffer.size.toInt()
     }
 }

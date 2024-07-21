@@ -17,7 +17,6 @@ import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
-import java.io.ByteArrayOutputStream
 
 /**
  * [Memory] implementation based on GraalVM [WasmMemory]
@@ -51,16 +50,6 @@ internal class GraalvmWasmHostMemoryAdapter(
         outputStream.flush()
     }
 
-    override fun read(addr: WasmPtr<*>, destination: ByteArray, destinationOffset: Int, readBytes: Int) {
-        val bous = object : ByteArrayOutputStream(readBytes) {
-            fun copyInto(destination: ByteArray, destinationOffset: Int) {
-                buf.copyInto(destination, destinationOffset, 0, count)
-            }
-        }
-        wasmMemory.copyToStream(node, bous, addr.addr, readBytes)
-        bous.copyInto(destination, destinationOffset)
-    }
-
     override fun writeI8(addr: WasmPtr<*>, data: Byte) {
         wasmMemory.store_i32_8(node, addr.addr.toLong(), data)
     }
@@ -79,9 +68,5 @@ internal class GraalvmWasmHostMemoryAdapter(
         if (read < 0) {
             throw IOException("End of the stream has been reached")
         }
-    }
-
-    override fun write(addr: WasmPtr<*>, source: ByteArray, sourceOffset: Int, writeBytes: Int) {
-        wasmMemory.initialize(source, sourceOffset, addr.addr.toLong(), writeBytes)
     }
 }

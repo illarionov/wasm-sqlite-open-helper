@@ -11,7 +11,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.ext.encodeToNullTerminatedByteArray
+import ru.pixnews.wasm.sqlite.open.helper.host.ext.encodeToNullTerminatedBuffer
 
 public class TzsetJsFunctionHandle(
     host: EmbedderHost,
@@ -28,11 +28,11 @@ public class TzsetJsFunctionHandle(
         memory.writeI32(timezone, tzInfo.timeZone.toInt())
         memory.writeI32(daylight, tzInfo.daylight)
 
-        val nameBytes = tzInfo.stdName.encodeToNullTerminatedByteArray(TZ_NAME_MAX_SIZE)
-        memory.write(stdName, nameBytes)
+        val nameBuffer = tzInfo.stdName.encodeToNullTerminatedBuffer(TZ_NAME_MAX_SIZE)
+        memory.write(nameBuffer, stdName, nameBuffer.size.toInt())
 
-        val dstNameBytes = tzInfo.dstName.encodeToNullTerminatedByteArray(TZ_NAME_MAX_SIZE)
-        memory.write(dstName, dstNameBytes)
+        val dstNameBuffer = tzInfo.dstName.encodeToNullTerminatedBuffer(TZ_NAME_MAX_SIZE)
+        memory.write(dstNameBuffer, dstName, dstNameBuffer.size.toInt())
     }
 
     private companion object {

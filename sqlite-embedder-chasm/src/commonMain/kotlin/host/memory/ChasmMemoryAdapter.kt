@@ -63,12 +63,6 @@ internal class ChasmMemoryAdapter(
         }
     }
 
-    override fun read(addr: WasmPtr<*>, destination: ByteArray, destinationOffset: Int, readBytes: Int) {
-        repeat(readBytes) { offset ->
-            destination[destinationOffset + offset] = readMemory(store, memoryAddress, addr.addr + offset).orThrow()
-        }
-    }
-
     override fun writeI8(addr: WasmPtr<*>, data: Byte) {
         writeMemory(store, memoryAddress, addr.addr, data).orThrow()
     }
@@ -89,12 +83,6 @@ internal class ChasmMemoryAdapter(
         }
         for (addr in toAddr.addr until toAddr.addr + writeBytes) {
             writeMemory(store, memoryAddress, addr, fromSourceBuffered.readByte())
-        }
-    }
-
-    override fun write(addr: WasmPtr<*>, source: ByteArray, sourceOffset: Int, writeBytes: Int) {
-        for (addrOffset in 0 until writeBytes) {
-            writeMemory(store, memoryAddress, addr.addr + addrOffset, source[sourceOffset + addrOffset])
         }
     }
 

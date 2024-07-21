@@ -28,6 +28,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            implementation(libs.kotlinx.io)
             api(projects.commonApi)
             implementation(projects.commonLock)
             api(projects.wasiEmscriptenHost)

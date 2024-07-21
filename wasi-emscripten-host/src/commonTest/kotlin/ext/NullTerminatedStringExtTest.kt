@@ -9,6 +9,7 @@ package ru.pixnews.wasm.sqlite.open.helper.host.ext
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.tableOf
+import kotlinx.io.readByteArray
 import ru.pixnews.wasm.sqlite.test.utils.TestEnv
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -21,7 +22,7 @@ class NullTerminatedStringExtTest {
     }
 
     @Test
-    fun encodeToNullTerminatedByteArray_test() {
+    fun encodeToNullTerminatedBuffer_test() {
         // TODO: correctly truncate on utf-8 character border
         tableOf("string", "maxDstSize", "result")
             .row("", 1, byteArrayOf(0))
@@ -34,15 +35,15 @@ class NullTerminatedStringExtTest {
             .row("ab", 3, byteArrayOf(97, 98, 0))
             .row("ab", 4, byteArrayOf(97, 98, 0))
             .forAll { str, maxLength, expectedBytes ->
-                assertThat(str.encodeToNullTerminatedByteArray(maxLength))
+                assertThat(str.encodeToNullTerminatedBuffer(maxLength).readByteArray())
                     .isEqualTo(expectedBytes)
             }
     }
 
     @Test
-    fun encodeToNullTerminatedByteArray_should_fail_on_negative_arg() {
-        assertFailsWith<IllegalArgumentException> { "".encodeToNullTerminatedByteArray(0) }
-        assertFailsWith<IllegalArgumentException> { "".encodeToNullTerminatedByteArray(-1) }
+    fun encodeToNullTerminatedBuffer_should_fail_on_negative_arg() {
+        assertFailsWith<IllegalArgumentException> { "".encodeToNullTerminatedBuffer(0) }
+        assertFailsWith<IllegalArgumentException> { "".encodeToNullTerminatedBuffer(-1) }
     }
 
     @Test

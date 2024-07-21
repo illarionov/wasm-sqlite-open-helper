@@ -23,12 +23,6 @@ public interface ReadOnlyMemory {
         toSink: RawSink,
         readBytes: Int,
     )
-    public fun read(
-        addr: WasmPtr<*>,
-        destination: ByteArray,
-        destinationOffset: Int = 0,
-        readBytes: Int = destination.size,
-    )
 }
 
 @InternalWasmSqliteHelperApi

@@ -28,7 +28,7 @@ public class SyscallFstat64FunctionHandle(
         val stat = host.fileSystem.stat(fd).also {
             logger.v { "`$fd`: OK $it" }
         }.pack()
-        memory.write(dst, stat)
+        memory.write(stat, dst, stat.size.toInt())
         Errno.SUCCESS.code
     } catch (e: SysException) {
         logger.v { "`$fd`: Error ${e.errNo}" }

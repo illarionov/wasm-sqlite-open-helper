@@ -45,11 +45,6 @@ internal class ChicoryMemoryAdapter(
         }
     }
 
-    override fun read(addr: WasmPtr<*>, destination: ByteArray, destinationOffset: Int, readBytes: Int) {
-        val bytes = wasmMemory.readBytes(addr.addr, readBytes)
-        bytes.copyInto(destination, destinationOffset)
-    }
-
     override fun writeI8(addr: WasmPtr<*>, data: Byte) {
         wasmMemory.writeByte(addr.addr, data)
     }
@@ -70,9 +65,5 @@ internal class ChicoryMemoryAdapter(
         }
         val data = fromSourceBuffered.readByteArray(writeBytes.toInt())
         wasmMemory.write(toAddr.addr, data)
-    }
-
-    override fun write(addr: WasmPtr<*>, source: ByteArray, sourceOffset: Int, writeBytes: Int) {
-        wasmMemory.write(addr.addr, source, sourceOffset, writeBytes)
     }
 }
