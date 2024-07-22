@@ -11,11 +11,12 @@ import com.dylibso.chicory.runtime.exceptions.WASMRuntimeException
 import kotlinx.io.Buffer
 import kotlinx.io.RawSource
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.host.base.plus
 
 internal class ChicoryMemoryRawSource(
     private val wasmMemory: Memory,
-    private val baseAddr: WasmPtr<*>,
-    private val toAddrExclusive: WasmPtr<*>, // TODO: use
+    private var baseAddr: WasmPtr<*>,
+    private val toAddrExclusive: WasmPtr<*>,
 ) : RawSource {
     private var isClosed: Boolean = false
 
@@ -23,10 +24,16 @@ internal class ChicoryMemoryRawSource(
         require(byteCount >= 0) { "byteCount is negative" }
         check(!isClosed) { "Stream is closed" }
 
-        val readBytes = byteCount.coerceAtMost(Int.MAX_VALUE.toLong()).toInt()
+        val bytesLeft: Long = (toAddrExclusive.addr - baseAddr.addr).toLong()
+        val readBytes = byteCount.coerceAtMost(bytesLeft).toInt()
+        if (readBytes <= 0) {
+            return -1
+        }
+
         try {
             val bytes = wasmMemory.readBytes(baseAddr.addr, readBytes)
             sink.write(bytes)
+            baseAddr += readBytes
         } catch (oob: WASMRuntimeException) {
             throw IllegalStateException("Out of bounds memory access", oob)
         } finally {

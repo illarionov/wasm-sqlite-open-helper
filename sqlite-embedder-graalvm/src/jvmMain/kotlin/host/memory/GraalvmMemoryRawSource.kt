@@ -12,12 +12,13 @@ import kotlinx.io.RawSource
 import kotlinx.io.asOutputStream
 import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.host.base.plus
 import java.io.IOException
 
 internal class GraalvmMemoryRawSource(
     private val memoryProvider: () -> WasmMemory,
-    private val baseAddr: WasmPtr<*>,
-    private val toAddrExclusive: WasmPtr<*>, // TODO: use
+    private var baseAddr: WasmPtr<*>,
+    private val toAddrExclusive: WasmPtr<*>,
     private val node: Node?,
 ) : RawSource {
     private var isClosed: Boolean = false
@@ -26,7 +27,12 @@ internal class GraalvmMemoryRawSource(
         require(byteCount >= 0) { "byteCount is negative" }
         check(!isClosed) { "Stream is closed" }
 
-        val readBytes = byteCount.coerceAtMost(Int.MAX_VALUE.toLong()).toInt()
+        val bytesLeft: Long = (toAddrExclusive.addr - baseAddr.addr).toLong()
+        val readBytes = byteCount.coerceAtMost(bytesLeft).toInt()
+        if (readBytes <= 0) {
+            return -1
+        }
+
         val outputStream = sink.asOutputStream()
         try {
             memoryProvider().copyToStream(node, outputStream, baseAddr.addr, readBytes)
@@ -35,6 +41,8 @@ internal class GraalvmMemoryRawSource(
         } finally {
             outputStream.flush()
         }
+        baseAddr += readBytes
+
         return readBytes.toLong()
     }
 

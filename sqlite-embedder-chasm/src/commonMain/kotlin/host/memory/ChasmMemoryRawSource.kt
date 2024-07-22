@@ -14,13 +14,14 @@ import io.github.charlietap.chasm.executor.runtime.store.Store
 import kotlinx.io.Buffer
 import kotlinx.io.RawSource
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.host.base.plus
 import kotlin.concurrent.Volatile
 
 internal class ChasmMemoryRawSource(
     private val store: Store,
     private val memoryAddress: Address.Memory,
-    private val baseAddr: WasmPtr<*>,
-    private val toAddrExclusive: WasmPtr<*>, // TODO: use
+    private var baseAddr: WasmPtr<*>,
+    private val toAddrExclusive: WasmPtr<*>,
 ) : RawSource {
     @Volatile
     private var isClosed: Boolean = false
@@ -29,7 +30,12 @@ internal class ChasmMemoryRawSource(
         require(byteCount >= 0) { "byteCount is negative" }
         check(!isClosed) { "Stream is closed" }
 
-        val readBytes = byteCount.coerceAtMost(Int.MAX_VALUE.toLong()).toInt()
+        val bytesLeft: Long = (toAddrExclusive.addr - baseAddr.addr).toLong()
+        val readBytes = byteCount.coerceAtMost(bytesLeft).toInt()
+        if (readBytes <= 0) {
+            return -1
+        }
+
         try {
             for (addr in baseAddr.addr..<baseAddr.addr + readBytes) {
                 @Suppress("UseCheckOrError")
@@ -38,6 +44,7 @@ internal class ChasmMemoryRawSource(
                     is Error -> throw IllegalStateException("Read from memory failed: ${readResult.error.error}")
                 }
             }
+            baseAddr += readBytes
         } finally {
             sink.emit()
         }
