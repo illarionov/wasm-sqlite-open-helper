@@ -10,8 +10,6 @@ package ru.pixnews.wasm.sqlite.open.helper.host.test.fixtures
 
 import kotlinx.io.RawSink
 import kotlinx.io.RawSource
-import kotlinx.io.buffered
-import kotlinx.io.readTo
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.DefaultWasiMemoryReader
@@ -51,14 +49,8 @@ public open class TestMemory(
             (bytes[addr.addr + 6].toLong() and 0xffL shl 48) or
             (bytes[addr.addr + 7].toLong() and 0xffL shl 56)
 
-    override fun read(fromAddr: WasmPtr<*>, toSink: RawSink, readBytes: Int) {
-        val toSinkBuffered = toSink.buffered()
-        toSinkBuffered.write(
-            source = bytes,
-            startIndex = fromAddr.addr,
-            endIndex = fromAddr.addr + readBytes,
-        )
-        toSinkBuffered.emit()
+    override fun source(fromAddr: WasmPtr<*>, toAddrExclusive: WasmPtr<*>): RawSource {
+        return TestMemoryRawSource(this, fromAddr, toAddrExclusive)
     }
 
     override fun writeI8(addr: WasmPtr<*>, data: Byte) {
@@ -83,13 +75,8 @@ public open class TestMemory(
         bytes[addr.addr + 7] = (data ushr 56 and 0xff).toByte()
     }
 
-    override fun write(fromSource: RawSource, toAddr: WasmPtr<*>, writeBytes: Int) {
-        val fromSourceBuffered = fromSource.buffered()
-        fromSourceBuffered.readTo(
-            sink = bytes,
-            startIndex = toAddr.addr,
-            endIndex = toAddr.addr + writeBytes,
-        )
+    override fun sink(fromAddr: WasmPtr<*>, toAddrExclusive: WasmPtr<*>): RawSink {
+        return TestMemoryRawSink(this, fromAddr, toAddrExclusive)
     }
 
     override fun toString(): String {

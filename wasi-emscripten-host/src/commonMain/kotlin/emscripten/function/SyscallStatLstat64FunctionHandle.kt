@@ -6,16 +6,19 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function
 
+import kotlinx.io.buffered
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readNullTerminatedString
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.sinkWithMaxSize
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
+import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.STRUCT_SIZE_PACKED_SIZE
 import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.StructStat
-import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.pack
+import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.packTo
 
 public class SyscallStatLstat64FunctionHandle private constructor(
     host: EmbedderHost,
@@ -35,8 +38,10 @@ public class SyscallStatLstat64FunctionHandle private constructor(
                 followSymlinks = followSymlinks,
             ).also {
                 logger.v { "`$path`: $it" }
-            }.pack()
-            memory.write(stat, dstAddr, stat.size.toInt())
+            }
+            memory.sinkWithMaxSize(dstAddr, STRUCT_SIZE_PACKED_SIZE).buffered().use {
+                stat.packTo(it)
+            }
         } catch (e: SysException) {
             logger.v { "`$path`: error ${e.errNo}" }
             return -e.errNo.code

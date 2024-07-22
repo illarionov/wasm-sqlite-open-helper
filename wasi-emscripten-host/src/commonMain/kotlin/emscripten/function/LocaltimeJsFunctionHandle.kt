@@ -6,13 +6,16 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function
 
+import kotlinx.io.buffered
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.sinkWithMaxSize
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
+import ru.pixnews.wasm.sqlite.open.helper.host.include.STRUCT_TM_PACKED_SIZE
 import ru.pixnews.wasm.sqlite.open.helper.host.include.StructTm
-import ru.pixnews.wasm.sqlite.open.helper.host.include.pack
+import ru.pixnews.wasm.sqlite.open.helper.host.include.packTo
 
 public class LocaltimeJsFunctionHandle(
     host: EmbedderHost,
@@ -25,7 +28,8 @@ public class LocaltimeJsFunctionHandle(
         val localTime = host.localTimeFormatter.format(timeSeconds)
         logger.v { "localtimeJs($timeSeconds): $localTime" }
 
-        val bytesBuffer = localTime.pack()
-        memory.write(bytesBuffer, timePtr, bytesBuffer.size.toInt())
+        memory.sinkWithMaxSize(timePtr, STRUCT_TM_PACKED_SIZE).buffered().use {
+            localTime.packTo(it)
+        }
     }
 }

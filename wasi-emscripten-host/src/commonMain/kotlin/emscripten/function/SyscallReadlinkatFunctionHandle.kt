@@ -13,6 +13,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readNullTerminatedString
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.sinkWithMaxSize
 import ru.pixnews.wasm.sqlite.open.helper.host.castFileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
@@ -43,7 +44,9 @@ public class SyscallReadlinkatFunctionHandle(
             val linkPath = fs.readLinkAt(dirFd, path)
             val linkpathBuffer = Buffer().also { it.writeString(linkPath) }
             val len = linkpathBuffer.size.toInt().coerceAtMost(bufSize)
-            memory.write(linkpathBuffer, buf, len)
+            memory.sinkWithMaxSize(buf, len).use {
+                it.write(linkpathBuffer, len.toLong())
+            }
             len
         } catch (e: SysException) {
             logger.v {

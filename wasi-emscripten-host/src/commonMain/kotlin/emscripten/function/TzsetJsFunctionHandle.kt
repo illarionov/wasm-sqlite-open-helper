@@ -6,12 +6,14 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function
 
+import kotlinx.io.buffered
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.sinkWithMaxSize
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.ext.encodeToNullTerminatedBuffer
+import ru.pixnews.wasm.sqlite.open.helper.host.ext.writeNullTerminatedString
 
 public class TzsetJsFunctionHandle(
     host: EmbedderHost,
@@ -28,11 +30,13 @@ public class TzsetJsFunctionHandle(
         memory.writeI32(timezone, tzInfo.timeZone.toInt())
         memory.writeI32(daylight, tzInfo.daylight)
 
-        val nameBuffer = tzInfo.stdName.encodeToNullTerminatedBuffer(TZ_NAME_MAX_SIZE)
-        memory.write(nameBuffer, stdName, nameBuffer.size.toInt())
+        memory.sinkWithMaxSize(stdName, TZ_NAME_MAX_SIZE).buffered().use {
+            it.writeNullTerminatedString(tzInfo.stdName, TZ_NAME_MAX_SIZE)
+        }
 
-        val dstNameBuffer = tzInfo.dstName.encodeToNullTerminatedBuffer(TZ_NAME_MAX_SIZE)
-        memory.write(dstNameBuffer, dstName, dstNameBuffer.size.toInt())
+        memory.sinkWithMaxSize(dstName, TZ_NAME_MAX_SIZE).buffered().use {
+            it.writeNullTerminatedString(tzInfo.dstName, TZ_NAME_MAX_SIZE)
+        }
     }
 
     private companion object {

@@ -34,6 +34,7 @@ public data class StructFlock(
         public fun unpack(
             source: Source,
         ): StructFlock {
+            source.require(STRUCT_FLOCK_SIZE.toLong())
             val type = source.readShortLe() // 0
             val whence = source.readShortLe() // 2
             source.readIntLe() // 4, padding?

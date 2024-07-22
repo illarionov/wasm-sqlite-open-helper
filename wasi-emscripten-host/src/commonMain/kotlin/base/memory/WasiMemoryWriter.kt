@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.base.memory
 
-import kotlinx.io.Buffer
+import kotlinx.io.buffered
 import kotlinx.io.readByteArray
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
@@ -39,10 +39,11 @@ public class DefaultWasiMemoryWriter(
         memory: ReadOnlyMemory,
     ): List<FileSystemByteBuffer> = List(ciovecList.size) { idx ->
         val ciovec = ciovecList[idx]
-        val bytesBuffer = Buffer().also {
-            memory.read(ciovec.buf, it, ciovec.bufLen.value.toInt())
-        }
         // XXX: too many memory copies
-        FileSystemByteBuffer(bytesBuffer.readByteArray())
+        val maxSize = ciovec.bufLen.value.toInt()
+        val bytesBuffer = memory.sourceWithMaxSize(ciovec.buf, maxSize).buffered().use {
+            it.readByteArray(maxSize)
+        }
+        FileSystemByteBuffer(bytesBuffer)
     }
 }

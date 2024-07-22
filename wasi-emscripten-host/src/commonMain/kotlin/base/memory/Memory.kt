@@ -7,7 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.host.base.memory
 
 import kotlinx.io.Buffer
-import kotlinx.io.RawSource
+import kotlinx.io.RawSink
 import kotlinx.io.writeString
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
@@ -17,11 +17,8 @@ public interface Memory : ReadOnlyMemory {
     public fun writeI8(addr: WasmPtr<*>, data: Byte)
     public fun writeI32(addr: WasmPtr<*>, data: Int)
     public fun writeI64(addr: WasmPtr<*>, data: Long)
-    public fun write(
-        fromSource: RawSource,
-        toAddr: WasmPtr<*>,
-        writeBytes: Int,
-    )
+
+    public fun sink(fromAddr: WasmPtr<*>, toAddrExclusive: WasmPtr<*>): RawSink
 }
 
 @InternalWasmSqliteHelperApi
@@ -43,9 +40,17 @@ public fun Memory.writeNullTerminatedString(
 ): Int {
     val buffer = Buffer().apply {
         writeString(value)
+        writeByte(0)
     }
-    val encodedSize = buffer.size.toInt()
-    write(buffer, offset, encodedSize)
-    writeI8(WasmPtr<Unit>(offset.addr + encodedSize), 0)
-    return encodedSize + 1
+    val size = buffer.size.toInt()
+    sinkWithMaxSize(offset, size).use {
+        it.write(buffer, size.toLong())
+    }
+    return size
 }
+
+@InternalWasmSqliteHelperApi
+public fun <P : Any?> Memory.sinkWithMaxSize(
+    fromAddr: WasmPtr<P>,
+    maxSize: Int,
+): RawSink = sink(fromAddr, WasmPtr<P>(fromAddr.addr + maxSize))

@@ -6,14 +6,17 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function
 
+import kotlinx.io.buffered
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.sinkWithMaxSize
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
+import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.STRUCT_SIZE_PACKED_SIZE
 import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.StructStat
-import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.pack
+import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.packTo
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 
@@ -27,8 +30,10 @@ public class SyscallFstat64FunctionHandle(
     ): Int = try {
         val stat = host.fileSystem.stat(fd).also {
             logger.v { "`$fd`: OK $it" }
-        }.pack()
-        memory.write(stat, dst, stat.size.toInt())
+        }
+        memory.sinkWithMaxSize(dst, STRUCT_SIZE_PACKED_SIZE).buffered().use {
+            stat.packTo(it)
+        }
         Errno.SUCCESS.code
     } catch (e: SysException) {
         logger.v { "`$fd`: Error ${e.errNo}" }

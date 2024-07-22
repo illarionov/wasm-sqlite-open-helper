@@ -70,6 +70,8 @@ public fun IsDstFlag.asTmIsdstValue(): Int = when (this) {
     IsDstFlag.UNKNOWN -> -1
 }
 
+public const val STRUCT_TM_PACKED_SIZE: Int = 40
+
 public fun StructTm.packTo(sink: Sink): Unit = sink.run {
     writeIntLe(tm_sec) // 0
     writeIntLe(tm_min) // 4
@@ -85,5 +87,5 @@ public fun StructTm.packTo(sink: Sink): Unit = sink.run {
 
 public fun StructTm.pack(): Buffer = Buffer().also {
     packTo(it)
-    check(it.size == 40L)
+    check(it.size == STRUCT_TM_PACKED_SIZE.toLong())
 }

@@ -7,6 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi
 
 import kotlinx.io.Buffer
+import kotlinx.io.buffered
 import kotlinx.io.readByteArray
 import kotlinx.io.writeString
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
@@ -15,6 +16,8 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readNullableNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readPtr
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.sinkWithMaxSize
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.sourceWithMaxSize
 import ru.pixnews.wasm.sqlite.open.helper.host.ext.encodeToNullTerminatedBuffer
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteColumnType
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
@@ -47,7 +50,9 @@ public class Sqlite3StatementFunctions internal constructor(
             sqlBytesPtr = memoryBindings.sqliteAllocOrThrow(nullTerminatedSqlSize.toUInt())
             ppStatement = memoryBindings.sqliteAllocOrThrow(WasmPtr.WASM_SIZEOF_PTR)
 
-            memory.write(sqlEncoded, sqlBytesPtr, nullTerminatedSqlSize)
+            memory.sinkWithMaxSize(sqlBytesPtr, nullTerminatedSqlSize).use {
+                it.write(sqlEncoded, sqlEncoded.size)
+            }
 
             val errCode = sqliteExports.sqlite3_prepare_v2.executeForSqliteResultCode(
                 sqliteDb.addr,
@@ -106,10 +111,9 @@ public class Sqlite3StatementFunctions internal constructor(
         value: ByteArray,
     ): SqliteResultCode {
         val pValue: WasmPtr<Byte> = memoryBindings.sqliteAllocOrThrow(value.size.toUInt())
-        val valueBuffer = Buffer().apply {
-            write(value)
+        memory.sinkWithMaxSize(pValue, value.size).buffered().use {
+            it.write(value)
         }
-        memory.write(valueBuffer, pValue, valueBuffer.size.toInt())
         val errCode = try {
             sqliteExports.sqlite3_bind_blob.executeForSqliteResultCode(
                 statement.addr,
@@ -134,7 +138,9 @@ public class Sqlite3StatementFunctions internal constructor(
         val size = encoded.size.toInt()
 
         val pValue: WasmPtr<Byte> = memoryBindings.sqliteAllocOrThrow(size.toUInt())
-        memory.write(encoded, pValue, size)
+        memory.sinkWithMaxSize(pValue, size).use {
+            it.write(encoded, encoded.size)
+        }
         val errCode = try {
             sqliteExports.sqlite3_bind_text.executeForInt(
                 statement.addr,
@@ -248,6 +254,8 @@ public class Sqlite3StatementFunctions internal constructor(
             statement.addr,
             columnIndex,
         )
-        return Buffer().also { memory.read(ptr, it, bytes) }.readByteArray()
+        return memory.sourceWithMaxSize(ptr, bytes).buffered().use {
+            it.readByteArray(bytes)
+        }
     }
 }
