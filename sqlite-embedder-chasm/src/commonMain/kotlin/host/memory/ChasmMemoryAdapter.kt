@@ -21,7 +21,6 @@ import io.github.charlietap.chasm.executor.runtime.ext.memory
 import io.github.charlietap.chasm.executor.runtime.store.Address
 import io.github.charlietap.chasm.executor.runtime.store.Store
 import kotlinx.io.Buffer
-import kotlinx.io.RawSink
 import kotlinx.io.RawSource
 import kotlinx.io.buffered
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.orThrow
@@ -47,24 +46,8 @@ internal class ChasmMemoryAdapter(
         return MemoryInstanceLongReaderImpl(memoryInstance, addr.addr, 8).getOrThrow()
     }
 
-    override fun source(fromAddr: WasmPtr<*>): ChasmMemoryRawSource {
-        return ChasmMemoryRawSource(store, memoryAddress, fromAddr)
-    }
-
-    override fun read(fromAddr: WasmPtr<*>, toSink: RawSink, readBytes: Int) {
-        val sinkBuffered = if (toSink is Buffer) {
-            toSink
-        } else {
-            toSink.buffered()
-        }
-        try {
-            for (addr in fromAddr.addr..<fromAddr.addr + readBytes) {
-                val byte = readMemory(store, memoryAddress, addr).orThrow()
-                sinkBuffered.writeByte(byte)
-            }
-        } finally {
-            sinkBuffered.flush()
-        }
+    override fun source(fromAddr: WasmPtr<*>, toAddrExclusive: WasmPtr<*>): ChasmMemoryRawSource {
+        return ChasmMemoryRawSource(store, memoryAddress, fromAddr, toAddrExclusive)
     }
 
     override fun writeI8(addr: WasmPtr<*>, data: Byte) {

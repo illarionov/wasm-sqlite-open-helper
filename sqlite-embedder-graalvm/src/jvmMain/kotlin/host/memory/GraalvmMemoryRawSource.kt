@@ -17,6 +17,7 @@ import java.io.IOException
 internal class GraalvmMemoryRawSource(
     private val memoryProvider: () -> WasmMemory,
     private val baseAddr: WasmPtr<*>,
+    private val toAddrExclusive: WasmPtr<*>, // TODO: use
     private val node: Node?,
 ) : RawSource {
     @Volatile

@@ -8,7 +8,6 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.test.fixtures
 
-import kotlinx.io.RawSink
 import kotlinx.io.RawSource
 import kotlinx.io.buffered
 import kotlinx.io.readTo
@@ -51,18 +50,8 @@ public open class TestMemory(
             (bytes[addr.addr + 6].toLong() and 0xffL shl 48) or
             (bytes[addr.addr + 7].toLong() and 0xffL shl 56)
 
-    override fun source(fromAddr: WasmPtr<*>): RawSource {
-        return TestMemoryRawSource(this, fromAddr)
-    }
-
-    override fun read(fromAddr: WasmPtr<*>, toSink: RawSink, readBytes: Int) {
-        val toSinkBuffered = toSink.buffered()
-        toSinkBuffered.write(
-            source = bytes,
-            startIndex = fromAddr.addr,
-            endIndex = fromAddr.addr + readBytes,
-        )
-        toSinkBuffered.emit()
+    override fun source(fromAddr: WasmPtr<*>, toAddrExclusive: WasmPtr<*>): RawSource {
+        return TestMemoryRawSource(this, fromAddr, toAddrExclusive)
     }
 
     override fun writeI8(addr: WasmPtr<*>, data: Byte) {

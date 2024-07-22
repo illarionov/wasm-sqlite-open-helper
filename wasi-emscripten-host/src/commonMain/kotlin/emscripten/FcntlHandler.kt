@@ -6,15 +6,17 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.emscripten
 
-import kotlinx.io.Buffer
+import kotlinx.io.buffered
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readPtr
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.sourceWithMaxSize
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
 import ru.pixnews.wasm.sqlite.open.helper.host.include.Fcntl
 import ru.pixnews.wasm.sqlite.open.helper.host.include.StructFlock
+import ru.pixnews.wasm.sqlite.open.helper.host.include.StructFlock.Companion.STRUCT_FLOCK_SIZE
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 
@@ -56,14 +58,9 @@ internal class FcntlHandler(
             varArgs: Int?,
         ): Int {
             val structStatPtr: WasmPtr<StructFlock> = memory.readPtr(WasmPtr(checkNotNull(varArgs)))
-            val flockPacked = Buffer().also {
-                memory.read(
-                    fromAddr = structStatPtr,
-                    toSink = it,
-                    readBytes = StructFlock.STRUCT_FLOCK_SIZE,
-                )
+            val flock = memory.sourceWithMaxSize(structStatPtr, STRUCT_FLOCK_SIZE).buffered().use {
+                StructFlock.unpack(it)
             }
-            val flock = StructFlock.unpack(flockPacked)
 
             logger.v { "F_SETLK($fd, $flock)" }
             when (flock.l_type) {

@@ -7,7 +7,6 @@
 package ru.pixnews.wasm.sqlite.open.helper.host.base.memory
 
 import kotlinx.io.Buffer
-import kotlinx.io.RawSink
 import kotlinx.io.RawSource
 import kotlinx.io.readString
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
@@ -20,12 +19,7 @@ public interface ReadOnlyMemory {
     public fun readI32(addr: WasmPtr<*>): Int
     public fun readI64(addr: WasmPtr<*>): Long
 
-    public fun source(fromAddr: WasmPtr<*>): RawSource
-    public fun read(
-        fromAddr: WasmPtr<*>,
-        toSink: RawSink,
-        readBytes: Int,
-    )
+    public fun source(fromAddr: WasmPtr<*>, toAddrExclusive: WasmPtr<*>): RawSource
 }
 
 @InternalWasmSqliteHelperApi
@@ -67,3 +61,9 @@ public fun ReadOnlyMemory.readNullTerminatedString(offset: WasmPtr<Byte>): Strin
 
     return mem.readString()
 }
+
+@InternalWasmSqliteHelperApi
+public fun <P : Any?> ReadOnlyMemory.sourceWithMaxSize(
+    fromAddr: WasmPtr<P>,
+    maxSize: Int,
+): RawSource = source(fromAddr, WasmPtr<P>(fromAddr.addr + maxSize))

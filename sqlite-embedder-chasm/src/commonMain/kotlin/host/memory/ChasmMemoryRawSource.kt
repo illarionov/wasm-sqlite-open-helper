@@ -20,6 +20,7 @@ internal class ChasmMemoryRawSource(
     private val store: Store,
     private val memoryAddress: Address.Memory,
     private val baseAddr: WasmPtr<*>,
+    private val toAddrExclusive: WasmPtr<*>, // TODO: use
 ) : RawSource {
     @Volatile
     private var isClosed: Boolean = false

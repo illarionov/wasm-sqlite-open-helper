@@ -14,6 +14,7 @@ import kotlin.concurrent.Volatile
 public class TestMemoryRawSource(
     private val memory: TestMemory,
     public val baseAddr: WasmPtr<*>,
+    public val toAddrExclusive: WasmPtr<*>, // TODO: use
 ) : RawSource {
     @Volatile
     private var isClosed: Boolean = false

@@ -9,22 +9,19 @@ package ru.pixnews.wasm.sqlite.open.helper.host.test.assertions
 import assertk.Assert
 import assertk.assertions.isEqualTo
 import assertk.assertions.support.appendName
-import kotlinx.io.Buffer
+import kotlinx.io.buffered
 import kotlinx.io.readByteArray
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.sourceWithMaxSize
 import ru.pixnews.wasm.sqlite.open.helper.host.test.fixtures.TestMemory
 
 public fun Assert<TestMemory>.bytesAt(
     address: WasmPtr<Byte>,
     size: Int,
 ): Assert<ByteArray> = transform(appendName("TestMemory{$address}", separator = ".")) { testMemory ->
-    val buffer = Buffer()
-    testMemory.read(
-        fromAddr = address,
-        toSink = buffer,
-        readBytes = size,
-    )
-    buffer.readByteArray()
+    testMemory.sourceWithMaxSize(address, size).buffered().use {
+        it.readByteArray(size)
+    }
 }
 
 public fun Assert<TestMemory>.hasBytesAt(

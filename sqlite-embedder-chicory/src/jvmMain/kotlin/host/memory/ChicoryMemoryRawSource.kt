@@ -15,6 +15,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 internal class ChicoryMemoryRawSource(
     private val wasmMemory: Memory,
     private val baseAddr: WasmPtr<*>,
+    private val toAddrExclusive: WasmPtr<*>, // TODO: use
 ) : RawSource {
     @Volatile
     private var isClosed: Boolean = false

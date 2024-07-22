@@ -7,6 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi
 
 import kotlinx.io.Buffer
+import kotlinx.io.buffered
 import kotlinx.io.readByteArray
 import kotlinx.io.writeString
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
@@ -15,6 +16,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readNullableNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readPtr
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.sourceWithMaxSize
 import ru.pixnews.wasm.sqlite.open.helper.host.ext.encodeToNullTerminatedBuffer
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteColumnType
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
@@ -248,6 +250,8 @@ public class Sqlite3StatementFunctions internal constructor(
             statement.addr,
             columnIndex,
         )
-        return Buffer().also { memory.read(ptr, it, bytes) }.readByteArray()
+        return memory.sourceWithMaxSize(ptr, bytes).buffered().use {
+            it.readByteArray(bytes)
+        }
     }
 }
