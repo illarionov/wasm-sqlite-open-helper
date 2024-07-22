@@ -861,6 +861,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/include/StructTm$IsDs
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/include/StructTmKt {
+	public static final field STRUCT_TM_PACKED_SIZE I
 	public static final fun asTmIsdstValue (Lru/pixnews/wasm/sqlite/open/helper/host/include/StructTm$IsDstFlag;)I
 	public static final fun pack (Lru/pixnews/wasm/sqlite/open/helper/host/include/StructTm;)Lkotlinx/io/Buffer;
 	public static final fun packTo (Lru/pixnews/wasm/sqlite/open/helper/host/include/StructTm;Lkotlinx/io/Sink;)V
@@ -919,6 +920,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/include/sys/StructSta
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/include/sys/StructStatKt {
+	public static final field STRUCT_SIZE_PACKED_SIZE I
 	public static final fun pack (Lru/pixnews/wasm/sqlite/open/helper/host/include/sys/StructStat;)Lkotlinx/io/Buffer;
 	public static final fun packTo (Lru/pixnews/wasm/sqlite/open/helper/host/include/sys/StructStat;Lkotlinx/io/Sink;)V
 }

@@ -7,33 +7,32 @@
 package ru.pixnews.wasm.sqlite.open.helper.chicory.host.memory
 
 import com.dylibso.chicory.runtime.Memory
-import com.dylibso.chicory.runtime.exceptions.WASMRuntimeException
 import kotlinx.io.Buffer
-import kotlinx.io.RawSource
+import kotlinx.io.RawSink
+import kotlinx.io.readByteArray
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 
-internal class ChicoryMemoryRawSource(
+internal class ChicoryMemoryRawSink(
     private val wasmMemory: Memory,
-    private val baseAddr: WasmPtr<*>,
-    private val toAddrExclusive: WasmPtr<*>, // TODO: use
-) : RawSource {
+    private var baseAddr: WasmPtr<*>,
+    private val toAddrExclusive: WasmPtr<*>,
+) : RawSink {
     private var isClosed: Boolean = false
 
-    override fun readAtMostTo(sink: Buffer, byteCount: Long): Long {
+    override fun write(source: Buffer, byteCount: Long) {
         require(byteCount >= 0) { "byteCount is negative" }
         check(!isClosed) { "Stream is closed" }
 
-        val readBytes = byteCount.coerceAtMost(Int.MAX_VALUE.toLong()).toInt()
-        try {
-            val bytes = wasmMemory.readBytes(baseAddr.addr, readBytes)
-            sink.write(bytes)
-        } catch (oob: WASMRuntimeException) {
-            throw IllegalStateException("Out of bounds memory access", oob)
-        } finally {
-            sink.emit()
+        val endAddrExclusive = baseAddr.addr + byteCount
+        require(endAddrExclusive <= toAddrExclusive.addr) {
+            "Cannot write `$byteCount` bytes to memory range $baseAddr ..<$toAddrExclusive: out of boundary access"
         }
-        return readBytes.toLong()
+        val data = source.readByteArray(byteCount.toInt())
+        wasmMemory.write(baseAddr.addr, data)
+        baseAddr = WasmPtr<Unit>(endAddrExclusive.toInt())
     }
+
+    override fun flush() = Unit
 
     override fun close() {
         isClosed = true

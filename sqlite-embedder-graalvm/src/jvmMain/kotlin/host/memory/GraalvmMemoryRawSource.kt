@@ -20,7 +20,6 @@ internal class GraalvmMemoryRawSource(
     private val toAddrExclusive: WasmPtr<*>, // TODO: use
     private val node: Node?,
 ) : RawSource {
-    @Volatile
     private var isClosed: Boolean = false
 
     override fun readAtMostTo(sink: Buffer, byteCount: Long): Long {

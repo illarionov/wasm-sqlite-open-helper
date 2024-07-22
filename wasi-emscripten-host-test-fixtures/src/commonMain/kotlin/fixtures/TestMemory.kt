@@ -8,9 +8,8 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.test.fixtures
 
+import kotlinx.io.RawSink
 import kotlinx.io.RawSource
-import kotlinx.io.buffered
-import kotlinx.io.readTo
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.DefaultWasiMemoryReader
@@ -76,13 +75,8 @@ public open class TestMemory(
         bytes[addr.addr + 7] = (data ushr 56 and 0xff).toByte()
     }
 
-    override fun write(fromSource: RawSource, toAddr: WasmPtr<*>, writeBytes: Int) {
-        val fromSourceBuffered = fromSource.buffered()
-        fromSourceBuffered.readTo(
-            sink = bytes,
-            startIndex = toAddr.addr,
-            endIndex = toAddr.addr + writeBytes,
-        )
+    override fun sink(fromAddr: WasmPtr<*>, toAddrExclusive: WasmPtr<*>): RawSink {
+        return TestMemoryRawSink(this, fromAddr, toAddrExclusive)
     }
 
     override fun toString(): String {

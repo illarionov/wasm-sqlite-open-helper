@@ -96,7 +96,9 @@ public fun StructStat.packTo(sink: Sink): Unit = sink.run {
     writeLongLe(st_ino.toLong()) // 88
 }
 
+public const val STRUCT_SIZE_PACKED_SIZE: Int = 96
+
 public fun StructStat.pack(): Buffer = Buffer().also {
     packTo(it)
-    check(it.size == 96L)
+    check(it.size == STRUCT_SIZE_PACKED_SIZE.toLong())
 }

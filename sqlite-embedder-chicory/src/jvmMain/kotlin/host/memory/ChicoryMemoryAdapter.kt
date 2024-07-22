@@ -6,10 +6,8 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chicory.host.memory
 
-import kotlinx.io.Buffer
+import kotlinx.io.RawSink
 import kotlinx.io.RawSource
-import kotlinx.io.buffered
-import kotlinx.io.readByteArray
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import com.dylibso.chicory.runtime.Memory as ChicoryMemory
@@ -46,13 +44,7 @@ internal class ChicoryMemoryAdapter(
         wasmMemory.writeLong(addr.addr, data)
     }
 
-    override fun write(fromSource: RawSource, toAddr: WasmPtr<*>, writeBytes: Int) {
-        val fromSourceBuffered = if (fromSource is Buffer) {
-            fromSource
-        } else {
-            fromSource.buffered()
-        }
-        val data = fromSourceBuffered.readByteArray(writeBytes)
-        wasmMemory.write(toAddr.addr, data)
+    override fun sink(fromAddr: WasmPtr<*>, toAddrExclusive: WasmPtr<*>): RawSink {
+        return ChicoryMemoryRawSink(wasmMemory, fromAddr, toAddrExclusive)
     }
 }

@@ -6,11 +6,12 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function
 
-import kotlinx.io.Buffer
+import kotlinx.io.buffered
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.sinkWithMaxSize
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
 
 public class GetentropyFunctionHandle(
@@ -24,12 +25,10 @@ public class GetentropyFunctionHandle(
         return try {
             val entropyBytes = host.entropySource.generateEntropy(size)
             check(entropyBytes.size == size)
-            val entropySource = Buffer().apply { write(entropyBytes) }
-            memory.write(
-                fromSource = entropySource,
-                toAddr = buffer,
-                writeBytes = size,
-            )
+
+            memory.sinkWithMaxSize(buffer, size).buffered().use {
+                it.write(entropyBytes)
+            }
             0
         } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
             logger.e(e) { "getentropy() failed" }
