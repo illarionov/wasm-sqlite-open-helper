@@ -31,6 +31,10 @@ internal class ChicoryMemoryAdapter(
         return wasmMemory.readI64(addr.addr).asLong()
     }
 
+    override fun source(fromAddr: WasmPtr<*>): RawSource {
+        return ChicoryMemoryRawSource(wasmMemory, fromAddr)
+    }
+
     override fun read(fromAddr: WasmPtr<*>, toSink: RawSink, readBytes: Int) {
         val sinkBuffered = if (toSink is Buffer) {
             toSink
@@ -63,7 +67,7 @@ internal class ChicoryMemoryAdapter(
         } else {
             fromSource.buffered()
         }
-        val data = fromSourceBuffered.readByteArray(writeBytes.toInt())
+        val data = fromSourceBuffered.readByteArray(writeBytes)
         wasmMemory.write(toAddr.addr, data)
     }
 }

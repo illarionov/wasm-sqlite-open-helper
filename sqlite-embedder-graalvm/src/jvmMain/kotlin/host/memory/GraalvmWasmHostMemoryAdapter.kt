@@ -44,6 +44,10 @@ internal class GraalvmWasmHostMemoryAdapter(
         return wasmMemory.load_i64(node, addr.addr.toLong())
     }
 
+    override fun source(fromAddr: WasmPtr<*>): RawSource {
+        return GraalvmMemoryRawSource(memoryProvider, fromAddr, node)
+    }
+
     override fun read(fromAddr: WasmPtr<*>, toSink: RawSink, readBytes: Int) {
         val outputStream = toSink.buffered().asOutputStream()
         wasmMemory.copyToStream(node, outputStream, fromAddr.addr, readBytes)

@@ -51,6 +51,10 @@ public open class TestMemory(
             (bytes[addr.addr + 6].toLong() and 0xffL shl 48) or
             (bytes[addr.addr + 7].toLong() and 0xffL shl 56)
 
+    override fun source(fromAddr: WasmPtr<*>): RawSource {
+        return TestMemoryRawSource(this, fromAddr)
+    }
+
     override fun read(fromAddr: WasmPtr<*>, toSink: RawSink, readBytes: Int) {
         val toSinkBuffered = toSink.buffered()
         toSinkBuffered.write(

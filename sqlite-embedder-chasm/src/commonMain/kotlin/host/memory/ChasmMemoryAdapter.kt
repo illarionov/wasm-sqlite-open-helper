@@ -47,6 +47,10 @@ internal class ChasmMemoryAdapter(
         return MemoryInstanceLongReaderImpl(memoryInstance, addr.addr, 8).getOrThrow()
     }
 
+    override fun source(fromAddr: WasmPtr<*>): ChasmMemoryRawSource {
+        return ChasmMemoryRawSource(store, memoryAddress, fromAddr)
+    }
+
     override fun read(fromAddr: WasmPtr<*>, toSink: RawSink, readBytes: Int) {
         val sinkBuffered = if (toSink is Buffer) {
             toSink
