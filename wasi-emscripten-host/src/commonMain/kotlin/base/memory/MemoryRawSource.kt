@@ -30,7 +30,17 @@ public abstract class MemoryRawSource(
         if (readBytes <= 0) {
             return -1
         }
-        readBytesFromMemory(baseAddr, sink, readBytes)
+
+        try {
+            readBytesFromMemory(baseAddr, sink, readBytes)
+        } catch (ise: IllegalStateException) {
+            throw ise
+        } catch (iae: IllegalArgumentException) {
+            throw iae
+        } catch (@Suppress("TooGenericExceptionCaught") ex: Throwable) {
+            throw IllegalStateException(ex.message, ex)
+        }
+
         baseAddr += readBytes
         return readBytes.toLong()
     }
