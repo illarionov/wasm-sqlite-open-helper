@@ -8,45 +8,26 @@ package ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory
 
 import com.oracle.truffle.api.nodes.Node
 import kotlinx.io.Buffer
-import kotlinx.io.RawSource
 import kotlinx.io.asOutputStream
 import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.host.base.plus
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.MemoryRawSource
 import java.io.IOException
 
 internal class GraalvmMemoryRawSource(
     private val memoryProvider: () -> WasmMemory,
-    private var baseAddr: WasmPtr<*>,
-    private val toAddrExclusive: WasmPtr<*>,
+    baseAddr: WasmPtr<*>,
+    toAddrExclusive: WasmPtr<*>,
     private val node: Node?,
-) : RawSource {
-    private var isClosed: Boolean = false
-
-    override fun readAtMostTo(sink: Buffer, byteCount: Long): Long {
-        require(byteCount >= 0) { "byteCount is negative" }
-        check(!isClosed) { "Stream is closed" }
-
-        val bytesLeft: Long = (toAddrExclusive.addr - baseAddr.addr).toLong()
-        val readBytes = byteCount.coerceAtMost(bytesLeft).toInt()
-        if (readBytes <= 0) {
-            return -1
-        }
-
+) : MemoryRawSource(baseAddr, toAddrExclusive) {
+    override fun readBytesFromMemory(srcAddr: WasmPtr<*>, sink: Buffer, readBytes: Int) {
         val outputStream = sink.asOutputStream()
         try {
-            memoryProvider().copyToStream(node, outputStream, baseAddr.addr, readBytes)
+            memoryProvider().copyToStream(node, outputStream, srcAddr.addr, readBytes)
         } catch (ioe: IOException) {
             throw IllegalStateException("Can not read from memory", ioe)
         } finally {
             outputStream.flush()
         }
-        baseAddr += readBytes
-
-        return readBytes.toLong()
-    }
-
-    override fun close() {
-        isClosed = true
     }
 }

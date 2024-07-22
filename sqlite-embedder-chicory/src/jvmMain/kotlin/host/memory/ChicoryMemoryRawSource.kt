@@ -9,40 +9,22 @@ package ru.pixnews.wasm.sqlite.open.helper.chicory.host.memory
 import com.dylibso.chicory.runtime.Memory
 import com.dylibso.chicory.runtime.exceptions.WASMRuntimeException
 import kotlinx.io.Buffer
-import kotlinx.io.RawSource
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.host.base.plus
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.MemoryRawSource
 
 internal class ChicoryMemoryRawSource(
     private val wasmMemory: Memory,
-    private var baseAddr: WasmPtr<*>,
-    private val toAddrExclusive: WasmPtr<*>,
-) : RawSource {
-    private var isClosed: Boolean = false
-
-    override fun readAtMostTo(sink: Buffer, byteCount: Long): Long {
-        require(byteCount >= 0) { "byteCount is negative" }
-        check(!isClosed) { "Stream is closed" }
-
-        val bytesLeft: Long = (toAddrExclusive.addr - baseAddr.addr).toLong()
-        val readBytes = byteCount.coerceAtMost(bytesLeft).toInt()
-        if (readBytes <= 0) {
-            return -1
-        }
-
+    baseAddr: WasmPtr<*>,
+    toAddrExclusive: WasmPtr<*>,
+) : MemoryRawSource(baseAddr, toAddrExclusive) {
+    override fun readBytesFromMemory(srcAddr: WasmPtr<*>, sink: Buffer, readBytes: Int) {
         try {
-            val bytes = wasmMemory.readBytes(baseAddr.addr, readBytes)
+            val bytes = wasmMemory.readBytes(srcAddr.addr, readBytes)
             sink.write(bytes)
-            baseAddr += readBytes
         } catch (oob: WASMRuntimeException) {
             throw IllegalStateException("Out of bounds memory access", oob)
         } finally {
             sink.emit()
         }
-        return readBytes.toLong()
-    }
-
-    override fun close() {
-        isClosed = true
     }
 }
