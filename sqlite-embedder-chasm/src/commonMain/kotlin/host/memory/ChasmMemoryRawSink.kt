@@ -10,38 +10,19 @@ import io.github.charlietap.chasm.embedding.memory.writeMemory
 import io.github.charlietap.chasm.executor.runtime.store.Address
 import io.github.charlietap.chasm.executor.runtime.store.Store
 import kotlinx.io.Buffer
-import kotlinx.io.RawSink
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.MemoryRawSink
 
 internal class ChasmMemoryRawSink(
     private val store: Store,
     private val memoryAddress: Address.Memory,
-    private var baseAddr: WasmPtr<*>,
-    private val toAddrExclusive: WasmPtr<*>,
-) : RawSink {
-    private var isClosed: Boolean = false
-
-    override fun write(source: Buffer, byteCount: Long) {
-        require(byteCount >= 0) { "byteCount is negative" }
-        check(!isClosed) { "Stream is closed" }
-
-        val endAddrExclusive = baseAddr.addr + byteCount
-        require(endAddrExclusive <= toAddrExclusive.addr) {
-            "Cannot write `$byteCount` bytes to memory range $baseAddr ..<$toAddrExclusive: out of boundary access"
-        }
-
-        for (addr in baseAddr.addr..<endAddrExclusive.toInt()) {
+    baseAddr: WasmPtr<*>,
+    toAddrExclusive: WasmPtr<*>,
+) : MemoryRawSink(baseAddr, toAddrExclusive) {
+    override fun writeBytesToMemory(source: Buffer, toAddr: WasmPtr<*>, byteCount: Long) {
+        for (addr in baseAddr.addr..<(baseAddr.addr + byteCount).toInt()) {
             val byte = source.readByte()
             writeMemory(store, memoryAddress, addr, byte)
         }
-        baseAddr = WasmPtr<Unit>(endAddrExclusive.toInt())
-    }
-
-    override fun flush() {
-        // no-op
-    }
-
-    override fun close() {
-        isClosed = true
     }
 }

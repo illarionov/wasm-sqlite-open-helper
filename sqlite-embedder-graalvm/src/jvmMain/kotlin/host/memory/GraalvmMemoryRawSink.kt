@@ -7,38 +7,21 @@
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory
 
 import kotlinx.io.Buffer
-import kotlinx.io.RawSink
 import kotlinx.io.asInputStream
 import org.graalvm.wasm.memory.WasmMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.MemoryRawSink
 
 internal class GraalvmMemoryRawSink(
     private val memoryProvider: () -> WasmMemory,
-    private var baseAddr: WasmPtr<*>,
-    private val toAddrExclusive: WasmPtr<*>,
-) : RawSink {
-    private var isClosed: Boolean = false
-
-    override fun write(source: Buffer, byteCount: Long) {
-        require(byteCount >= 0) { "byteCount is negative" }
-        check(!isClosed) { "Stream is closed" }
-
-        val endAddrExclusive = baseAddr.addr + byteCount
-        require(endAddrExclusive <= toAddrExclusive.addr) {
-            "Cannot write `$byteCount` bytes to memory range $baseAddr ..<$toAddrExclusive: out of boundary access"
-        }
-
+    baseAddr: WasmPtr<*>,
+    toAddrExclusive: WasmPtr<*>,
+) : MemoryRawSink(baseAddr, toAddrExclusive) {
+    override fun writeBytesToMemory(source: Buffer, toAddr: WasmPtr<*>, byteCount: Long) {
         val inputStream = source.asInputStream()
-        val bytesWritten = memoryProvider().copyFromStream(null, inputStream, baseAddr.addr, byteCount.toInt())
+        val bytesWritten = memoryProvider().copyFromStream(null, inputStream, toAddr.addr, byteCount.toInt())
         check(bytesWritten >= 0) {
             "End of the stream has been reached"
         }
-        baseAddr = WasmPtr<Unit>(endAddrExclusive.toInt())
-    }
-
-    override fun flush() = Unit
-
-    override fun close() {
-        isClosed = true
     }
 }
