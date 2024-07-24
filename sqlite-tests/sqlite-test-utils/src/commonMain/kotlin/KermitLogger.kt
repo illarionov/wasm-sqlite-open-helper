@@ -8,10 +8,11 @@
 
 package ru.pixnews.wasm.sqlite.test.utils
 
+import co.touchlab.kermit.LogWriter
+import co.touchlab.kermit.Message
 import co.touchlab.kermit.MessageStringFormatter
 import co.touchlab.kermit.Severity
 import co.touchlab.kermit.Tag
-import co.touchlab.kermit.platformLogWriter
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import co.touchlab.kermit.Logger as KermitLogger
 
@@ -24,7 +25,7 @@ public open class KermitLogger(
 ) : Logger {
     private val delegate: KermitLogger = KermitLogger.apply {
         setMinSeverity(minSeverity)
-        setLogWriters(platformLogWriter(MessageFormatter))
+        setLogWriters(TestWriter(MessageFormatter))
     }.withTag(tag)
 
     @Suppress("MagicNumber")
@@ -62,5 +63,17 @@ public open class KermitLogger(
 
     override fun a(throwable: Throwable?, message: () -> String) {
         delegate.a(message(), throwable)
+    }
+
+    @Suppress("DEBUG_PRINT")
+    internal class TestWriter(
+        private val messageStringFormatter: MessageStringFormatter = MessageFormatter,
+    ) : LogWriter() {
+        override fun log(severity: Severity, message: String, tag: String, throwable: Throwable?) {
+            println(messageStringFormatter.formatMessage(severity, Tag(tag), Message(message)))
+            throwable?.let {
+                println(it.stackTraceToString())
+            }
+        }
     }
 }
