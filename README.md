@@ -423,6 +423,23 @@ class DatabaseTest {
 }
 ```
 
+Android assets are not available in Android unit tests; however, you can use the SQLite WebAssembly binary
+for the JVM target instead:
+
+```kotlin
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+
+dependencies {
+    constraints {
+        testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-346:*") {
+            attributes {
+                attribute(KotlinPlatformType.attribute, KotlinPlatformType.jvm)
+            }
+        }
+    }
+}
+```
+
 ## Contributing
 
 Any type of contributions are welcome. Please see the [contribution guide](CONTRIBUTING.md).
