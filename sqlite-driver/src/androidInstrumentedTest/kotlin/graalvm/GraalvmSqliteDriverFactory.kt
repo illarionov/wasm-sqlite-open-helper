@@ -6,6 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.driver.graalvm
 
+import androidx.test.platform.app.InstrumentationRegistry
 import org.graalvm.polyglot.Engine
 import ru.pixnews.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcuMtPthread346
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
@@ -24,7 +25,8 @@ class GraalvmSqliteDriverFactory(
         dbLogger: Logger,
         sqlite3Binary: WasmSqliteConfiguration,
     ): WasmSQLiteDriver<GraalvmRuntimeInstance> {
-        return WasmSQLiteDriver(GraalvmSqliteEmbedder) {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        return WasmSQLiteDriver(GraalvmSqliteEmbedder, context) {
             defaultTestSqliteDriverConfig(dbLogger)
             embedder {
                 this.sqlite3Binary = sqlite3Binary

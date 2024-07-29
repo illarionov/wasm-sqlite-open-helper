@@ -6,6 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.driver.chasm
 
+import androidx.test.platform.app.InstrumentationRegistry
 import ru.pixnews.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcu346
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
@@ -21,7 +22,8 @@ object ChasmSqliteDriverFactory : TestSqliteDriverFactory<WasmSQLiteDriver<Chasm
         dbLogger: Logger,
         sqlite3Binary: WasmSqliteConfiguration,
     ): WasmSQLiteDriver<ChasmRuntimeInstance> {
-        return WasmSQLiteDriver(ChasmSqliteEmbedder) {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        return WasmSQLiteDriver(ChasmSqliteEmbedder, context) {
             defaultTestSqliteDriverConfig(dbLogger)
             embedder {
                 this.sqlite3Binary = sqlite3Binary

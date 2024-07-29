@@ -46,7 +46,7 @@ public object ChasmSqliteEmbedder : SqliteEmbedder<ChasmSqliteEmbedderConfig, Ch
     ): ChasmSqliteEmbedderConfig {
         return ChasmSqliteEmbedderConfig(
             rootLogger = commonConfig.logger,
-            defaultWasmSourceReader = WasmSourceReader,
+            defaultWasmSourceReader = commonConfig.wasmReader,
         ).apply(embedderConfigBuilder)
     }
 

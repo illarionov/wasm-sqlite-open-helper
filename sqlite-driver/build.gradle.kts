@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+
 plugins {
     id("com.google.devtools.ksp")
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.lint.binary-compatibility-validator")
@@ -153,4 +155,19 @@ kotlin {
 
 dependencies {
     coreLibraryDesugaring(libs.desugar.jdk.libs)
+    constraints {
+        listOf(
+            "ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-346:*",
+            "ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-mt-pthread-346:*",
+        ).forEach { dependency ->
+            testImplementation(dependency) {
+                attributes {
+                    attribute(
+                        KotlinPlatformType.attribute,
+                        KotlinPlatformType.jvm,
+                    )
+                }
+            }
+        }
+    }
 }

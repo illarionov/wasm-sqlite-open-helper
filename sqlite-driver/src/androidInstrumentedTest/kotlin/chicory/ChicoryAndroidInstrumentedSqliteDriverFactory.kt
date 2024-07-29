@@ -6,6 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.driver.chicory
 
+import androidx.test.platform.app.InstrumentationRegistry
 import ru.pixnews.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcu346
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
@@ -22,7 +23,8 @@ object ChicoryAndroidInstrumentedSqliteDriverFactory :
         dbLogger: Logger,
         sqlite3Binary: WasmSqliteConfiguration,
     ): WasmSQLiteDriver<ChicoryRuntimeInstance> {
-        return WasmSQLiteDriver(ChicorySqliteEmbedder) {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        return WasmSQLiteDriver(ChicorySqliteEmbedder, context) {
             defaultTestSqliteDriverConfig(dbLogger)
             embedder {
                 this.sqlite3Binary = sqlite3Binary

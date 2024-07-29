@@ -10,6 +10,9 @@ package ru.pixnews.wasm.sqlite.open.helper
 
 import android.content.Context
 import androidx.sqlite.db.SupportSQLiteOpenHelper
+import ru.pixnews.wasm.sqlite.binary.reader.AndroidAssetsWasmSourceReader
+import ru.pixnews.wasm.sqlite.binary.reader.JvmResourcesWasmSourceReader
+import ru.pixnews.wasm.sqlite.binary.reader.WasmSourceReader
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.debug.EmbedderHostLogger
 import ru.pixnews.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfigBlock
@@ -42,6 +45,7 @@ public fun <E : SqliteEmbedderConfig, R : SqliteRuntimeInstance> WasmSqliteOpenH
 ): WasmSQLiteOpenHelperFactory<R> = WasmSqliteOpenHelperFactory(
     embedder = embedder,
     defaultPathResolver = AndroidDatabasePathResolver(context),
+    defaultWasmSourceReader = AndroidAssetsWasmSourceReader(context.assets),
     block = block,
 )
 
@@ -57,21 +61,24 @@ public fun <E : SqliteEmbedderConfig, R : SqliteRuntimeInstance> WasmSqliteOpenH
 ): WasmSQLiteOpenHelperFactory<R> = WasmSqliteOpenHelperFactory(
     embedder = embedder,
     defaultPathResolver = JvmDatabasePathResolver(),
+    defaultWasmSourceReader = JvmResourcesWasmSourceReader(),
     block = block,
 )
 
 internal fun <E : SqliteEmbedderConfig, R : SqliteRuntimeInstance> WasmSqliteOpenHelperFactory(
     embedder: SqliteEmbedder<E, R>,
     defaultPathResolver: DatabasePathResolver,
+    defaultWasmSourceReader: WasmSourceReader,
     block: WasmSqliteOpenHelperFactoryConfigBlock<E>.() -> Unit = {},
 ): WasmSQLiteOpenHelperFactory<R> {
     val config = WasmSqliteOpenHelperFactoryConfigBlock<E>(defaultPathResolver).apply(block)
     val rootCommonConfig = object : WasmSqliteCommonConfig {
         override val logger: Logger = config.logger
+        override val wasmReader: WasmSourceReader = defaultWasmSourceReader
     }
     val debugConfig = WasmSqliteDebugConfigBlock().apply { config.debugConfigBlock(this) }.build(rootCommonConfig)
     val embedderLogger = debugConfig.getOrCreateDefault(EmbedderHostLogger)
-    val embedderEnv = createEmbedder(embedder, embedderLogger, config.embedderConfig)
+    val embedderEnv = createEmbedder(embedder, embedderLogger, defaultWasmSourceReader, config.embedderConfig)
 
     setupCloseGuard(config.logger)
 
@@ -98,6 +105,7 @@ private fun setupCloseGuard(rootLogger: Logger) {
 private fun <E : SqliteEmbedderConfig, R : SqliteRuntimeInstance> createEmbedder(
     embedder: SqliteEmbedder<E, R>,
     embedderLogger: EmbedderHostLogger,
+    embedderWasmReader: WasmSourceReader,
     embedderConfig: E.() -> Unit,
 ): SqliteWasmEnvironment<R> {
     val embedderCommonConfig = object : WasmSqliteCommonConfig {
@@ -106,6 +114,7 @@ private fun <E : SqliteEmbedderConfig, R : SqliteRuntimeInstance> createEmbedder
         } else {
             Logger
         }
+        override val wasmReader: WasmSourceReader = embedderWasmReader
     }
 
     return embedder.createSqliteWasmEnvironment(
