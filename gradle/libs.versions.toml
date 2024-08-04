@@ -28,7 +28,7 @@ kotlinx-io ="0.5.1"
 kermit = "2.0.4"
 ksp = "2.0.20-Beta1-1.0.22"
 spotless = "7.0.0.BETA1"
-sqlite-wasm-binary = "0.1-alpha11"
+sqlite-wasm-binary = "0.1-alpha11-SNAPSHOT"
 
 [libraries]
 androidx-collection = { group = "androidx.collection", name = "collection", version.ref = "androidx-collection" }
@@ -76,6 +76,8 @@ kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime",
 kotlinx-io = { group = "org.jetbrains.kotlinx", name = "kotlinx-io-core", version.ref = "kotlinx-io" }
 wsoh-sqlite-mt = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-android-wasm-emscripten-icu-mt-pthread-346", version.ref = "sqlite-wasm-binary" }
 wsoh-sqlite-st = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-android-wasm-emscripten-icu-346", version.ref = "sqlite-wasm-binary" }
+wsoh-sqlite-mt-plain = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-wasm-emscripten-mt-pthread-346", version.ref = "sqlite-wasm-binary" }
+wsoh-sqlite-st-plain = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-wasm-emscripten-346", version.ref = "sqlite-wasm-binary" }
 wsoh-binary-base = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-binary-api", version.ref = "sqlite-wasm-binary" }
 wsoh-binary-reader = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "wasm-binary-reader", version.ref = "sqlite-wasm-binary" }
 
