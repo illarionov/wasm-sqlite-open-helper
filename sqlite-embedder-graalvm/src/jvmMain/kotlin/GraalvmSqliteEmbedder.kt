@@ -6,7 +6,6 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm
 
-import ru.pixnews.wasm.sqlite.binary.reader.WasmSourceReader
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedder
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteWasmEnvironment
@@ -32,6 +31,6 @@ public object GraalvmSqliteEmbedder : SqliteEmbedder<GraalvmSqliteEmbedderConfig
         embedderConfigBuilder: GraalvmSqliteEmbedderConfig.() -> Unit,
     ): GraalvmSqliteEmbedderConfig = GraalvmSqliteEmbedderConfig(
         embedderRootLogger = commonConfig.logger,
-        defaultWasmSourceReader = WasmSourceReader,
+        defaultWasmSourceReader = commonConfig.wasmReader,
     ).apply(embedderConfigBuilder)
 }

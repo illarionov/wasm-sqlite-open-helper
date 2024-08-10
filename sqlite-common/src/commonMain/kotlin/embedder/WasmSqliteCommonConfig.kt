@@ -6,10 +6,12 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.embedder
 
+import ru.pixnews.wasm.sqlite.binary.reader.WasmSourceReader
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 
 @InternalWasmSqliteHelperApi
 public interface WasmSqliteCommonConfig {
     public val logger: Logger
+    public val wasmReader: WasmSourceReader
 }

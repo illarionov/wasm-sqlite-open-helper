@@ -11,14 +11,17 @@ import ru.pixnews.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcuMtPthread346
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
 import ru.pixnews.wasm.sqlite.driver.base.defaultTestSqliteDriverConfig
+import ru.pixnews.wasm.sqlite.driver.dsl.WasmSqliteDriverConfigBlock
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.TestSqliteDriverFactory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmRuntimeInstance
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmSqliteEmbedder
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmSqliteEmbedderConfig
 
 class GraalvmSqliteDriverFactory(
     private val initialGraalvmEngine: Engine? = WASM_GRAALVM_ENGINE,
     override val defaultSqliteBinary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcuMtPthread346,
+    private val additionalConfig: WasmSqliteDriverConfigBlock<GraalvmSqliteEmbedderConfig>.() -> Unit = {},
 ) : TestSqliteDriverFactory<WasmSQLiteDriver<GraalvmRuntimeInstance>> {
     override fun create(
         dbLogger: Logger,
@@ -32,6 +35,7 @@ class GraalvmSqliteDriverFactory(
                     this.graalvmEngine = initialGraalvmEngine
                 }
             }
+            additionalConfig()
         }
     }
 

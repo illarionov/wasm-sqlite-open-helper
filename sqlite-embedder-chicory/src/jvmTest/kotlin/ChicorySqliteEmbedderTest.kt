@@ -18,15 +18,16 @@ class ChicorySqliteEmbedderTest {
     fun wasmSourceReader_should_Be_possible_to_override() {
         val commonConfig = object : WasmSqliteCommonConfig {
             override val logger: Logger = Logger
+            override val wasmReader: WasmSourceReader = WasmSourceReader
         }
-        val testReader = WasmSourceReader { emptyList() }
+        val newReader = WasmSourceReader { emptyList() }
 
         val configBuilder: ChicorySqliteEmbedderConfig.() -> Unit = {
-            wasmSourceReader = testReader
+            wasmSourceReader = newReader
         }
 
         val mergedConfig = ChicorySqliteEmbedder.mergeConfig(commonConfig, configBuilder)
 
-        assertThat(mergedConfig.wasmSourceReader).isEqualTo(testReader)
+        assertThat(mergedConfig.wasmSourceReader).isEqualTo(newReader)
     }
 }

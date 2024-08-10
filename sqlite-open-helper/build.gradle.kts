@@ -11,6 +11,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_ERROR
 import org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_OUT
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 
 plugins {
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.lint.binary-compatibility-validator")
@@ -85,6 +86,7 @@ kotlin {
 
         commonMain.dependencies {
             api(projects.commonApi)
+            implementation(libs.wsoh.binary.reader)
             api(projects.sqliteCommon)
             implementation(projects.commonCleaner)
             implementation(projects.commonLock)
@@ -102,5 +104,23 @@ kotlin {
         }
         androidMain.get().dependsOn(jvmAndAndroid)
         jvmMain.get().dependsOn(jvmAndAndroid)
+    }
+}
+
+dependencies {
+    constraints {
+        listOf(
+            "ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-346:*",
+            "ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-mt-pthread-346:*",
+        ).forEach { dependency ->
+            testImplementation(dependency) {
+                attributes {
+                    attribute(
+                        KotlinPlatformType.attribute,
+                        KotlinPlatformType.jvm,
+                    )
+                }
+            }
+        }
     }
 }

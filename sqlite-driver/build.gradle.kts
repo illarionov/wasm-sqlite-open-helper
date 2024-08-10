@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+
 plugins {
     id("com.google.devtools.ksp")
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.lint.binary-compatibility-validator")
@@ -80,7 +82,9 @@ kotlin {
             implementation(libs.androidx.test.rules)
             implementation(libs.chicory.runtime)
             implementation(libs.wsoh.sqlite.mt)
+            implementation(libs.wsoh.sqlite.mt.plain)
             implementation(libs.wsoh.sqlite.st)
+            implementation(libs.wsoh.sqlite.st.plain)
             implementation(projects.sqliteEmbedderChasm)
             implementation(projects.sqliteEmbedderChicory)
             implementation(projects.sqliteEmbedderGraalvm)
@@ -106,6 +110,7 @@ kotlin {
                 // TODO: Shouldn't be here, added for resources in tests
                 // https://github.com/JetBrains/compose-multiplatform/issues/4442
                 implementation(libs.wsoh.sqlite.st)
+                implementation(libs.wsoh.sqlite.st.plain)
             }
         }
 
@@ -118,6 +123,7 @@ kotlin {
             implementation(libs.androidx.room.testing)
             implementation(libs.kermit)
             implementation(libs.wsoh.sqlite.st)
+            implementation(libs.wsoh.sqlite.st.plain)
         }
 
         val jvmAndAndroidMain by creating {
@@ -134,6 +140,7 @@ kotlin {
             dependencies {
                 kotlin(("test-junit"))
                 implementation(libs.wsoh.sqlite.mt)
+                implementation(libs.wsoh.sqlite.mt.plain)
                 implementation(libs.androidx.sqlite.bundled)
                 implementation(projects.sqliteEmbedderChicory)
                 implementation(projects.sqliteEmbedderGraalvm)
@@ -153,4 +160,19 @@ kotlin {
 
 dependencies {
     coreLibraryDesugaring(libs.desugar.jdk.libs)
+    constraints {
+        listOf(
+            "ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-346:*",
+            "ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-mt-pthread-346:*",
+        ).forEach { dependency ->
+            testImplementation(dependency) {
+                attributes {
+                    attribute(
+                        KotlinPlatformType.attribute,
+                        KotlinPlatformType.jvm,
+                    )
+                }
+            }
+        }
+    }
 }

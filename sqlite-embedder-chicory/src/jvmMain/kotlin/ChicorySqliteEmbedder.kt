@@ -52,7 +52,7 @@ public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig
         embedderConfigBuilder: ChicorySqliteEmbedderConfig.() -> Unit,
     ): ChicorySqliteEmbedderConfig = ChicorySqliteEmbedderConfig(
         rootLogger = commonConfig.logger,
-        defaultWasmSourceReader = WasmSourceReader,
+        defaultWasmSourceReader = commonConfig.wasmReader,
     ).apply(embedderConfigBuilder)
 
     @Suppress("LAMBDA_IS_NOT_LAST_PARAMETER")
