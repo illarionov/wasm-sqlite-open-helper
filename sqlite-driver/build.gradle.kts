@@ -82,7 +82,9 @@ kotlin {
             implementation(libs.androidx.test.rules)
             implementation(libs.chicory.runtime)
             implementation(libs.wsoh.sqlite.mt)
+            implementation(libs.wsoh.sqlite.mt.plain)
             implementation(libs.wsoh.sqlite.st)
+            implementation(libs.wsoh.sqlite.st.plain)
             implementation(projects.sqliteEmbedderChasm)
             implementation(projects.sqliteEmbedderChicory)
             implementation(projects.sqliteEmbedderGraalvm)
@@ -108,6 +110,7 @@ kotlin {
                 // TODO: Shouldn't be here, added for resources in tests
                 // https://github.com/JetBrains/compose-multiplatform/issues/4442
                 implementation(libs.wsoh.sqlite.st)
+                implementation(libs.wsoh.sqlite.st.plain)
             }
         }
 
@@ -120,6 +123,7 @@ kotlin {
             implementation(libs.androidx.room.testing)
             implementation(libs.kermit)
             implementation(libs.wsoh.sqlite.st)
+            implementation(libs.wsoh.sqlite.st.plain)
         }
 
         val jvmAndAndroidMain by creating {
@@ -136,6 +140,7 @@ kotlin {
             dependencies {
                 kotlin(("test-junit"))
                 implementation(libs.wsoh.sqlite.mt)
+                implementation(libs.wsoh.sqlite.mt.plain)
                 implementation(libs.androidx.sqlite.bundled)
                 implementation(projects.sqliteEmbedderChicory)
                 implementation(projects.sqliteEmbedderGraalvm)
