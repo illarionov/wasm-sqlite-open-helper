@@ -79,23 +79,29 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-30
+          key: avd-34
 
       - name: create AVD and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 30
-          target: aosp_atd
+          arch: x86_64
+          api-level: 34
+          target: default
           force-avd-creation: false
+          disk-size: 2G
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -wipe-data
           script: echo "Generated AVD snapshot for caching."
 
       - name: Run instrumented tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 30
-          target: aosp_atd
+          arch: x86_64
+          api-level: 34
+          target: default
           force-avd-creation: false
+          disk-size: 2G
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           script: >
             ./gradlew uninstallAll &&
             ./gradlew -Pkotlin.daemon.jvmargs="${{ env.KOTLIN_DAEMON_JVMARGS }}" connectedCheck --scan --continue &&
