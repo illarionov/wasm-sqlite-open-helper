@@ -2,31 +2,31 @@
 androidMinSdk = "26"
 androidCompileSdk = "34"
 
-agp = "8.2.2"
-androidx-collection = "1.4.1"
+agp = "8.5.2"
+androidx-collection = "1.4.3"
 androidx-core = "1.13.1"
-androidx-sqlite = "2.5.0-alpha05"
-androidx-room = "2.7.0-alpha05"
+androidx-sqlite = "2.5.0-alpha06"
+androidx-room = "2.7.0-alpha06"
 androidx-sqlite24 = "2.4.0"
 androidx-room26 = "2.6.1"
 androidx-test = "1.6.1"
 atomicfu = "0.25.0"
 assertk = "0.28.1"
-chasm = "0.7.0"
+chasm = "0.7.1"
 chicory = "0.0.12"
 desugar_jdk_libs = "2.0.4"
 detekt = "1.23.6"
 diktat = "2.0.0"
 dokka = "1.9.20"
-graalvm = "24.0.1"
+graalvm = "24.0.2"
 gradle-maven-publish-plugin = "0.29.0"
-kotlin = "2.0.20-Beta1"
+kotlin = "2.0.20-RC"
 kotlinx-coroutines = "1.9.0-RC"
-kotlinx-binary-compatibility-validator = "0.15.1"
+kotlinx-binary-compatibility-validator = "0.16.2"
 kotlinx-datetime = "0.6.0"
 kotlinx-io ="0.5.1"
 kermit = "2.0.4"
-ksp = "2.0.20-Beta1-1.0.22"
+ksp = "2.0.20-RC-1.0.24"
 spotless = "7.0.0.BETA1"
 sqlite-wasm-binary = "0.1"
 
@@ -50,7 +50,6 @@ androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "
 assertk = { group = "com.willowtreeapps.assertk", name = "assertk", version.ref = "assertk" }
 chasm = { group = "io.github.charlietap.chasm", name = "chasm", version.ref = "chasm" }
 chasm-decoder = { group = "io.github.charlietap.chasm", name = "decoder", version.ref = "chasm" }
-chasm-decoder-wasm = { group = "io.github.charlietap.chasm", name = "wasm", version.ref = "chasm" }
 chasm-instantiator = { group = "io.github.charlietap.chasm", name = "instantiator", version.ref = "chasm" }
 chasm-memory = { group = "io.github.charlietap.chasm", name = "memory", version.ref = "chasm" }
 chasm-runtime = { group = "io.github.charlietap.chasm", name = "runtime", version.ref = "chasm" }

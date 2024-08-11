@@ -7,6 +7,7 @@
 package ru.pixnews.wasm.sqlite.driver.test.base.room
 
 import androidx.room.ColumnInfo
+import androidx.room.ConstructedBy
 import androidx.room.Dao
 import androidx.room.Database
 import androidx.room.Delete
@@ -15,6 +16,7 @@ import androidx.room.Insert
 import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.RoomDatabase
+import androidx.room.RoomDatabaseConstructor
 
 @Entity
 public data class User(
@@ -44,7 +46,10 @@ public interface UserDao {
     public suspend fun delete(user: User)
 }
 
+expect object UserDatabaseSuspendConstructor : RoomDatabaseConstructor<UserDatabaseSuspend>
+
 @Database(entities = [User::class], version = 1)
+@ConstructedBy(UserDatabaseSuspendConstructor::class)
 public abstract class UserDatabaseSuspend : RoomDatabase() {
     public abstract fun userDao(): UserDao
 }
