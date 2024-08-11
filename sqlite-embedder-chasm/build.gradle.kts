@@ -37,7 +37,6 @@ kotlin {
             implementation(libs.chasm)
             implementation(libs.kotlinx.io)
             compileOnly(libs.chasm.decoder)
-            compileOnly(libs.chasm.decoder.wasm)
             compileOnly(libs.chasm.instantiator)
             compileOnly(libs.chasm.memory)
             compileOnly(libs.chasm.runtime)
