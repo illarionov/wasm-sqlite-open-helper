@@ -76,10 +76,7 @@ internal class WasmSqliteConnection(
 
     override fun close() {
         logger.v { "close($connectionPtrResource) " }
-        val alreadyClosed = connectionPtrResource.isClosed.getAndSet(true)
-        if (!alreadyClosed) {
-            closeConnection(databaseLabel, connectionPtrResource, cApi, logger)
-        }
+        closeConnection(databaseLabel, connectionPtrResource, cApi, logger)
         connectionPtrResourceCleanable.clean()
     }
 
@@ -96,7 +93,7 @@ internal class WasmSqliteConnection(
         val rootLogger: Logger,
     ) : () -> Unit {
         override fun invoke() {
-            val alreadyClosed = ptr.isClosed.getAndSet(true)
+            val alreadyClosed = ptr.isClosed.value
             if (!alreadyClosed) {
                 onConnectionLeaked()
                 closeConnection(databaseLabel, ptr, cApi, rootLogger)
