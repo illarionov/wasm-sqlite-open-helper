@@ -14,10 +14,10 @@ import ru.pixnews.wasm.sqlite.test.utils.KermitLogger
 import ru.pixnews.wasm.sqlite.test.utils.TestEnv
 import kotlin.test.BeforeTest
 
-public abstract class AbstractSqliteDriverTest<S : SQLiteDriver>(
+public abstract class AbstractSqliteDriverTest<S>(
     val driverFactory: TestSqliteDriverFactory<S>,
     dbLoggerSeverity: Severity = Severity.Info,
-) {
+) where S : SQLiteDriver, S : AutoCloseable {
     protected open val logger: Logger = KermitLogger("AbstractSqliteDriverTest")
     protected open val dbLogger: Logger = KermitLogger(tag = "WasmSQLiteDriver", minSeverity = dbLoggerSeverity)
 

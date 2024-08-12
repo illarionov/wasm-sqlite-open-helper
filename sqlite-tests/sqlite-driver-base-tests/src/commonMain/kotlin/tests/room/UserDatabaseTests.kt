@@ -16,19 +16,21 @@ import ru.pixnews.wasm.sqlite.driver.test.base.tests.TestSqliteDriverFactory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import kotlin.coroutines.CoroutineContext
 
-class UserDatabaseTests<S : SQLiteDriver>(
+class UserDatabaseTests<S>(
     private val driverFactory: TestSqliteDriverFactory<S>,
     private val databaseFactory: UserDatabaseFactory,
     val logger: Logger,
     val dbLogger: Logger,
-) {
+) where S : SQLiteDriver, S : AutoCloseable {
     public suspend fun testRoomOnUserDatabase(
         databaseName: String?,
         queryCoroutineContext: CoroutineContext,
         block: suspend (UserDatabaseSuspend) -> Unit,
     ) {
         val driver: S = driverFactory.create(dbLogger, driverFactory.defaultSqliteBinary)
-        testRoomOnUserDatabase(driver, databaseName, queryCoroutineContext, block)
+        driver.use {
+            testRoomOnUserDatabase(driver, databaseName, queryCoroutineContext, block)
+        }
     }
 
     suspend fun testRoomOnUserDatabase(

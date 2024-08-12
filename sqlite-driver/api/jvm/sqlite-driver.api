@@ -1,4 +1,5 @@
-public abstract interface class ru/pixnews/wasm/sqlite/driver/WasmSQLiteDriver : androidx/sqlite/SQLiteDriver {
+public abstract interface class ru/pixnews/wasm/sqlite/driver/WasmSQLiteDriver : androidx/sqlite/SQLiteDriver, java/lang/AutoCloseable {
+	public abstract fun close ()V
 	public abstract fun getRuntime ()Lru/pixnews/wasm/sqlite/open/helper/embedder/SqliteRuntimeInstance;
 }
 

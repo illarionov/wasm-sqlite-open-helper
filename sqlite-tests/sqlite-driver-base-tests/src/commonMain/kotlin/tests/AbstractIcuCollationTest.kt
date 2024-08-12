@@ -18,18 +18,19 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-public abstract class AbstractIcuCollationTest<S : SQLiteDriver>(
+public abstract class AbstractIcuCollationTest<S>(
     driverCreator: TestSqliteDriverFactory<S>,
     dbLoggerSeverity: Severity = Severity.Info,
 ) : AbstractSqliteDriverTest<S>(
     driverFactory = driverCreator,
     dbLoggerSeverity = dbLoggerSeverity,
-) {
+) where S : SQLiteDriver, S : AutoCloseable {
+    lateinit var driver: S
     lateinit var connection: SQLiteConnection
 
     @BeforeTest
     open fun setup() {
-        val driver = createWasmSQLiteDriver()
+        driver = createWasmSQLiteDriver()
         connection = driver.open(fileInTempDir("test.db"))
     }
 
@@ -37,6 +38,9 @@ public abstract class AbstractIcuCollationTest<S : SQLiteDriver>(
     open fun destroy() {
         if (::connection.isInitialized) {
             connection.close()
+        }
+        if (::driver.isInitialized) {
+            driver.close()
         }
     }
 

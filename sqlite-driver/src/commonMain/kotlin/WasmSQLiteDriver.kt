@@ -67,6 +67,7 @@ internal fun <E : SqliteEmbedderConfig, R : SqliteRuntimeInstance> WasmSQLiteDri
         rootLogger = config.logger,
         openParams = OpenParamsBlock().apply { config.openParams(this) },
         runtime = embedderEnv.runtimeInstance,
+        onClose = embedderEnv,
     )
 }
 
@@ -91,6 +92,8 @@ private fun <E : SqliteEmbedderConfig, R : SqliteRuntimeInstance> createEmbedder
     )
 }
 
-public interface WasmSQLiteDriver<R : SqliteRuntimeInstance> : SQLiteDriver {
+public interface WasmSQLiteDriver<R : SqliteRuntimeInstance> : AutoCloseable, SQLiteDriver {
     public val runtime: R
+
+    public override fun close()
 }

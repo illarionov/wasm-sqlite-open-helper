@@ -42,7 +42,8 @@ internal class WasmSqliteDriverImpl<R : SqliteRuntimeInstance>(
     private val cApi: Sqlite3CApi,
     private val openParams: OpenParamsBlock,
     override val runtime: R,
-) : WasmSQLiteDriver<R> {
+    private val onClose: AutoCloseable,
+) : WasmSQLiteDriver<R>, AutoCloseable by onClose {
     private val logger: Logger = rootLogger.withTag("WasmSqliteDriver")
     private val sqliteErrorLogger = debugConfig.getOrCreateDefault(SqliteErrorLogger)
     private val sqliteStatementLogger = debugConfig.getOrCreateDefault(SqliteStatementLogger)

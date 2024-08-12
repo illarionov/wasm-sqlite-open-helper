@@ -60,6 +60,7 @@ internal abstract class ManagedThreadBase(
             } finally {
                 state = DESTROYING
                 destroyThreadPtr()
+                unloadWasmAgent()
 
                 state = DESTROYED
             }
@@ -71,6 +72,11 @@ internal abstract class ManagedThreadBase(
     private fun loadWasmAgent() {
         threadInitializer.initThreadLocalGraalvmAgent()
         wasmAgentLoaded = true
+    }
+
+    private fun unloadWasmAgent() {
+        threadInitializer.destroyThreadLocalGraalvmAgent()
+        wasmAgentLoaded = false
     }
 
     private fun attachPthread() {

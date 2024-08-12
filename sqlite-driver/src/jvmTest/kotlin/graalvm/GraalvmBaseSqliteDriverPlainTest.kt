@@ -6,13 +6,13 @@
 
 package ru.pixnews.wasm.sqlite.driver.graalvm
 
-import androidx.sqlite.SQLiteDriver
 import org.junit.Rule
 import org.junit.experimental.runners.Enclosed
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import ru.pixnews.wasm.sqlite.binary.SqliteWasmEmscripten346
 import ru.pixnews.wasm.sqlite.binary.SqliteWasmEmscriptenMtPthread346
+import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractBasicSqliteDriverTest
 
 /**
@@ -20,7 +20,7 @@ import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractBasicSqliteDriverTe
  */
 @RunWith(Enclosed::class)
 class GraalvmBaseSqliteDriverPlainTest {
-    class MultiThreadedSqlitePlainTest : AbstractBasicSqliteDriverTest<SQLiteDriver>(
+    class MultiThreadedSqlitePlainTest : AbstractBasicSqliteDriverTest<WasmSQLiteDriver<*>>(
         driverCreator = GraalvmSqliteDriverFactory(
             defaultSqliteBinary = SqliteWasmEmscriptenMtPthread346,
             additionalConfig = {
@@ -37,7 +37,7 @@ class GraalvmBaseSqliteDriverPlainTest {
         override fun fileInTempDir(databaseName: String): String = tempFolder.root.resolve(databaseName).path
     }
 
-    class SingleThreadedSqlitePlainTest : AbstractBasicSqliteDriverTest<SQLiteDriver>(
+    class SingleThreadedSqlitePlainTest : AbstractBasicSqliteDriverTest<WasmSQLiteDriver<*>>(
         driverCreator = GraalvmSqliteDriverFactory(
             defaultSqliteBinary = SqliteWasmEmscripten346,
             additionalConfig = {

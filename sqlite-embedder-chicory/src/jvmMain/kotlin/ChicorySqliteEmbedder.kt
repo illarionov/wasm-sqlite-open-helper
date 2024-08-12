@@ -107,6 +107,7 @@ public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig
             override val callbackFunctionIndexes: Sqlite3CallbackFunctionIndexes =
                 chicoryInstance.indirectFunctionIndexes
             override val runtimeInstance: ChicoryRuntimeInstance = runtimeInstance
+            override fun close() = Unit
         }
     }
 }

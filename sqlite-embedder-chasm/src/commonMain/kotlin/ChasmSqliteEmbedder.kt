@@ -93,6 +93,7 @@ public object ChasmSqliteEmbedder : SqliteEmbedder<ChasmSqliteEmbedderConfig, Ch
             override val callbackFunctionIndexes: Sqlite3CallbackFunctionIndexes =
                 chasmInstance.indirectFunctionIndexes
             override val runtimeInstance: ChasmRuntimeInstance = runtimeInstance
+            override fun close() = Unit
         }
     }
 }

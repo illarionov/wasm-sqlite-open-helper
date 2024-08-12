@@ -6,6 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.driver.graalvm
 
+import co.touchlab.kermit.Severity.Verbose
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
@@ -14,6 +15,7 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmRuntimeInstance
 
 class GraalvmMultithreadingTest : AbstractMultithreadingTest<WasmSQLiteDriver<GraalvmRuntimeInstance>>(
     driverCreator = GraalvmSqliteDriverFactory(),
+    dbLoggerSeverity = Verbose,
 ) {
     @JvmField
     @Rule
