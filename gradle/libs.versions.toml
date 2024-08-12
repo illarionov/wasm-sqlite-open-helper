@@ -27,6 +27,7 @@ kotlinx-datetime = "0.6.0"
 kotlinx-io ="0.5.1"
 kermit = "2.0.4"
 ksp = "2.0.20-RC-1.0.24"
+mockk = "1.13.12"
 spotless = "7.0.0.BETA1"
 sqlite-wasm-binary = "0.2"
 
@@ -73,6 +74,7 @@ kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-cor
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test" }
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinx-datetime" }
 kotlinx-io = { group = "org.jetbrains.kotlinx", name = "kotlinx-io-core", version.ref = "kotlinx-io" }
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 wsoh-sqlite-mt = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-android-wasm-emscripten-icu-mt-pthread-346", version.ref = "sqlite-wasm-binary" }
 wsoh-sqlite-st = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-android-wasm-emscripten-icu-346", version.ref = "sqlite-wasm-binary" }
 wsoh-sqlite-mt-plain = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-wasm-emscripten-mt-pthread-346", version.ref = "sqlite-wasm-binary" }

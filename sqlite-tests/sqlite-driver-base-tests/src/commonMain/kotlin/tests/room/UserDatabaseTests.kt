@@ -7,6 +7,9 @@
 package ru.pixnews.wasm.sqlite.driver.test.base.tests.room
 
 import androidx.sqlite.SQLiteDriver
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import ru.pixnews.wasm.sqlite.driver.test.base.room.User
 import ru.pixnews.wasm.sqlite.driver.test.base.room.UserDatabaseSuspend
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.TestSqliteDriverFactory
@@ -37,6 +40,12 @@ class UserDatabaseTests<S : SQLiteDriver>(
         val database = databaseFactory.create(driver, databaseName, coroutineContext)
         try {
             block(database)
+        } catch (@Suppress("TooGenericExceptionCaught") ex: Throwable) {
+            @Suppress("InstanceOfCheckForException")
+            if (ex is CancellationException) {
+                currentCoroutineContext().ensureActive()
+            }
+            throw RoomTestFailedException("Room test failed", ex)
         } finally {
             database.close()
         }
@@ -60,6 +69,11 @@ class UserDatabaseTests<S : SQLiteDriver>(
 
         logger.i { "users by ids: $usersByIds; user by name: $userByName; users: $users;" }
     }
+
+    public class RoomTestFailedException(
+        message: String,
+        parent: Throwable,
+    ) : RuntimeException(message, parent)
 
     public fun interface UserDatabaseFactory {
         fun create(

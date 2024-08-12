@@ -154,6 +154,7 @@ kotlin {
             dependencies {
                 implementation(libs.chicory.aot)
                 implementation(libs.kotlinx.coroutines.debug)
+                implementation(libs.mockk)
             }
         }
     }
