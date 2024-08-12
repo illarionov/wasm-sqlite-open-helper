@@ -143,6 +143,10 @@ internal class GraalvmSqliteWasmEnvironment internal constructor(
         check(context == mainThreadGraalContext) {
             "close() should be called from the main thread"
         }
+        // Before closing we need to wait for all child threads to complete otherwise they may use already destroyed
+        // shared memory
+        pthreadManager.joinThreads()
+
         _localGraalContext.remove()
         mainThreadGraalContext.close()
     }
