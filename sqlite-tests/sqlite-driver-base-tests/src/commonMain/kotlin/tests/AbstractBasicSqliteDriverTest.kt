@@ -17,25 +17,25 @@ import ru.pixnews.wasm.sqlite.driver.test.base.util.queryTable
 import ru.pixnews.wasm.sqlite.driver.test.base.util.use
 import kotlin.test.Test
 
-public abstract class AbstractBasicSqliteDriverTest<S : SQLiteDriver>(
+public abstract class AbstractBasicSqliteDriverTest<S>(
     driverCreator: TestSqliteDriverFactory<S>,
     dbLoggerSeverity: Severity = Severity.Info,
 ) : AbstractSqliteDriverTest<S>(
     driverFactory = driverCreator,
     dbLoggerSeverity = dbLoggerSeverity,
-) {
+) where S : SQLiteDriver, S : AutoCloseable {
     @Test
-    public open fun Driver_initialization_should_work() {
-        val driver = createWasmSQLiteDriver()
+    public open fun Driver_initialization_should_work() = createWasmSQLiteDriver().use { driver ->
         val connection = driver.open(fileInTempDir("user.db"))
         connection.use(::testDb)
     }
 
     @Test
     public open fun Driver_initialization_with_in_memory_database_should_work() {
-        val driver = createWasmSQLiteDriver()
-        val connection = driver.open(":memory:")
-        connection.use(::testDb)
+        createWasmSQLiteDriver().use { driver ->
+            val connection = driver.open(":memory:")
+            connection.use(::testDb)
+        }
     }
 
     public fun testDb(db: SQLiteConnection) {

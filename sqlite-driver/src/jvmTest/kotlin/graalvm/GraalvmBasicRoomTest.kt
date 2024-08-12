@@ -6,19 +6,19 @@
 
 package ru.pixnews.wasm.sqlite.driver.graalvm
 
-import androidx.sqlite.SQLiteDriver
 import kotlinx.coroutines.debug.junit4.CoroutinesTimeout
 import org.junit.Rule
 import org.junit.experimental.runners.Enclosed
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import ru.pixnews.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcu346
+import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
 import ru.pixnews.wasm.sqlite.driver.base.JvmDatabaseFactory
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.room.AbstractBasicRoomTest
 
 @RunWith(Enclosed::class)
 class GraalvmBasicRoomTest {
-    class MultithreadingSqliteTest : AbstractBasicRoomTest<SQLiteDriver>(
+    class MultithreadingSqliteTest : AbstractBasicRoomTest<WasmSQLiteDriver<*>>(
         driverFactory = GraalvmSqliteDriverFactory(),
         databaseFactory = JvmDatabaseFactory,
     ) {
@@ -32,7 +32,7 @@ class GraalvmBasicRoomTest {
         override fun fileInTempDir(databaseName: String): String = tempFolder.root.resolve(databaseName).path
     }
 
-    class SingleThreadedSqliteTest : AbstractBasicRoomTest<SQLiteDriver>(
+    class SingleThreadedSqliteTest : AbstractBasicRoomTest<WasmSQLiteDriver<*>>(
         driverFactory = GraalvmSqliteDriverFactory(
             defaultSqliteBinary = SqliteAndroidWasmEmscriptenIcu346,
         ),

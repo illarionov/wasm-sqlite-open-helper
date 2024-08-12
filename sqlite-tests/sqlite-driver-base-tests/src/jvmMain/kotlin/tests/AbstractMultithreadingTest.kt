@@ -23,19 +23,17 @@ import kotlin.time.Duration.Companion.seconds
 import kotlin.time.TimedValue
 import kotlin.time.measureTimedValue
 
-public abstract class AbstractMultithreadingTest<S : SQLiteDriver>(
+public abstract class AbstractMultithreadingTest<S>(
     driverCreator: TestSqliteDriverFactory<S>,
     dbLoggerSeverity: Severity = Severity.Info,
 ) : AbstractSqliteDriverTest<S>(
     driverFactory = driverCreator,
     dbLoggerSeverity = dbLoggerSeverity,
-) {
+) where S : SQLiteDriver, S : AutoCloseable {
     abstract fun createThread(driver: S, runnable: Runnable): Thread
 
     @Test
-    public open fun Factory_from_multiple_threads_should_work() {
-        val driver = createWasmSQLiteDriver()
-
+    public open fun Factory_from_multiple_threads_should_work() = createWasmSQLiteDriver().use { driver ->
         driver.open(fileInTempDir("test.db")).use { db ->
             db.execSQL("CREATE TABLE t1(x, y)")
             db.execSQL("INSERT INTO t1 VALUES (1, 2), (3, 4)")
@@ -62,44 +60,43 @@ public abstract class AbstractMultithreadingTest<S : SQLiteDriver>(
 
     @Test
     @Suppress("MagicNumber")
-    public open fun Factory_from_multiple_threads_with_active_transaction_should_work() {
-        val driver = createWasmSQLiteDriver()
+    public open fun Factory_from_multiple_threads_with_active_transaction_should_work() =
+        createWasmSQLiteDriver().use { driver ->
+            driver.open(fileInTempDir("test.db")).use { db ->
+                db.execSQL("CREATE TABLE t1(x, y)")
+                db.execSQL("INSERT INTO t1 VALUES (1, 2), (3, 4)")
 
-        driver.open(fileInTempDir("test.db")).use { db ->
-            db.execSQL("CREATE TABLE t1(x, y)")
-            db.execSQL("INSERT INTO t1 VALUES (1, 2), (3, 4)")
+                val newMode = db.queryForString("PRAGMA journal_mode=WAL")
+                check("WAL".equals(newMode, ignoreCase = true)) { "Can not change mode to WAL" }
 
-            val newMode = db.queryForString("PRAGMA journal_mode=WAL")
-            check("WAL".equals(newMode, ignoreCase = true)) { "Can not change mode to WAL" }
+                db.execSQL("BEGIN IMMEDIATE TRANSACTION")
+                db.execSQL("INSERT INTO t1 VALUES (5, 6)")
 
-            db.execSQL("BEGIN IMMEDIATE TRANSACTION")
-            db.execSQL("INSERT INTO t1 VALUES (5, 6)")
+                val innerStatementCompiled = CountDownLatch(1)
+                var thread2Result: String? = null
 
-            val innerStatementCompiled = CountDownLatch(1)
-            var thread2Result: String? = null
-
-            val backgroundThread = createThread(driver) {
-                driver.open(fileInTempDir("test.db")).use { db2 ->
-                    db2.prepare("SELECT sum(x+y) FROM t1").use {
-                        db2.execSQL("BEGIN DEFERRED TRANSACTION")
-                        innerStatementCompiled.countDown()
-                        thread2Result = it.readResult().first().values.first()
-                        db2.execSQL("COMMIT")
+                val backgroundThread = createThread(driver) {
+                    driver.open(fileInTempDir("test.db")).use { db2 ->
+                        db2.prepare("SELECT sum(x+y) FROM t1").use {
+                            db2.execSQL("BEGIN DEFERRED TRANSACTION")
+                            innerStatementCompiled.countDown()
+                            thread2Result = it.readResult().first().values.first()
+                            db2.execSQL("COMMIT")
+                        }
                     }
+                }.apply {
+                    start()
                 }
-            }.apply {
-                start()
+
+                val compiled = innerStatementCompiled.await(10, TimeUnit.SECONDS)
+
+                assertThat(compiled).isTrue()
+
+                backgroundThread.join(10.seconds.inWholeMilliseconds)
+
+                db.execSQL("COMMIT")
+
+                assertThat(thread2Result).isEqualTo("10")
             }
-
-            val compiled = innerStatementCompiled.await(10, TimeUnit.SECONDS)
-
-            assertThat(compiled).isTrue()
-
-            backgroundThread.join(10.seconds.inWholeMilliseconds)
-
-            db.execSQL("COMMIT")
-
-            assertThat(thread2Result).isEqualTo("10")
         }
-    }
 }

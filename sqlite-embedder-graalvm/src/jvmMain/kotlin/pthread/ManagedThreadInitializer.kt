@@ -11,5 +11,6 @@ import ru.pixnews.wasm.sqlite.open.helper.host.include.StructPthread
 
 internal interface ManagedThreadInitializer {
     fun initThreadLocalGraalvmAgent()
+    fun destroyThreadLocalGraalvmAgent()
     fun initWorkerThread(threadPtr: WasmPtr<StructPthread>)
 }

@@ -6,17 +6,17 @@
 
 package ru.pixnews.wasm.sqlite.driver.graalvm
 
-import androidx.sqlite.SQLiteDriver
 import org.junit.Rule
 import org.junit.experimental.runners.Enclosed
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import ru.pixnews.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcu346
+import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractBasicSqliteDriverTest
 
 @RunWith(Enclosed::class)
 class GraalvmBaseSqliteDriverTest {
-    class MultiThreadedSqliteTest : AbstractBasicSqliteDriverTest<SQLiteDriver>(
+    class MultiThreadedSqliteTest : AbstractBasicSqliteDriverTest<WasmSQLiteDriver<*>>(
         driverCreator = GraalvmSqliteDriverFactory(),
     ) {
         @JvmField
@@ -26,7 +26,7 @@ class GraalvmBaseSqliteDriverTest {
         override fun fileInTempDir(databaseName: String): String = tempFolder.root.resolve(databaseName).path
     }
 
-    class SingleThreadedSqliteTest : AbstractBasicSqliteDriverTest<SQLiteDriver>(
+    class SingleThreadedSqliteTest : AbstractBasicSqliteDriverTest<WasmSQLiteDriver<*>>(
         driverCreator = GraalvmSqliteDriverFactory(
             defaultSqliteBinary = SqliteAndroidWasmEmscriptenIcu346,
         ),

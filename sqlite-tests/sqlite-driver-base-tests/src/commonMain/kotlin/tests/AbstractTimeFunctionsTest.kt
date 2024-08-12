@@ -23,13 +23,14 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.time.Duration.Companion.minutes
 
-public abstract class AbstractTimeFunctionsTest<S : SQLiteDriver>(
+public abstract class AbstractTimeFunctionsTest<S>(
     driverCreator: TestSqliteDriverFactory<S>,
     dbLoggerSeverity: Severity = Severity.Info,
 ) : AbstractSqliteDriverTest<S>(
     driverFactory = driverCreator,
     dbLoggerSeverity = dbLoggerSeverity,
-) {
+) where S : SQLiteDriver, S : AutoCloseable {
+    lateinit var driver: S
     lateinit var connection: SQLiteConnection
 
     @BeforeTest

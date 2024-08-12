@@ -118,9 +118,32 @@ internal class GraalvmSqliteWasmEnvironment internal constructor(
         _localGraalContext.set(newContext)
     }
 
+    override fun destroyThreadLocalGraalvmAgent() {
+        logger.v { "destroyThreadLocalGraalvmAgent()" }
+        val context = _localGraalContext.get()
+        _localGraalContext.remove()
+        check(context != mainThreadGraalContext) {
+            "destroyThreadLocalGraalvmAgent() should not be called from the main thread"
+        }
+
+        // Does not close the context in the dying thread, as this leads to the closing of shared memory
+        // used in other threads
+        // context?.close()
+    }
+
     override fun initWorkerThread(
         threadPtr: WasmPtr<StructPthread>,
     ) {
         emscriptenRuntime.initWorkerThread(threadPtr)
+    }
+
+    override fun close() {
+        logger.v { "close()" }
+        val context = _localGraalContext.get()
+        check(context == mainThreadGraalContext) {
+            "close() should be called from the main thread"
+        }
+        _localGraalContext.remove()
+        mainThreadGraalContext.close()
     }
 }

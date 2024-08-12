@@ -6,12 +6,12 @@
 
 package ru.pixnews.wasm.sqlite.driver.chasm
 
-import androidx.sqlite.SQLiteDriver
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
+import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractIcuCollationTest
 
-class ChasmIcuCollationTest : AbstractIcuCollationTest<SQLiteDriver>(
+class ChasmIcuCollationTest : AbstractIcuCollationTest<WasmSQLiteDriver<*>>(
     driverCreator = ChasmSqliteDriverFactory,
 ) {
     @JvmField

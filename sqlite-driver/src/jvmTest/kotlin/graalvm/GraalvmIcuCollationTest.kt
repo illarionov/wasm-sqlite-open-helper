@@ -6,12 +6,12 @@
 
 package ru.pixnews.wasm.sqlite.driver.graalvm
 
-import androidx.sqlite.SQLiteDriver
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
+import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractIcuCollationTest
 
-class GraalvmIcuCollationTest : AbstractIcuCollationTest<SQLiteDriver>(
+class GraalvmIcuCollationTest : AbstractIcuCollationTest<WasmSQLiteDriver<*>>(
     driverCreator = GraalvmSqliteDriverFactory(),
 ) {
     @JvmField

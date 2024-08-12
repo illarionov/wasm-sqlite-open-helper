@@ -36,32 +36,36 @@ class GraalvmBasicMultithreadingRoomTest : AbstractSqliteDriverTest<WasmSQLiteDr
     @Test
     fun Test_Room_Multithread() = runTest {
         val driver = driverFactory.create(dbLogger, driverFactory.defaultSqliteBinary)
-        Executors.newFixedThreadPool(
-            2,
-            driver.runtime.managedThreadFactory,
-        ).asCoroutineDispatcher().use { dispatcher ->
-            tests.testRoomOnUserDatabase(
-                driver = driver,
-                databaseName = fileInTempDir("test.db"),
-                coroutineContext = dispatcher,
-                block = tests::basicRoomTest,
-            )
+        driver.use {
+            Executors.newFixedThreadPool(
+                2,
+                driver.runtime.managedThreadFactory,
+            ).asCoroutineDispatcher().use { dispatcher ->
+                tests.testRoomOnUserDatabase(
+                    driver = driver,
+                    databaseName = fileInTempDir("test.db"),
+                    coroutineContext = dispatcher,
+                    block = tests::basicRoomTest,
+                )
+            }
         }
     }
 
     @Test
     fun Test_In_Memory_Room_Multithread() = runTest {
         val driver = driverFactory.create(dbLogger, driverFactory.defaultSqliteBinary)
-        Executors.newFixedThreadPool(
-            2,
-            driver.runtime.managedThreadFactory,
-        ).asCoroutineDispatcher().use { dispatcher ->
-            tests.testRoomOnUserDatabase(
-                driver = driver,
-                databaseName = null,
-                coroutineContext = dispatcher,
-                block = tests::basicRoomTest,
-            )
+        driver.use {
+            Executors.newFixedThreadPool(
+                2,
+                driver.runtime.managedThreadFactory,
+            ).asCoroutineDispatcher().use { dispatcher ->
+                tests.testRoomOnUserDatabase(
+                    driver = driver,
+                    databaseName = null,
+                    coroutineContext = dispatcher,
+                    block = tests::basicRoomTest,
+                )
+            }
         }
     }
 }

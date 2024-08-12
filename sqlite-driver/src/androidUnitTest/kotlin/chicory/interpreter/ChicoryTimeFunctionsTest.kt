@@ -6,13 +6,13 @@
 
 package ru.pixnews.wasm.sqlite.driver.chicory.interpreter
 
-import androidx.sqlite.SQLiteDriver
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
+import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
 import ru.pixnews.wasm.sqlite.driver.chicory.ChicoryAndroidUnitTestSqliteDriverFactory
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractTimeFunctionsTest
 
-class ChicoryTimeFunctionsTest : AbstractTimeFunctionsTest<SQLiteDriver>(
+class ChicoryTimeFunctionsTest : AbstractTimeFunctionsTest<WasmSQLiteDriver<*>>(
     driverCreator = ChicoryAndroidUnitTestSqliteDriverFactory,
 ) {
     @JvmField

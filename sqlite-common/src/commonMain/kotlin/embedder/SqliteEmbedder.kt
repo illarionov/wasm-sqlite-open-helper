@@ -21,7 +21,7 @@ public interface SqliteEmbedder<E : SqliteEmbedderConfig, I : SqliteRuntimeInsta
 }
 
 @InternalWasmSqliteHelperApi
-public interface SqliteWasmEnvironment<I : SqliteRuntimeInstance> {
+public interface SqliteWasmEnvironment<I : SqliteRuntimeInstance> : AutoCloseable {
     public val sqliteExports: SqliteExports
     public val memory: Memory
     public val callbackStore: SqliteCallbackStore

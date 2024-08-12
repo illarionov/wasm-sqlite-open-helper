@@ -6,15 +6,15 @@
 
 package ru.pixnews.wasm.sqlite.driver.graalvm
 
-import androidx.sqlite.SQLiteDriver
 import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
+import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractBasicSqliteDriverTest
 
 @Ignore("Graalvm is not supported on Android")
-class GraalvmBasicSqliteDriverTest : AbstractBasicSqliteDriverTest<SQLiteDriver>(
+class GraalvmBasicSqliteDriverTest : AbstractBasicSqliteDriverTest<WasmSQLiteDriver<*>>(
     driverCreator = GraalvmSqliteDriverFactory(),
 ) {
     @JvmField

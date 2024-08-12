@@ -14,14 +14,14 @@ import ru.pixnews.wasm.sqlite.driver.test.base.tests.TestSqliteDriverFactory
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.room.UserDatabaseTests.UserDatabaseFactory
 import kotlin.test.Test
 
-public abstract class AbstractBasicRoomTest<S : SQLiteDriver>(
+public abstract class AbstractBasicRoomTest<S>(
     driverFactory: TestSqliteDriverFactory<S>,
     databaseFactory: UserDatabaseFactory,
     dbLoggerSeverity: Severity = Severity.Info,
 ) : AbstractSqliteDriverTest<S>(
     driverFactory = driverFactory,
     dbLoggerSeverity = dbLoggerSeverity,
-) {
+) where S : SQLiteDriver, S : AutoCloseable {
     val tests = UserDatabaseTests(driverFactory, databaseFactory, logger, dbLogger)
 
     @Test

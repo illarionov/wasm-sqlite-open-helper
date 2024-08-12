@@ -24,6 +24,7 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.wasi.WasiSnapshotP
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.GraalvmPthreadManager
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.stack.EmscriptenStack
+import java.net.URI
 import java.util.concurrent.atomic.AtomicReference
 
 internal class GraalvmEmbedderBuilder(
@@ -34,8 +35,14 @@ internal class GraalvmEmbedderBuilder(
 ) {
     val logger = host.rootLogger
     val sqliteSource: Source by lazy(LazyThreadSafetyMode.NONE) {
-        val bytes = wasmSourceReader.readBytesOrThrow(sqlite3Binary.sqliteUrl)
-        Source.newBuilder("wasm", ByteSequence.create(bytes), SQLITE3_SOURCE_NAME)
+        val rawUrl = sqlite3Binary.sqliteUrl.url
+        val builder = if (rawUrl.startsWith("jar:")) {
+            Source.newBuilder("wasm", URI(rawUrl).toURL())
+        } else {
+            val bytes = wasmSourceReader.readBytesOrThrow(sqlite3Binary.sqliteUrl)
+            Source.newBuilder("wasm", ByteSequence.create(bytes), SQLITE3_SOURCE_NAME)
+        }
+        builder
             .name(SQLITE3_SOURCE_NAME)
             .build()
     }
