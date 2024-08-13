@@ -16,7 +16,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WasiMemoryReader
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.plus
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.FileSystemOperationError
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
@@ -38,14 +38,12 @@ public class FdReadFdPreadFunctionHandle private constructor(
         pNum: WasmPtr<Int>,
     ): Errno {
         val ioVecs: IovecArray = readIovecs(memory, pIov, iovCnt)
-        return try {
-            val readBytes = bulkReader.read(fd, strategy, ioVecs)
-            memory.writeI32(pNum, readBytes.toInt())
-            Errno.SUCCESS
-        } catch (e: SysException) {
-            logger.i(e) { "read() error" }
-            e.errNo
-        }
+        return bulkReader.read(fd, strategy, ioVecs)
+            .onRight { readBytes -> memory.writeI32(pNum, readBytes.toInt()) }
+            .fold(
+                ifLeft = FileSystemOperationError::errno,
+                ifRight = { Errno.SUCCESS },
+            )
     }
 
     public companion object {

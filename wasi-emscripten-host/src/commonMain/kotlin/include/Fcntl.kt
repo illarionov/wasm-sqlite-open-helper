@@ -62,22 +62,6 @@ public object Fcntl {
     public const val O_TMPFILE: UInt = 0x410000U
     public const val O_SEARCH: UInt = O_PATH
 
-    public const val S_ISUID: UInt = 0x800U
-    public const val S_ISGID: UInt = 0x400U
-    public const val S_ISVTX: UInt = 0x200U
-    public const val S_IRUSR: UInt = 0x100U
-    public const val S_IWUSR: UInt = 0x80U
-    public const val S_IXUSR: UInt = 0x40U
-    public const val S_IRWXU: UInt = 0x1c0U
-    public const val S_IRGRP: UInt = 0x20U
-    public const val S_IWGRP: UInt = 0x10U
-    public const val S_IXGRP: UInt = 0x08U
-    public const val S_IRWXG: UInt = 0x38U
-    public const val S_IROTH: UInt = 0x04U
-    public const val S_IWOTH: UInt = 0x02U
-    public const val S_IXOTH: UInt = 0x01U
-    public const val S_IRWXO: UInt = 0x07U
-
     public const val AT_FDCWD: Int = -100
     public const val AT_SYMLINK_NOFOLLOW: UInt = 0x100U
     public const val AT_REMOVEDIR: UInt = 0x200U

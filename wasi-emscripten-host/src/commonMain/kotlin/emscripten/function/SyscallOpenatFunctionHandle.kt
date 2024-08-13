@@ -11,15 +11,11 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readNullTerminatedString
-import ru.pixnews.wasm.sqlite.open.helper.host.castFileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.Path
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
-import ru.pixnews.wasm.sqlite.open.helper.host.include.DirFd
-import ru.pixnews.wasm.sqlite.open.helper.host.include.Fcntl
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.BaseDirectory
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.Open
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.OpenError
 import ru.pixnews.wasm.sqlite.open.helper.host.include.FileMode
-import ru.pixnews.wasm.sqlite.open.helper.host.include.oMaskToString
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 
 public class SyscallOpenatFunctionHandle(
@@ -32,38 +28,31 @@ public class SyscallOpenatFunctionHandle(
         flags: UInt,
         rawMode: UInt,
     ): Int {
-        val fs: FileSystem<Path> = host.castFileSystem()
-        val dirFd = DirFd(rawDirFd)
+        val fs = host.fileSystem
+        val baseDirectory = BaseDirectory.fromRawDirFd(rawDirFd)
         val mode = FileMode(rawMode)
         val path = memory.readNullTerminatedString(pathnamePtr)
-        val absolutePath = fs.resolveAbsolutePath(dirFd, path)
 
-        return try {
-            val fd = fs.open(absolutePath, flags, mode)
-            logger.v { formatCallString(dirFd, path, absolutePath, flags, mode, fd) }
-            fd.fd
-        } catch (e: SysException) {
-            logger.v {
-                formatCallString(dirFd, path, absolutePath, flags, mode, null) +
-                        "openAt() error ${e.errNo}"
-            }
-            -e.errNo.code
-        }
+        val fsOperation = Open(
+            path = path,
+            baseDirectory = baseDirectory,
+            flags = flags,
+            mode = mode,
+        )
+        return fs.execute(Open, fsOperation)
+            .onLeft {
+                logger.v {
+                    "$fsOperation error ${it.errno}, ${it.message}"
+                }
+            }.onRight {
+                logger.v { "$fsOperation; fd: $it" }
+            }.fold(
+                ifLeft = { error: OpenError ->
+                    -error.errno.code
+                },
+                ifRight = { fd: Fd ->
+                    fd.fd
+                },
+            )
     }
-
-    @Suppress("MagicNumber")
-    private fun formatCallString(
-        dirfd: DirFd,
-        path: String,
-        absolutePath: Path,
-        flags: UInt,
-        mode: FileMode,
-        fd: Fd?,
-    ): String = "openAt() dirfd: " +
-            "$dirfd, " +
-            "path: `$path`, " +
-            "full path: `$absolutePath`, " +
-            "flags: 0${flags.toString(8)} (${Fcntl.oMaskToString(flags)}), " +
-            "mode: $mode" +
-            if (fd != null) ": $fd" else ""
 }

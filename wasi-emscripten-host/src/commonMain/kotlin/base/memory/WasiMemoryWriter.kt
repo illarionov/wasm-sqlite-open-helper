@@ -6,12 +6,15 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.base.memory
 
+import arrow.core.Either
 import kotlinx.io.buffered
 import kotlinx.io.readByteArray
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystemByteBuffer
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.WriteError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.WriteFd
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.CiovecArray
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 
@@ -20,19 +23,19 @@ public fun interface WasiMemoryWriter {
         fd: Fd,
         strategy: ReadWriteStrategy,
         cioVecs: CiovecArray,
-    ): ULong
+    ): Either<WriteError, ULong>
 }
 
 public class DefaultWasiMemoryWriter(
     private val memory: ReadOnlyMemory,
-    private val fileSystem: FileSystem<*>,
+    private val fileSystem: FileSystem,
     logger: Logger,
 ) : WasiMemoryWriter {
     private val logger: Logger = logger.withTag("DefaultWasiMemoryWriter")
-    override fun write(fd: Fd, strategy: ReadWriteStrategy, cioVecs: CiovecArray): ULong {
+    override fun write(fd: Fd, strategy: ReadWriteStrategy, cioVecs: CiovecArray): Either<WriteError, ULong> {
         logger.v { "write($fd, ${cioVecs.ciovecList.map { it.bufLen.value }})" }
         val bufs = cioVecs.toByteBuffers(memory)
-        return fileSystem.write(fd, bufs, strategy)
+        return fileSystem.execute(WriteFd, WriteFd(fd, bufs, strategy))
     }
 
     private fun CiovecArray.toByteBuffers(

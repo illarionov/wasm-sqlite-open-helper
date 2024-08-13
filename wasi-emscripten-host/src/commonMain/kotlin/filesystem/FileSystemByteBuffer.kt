@@ -10,4 +10,34 @@ public class FileSystemByteBuffer(
     public val array: ByteArray,
     public val offset: Int = 0,
     public val length: Int = array.size,
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) {
+            return true
+        }
+        if (other == null || this::class != other::class) {
+            return false
+        }
+
+        other as FileSystemByteBuffer
+
+        if (!array.contentEquals(other.array)) {
+            return false
+        }
+        if (offset != other.offset) {
+            return false
+        }
+        if (length != other.length) {
+            return false
+        }
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = array.contentHashCode()
+        result = 31 * result + offset
+        result = 31 * result + length
+        return result
+    }
+}

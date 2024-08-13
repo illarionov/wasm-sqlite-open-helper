@@ -12,7 +12,7 @@ import kotlinx.io.Buffer
 import kotlinx.io.Sink
 import kotlinx.io.writeIntLe
 import kotlinx.io.writeLongLe
-import ru.pixnews.wasm.sqlite.open.helper.host.include.FileMode
+import ru.pixnews.wasm.sqlite.open.helper.host.include.FileModeType
 import ru.pixnews.wasm.sqlite.open.helper.host.include.StructTimespec
 import ru.pixnews.wasm.sqlite.open.helper.host.include.blkcnt_t
 import ru.pixnews.wasm.sqlite.open.helper.host.include.blksize_t
@@ -45,7 +45,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.include.uid_t
 public data class StructStat(
     val st_dev: dev_t,
     val st_ino: ino_t,
-    val st_mode: FileMode,
+    val st_mode: FileModeType,
     val st_nlink: nlink_t,
     val st_uid: uid_t,
     val st_gid: gid_t,

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem
+package ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.ext
 
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystemByteBuffer
 import java.nio.ByteBuffer

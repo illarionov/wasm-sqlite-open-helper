@@ -4,10 +4,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.host.test.fixtures
+package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op
 
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.Path
-
-public open class TestPath : Path {
-    override val pathString: String get() = "nonexistent"
-}
+public interface FileSystemOperation<I : Any, E : FileSystemOperationError, R : Any>

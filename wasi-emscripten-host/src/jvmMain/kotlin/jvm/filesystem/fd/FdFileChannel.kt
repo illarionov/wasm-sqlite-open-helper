@@ -6,46 +6,79 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.fd
 
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
-import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.JvmPath
+import arrow.core.Either
+import arrow.core.right
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.FileSystemOperationError
+import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.fd.ChannelPositionError.ClosedChannel
+import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.nio.JvmFileSystemState
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno.BADF
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno.INVAL
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno.IO
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Whence
 import java.io.IOException
 import java.nio.channels.ClosedChannelException
 import java.nio.channels.FileChannel
 import java.nio.channels.FileLock
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock
+import java.nio.file.Path as NioPath
 
 internal class FdFileChannel(
-    val fileSystem: FileSystem<JvmPath>,
+    val fileSystem: JvmFileSystemState,
     val fd: Fd,
-    val path: JvmPath,
-
+    val path: NioPath,
     val channel: FileChannel,
 ) {
     val lock: Lock = ReentrantLock()
     val fileLocks: MutableMap<FileLockKey, FileLock> = mutableMapOf()
 }
 
-internal var FdFileChannel.position: Long
-    get() = try {
-        channel.position()
-    } catch (ce: ClosedChannelException) {
-        throw SysException(BADF, cause = ce)
-    } catch (ioe: IOException) {
-        throw SysException(IO, cause = ioe)
+internal fun FdFileChannel.getPosition(): Either<ChannelPositionError, Long> = Either.catch {
+    channel.position()
+}.mapLeft {
+    when (it) {
+        is ClosedChannelException -> ClosedChannel("Channel `$path` closed (${it.message})")
+        is IOException -> ChannelPositionError.IoError("I/O error: ${it.message}")
+        else -> throw IllegalStateException("Unexpected error", it)
     }
-    set(newPosition) = try {
-        channel.position(newPosition)
-        Unit
-    } catch (ce: ClosedChannelException) {
-        throw SysException(BADF, cause = ce)
-    } catch (ioe: IOException) {
-        throw SysException(IO, cause = ioe)
-    } catch (iae: IllegalArgumentException) {
-        throw SysException(INVAL, "Negative new position", cause = iae)
+}
+
+internal fun FdFileChannel.setPosition(newPosition: Long): Either<ChannelPositionError, Long> = Either.catch {
+    channel.position(newPosition)
+    newPosition
+}.mapLeft {
+    when (it) {
+        is ClosedChannelException -> ClosedChannel("Channel `$path` closed (${it.message})")
+        is IllegalArgumentException -> ChannelPositionError.InvalidArgument("Negative new position (${it.message})")
+        is IOException -> ChannelPositionError.IoError("I/O error: ${it.message}")
+        else -> throw IllegalStateException("Unexpected error", it)
     }
+}
+
+internal fun FdFileChannel.resolveWhencePosition(
+    offset: Long,
+    whence: Whence,
+): Either<ChannelPositionError, Long> = when (whence) {
+    Whence.SET -> offset.right()
+    Whence.CUR -> this.getPosition().map { it + offset }
+    Whence.END -> Either.catch {
+        channel.size() - offset
+    }.mapLeft {
+        when (it) {
+            is ClosedChannelException -> ClosedChannel("Channel `$path` closed (${it.message})")
+            is IOException -> ChannelPositionError.IoError("I/O error: ${it.message}")
+            else -> throw IllegalStateException("Unexpected error", it)
+        }
+    }
+}
+
+internal sealed class ChannelPositionError(
+    override val errno: Errno,
+    override val message: String,
+) : FileSystemOperationError {
+    internal data class ClosedChannel(override val message: String) : ChannelPositionError(BADF, message)
+    internal data class IoError(override val message: String) : ChannelPositionError(IO, message)
+    internal data class InvalidArgument(override val message: String) : ChannelPositionError(INVAL, message)
+}

@@ -6,12 +6,15 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function
 
+import arrow.core.left
+import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.writeNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.host.base.plus
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.ReadLink
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.ReadLinkError
 import ru.pixnews.wasm.sqlite.open.helper.host.include.Fcntl
 import ru.pixnews.wasm.sqlite.open.helper.host.test.assertions.byteAt
 import ru.pixnews.wasm.sqlite.open.helper.host.test.assertions.hasBytesAt
@@ -45,9 +48,9 @@ class SyscallReadlinkatFunctionHandleTest {
         val expectedLinkTarget = "usr/sbin"
         val expectedLinkTargetBytes = expectedLinkTarget.encodeToByteArray()
 
-        fileSystem.readLinkAtHandler = { _, path ->
-            check(path == "/sbin")
-            expectedLinkTarget
+        fileSystem.onOperation(ReadLink) { operation ->
+            assertThat(operation.path).isEqualTo("/sbin")
+            expectedLinkTarget.right()
         }
         val pathnamePtr: WasmPtr<Byte> = WasmPtr(64)
         val bufPtr: WasmPtr<Byte> = WasmPtr(128)
@@ -92,7 +95,9 @@ class SyscallReadlinkatFunctionHandleTest {
         val pathnamePtr = WasmPtr<Byte>(64).also {
             memory.writeNullTerminatedString(it, "/")
         }
-        fileSystem.readLinkAtHandler = { _, _ -> throw SysException(Errno.ACCES) }
+        fileSystem.onOperation(ReadLink) { _ ->
+            ReadLinkError.AccessDenied("Test access denied").left()
+        }
 
         val sizeOrErrno = readlinkatFunctionHandle.execute(
             memory = memory,
@@ -107,7 +112,9 @@ class SyscallReadlinkatFunctionHandleTest {
 
     @Test
     fun readlinkAt_should_not_exceed_bufsize_limit() {
-        fileSystem.readLinkAtHandler = { _, _ -> "usr/sbin" }
+        fileSystem.onOperation(ReadLink) {
+            "usr/sbin".right()
+        }
 
         val pathnamePtr: WasmPtr<Byte> = WasmPtr(64)
         val bufPtr: WasmPtr<Byte> = WasmPtr(128)

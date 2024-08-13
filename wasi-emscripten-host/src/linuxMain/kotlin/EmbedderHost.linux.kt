@@ -7,7 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.host
 
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost.Builder
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.stub.NotImplementedFileSystem
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.NotImplementedFileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.internal.CommonClock
 import ru.pixnews.wasm.sqlite.open.helper.host.internal.CommonMonotonicClock
 import ru.pixnews.wasm.sqlite.open.helper.host.linux.LinuxEmbedderHost
@@ -21,7 +21,7 @@ internal actual fun createDefaultEmbedderHost(builder: Builder): EmbedderHost = 
     rootLogger = builder.rootLogger,
     systemEnvProvider = builder.systemEnvProvider ?: NativeSystemEnvProvider,
     commandArgsProvider = builder.commandArgsProvider ?: NativeCommandArgsProvider,
-    fileSystem = builder.fileSystem ?: NotImplementedFileSystem(builder.rootLogger),
+    fileSystem = builder.fileSystem ?: NotImplementedFileSystem,
     monotonicClock = builder.monotonicClock ?: CommonMonotonicClock(),
     clock = builder.clock ?: CommonClock(),
     localTimeFormatter = builder.localTimeFormatter ?: LinuxLocalTimeFormatter(),

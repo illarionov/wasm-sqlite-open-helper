@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.host.filesystem
+package ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.ext
 
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
+import java.nio.file.LinkOption.NOFOLLOW_LINKS
 
-public class SysException(
-    public val errNo: Errno,
-    msg: String? = null,
-    cause: Throwable? = null,
-) : RuntimeException(msg, cause)
+internal fun asLinkOptions(followSymlinks: Boolean = true) = if (followSymlinks) {
+    emptyArray()
+} else {
+    arrayOf(NOFOLLOW_LINKS)
+}

@@ -21,8 +21,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Pages
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.EmscriptenResizeHeapFunctionHandle.Companion.calculateNewSizePages
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno.NOMEM
 
 internal class EmscriptenResizeHeap(
     language: WasmLanguage,
@@ -43,7 +42,7 @@ internal class EmscriptenResizeHeap(
         fun execute(
             memory: WasmMemory,
             requestedSize: Long,
-        ): Int = try {
+        ): Int {
             val currentPages = Pages(memory.size())
             val declaredMaxPages = Pages(memory.declaredMaxSize())
             val newSizePages = calculateNewSizePages(requestedSize, currentPages, declaredMaxPages)
@@ -54,16 +53,11 @@ internal class EmscriptenResizeHeap(
             }
 
             val memoryAdded = memory.grow(newSizePages.count - currentPages.count)
-            if (!memoryAdded) {
-                throw SysException(
-                    Errno.NOMEM,
-                    "Cannot enlarge memory, requested $newSizePages pages, but the limit is " +
-                            "${memory.declaredMaxSize()} pages!",
-                )
+            return if (!memoryAdded) {
+                return -NOMEM.code
+            } else {
+                1
             }
-            1
-        } catch (e: SysException) {
-            -e.errNo.code
         }
     }
 }

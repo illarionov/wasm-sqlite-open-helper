@@ -12,9 +12,10 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
+import ru.pixnews.wasm.sqlite.open.helper.host.ext.negativeErrnoCode
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.BaseDirectory.CurrentWorkingDirectory
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.Chmod
 import ru.pixnews.wasm.sqlite.open.helper.host.include.FileMode
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 
 public class SyscallChmodFunctionHandle(
     host: EmbedderHost,
@@ -26,12 +27,9 @@ public class SyscallChmodFunctionHandle(
     ): Int {
         val fileMode = FileMode(mode)
         val path = memory.readNullTerminatedString(pathnamePtr)
-        return try {
-            host.fileSystem.chmod(path, fileMode)
-            Errno.SUCCESS.code
-        } catch (e: SysException) {
-            logger.v { "chmod($path, $fileMode): Error ${e.errNo}" }
-            -e.errNo.code
-        }
+        return host.fileSystem.execute(
+            Chmod,
+            Chmod(path, CurrentWorkingDirectory, fileMode),
+        ).negativeErrnoCode()
     }
 }

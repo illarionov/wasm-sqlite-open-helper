@@ -24,7 +24,7 @@ public open class TestEmbedderHost(
     override var rootLogger: Logger = KermitLogger(),
     override var systemEnvProvider: SystemEnvProvider = SystemEnvProvider { emptyMap() },
     override var commandArgsProvider: CommandArgsProvider = CommandArgsProvider { emptyList() },
-    override var fileSystem: FileSystem<*> = TestFileSystem(),
+    override var fileSystem: FileSystem = TestFileSystem(),
     override var monotonicClock: MonotonicClock = MonotonicClock { Long.MAX_VALUE },
     override var clock: Clock = Clock { Long.MAX_VALUE },
     override var localTimeFormatter: LocalTimeFormatter = LocalTimeFormatter {

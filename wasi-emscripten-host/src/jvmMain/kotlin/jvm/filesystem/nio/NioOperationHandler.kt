@@ -1,0 +1,18 @@
+/*
+ * Copyright 2024, the wasm-sqlite-open-helper project authors and contributors. Please see the AUTHORS file
+ * for details. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+package ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.nio
+
+import arrow.core.Either
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.FileSystemOperationError
+
+internal fun interface NioOperationHandler<
+        in I : Any,
+        out E : FileSystemOperationError,
+        out R : Any,
+        > {
+    public operator fun invoke(input: I): Either<E, R>
+}

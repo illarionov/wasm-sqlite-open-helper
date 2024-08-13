@@ -15,7 +15,9 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.sinkWithMaxSize
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
+import ru.pixnews.wasm.sqlite.open.helper.host.ext.negativeErrnoCode
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.BaseDirectory.CurrentWorkingDirectory
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.Stat
 import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.STRUCT_SIZE_PACKED_SIZE
 import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.StructStat
 import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.packTo
@@ -30,24 +32,19 @@ public class SyscallStatLstat64FunctionHandle private constructor(
         pathnamePtr: WasmPtr<Byte>,
         dstAddr: WasmPtr<StructStat>,
     ): Int {
-        var path = ""
-        try {
-            path = memory.readNullTerminatedString(pathnamePtr)
-            val stat = host.fileSystem.stat(
+        val path = memory.readNullTerminatedString(pathnamePtr)
+        return host.fileSystem.execute(
+            Stat,
+            Stat(
                 path = path,
+                baseDirectory = CurrentWorkingDirectory,
                 followSymlinks = followSymlinks,
-            ).also {
-                logger.v { "`$path`: $it" }
-            }
+            ),
+        ).map { stat: StructStat ->
             memory.sinkWithMaxSize(dstAddr, STRUCT_SIZE_PACKED_SIZE).buffered().use {
                 stat.packTo(it)
             }
-        } catch (e: SysException) {
-            logger.v { "`$path`: error ${e.errNo}" }
-            return -e.errNo.code
-        }
-
-        return 0
+        }.negativeErrnoCode()
     }
 
     public companion object {

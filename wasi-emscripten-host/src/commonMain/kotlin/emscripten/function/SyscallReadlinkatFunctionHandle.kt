@@ -14,12 +14,9 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.sinkWithMaxSize
-import ru.pixnews.wasm.sqlite.open.helper.host.castFileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.Path
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
-import ru.pixnews.wasm.sqlite.open.helper.host.include.DirFd
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.BaseDirectory
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.ReadLink
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 
 public class SyscallReadlinkatFunctionHandle(
@@ -32,27 +29,28 @@ public class SyscallReadlinkatFunctionHandle(
         buf: WasmPtr<Byte>,
         bufSize: Int,
     ): Int {
-        val fs: FileSystem<Path> = host.castFileSystem()
-        val dirFd = DirFd(rawDirFd)
         val path = memory.readNullTerminatedString(pathnamePtr)
 
         if (bufSize < 0) {
             return -Errno.INVAL.code
         }
 
-        return try {
-            val linkPath = fs.readLinkAt(dirFd, path)
-            val linkpathBuffer = Buffer().also { it.writeString(linkPath) }
+        return host.fileSystem.execute(
+            ReadLink,
+            ReadLink(
+                path = path,
+                baseDirectory = BaseDirectory.fromRawDirFd(rawDirFd),
+            ),
+        ).fold(
+            ifLeft = { -it.errno.code },
+        ) { linkPath: String ->
+            val linkpathBuffer = Buffer().also { it.writeString(linkPath.toString()) }
             val len = linkpathBuffer.size.toInt().coerceAtMost(bufSize)
+
             memory.sinkWithMaxSize(buf, len).use {
                 it.write(linkpathBuffer, len.toLong())
             }
             len
-        } catch (e: SysException) {
-            logger.v {
-                "readlinkat(rawdirfd: $rawDirFd path: $path, buf: $buf, bufsiz: $bufSize) error: ${e.errNo}"
-            }
-            -e.errNo.code
         }
     }
 }
