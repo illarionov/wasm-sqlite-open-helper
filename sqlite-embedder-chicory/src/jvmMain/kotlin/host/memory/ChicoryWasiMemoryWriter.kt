@@ -6,6 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chicory.host.memory
 
+import arrow.core.Either
 import com.dylibso.chicory.runtime.Memory
 import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.isJvmOrAndroidMinApi34
 import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.trySetAccessibleCompat
@@ -15,6 +16,8 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WasiMemoryWriter
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystemByteBuffer
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.WriteError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.WriteFd
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.CiovecArray
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 import java.lang.reflect.Field
@@ -22,14 +25,14 @@ import java.nio.ByteBuffer
 
 internal class ChicoryWasiMemoryWriter private constructor(
     private val memory: Memory,
-    private val fileSystem: FileSystem<*>,
+    private val fileSystem: FileSystem,
     private val bufferField: Field,
 ) : WasiMemoryWriter {
-    override fun write(fd: Fd, strategy: ReadWriteStrategy, cioVecs: CiovecArray): ULong {
+    override fun write(fd: Fd, strategy: ReadWriteStrategy, cioVecs: CiovecArray): Either<WriteError, ULong> {
         val memoryByteBuffer = bufferField.get(memory) as? ByteBuffer
             ?: error("Can not get memory byte buffer")
         val bbufs = cioVecs.toByteBuffers(memoryByteBuffer)
-        return fileSystem.write(fd, bbufs, strategy)
+        return fileSystem.execute(WriteFd, WriteFd(fd, bbufs, strategy))
     }
 
     private fun CiovecArray.toByteBuffers(
@@ -46,7 +49,7 @@ internal class ChicoryWasiMemoryWriter private constructor(
     companion object {
         fun createOrDefault(
             memory: ChicoryMemoryAdapter,
-            fileSystem: FileSystem<*>,
+            fileSystem: FileSystem,
             logger: Logger,
         ): WasiMemoryWriter = if (isJvmOrAndroidMinApi34()) {
             tryCreate(memory.wasmMemory, fileSystem)
@@ -57,7 +60,7 @@ internal class ChicoryWasiMemoryWriter private constructor(
         @Suppress("ReturnCount", "SwallowedException")
         fun tryCreate(
             memory: Memory,
-            fileSystem: FileSystem<*>,
+            fileSystem: FileSystem,
         ): ChicoryWasiMemoryWriter? {
             try {
                 val bufferField = Memory::class.java.getDeclaredField("buffer")

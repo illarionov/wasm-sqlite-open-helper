@@ -16,13 +16,13 @@ import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost.MonotonicClock
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost.SystemEnvProvider
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost.TimeZoneInfoProvider
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
-import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.JvmFileSystem
+import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.nio.JvmNioFileSystem
 
 public class JvmEmbedderHost(
     public override val rootLogger: Logger = Logger,
     public override val systemEnvProvider: SystemEnvProvider = JvmSystemEnvProvider,
     public override val commandArgsProvider: CommandArgsProvider = JvmCommandArgsProvider,
-    public override val fileSystem: FileSystem<*> = JvmFileSystem(rootLogger),
+    public override val fileSystem: FileSystem = JvmNioFileSystem(rootLogger),
     public override val clock: Clock = JvmClock,
     public override val monotonicClock: MonotonicClock = JvmMonotonicClock,
     public override val localTimeFormatter: LocalTimeFormatter = JvmLocalTimeFormatter(),

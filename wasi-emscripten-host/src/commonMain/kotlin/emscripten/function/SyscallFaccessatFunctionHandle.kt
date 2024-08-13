@@ -12,10 +12,12 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
-import ru.pixnews.wasm.sqlite.open.helper.host.include.DirFd
+import ru.pixnews.wasm.sqlite.open.helper.host.ext.negativeErrnoCode
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.BaseDirectory
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.CheckAccess
+import ru.pixnews.wasm.sqlite.open.helper.host.include.Fcntl.AT_EACCESS
+import ru.pixnews.wasm.sqlite.open.helper.host.include.Fcntl.AT_SYMLINK_NOFOLLOW
 import ru.pixnews.wasm.sqlite.open.helper.host.include.FileAccessibilityCheck
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 
 public class SyscallFaccessatFunctionHandle(
     host: EmbedderHost,
@@ -27,16 +29,17 @@ public class SyscallFaccessatFunctionHandle(
         amode: UInt,
         flags: UInt,
     ): Int {
-        val fs = host.fileSystem
-        val dirFd = DirFd(rawDirFd)
         val path = memory.readNullTerminatedString(pathnamePtr)
-        val check = FileAccessibilityCheck(amode)
-        return try {
-            fs.faccessat(dirFd, path, check, flags)
-            Errno.SUCCESS.code
-        } catch (e: SysException) {
-            logger.v { "__syscall_faccessat($rawDirFd, $path, $check, $flags) failed: ${e.errNo}" }
-            -e.errNo.code
-        }
+        return host.fileSystem.execute(
+            CheckAccess,
+            CheckAccess(
+                path = path,
+                baseDirectory = BaseDirectory.fromRawDirFd(rawDirFd),
+                mode = FileAccessibilityCheck(amode),
+                useEffectiveUserId = flags and AT_EACCESS == AT_EACCESS,
+                allowEmptyPath = false,
+                followSymlinks = flags and AT_SYMLINK_NOFOLLOW != AT_SYMLINK_NOFOLLOW,
+            ),
+        ).negativeErrnoCode()
     }
 }

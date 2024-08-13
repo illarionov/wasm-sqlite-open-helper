@@ -12,9 +12,11 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
-import ru.pixnews.wasm.sqlite.open.helper.host.include.DirFd
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
+import ru.pixnews.wasm.sqlite.open.helper.host.ext.negativeErrnoCode
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.BaseDirectory
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.UnlinkDirectory
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.UnlinkFile
+import ru.pixnews.wasm.sqlite.open.helper.host.include.Fcntl.AT_REMOVEDIR
 
 public class SyscallUnlinkatFunctionHandle(
     host: EmbedderHost,
@@ -25,13 +27,24 @@ public class SyscallUnlinkatFunctionHandle(
         pathnamePtr: WasmPtr<Byte>,
         flags: UInt,
     ): Int {
-        val errNo = try {
-            val path = memory.readNullTerminatedString(pathnamePtr)
-            host.fileSystem.unlinkAt(DirFd(rawDirfd), path, flags)
-            Errno.SUCCESS
-        } catch (e: SysException) {
-            e.errNo
-        }
-        return -errNo.code
+        val path = memory.readNullTerminatedString(pathnamePtr)
+        val baseDirectory = BaseDirectory.fromRawDirFd(rawDirfd)
+        return if (flags and AT_REMOVEDIR == AT_REMOVEDIR) {
+            host.fileSystem.execute(
+                operation = UnlinkDirectory,
+                input = UnlinkDirectory(
+                    path = path,
+                    baseDirectory = baseDirectory,
+                ),
+            )
+        } else {
+            host.fileSystem.execute(
+                operation = UnlinkFile,
+                input = UnlinkFile(
+                    path = path,
+                    baseDirectory = baseDirectory,
+                ),
+            )
+        }.negativeErrnoCode()
     }
 }

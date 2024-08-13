@@ -6,46 +6,59 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory
 
+import arrow.core.Either
+import arrow.core.getOrElse
+import arrow.core.left
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.DefaultWasiMemoryWriter
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WasiMemoryWriter
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
-import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.JvmFileSystem
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy.CHANGE_POSITION
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.FileSystemOperationError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.WriteError
+import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.ext.writeCatching
+import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.nio.op.RunWithChannelFd
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.CiovecArray
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
-import java.io.IOException
-import java.nio.channels.AsynchronousCloseException
 import java.nio.channels.Channels
-import java.nio.channels.ClosedByInterruptException
-import java.nio.channels.ClosedChannelException
-import java.nio.channels.NonReadableChannelException
-import kotlin.concurrent.withLock
+import java.nio.channels.FileChannel
 
 internal class GraalOutputStreamWasiMemoryWriter(
     private val memory: GraalvmWasmHostMemoryAdapter,
-    private val fileSystem: JvmFileSystem,
+    private val fileSystem: FileSystem,
     logger: Logger,
 ) : WasiMemoryWriter {
     private val logger = logger.withTag("FS:GrWriter")
     private val wasmMemory = memory.wasmMemory
     private val defaultMemoryWriter = DefaultWasiMemoryWriter(memory, fileSystem, logger)
 
-    override fun write(fd: Fd, strategy: ReadWriteStrategy, cioVecs: CiovecArray): ULong = fileSystem.fsLock.withLock {
-        return if (strategy == ReadWriteStrategy.CHANGE_POSITION) {
-            write(fd, cioVecs)
+    override fun write(fd: Fd, strategy: ReadWriteStrategy, cioVecs: CiovecArray): Either<WriteError, ULong> {
+        return if (strategy == CHANGE_POSITION && fileSystem.isOperationSupported(RunWithChannelFd)) {
+            val op = RunWithChannelFd(
+                fd = fd,
+                block = { writeChangePosition(it, cioVecs) },
+            )
+            fileSystem.execute(RunWithChannelFd.key(), op)
+                .mapLeft { it as WriteError }
         } else {
             defaultMemoryWriter.write(fd, strategy, cioVecs)
         }
     }
 
-    @Suppress("ThrowsCount")
-    private fun write(fd: Fd, cioVecs: CiovecArray): ULong {
-        logger.v { "write($fd, ${cioVecs.ciovecList.map { it.bufLen.value }})" }
-        var totalBytesWritten: ULong = 0U
-        try {
-            val channel = fileSystem.getNioFileChannelByFd(fd)
+    private fun writeChangePosition(
+        channelResult: Either<FileSystemOperationError.BadFileDescriptor, FileChannel>,
+        cioVecs: CiovecArray,
+    ): Either<WriteError, ULong> {
+        logger.v { "writeChangePosition($channelResult, ${cioVecs.ciovecList.map { it.bufLen.value }})" }
+        val channel = channelResult.mapLeft {
+            WriteError.BadFileDescriptor(it.message)
+        }.getOrElse {
+            return it.left()
+        }
+
+        return writeCatching {
+            var totalBytesWritten: ULong = 0U
             val outputStream = Channels.newOutputStream(channel).buffered()
             for (vec in cioVecs.ciovecList) {
                 val limit = vec.bufLen.value.toInt()
@@ -53,18 +66,7 @@ internal class GraalOutputStreamWasiMemoryWriter(
                 totalBytesWritten += limit.toUInt()
             }
             outputStream.flush()
-        } catch (cce: ClosedChannelException) {
-            throw SysException(Errno.IO, "Channel closed", cce)
-        } catch (ace: AsynchronousCloseException) {
-            throw SysException(Errno.IO, "Channel closed on other thread", ace)
-        } catch (ci: ClosedByInterruptException) {
-            throw SysException(Errno.INTR, "Interrupted", ci)
-        } catch (nre: NonReadableChannelException) {
-            throw SysException(Errno.BADF, "Non readable channel", nre)
-        } catch (ioe: IOException) {
-            throw SysException(Errno.IO, "I/o error", ioe)
+            totalBytesWritten
         }
-
-        return totalBytesWritten
     }
 }

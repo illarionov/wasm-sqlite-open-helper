@@ -15,13 +15,13 @@ import ru.pixnews.wasm.sqlite.open.helper.host.jvm.JvmEmbedderHost.JvmSystemEnvP
 import ru.pixnews.wasm.sqlite.open.helper.host.jvm.JvmEntropySource
 import ru.pixnews.wasm.sqlite.open.helper.host.jvm.JvmLocalTimeFormatter
 import ru.pixnews.wasm.sqlite.open.helper.host.jvm.JvmTimeZoneInfoProvider
-import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.JvmFileSystem
+import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.nio.JvmNioFileSystem
 
 internal actual fun createDefaultEmbedderHost(builder: Builder): EmbedderHost = JvmEmbedderHost(
     rootLogger = builder.rootLogger,
     systemEnvProvider = builder.systemEnvProvider ?: JvmSystemEnvProvider,
     commandArgsProvider = builder.commandArgsProvider ?: JvmCommandArgsProvider,
-    fileSystem = builder.fileSystem ?: JvmFileSystem(builder.rootLogger),
+    fileSystem = builder.fileSystem ?: JvmNioFileSystem(builder.rootLogger),
     clock = builder.clock ?: JvmClock,
     monotonicClock = builder.monotonicClock ?: JvmMonotonicClock,
     localTimeFormatter = builder.localTimeFormatter ?: JvmLocalTimeFormatter(),

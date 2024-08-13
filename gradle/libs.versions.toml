@@ -11,6 +11,7 @@ androidx-sqlite24 = "2.4.0"
 androidx-room26 = "2.6.1"
 androidx-test = "1.6.1"
 atomicfu = "0.25.0"
+arrow = "2.0.0-alpha.3"
 assertk = "0.28.1"
 chasm = "0.7.1"
 chicory = "0.0.12"
@@ -24,12 +25,12 @@ kotlin = "2.0.20-RC"
 kotlinx-coroutines = "1.9.0-RC"
 kotlinx-binary-compatibility-validator = "0.16.2"
 kotlinx-datetime = "0.6.0"
-kotlinx-io ="0.5.1"
+kotlinx-io ="0.5.2"
 kermit = "2.0.4"
 ksp = "2.0.20-RC-1.0.24"
 mockk = "1.13.12"
 spotless = "7.0.0.BETA1"
-sqlite-wasm-binary = "0.2"
+sqlite-wasm-binary = "0.3"
 
 [libraries]
 androidx-collection = { group = "androidx.collection", name = "collection", version.ref = "androidx-collection" }
@@ -48,6 +49,7 @@ androidx-sqlite-sqlite24 = { group = "androidx.sqlite", name = "sqlite", version
 androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidx-test" }
 androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidx-test" }
 androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "androidx-test" }
+arrow-core = { group = "io.arrow-kt", name = "arrow-core", version.ref = "arrow" }
 assertk = { group = "com.willowtreeapps.assertk", name = "assertk", version.ref = "assertk" }
 chasm = { group = "io.github.charlietap.chasm", name = "chasm", version.ref = "chasm" }
 chasm-decoder = { group = "io.github.charlietap.chasm", name = "decoder", version.ref = "chasm" }

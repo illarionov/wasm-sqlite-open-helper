@@ -20,7 +20,7 @@ import ru.pixnews.wasm.sqlite.test.utils.KermitLogger
 
 public open class TestMemory(
     public val size: Int = 1_048_576,
-    public val fileSystem: FileSystem<*> = TestFileSystem(),
+    public val fileSystem: FileSystem = TestFileSystem(),
     public val logger: Logger = KermitLogger(),
 ) : Memory {
     public val bytes: ByteArray = ByteArray(size) { 0xdc.toByte() }

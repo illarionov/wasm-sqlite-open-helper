@@ -8,7 +8,7 @@ package ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.function
 
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.CloseFd
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
@@ -18,11 +18,12 @@ public class FdCloseFunctionHandle(
 ) : HostFunctionHandle(WasiHostFunction.FD_CLOSE, host) {
     public fun execute(
         fd: Fd,
-    ): Errno = try {
-        host.fileSystem.close(fd)
-        Errno.SUCCESS
-    } catch (e: SysException) {
-        logger.i(e) { "fd_close() error: $e" }
-        e.errNo
-    }
+    ): Errno = host.fileSystem.execute(CloseFd, CloseFd(fd))
+        .onLeft { error ->
+            logger.i { "fd_close() error: $error" }
+        }
+        .fold(
+            ifLeft = { it.errno },
+            ifRight = { Errno.SUCCESS },
+        )
 }

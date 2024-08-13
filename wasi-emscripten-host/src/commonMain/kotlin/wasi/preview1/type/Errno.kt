@@ -19,7 +19,7 @@ public enum class Errno(
      */
     SUCCESS(0),
 
-    /*
+    /**
      * Argument list too long.
      */
     TOO_BIG(1),

@@ -10,7 +10,8 @@ import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.SeekError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.SeekFd
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
@@ -27,14 +28,16 @@ public class FdSeekFunctionHandle(
         pNewOffset: WasmPtr<Long>,
     ): Errno {
         val whence = Whence.fromIdOrNull(whenceInt) ?: return Errno.INVAL
-        return try {
-            val fs = host.fileSystem
-            val newPosition = fs.seek(fd, offset, whence)
+        return host.fileSystem.execute(
+            SeekFd,
+            SeekFd(fd = fd, fileDelta = offset, whence = whence),
+        ).onLeft { error ->
+            logger.i { "fdSeek() error: $error" }
+        }.onRight { newPosition ->
             memory.writeI64(pNewOffset, newPosition)
-            Errno.SUCCESS
-        } catch (sysException: SysException) {
-            logger.i(sysException) { "fdSeek() error" }
-            sysException.errNo
-        }
+        }.fold(
+            ifLeft = SeekError::errno,
+            ifRight = { _ -> Errno.SUCCESS },
+        )
     }
 }

@@ -12,16 +12,18 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.sourceWithMaxSize
+import ru.pixnews.wasm.sqlite.open.helper.host.ext.negativeErrnoCode
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.AddAdvisoryLockFd
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.RemoveAdvisoryLockFd
 import ru.pixnews.wasm.sqlite.open.helper.host.include.Fcntl
 import ru.pixnews.wasm.sqlite.open.helper.host.include.StructFlock
 import ru.pixnews.wasm.sqlite.open.helper.host.include.StructFlock.Companion.STRUCT_FLOCK_SIZE
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno.INVAL
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 
 internal class FcntlHandler(
-    private val fileSystem: FileSystem<*>,
+    private val fileSystem: FileSystem,
     rootLogger: Logger,
 ) {
     private val logger: Logger = rootLogger.withTag("FcntlHandler")
@@ -34,12 +36,9 @@ internal class FcntlHandler(
         fd: Fd,
         operation: UInt,
         thirdArg: Int?,
-    ): Int = try {
-        val handler = handlers[operation] ?: throw SysException(Errno.INVAL, "Fcntl operation $operation not supported")
-        handler.invoke(memory, fd, thirdArg)
-    } catch (e: SysException) {
-        logger.v(e) { "invoke($fd, $operation, $thirdArg) failed: ${e.message}" }
-        -e.errNo.code
+    ): Int {
+        val handler = handlers[operation] ?: return -INVAL.code
+        return handler.invoke(memory, fd, thirdArg)
     }
 
     internal fun interface FcntlOperationHandler {
@@ -63,12 +62,19 @@ internal class FcntlHandler(
             }
 
             logger.v { "F_SETLK($fd, $flock)" }
-            when (flock.l_type) {
-                Fcntl.F_RDLCK, Fcntl.F_WRLCK -> fileSystem.addAdvisoryLock(fd, flock)
-                Fcntl.F_UNLCK -> fileSystem.removeAdvisoryLock(fd, flock)
-                else -> throw SysException(Errno.INVAL, "Unknown flock.l_type `${flock.l_type}`")
+            return when (flock.l_type) {
+                Fcntl.F_RDLCK, Fcntl.F_WRLCK -> fileSystem.execute(
+                    AddAdvisoryLockFd,
+                    AddAdvisoryLockFd(fd, flock),
+                ).negativeErrnoCode()
+
+                Fcntl.F_UNLCK -> fileSystem.execute(
+                    RemoveAdvisoryLockFd,
+                    RemoveAdvisoryLockFd(fd, flock),
+                ).negativeErrnoCode()
+
+                else -> -INVAL.code
             }
-            return Errno.SUCCESS.code
         }
     }
 }

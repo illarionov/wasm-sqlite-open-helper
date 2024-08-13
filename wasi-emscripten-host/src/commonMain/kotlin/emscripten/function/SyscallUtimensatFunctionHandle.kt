@@ -14,9 +14,10 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.host.base.plus
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
-import ru.pixnews.wasm.sqlite.open.helper.host.include.DirFd
-import ru.pixnews.wasm.sqlite.open.helper.host.include.Fcntl
+import ru.pixnews.wasm.sqlite.open.helper.host.ext.negativeErrnoCode
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.BaseDirectory
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.SetTimestamp
+import ru.pixnews.wasm.sqlite.open.helper.host.include.Fcntl.AT_SYMLINK_NOFOLLOW
 import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.SysStat.UTIME_NOW
 import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.SysStat.UTIME_OMIT
 import kotlin.LazyThreadSafetyMode.NONE
@@ -33,8 +34,8 @@ public class SyscallUtimensatFunctionHandle(
         times: WasmPtr<Byte>,
         flags: UInt,
     ): Int {
-        val dirFd = DirFd(rawDirFd)
-        val noFolowSymlinks: Boolean = (flags and Fcntl.AT_SYMLINK_NOFOLLOW) != 0U
+        val baseDirectory = BaseDirectory.fromRawDirFd(rawDirFd)
+        val folowSymlinks: Boolean = (flags and AT_SYMLINK_NOFOLLOW) == 0U
         val path = memory.readNullTerminatedString(pathnamePtr)
         var atimeNs: Long?
         val mtimeNs: Long?
@@ -50,18 +51,22 @@ public class SyscallUtimensatFunctionHandle(
             val mtimeNanoseconds = memory.readI64(times + 24)
 
             val now: Long by lazy(NONE) { host.clock.getCurrentTimeEpochMilliseconds() }
-            atimeNs = timesToDurationNs(atimeSeconds, atimeNanoseconds) { now }
-            mtimeNs = timesToDurationNs(mtimeSeconds, mtimeNanoseconds) { now }
+            atimeNs = parseTimeNanoseconds(atimeSeconds, atimeNanoseconds) { now }
+            mtimeNs = parseTimeNanoseconds(mtimeSeconds, mtimeNanoseconds) { now }
         }
-        try {
-            host.fileSystem.setTimesAt(dirFd, path, atimeNs, mtimeNs, noFolowSymlinks)
-            return 0
-        } catch (e: SysException) {
-            return -e.errNo.code
-        }
+        return host.fileSystem.execute(
+            operation = SetTimestamp,
+            input = SetTimestamp(
+                path = path,
+                baseDirectory = baseDirectory,
+                atimeNanoseconds = atimeNs,
+                mtimeNanoseconds = mtimeNs,
+                followSymlinks = folowSymlinks,
+            ),
+        ).negativeErrnoCode()
     }
 
-    private fun timesToDurationNs(
+    private fun parseTimeNanoseconds(
         seconds: Long,
         nanoseconds: Long,
         now: () -> Long,

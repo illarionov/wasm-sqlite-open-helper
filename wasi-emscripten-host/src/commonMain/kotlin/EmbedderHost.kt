@@ -9,7 +9,6 @@ package ru.pixnews.wasm.sqlite.open.helper.host
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost.Builder
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.Path
 import ru.pixnews.wasm.sqlite.open.helper.host.include.StructTm
 import ru.pixnews.wasm.sqlite.open.helper.host.include.TimeZoneInfo
 
@@ -19,7 +18,7 @@ public interface EmbedderHost {
     public val rootLogger: Logger
     public val systemEnvProvider: SystemEnvProvider
     public val commandArgsProvider: CommandArgsProvider
-    public val fileSystem: FileSystem<*>
+    public val fileSystem: FileSystem
     public val monotonicClock: MonotonicClock
     public val clock: Clock
     public val localTimeFormatter: LocalTimeFormatter
@@ -58,7 +57,7 @@ public interface EmbedderHost {
         public var rootLogger: Logger = Logger
         public var systemEnvProvider: SystemEnvProvider? = null
         public var commandArgsProvider: CommandArgsProvider? = null
-        public var fileSystem: FileSystem<*>? = null
+        public var fileSystem: FileSystem? = null
         public var clock: Clock? = null
         public var monotonicClock: MonotonicClock? = null
         public var localTimeFormatter: LocalTimeFormatter? = null
@@ -68,6 +67,3 @@ public interface EmbedderHost {
         public fun build(): EmbedderHost = createDefaultEmbedderHost(this)
     }
 }
-
-@Suppress("UNCHECKED_CAST")
-public fun <P : Path> EmbedderHost.castFileSystem(): FileSystem<P> = fileSystem as FileSystem<P>

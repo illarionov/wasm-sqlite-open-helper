@@ -10,7 +10,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.SyncFd
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
@@ -22,15 +22,14 @@ public class FdSyncSyscallFdatasyncFunctionHandle private constructor(
 ) : HostFunctionHandle(function, host) {
     public fun execute(
         fd: Fd,
-    ): Errno {
-        return try {
-            host.fileSystem.sync(fd, metadata = syncMetadata)
-            Errno.SUCCESS
-        } catch (e: SysException) {
-            logger.i(e) { "sync() error" }
-            e.errNo
+    ): Errno = host.fileSystem.execute(SyncFd, SyncFd(fd, syncMetadata))
+        .onLeft { error ->
+            logger.i { "sync() error: $error" }
         }
-    }
+        .fold(
+            ifLeft = { it.errno },
+            ifRight = { Errno.SUCCESS },
+        )
 
     public companion object {
         public fun fdSync(

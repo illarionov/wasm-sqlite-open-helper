@@ -12,10 +12,10 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
-import ru.pixnews.wasm.sqlite.open.helper.host.include.DirFd
+import ru.pixnews.wasm.sqlite.open.helper.host.ext.negativeErrnoCode
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.BaseDirectory
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.Mkdir
 import ru.pixnews.wasm.sqlite.open.helper.host.include.FileMode
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 
 public class SyscallMkdiratFunctionHandle(
     host: EmbedderHost,
@@ -26,16 +26,14 @@ public class SyscallMkdiratFunctionHandle(
         pathnamePtr: WasmPtr<Byte>,
         rawMode: UInt,
     ): Int {
-        val fs = host.fileSystem
-        val dirFd = DirFd(rawDirFd)
-        val mode = FileMode(rawMode)
         val path = memory.readNullTerminatedString(pathnamePtr)
-        return try {
-            fs.mkdirAt(dirFd, path, mode)
-            Errno.SUCCESS.code
-        } catch (e: SysException) {
-            logger.v(e) { "__syscall_mkdirat($dirFd, $path, $mode) error: ${e.errNo}" }
-            -e.errNo.code
-        }
+        return host.fileSystem.execute(
+            operation = Mkdir,
+            input = Mkdir(
+                path = path,
+                baseDirectory = BaseDirectory.fromRawDirFd(rawDirFd),
+                mode = FileMode(rawMode),
+            ),
+        ).negativeErrnoCode()
     }
 }

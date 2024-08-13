@@ -12,8 +12,9 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
+import ru.pixnews.wasm.sqlite.open.helper.host.ext.negativeErrnoCode
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.BaseDirectory.CurrentWorkingDirectory
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.UnlinkDirectory
 
 public class SyscallRmdirFunctionHandle(
     host: EmbedderHost,
@@ -22,13 +23,13 @@ public class SyscallRmdirFunctionHandle(
         memory: ReadOnlyMemory,
         pathnamePtr: WasmPtr<Byte>,
     ): Int {
-        val fs = host.fileSystem
         val path = memory.readNullTerminatedString(pathnamePtr)
-        return try {
-            fs.rmdir(path)
-            Errno.SUCCESS.code
-        } catch (e: SysException) {
-            -e.errNo.code
-        }
+        return host.fileSystem.execute(
+            operation = UnlinkDirectory,
+            input = UnlinkDirectory(
+                path = path,
+                baseDirectory = CurrentWorkingDirectory,
+            ),
+        ).negativeErrnoCode()
     }
 }

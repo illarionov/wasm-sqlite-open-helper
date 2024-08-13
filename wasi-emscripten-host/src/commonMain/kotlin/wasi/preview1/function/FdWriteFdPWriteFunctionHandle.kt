@@ -16,7 +16,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WasiMemoryWriter
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.plus
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.FileSystemOperationError
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.CioVec
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.CiovecArray
@@ -38,14 +38,13 @@ public class FdWriteFdPWriteFunctionHandle private constructor(
         pNum: WasmPtr<Int>,
     ): Errno {
         val cioVecs: CiovecArray = readCiovecs(memory, pCiov, cIovCnt)
-        return try {
-            val writtenBytes = bulkWriter.write(fd, strategy, cioVecs)
-            memory.writeI32(pNum, writtenBytes.toInt())
-            Errno.SUCCESS
-        } catch (e: SysException) {
-            logger.i(e) { "write() error" }
-            e.errNo
-        }
+        return bulkWriter.write(fd, strategy, cioVecs)
+            .onRight { writtenBytes ->
+                memory.writeI32(pNum, writtenBytes.toInt())
+            }.fold(
+                ifLeft = FileSystemOperationError::errno,
+                ifRight = { Errno.SUCCESS },
+            )
     }
 
     public companion object {

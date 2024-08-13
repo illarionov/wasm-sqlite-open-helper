@@ -6,31 +6,29 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory
 
+import arrow.core.Either
+import arrow.core.getOrElse
+import arrow.core.left
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.DefaultWasiMemoryReader
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WasiMemoryReader
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy.CHANGE_POSITION
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.SysException
-import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.JvmFileSystem
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.FileSystemOperationError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.ReadError
+import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.ext.readCatching
+import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.nio.JvmNioFileSystem
+import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.nio.op.RunWithChannelFd
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.IovecArray
-import java.io.IOException
-import java.nio.channels.AsynchronousCloseException
 import java.nio.channels.Channels
-import java.nio.channels.ClosedByInterruptException
-import java.nio.channels.ClosedChannelException
-import java.nio.channels.NonReadableChannelException
-import kotlin.concurrent.withLock
-import kotlin.time.measureTimedValue
+import java.nio.channels.FileChannel
 
 internal class GraalInputStreamWasiMemoryReader(
     private val memory: GraalvmWasmHostMemoryAdapter,
-    private val fileSystem: JvmFileSystem,
+    private val fileSystem: JvmNioFileSystem,
     logger: Logger,
 ) : WasiMemoryReader {
-    private val logger: Logger = logger.withTag("FS:GraalReader")
     private val wasmMemory get() = memory.wasmMemory
     private val defaultMemoryReader = DefaultWasiMemoryReader(memory, fileSystem, logger)
 
@@ -38,29 +36,30 @@ internal class GraalInputStreamWasiMemoryReader(
         fd: Fd,
         strategy: ReadWriteStrategy,
         iovecs: IovecArray,
-    ): ULong = fileSystem.fsLock.withLock {
-        val bytesRead = measureTimedValue {
-            if (strategy == CHANGE_POSITION) {
-                read(fd, iovecs)
-            } else {
-                defaultMemoryReader.read(fd, strategy, iovecs)
-            }
+    ): Either<ReadError, ULong> {
+        return if (strategy == CHANGE_POSITION && fileSystem.isOperationSupported(RunWithChannelFd)) {
+            val op = RunWithChannelFd(
+                fd = fd,
+                block = { readChangePosition(it, iovecs) },
+            )
+            fileSystem.execute(RunWithChannelFd.key(), op)
+                .mapLeft { it as ReadError }
+        } else {
+            defaultMemoryReader.read(fd, strategy, iovecs)
         }
-        logger.v {
-            "read($fd, $strategy, ${iovecs.iovecList.map { it.bufLen.value }}): " +
-                    "${bytesRead.value} in ${bytesRead.duration}"
-        }
-        return bytesRead.value
     }
 
-    @Suppress("ThrowsCount")
-    private fun read(
-        fd: Fd,
+    private fun readChangePosition(
+        channelResult: Either<FileSystemOperationError.BadFileDescriptor, FileChannel>,
         iovecs: IovecArray,
-    ): ULong {
-        var totalBytesRead: ULong = 0U
-        try {
-            val channel = fileSystem.getNioFileChannelByFd(fd)
+    ): Either<ReadError, ULong> {
+        val channel = channelResult.mapLeft {
+            ReadError.BadFileDescriptor(it.message)
+        }.getOrElse {
+            return it.left()
+        }
+        return readCatching {
+            var totalBytesRead: ULong = 0U
             val inputStream = Channels.newInputStream(channel).buffered()
             for (vec in iovecs.iovecList) {
                 val limit = vec.bufLen.value.toInt()
@@ -72,18 +71,7 @@ internal class GraalInputStreamWasiMemoryReader(
                     break
                 }
             }
-        } catch (cce: ClosedChannelException) {
-            throw SysException(Errno.IO, "Channel closed", cce)
-        } catch (ace: AsynchronousCloseException) {
-            throw SysException(Errno.IO, "Channel closed on other thread", ace)
-        } catch (ci: ClosedByInterruptException) {
-            throw SysException(Errno.INTR, "Interrupted", ci)
-        } catch (nre: NonReadableChannelException) {
-            throw SysException(Errno.BADF, "Non readable channel", nre)
-        } catch (ioe: IOException) {
-            throw SysException(Errno.IO, "I/o error", ioe)
+            totalBytesRead
         }
-
-        return totalBytesRead
     }
 }

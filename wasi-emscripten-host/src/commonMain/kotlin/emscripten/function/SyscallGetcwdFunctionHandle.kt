@@ -13,6 +13,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.sinkWithMaxSize
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.ext.encodeToNullTerminatedBuffer
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.GetCurrentWorkingDirectory
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 
 public class SyscallGetcwdFunctionHandle(
@@ -27,18 +28,19 @@ public class SyscallGetcwdFunctionHandle(
         if (size == 0) {
             return -Errno.INVAL.code
         }
-
-        val path = host.fileSystem.getCwdPath().pathString
-        val pathBuffer = path.encodeToNullTerminatedBuffer()
-
-        if (size < pathBuffer.size) {
-            return -Errno.RANGE.code
-        }
-
-        val pathSize = pathBuffer.size.toInt()
-        memory.sinkWithMaxSize(dst, pathSize).use {
-            it.write(pathBuffer, pathSize.toLong())
-        }
-        return pathSize
+        return host.fileSystem.execute(GetCurrentWorkingDirectory, Unit)
+            .fold(
+                ifLeft = { -it.errno.code },
+            ) { currentWorkingDirectory ->
+                val pathBuffer = currentWorkingDirectory.toString().encodeToNullTerminatedBuffer()
+                if (size < pathBuffer.size) {
+                    return@fold -Errno.RANGE.code
+                }
+                val pathSize = pathBuffer.size.toInt()
+                memory.sinkWithMaxSize(dst, pathSize).use {
+                    it.write(pathBuffer, pathSize.toLong())
+                }
+                pathSize
+            }
     }
 }
