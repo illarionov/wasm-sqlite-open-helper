@@ -22,6 +22,8 @@ import ru.pixnews.wasm.sqlite.open.helper.host.include.pthread_t
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 internal class GraalvmPthreadManager(
     memory: Memory,
@@ -122,6 +124,29 @@ internal class GraalvmPthreadManager(
         threads.unregister(pthreadPtr, thread, throwable)
     }
 
+    fun joinThreads(
+        maxTimeout: Duration = MAX_JOIN_THREADS_TIMEOUT,
+    ) {
+        val deadline = System.nanoTime() + maxTimeout.inWholeNanoseconds
+        val threads = lock.withLock {
+            threads.getAllThreads()
+        }
+        logger.v { "joinThreads(): waiting fot ${threads.count()} threads" }
+
+        var stuck: Thread? = null
+        for (thread in threads) {
+            val waitTime = java.time.Duration.ofNanos(deadline - System.nanoTime())
+            val terminated = thread.join(waitTime)
+            if (!terminated) {
+                stuck = thread
+                break
+            }
+        }
+        if (stuck != null) {
+            logger.e { "joinThreads(): timeout on waiting for thread ${stuck.name}" }
+        }
+    }
+
     private class NativeThreadRegistry {
         private val threads: MutableMap<WasmPtr<StructPthread>, Thread> = mutableMapOf()
 
@@ -150,5 +175,11 @@ internal class GraalvmPthreadManager(
                 }
             }
         }
+
+        fun getAllThreads(): List<Thread> = threads.values.toList()
+    }
+
+    private companion object {
+        private val MAX_JOIN_THREADS_TIMEOUT = 5.seconds
     }
 }

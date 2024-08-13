@@ -54,6 +54,15 @@ internal class GraalvmManagedThreadFactory(
         if (thread.isDaemon) {
             thread.isDaemon = false
         }
+        thread.setUncaughtExceptionHandler { terminatedThread, throwable ->
+            val ptr = (terminatedThread as ManagedThreadBase).pthreadPtr
+            logger.e(throwable) { "Uncaught exception in Managed Thread ${terminatedThread.name} " }
+            if (ptr != null) {
+                pthreadManager.unregisterManagedThread(ptr, thread)
+            }
+
+            throw IllegalStateException("Internal exception", throwable)
+        }
 
         // XXX: Wasm pthread leaks if thread not started
         val ptr = pthreadManager.createWasmPthreadForThread(thread)
