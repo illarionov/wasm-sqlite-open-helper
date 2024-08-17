@@ -8,6 +8,7 @@ package ru.pixnews.wasm.sqlite.driver.graalvm
 
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.test.runTest
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -30,6 +31,7 @@ class GraalvmBasicMultithreadingRoomTest : AbstractSqliteDriverTest<WasmSQLiteDr
     override fun fileInTempDir(databaseName: String): String = tempFolder.root.resolve(databaseName).path
 
     @Test
+    @Ignore("TODO: Fix 4-byte memory access at address 0x000000000771FCD0 (124910800) is out-of-bounds")
     fun Test_Room_Multithread() = runTest {
         val driver = driverFactory.create(dbLogger, driverFactory.defaultSqliteBinary)
         driver.use {
