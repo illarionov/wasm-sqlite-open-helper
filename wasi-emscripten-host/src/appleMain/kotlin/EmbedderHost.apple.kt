@@ -12,7 +12,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.apple.AppleEmbedderHost.AppleSyst
 import ru.pixnews.wasm.sqlite.open.helper.host.apple.AppleEntropySource
 import ru.pixnews.wasm.sqlite.open.helper.host.apple.AppleLocalTimeFormatter
 import ru.pixnews.wasm.sqlite.open.helper.host.apple.AppleTimeZoneInfoProvider
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.stub.NotImplementedFileSystem
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.NotImplementedFileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.internal.CommonClock
 import ru.pixnews.wasm.sqlite.open.helper.host.internal.CommonMonotonicClock
 
@@ -20,7 +20,7 @@ internal actual fun createDefaultEmbedderHost(builder: EmbedderHost.Builder): Em
     rootLogger = builder.rootLogger,
     systemEnvProvider = builder.systemEnvProvider ?: AppleSystemEnvProvider,
     commandArgsProvider = builder.commandArgsProvider ?: AppleCommandArgsProvider,
-    fileSystem = builder.fileSystem ?: NotImplementedFileSystem(builder.rootLogger),
+    fileSystem = builder.fileSystem ?: NotImplementedFileSystem,
     monotonicClock = builder.monotonicClock ?: CommonMonotonicClock(),
     clock = builder.clock ?: CommonClock(),
     localTimeFormatter = builder.localTimeFormatter ?: AppleLocalTimeFormatter(),

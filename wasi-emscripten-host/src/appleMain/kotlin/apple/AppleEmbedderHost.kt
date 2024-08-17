@@ -9,7 +9,7 @@ package ru.pixnews.wasm.sqlite.open.helper.host.apple
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.stub.NotImplementedFileSystem
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.NotImplementedFileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.internal.CommonClock
 import ru.pixnews.wasm.sqlite.open.helper.host.internal.CommonMonotonicClock
 
@@ -17,7 +17,7 @@ public class AppleEmbedderHost(
     override val rootLogger: Logger,
     override val systemEnvProvider: EmbedderHost.SystemEnvProvider = AppleSystemEnvProvider,
     override val commandArgsProvider: EmbedderHost.CommandArgsProvider = AppleCommandArgsProvider,
-    override val fileSystem: FileSystem<*> = NotImplementedFileSystem(rootLogger),
+    override val fileSystem: FileSystem = NotImplementedFileSystem,
     override val monotonicClock: EmbedderHost.MonotonicClock = CommonMonotonicClock(),
     override val clock: EmbedderHost.Clock = CommonClock(),
     override val localTimeFormatter: EmbedderHost.LocalTimeFormatter = AppleLocalTimeFormatter(),
