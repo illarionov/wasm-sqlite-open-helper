@@ -30,6 +30,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(projects.commonApi)
+            api(projects.wasiEmscriptenFs)
             api(libs.arrow.core)
             api(libs.kotlinx.io)
             implementation(libs.kotlinx.datetime)

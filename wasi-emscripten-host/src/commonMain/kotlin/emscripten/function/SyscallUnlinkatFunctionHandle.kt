@@ -12,10 +12,11 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
+import ru.pixnews.wasm.sqlite.open.helper.host.ext.fromRawDirFd
 import ru.pixnews.wasm.sqlite.open.helper.host.ext.negativeErrnoCode
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.BaseDirectory
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.UnlinkDirectory
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.UnlinkFile
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.BaseDirectory
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.unlink.UnlinkDirectory
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.unlink.UnlinkFile
 import ru.pixnews.wasm.sqlite.open.helper.host.include.Fcntl.AT_REMOVEDIR
 
 public class SyscallUnlinkatFunctionHandle(

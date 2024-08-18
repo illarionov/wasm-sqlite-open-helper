@@ -14,11 +14,11 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.sinkWithMaxSize
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.ext.negativeErrnoCode
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.StatFd
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.stat.StatFd
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.stat.StructStat
 import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.STRUCT_SIZE_PACKED_SIZE
-import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.StructStat
 import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.packTo
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 
 public class SyscallFstat64FunctionHandle(
     host: EmbedderHost,

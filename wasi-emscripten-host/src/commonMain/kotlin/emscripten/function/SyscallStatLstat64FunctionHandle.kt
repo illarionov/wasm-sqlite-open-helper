@@ -16,10 +16,10 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readNullTerminatedStr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.sinkWithMaxSize
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.ext.negativeErrnoCode
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.BaseDirectory.CurrentWorkingDirectory
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.Stat
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.BaseDirectory.CurrentWorkingDirectory
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.stat.Stat
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.stat.StructStat
 import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.STRUCT_SIZE_PACKED_SIZE
-import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.StructStat
 import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.packTo
 
 public class SyscallStatLstat64FunctionHandle private constructor(

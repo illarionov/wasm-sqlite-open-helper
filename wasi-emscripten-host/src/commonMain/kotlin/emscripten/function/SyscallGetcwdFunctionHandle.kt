@@ -13,8 +13,8 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.sinkWithMaxSize
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.ext.encodeToNullTerminatedBuffer
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.GetCurrentWorkingDirectory
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.cwd.GetCurrentWorkingDirectory
 
 public class SyscallGetcwdFunctionHandle(
     host: EmbedderHost,
@@ -32,7 +32,7 @@ public class SyscallGetcwdFunctionHandle(
             .fold(
                 ifLeft = { -it.errno.code },
             ) { currentWorkingDirectory ->
-                val pathBuffer = currentWorkingDirectory.toString().encodeToNullTerminatedBuffer()
+                val pathBuffer = currentWorkingDirectory.encodeToNullTerminatedBuffer()
                 if (size < pathBuffer.size) {
                     return@fold -Errno.RANGE.code
                 }

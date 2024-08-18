@@ -15,8 +15,9 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmValueType.WebAssemblyTyp
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction.HostFunctionType
 import ru.pixnews.wasm.sqlite.open.helper.host.base.pointer
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.WasiValueTypes.U8
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.wasmValueType
 
 public enum class EmscriptenHostFunction(
     public override val wasmName: String,

@@ -7,7 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.wasi
 
 import io.github.charlietap.chasm.executor.runtime.value.ExecutionValue
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno
 
 internal fun interface WasiHostFunctionHandle {
     fun invoke(args: List<ExecutionValue>): Errno

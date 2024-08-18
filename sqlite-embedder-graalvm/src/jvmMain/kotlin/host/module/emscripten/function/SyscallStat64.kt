@@ -18,7 +18,7 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.SyscallStatLstat64FunctionHandle
-import ru.pixnews.wasm.sqlite.open.helper.host.include.sys.StructStat
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.stat.StructStat
 
 internal fun syscallLstat64(
     language: WasmLanguage,

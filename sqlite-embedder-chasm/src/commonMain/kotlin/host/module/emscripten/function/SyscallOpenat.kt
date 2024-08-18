@@ -35,7 +35,7 @@ internal class SyscallOpenat(
             memory,
             rawDirFd = args[0].asInt(),
             pathnamePtr = args[1].asWasmAddr(),
-            flags = args[2].asUInt(),
+            rawFlags = args[2].asUInt(),
             rawMode = mode,
         )
         return listOf(I32(fdOrErrno))

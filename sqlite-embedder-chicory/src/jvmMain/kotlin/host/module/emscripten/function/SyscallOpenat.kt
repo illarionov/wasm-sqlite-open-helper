@@ -33,7 +33,7 @@ internal class SyscallOpenat(
             memory,
             rawDirFd = args[0].asInt(),
             pathnamePtr = args[1].asWasmAddr(),
-            flags = args[2].asInt().toUInt(),
+            rawFlags = args[2].asInt().toUInt(),
             rawMode = mode,
         )
         return Value.i32(fdOrErrno.toLong())

@@ -11,12 +11,12 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.FcntlHandler
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
 
 public class SyscallFcntl64FunctionHandle(
     host: EmbedderHost,
 ) : HostFunctionHandle(EmscriptenHostFunction.SYSCALL_FCNTL64, host) {
-    private val fcntlHandler = FcntlHandler(host.fileSystem, host.rootLogger)
+    private val fcntlHandler = FcntlHandler(host.fileSystem)
 
     public fun execute(
         memory: ReadOnlyMemory,
