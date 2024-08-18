@@ -21,7 +21,7 @@ internal actual fun createDefaultEmbedderHost(builder: Builder): EmbedderHost = 
     rootLogger = builder.rootLogger,
     systemEnvProvider = builder.systemEnvProvider ?: JvmSystemEnvProvider,
     commandArgsProvider = builder.commandArgsProvider ?: JvmCommandArgsProvider,
-    fileSystem = builder.fileSystem ?: JvmNioFileSystem(builder.rootLogger),
+    fileSystem = builder.fileSystem ?: JvmNioFileSystem(rootLogger = builder.rootLogger),
     clock = builder.clock ?: JvmClock,
     monotonicClock = builder.monotonicClock ?: JvmMonotonicClock,
     localTimeFormatter = builder.localTimeFormatter ?: JvmLocalTimeFormatter(),

@@ -10,14 +10,14 @@ import arrow.core.Either
 import arrow.core.getOrElse
 import arrow.core.left
 import arrow.core.right
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common.ChannelPositionError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common.ChannelPositionError.ClosedChannel
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common.ChannelPositionError.InvalidArgument
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common.ChannelPositionError.IoError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.AdvisoryLockError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.RemoveAdvisoryLockFd
 import ru.pixnews.wasm.sqlite.open.helper.host.include.StructFlock
-import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.fd.ChannelPositionError
-import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.fd.ChannelPositionError.ClosedChannel
-import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.fd.ChannelPositionError.InvalidArgument
-import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.fd.ChannelPositionError.IoError
-import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.fd.FdFileChannel
+import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.fd.NioFileHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.fd.resolveWhencePosition
 import java.io.IOException
 import java.nio.channels.ClosedChannelException
@@ -36,7 +36,7 @@ internal class NioRemoveAdvisoryLockFd(
 }
 
 internal fun removeAdvisoryLock(
-    channel: FdFileChannel,
+    channel: NioFileHandle,
     flock: StructFlock,
 ): Either<AdvisoryLockError, Unit> {
     val position = channel.resolveWhencePosition(flock.l_start.toLong(), flock.whence)

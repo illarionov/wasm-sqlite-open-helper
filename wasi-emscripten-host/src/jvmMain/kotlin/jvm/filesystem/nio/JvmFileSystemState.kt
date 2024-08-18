@@ -7,7 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.nio
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
-import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.fd.FileDescriptorMap
+import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.fd.NioFileDescriptorTable
 import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.util.concurrent.locks.Lock
@@ -18,7 +18,7 @@ internal class JvmFileSystemState(
     val javaFs: java.nio.file.FileSystem = FileSystems.getDefault(),
 ) : AutoCloseable {
     val fsLock: Lock = ReentrantLock()
-    val fileDescriptors: FileDescriptorMap = FileDescriptorMap(this, rootLogger)
+    val fileDescriptors: NioFileDescriptorTable = NioFileDescriptorTable(this, rootLogger)
 
     val currentWorkingDirectory: Path
         get() = javaFs.getPath("").toAbsolutePath()

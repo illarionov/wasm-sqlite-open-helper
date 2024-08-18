@@ -8,13 +8,9 @@ package ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.fd
 
 import arrow.core.Either
 import arrow.core.right
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.FileSystemOperationError
-import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.fd.ChannelPositionError.ClosedChannel
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common.ChannelPositionError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common.ChannelPositionError.ClosedChannel
 import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.nio.JvmFileSystemState
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno.BADF
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno.INVAL
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno.IO
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Whence
 import java.io.IOException
@@ -25,7 +21,7 @@ import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock
 import java.nio.file.Path as NioPath
 
-internal class FdFileChannel(
+internal class NioFileHandle(
     val fileSystem: JvmFileSystemState,
     val fd: Fd,
     val path: NioPath,
@@ -35,7 +31,7 @@ internal class FdFileChannel(
     val fileLocks: MutableMap<FileLockKey, FileLock> = mutableMapOf()
 }
 
-internal fun FdFileChannel.getPosition(): Either<ChannelPositionError, Long> = Either.catch {
+internal fun NioFileHandle.getPosition(): Either<ChannelPositionError, Long> = Either.catch {
     channel.position()
 }.mapLeft {
     when (it) {
@@ -45,7 +41,7 @@ internal fun FdFileChannel.getPosition(): Either<ChannelPositionError, Long> = E
     }
 }
 
-internal fun FdFileChannel.setPosition(newPosition: Long): Either<ChannelPositionError, Long> = Either.catch {
+internal fun NioFileHandle.setPosition(newPosition: Long): Either<ChannelPositionError, Long> = Either.catch {
     channel.position(newPosition)
     newPosition
 }.mapLeft {
@@ -57,7 +53,7 @@ internal fun FdFileChannel.setPosition(newPosition: Long): Either<ChannelPositio
     }
 }
 
-internal fun FdFileChannel.resolveWhencePosition(
+internal fun NioFileHandle.resolveWhencePosition(
     offset: Long,
     whence: Whence,
 ): Either<ChannelPositionError, Long> = when (whence) {
@@ -72,13 +68,4 @@ internal fun FdFileChannel.resolveWhencePosition(
             else -> throw IllegalStateException("Unexpected error", it)
         }
     }
-}
-
-internal sealed class ChannelPositionError(
-    override val errno: Errno,
-    override val message: String,
-) : FileSystemOperationError {
-    internal data class ClosedChannel(override val message: String) : ChannelPositionError(BADF, message)
-    internal data class IoError(override val message: String) : ChannelPositionError(IO, message)
-    internal data class InvalidArgument(override val message: String) : ChannelPositionError(INVAL, message)
 }

@@ -9,12 +9,12 @@ package ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.nio
 import arrow.core.Either
 import arrow.core.flatMap
 import arrow.core.left
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common.ChannelPositionError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common.ChannelPositionError.ClosedChannel
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common.ChannelPositionError.InvalidArgument
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common.ChannelPositionError.IoError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.SeekError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.SeekFd
-import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.fd.ChannelPositionError
-import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.fd.ChannelPositionError.ClosedChannel
-import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.fd.ChannelPositionError.InvalidArgument
-import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.fd.ChannelPositionError.IoError
 import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.fd.resolveWhencePosition
 import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.fd.setPosition
 
