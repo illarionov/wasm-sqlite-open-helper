@@ -10,16 +10,16 @@ import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractMultithreadingTest
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmRuntimeInstance
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmRuntime
 
-class GraalvmMultithreadingTest : AbstractMultithreadingTest<WasmSQLiteDriver<GraalvmRuntimeInstance>>(
+class GraalvmMultithreadingTest : AbstractMultithreadingTest<WasmSQLiteDriver<GraalvmRuntime>>(
     driverCreator = GraalvmSqliteDriverFactory(),
 ) {
     @JvmField
     @Rule
     val tempFolder: TemporaryFolder = TemporaryFolder()
 
-    override fun createThread(driver: WasmSQLiteDriver<GraalvmRuntimeInstance>, runnable: Runnable): Thread {
+    override fun createThread(driver: WasmSQLiteDriver<GraalvmRuntime>, runnable: Runnable): Thread {
         return driver.runtime.managedThreadFactory.newThread(runnable)
     }
 

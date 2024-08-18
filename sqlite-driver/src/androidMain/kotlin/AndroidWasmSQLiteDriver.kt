@@ -13,7 +13,7 @@ import ru.pixnews.wasm.sqlite.binary.reader.AndroidAssetsWasmSourceReader
 import ru.pixnews.wasm.sqlite.driver.dsl.WasmSqliteDriverConfigBlock
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedder
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntimeInstance
+import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntime
 
 /**
  * Creates a [SQLiteDriver] with the specified [block] configuration.
@@ -22,7 +22,7 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntimeInstance
  * @param embedder WebAssembly Runtime (embedder) for running SQLite compiled to Wasm.
  * For example, GraalvmSqliteEmbedder
  */
-public fun <E : SqliteEmbedderConfig, R : SqliteRuntimeInstance> WasmSQLiteDriver(
+public fun <E : SqliteEmbedderConfig, R : SqliteRuntime> WasmSQLiteDriver(
     embedder: SqliteEmbedder<E, R>,
     context: Context,
     block: WasmSqliteDriverConfigBlock<E>.() -> Unit = {},

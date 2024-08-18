@@ -6,13 +6,13 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb
 
-import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
+import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.SqliteCallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.IndirectFunctionTableIndex
 
-internal class ChasmSqlite3CallbackFunctionIndexes(
+internal class ChasmSqliteCallbackFunctionIndexes(
     functionMap: Map<SqliteCallbacksModuleFunction, IndirectFunctionTableIndex>,
-) : Sqlite3CallbackFunctionIndexes {
+) : SqliteCallbackFunctionIndexes {
     override val traceFunction: IndirectFunctionTableIndex =
         functionMap.getValue(SqliteCallbacksModuleFunction.SQLITE3_TRACE_CALLBACK)
     override val progressFunction: IndirectFunctionTableIndex =

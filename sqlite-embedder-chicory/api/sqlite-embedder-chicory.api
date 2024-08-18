@@ -1,4 +1,4 @@
-public abstract interface class ru/pixnews/wasm/sqlite/open/helper/chicory/ChicoryRuntimeInstance : ru/pixnews/wasm/sqlite/open/helper/embedder/SqliteRuntimeInstance {
+public abstract interface class ru/pixnews/wasm/sqlite/open/helper/chicory/ChicoryRuntime : ru/pixnews/wasm/sqlite/open/helper/embedder/SqliteRuntime {
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/chicory/ChicorySqliteEmbedder : ru/pixnews/wasm/sqlite/open/helper/embedder/SqliteEmbedder {

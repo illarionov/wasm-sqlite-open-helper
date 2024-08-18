@@ -8,14 +8,14 @@ package ru.pixnews.wasm.sqlite.driver.chasm
 
 import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractBasicSqliteDriverTest
-import ru.pixnews.wasm.sqlite.open.helper.chasm.ChasmRuntimeInstance
+import ru.pixnews.wasm.sqlite.open.helper.chasm.ChasmRuntime
 import ru.pixnews.wasm.sqlite.test.utils.TempFolder
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Ignore
 import kotlin.test.Test
 
-class ChasmBaseSqliteDriverTest : AbstractBasicSqliteDriverTest<WasmSQLiteDriver<ChasmRuntimeInstance>>(
+class ChasmBaseSqliteDriverTest : AbstractBasicSqliteDriverTest<WasmSQLiteDriver<ChasmRuntime>>(
     driverCreator = ChasmAppleSqliteDriverFactory,
 ) {
     private lateinit var tempDir: TempFolder

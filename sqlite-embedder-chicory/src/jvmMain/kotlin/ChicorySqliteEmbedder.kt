@@ -18,25 +18,25 @@ import ru.pixnews.wasm.sqlite.open.helper.chicory.host.ChicoryLogger
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.MainInstanceBuilder
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.MainInstanceBuilder.ChicoryInstance
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SQLiteEmbedderRuntimeInfo
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedder
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteWasmEnvironment
+import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderRuntimeInfo
+import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntimeInternal
 import ru.pixnews.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
-import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
+import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.SqliteCallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.EmscriptenRuntime
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.stack.EmscriptenStack
 import java.util.concurrent.atomic.AtomicReference
 
-public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig, ChicoryRuntimeInstance> {
+public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig, ChicoryRuntime> {
     @InternalWasmSqliteHelperApi
-    override fun createSqliteWasmEnvironment(
+    override fun createRuntime(
         commonConfig: WasmSqliteCommonConfig,
         embedderConfigBuilder: ChicorySqliteEmbedderConfig.() -> Unit,
-    ): SqliteWasmEnvironment<ChicoryRuntimeInstance> {
+    ): SqliteRuntimeInternal<ChicoryRuntime> {
         val config = mergeConfig(commonConfig, embedderConfigBuilder)
         return createChicorySqliteWasmEnvironment(
             config.host,
@@ -62,7 +62,7 @@ public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig
         wasmSourceReader: WasmSourceReader,
         machineFactory: ((Instance) -> Machine)?,
         logSeverity: Level,
-    ): SqliteWasmEnvironment<ChicoryRuntimeInstance> {
+    ): SqliteRuntimeInternal<ChicoryRuntime> {
         require(!sqlite3Binary.requireThreads) {
             "The specified SQLite binary is compiled with threading support, which is not compatible with the " +
                     "Chicory WebAssembly runtime. Use a version of SQLite compiled without thread support."
@@ -94,19 +94,19 @@ public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig
 
         emscriptenRuntime.initMainThread()
 
-        val runtimeInstance = object : ChicoryRuntimeInstance {
-            override val embedderInfo: SQLiteEmbedderRuntimeInfo = object : SQLiteEmbedderRuntimeInfo {
+        val runtimeInstance = object : ChicoryRuntime {
+            override val embedderInfo: SqliteEmbedderRuntimeInfo = object : SqliteEmbedderRuntimeInfo {
                 override val supportMultithreading: Boolean = false
             }
         }
 
-        return object : SqliteWasmEnvironment<ChicoryRuntimeInstance> {
+        return object : SqliteRuntimeInternal<ChicoryRuntime> {
             override val sqliteExports: SqliteExports = ChicorySqliteExports(chicoryInstance.instance)
             override val memory: Memory = chicoryInstance.memory
             override val callbackStore: SqliteCallbackStore = callbackStore
-            override val callbackFunctionIndexes: Sqlite3CallbackFunctionIndexes =
+            override val callbackFunctionIndexes: SqliteCallbackFunctionIndexes =
                 chicoryInstance.indirectFunctionIndexes
-            override val runtimeInstance: ChicoryRuntimeInstance = runtimeInstance
+            override val runtimeInstance: ChicoryRuntime = runtimeInstance
             override fun close() = Unit
         }
     }

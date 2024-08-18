@@ -37,11 +37,11 @@ import ru.pixnews.wasm.sqlite.open.helper.chasm.host.exception.ChasmException
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.exception.ChasmModuleRuntimeErrorException
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.memory.ChasmMemoryAdapter
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.getEmscriptenHostFunctions
-import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.ChasmSqlite3CallbackFunctionIndexes
+import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.ChasmSqliteCallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.getSqliteCallbacksHostFunctions
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.wasi.getWasiPreview1HostFunctions
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
-import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
+import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.SqliteCallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmModules.ENV_MODULE_NAME
@@ -116,7 +116,7 @@ internal class ChasmInstanceBuilder(
         store: Store,
         instance: ModuleInstance,
         callbackHostFunctions: List<ChasmImport>,
-    ): Sqlite3CallbackFunctionIndexes {
+    ): SqliteCallbackFunctionIndexes {
         val tableAddress = instance.tableAddress(0)
         val table: TableInstance = store.table(tableAddress.value).getOrThrow {
             ChasmModuleRuntimeErrorException(it)
@@ -135,7 +135,7 @@ internal class ChasmInstanceBuilder(
                 hostFunction to IndirectFunctionTableIndex(indirectIndex)
             }.toMap()
 
-        return ChasmSqlite3CallbackFunctionIndexes(indirectIndexes)
+        return ChasmSqliteCallbackFunctionIndexes(indirectIndexes)
     }
 
     private fun TableInstance.grow(
@@ -158,6 +158,6 @@ internal class ChasmInstanceBuilder(
         val store: Store,
         val instance: ModuleInstance,
         val memory: ChasmMemoryAdapter,
-        val indirectFunctionIndexes: Sqlite3CallbackFunctionIndexes,
+        val indirectFunctionIndexes: SqliteCallbackFunctionIndexes,
     )
 }

@@ -12,16 +12,16 @@ import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
 import ru.pixnews.wasm.sqlite.driver.base.defaultTestSqliteDriverConfig
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.TestSqliteDriverFactory
-import ru.pixnews.wasm.sqlite.open.helper.chasm.ChasmRuntimeInstance
+import ru.pixnews.wasm.sqlite.open.helper.chasm.ChasmRuntime
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ChasmSqliteEmbedder
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 
-object ChasmSqliteDriverFactory : TestSqliteDriverFactory<WasmSQLiteDriver<ChasmRuntimeInstance>> {
+object ChasmSqliteDriverFactory : TestSqliteDriverFactory<WasmSQLiteDriver<ChasmRuntime>> {
     override val defaultSqliteBinary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcu346
     override fun create(
         dbLogger: Logger,
         sqlite3Binary: WasmSqliteConfiguration,
-    ): WasmSQLiteDriver<ChasmRuntimeInstance> {
+    ): WasmSQLiteDriver<ChasmRuntime> {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         return WasmSQLiteDriver(ChasmSqliteEmbedder, context) {
             defaultTestSqliteDriverConfig(dbLogger)

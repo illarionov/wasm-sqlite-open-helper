@@ -14,7 +14,7 @@ import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.sqlitecb.function.
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.sqlitecb.function.Sqlite3ProgressAdapter
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.sqlitecb.function.Sqlite3TraceAdapter
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
-import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
+import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.SqliteCallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction.SQLITE3_LOGGING_CALLBACK
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction.SQLITE3_PROGRESS_CALLBACK
@@ -44,9 +44,9 @@ internal class SqliteCallbacksFunctionsBuilder(
         }
     }
 
-    private class ChicorySqlite3CallbackFunctionIndexes(
+    private class ChicorySqliteCallbackFunctionIndexes(
         functionMap: Map<SqliteCallbacksModuleFunction, IndirectFunctionTableIndex>,
-    ) : Sqlite3CallbackFunctionIndexes {
+    ) : SqliteCallbackFunctionIndexes {
         override val traceFunction: IndirectFunctionTableIndex = functionMap.getValue(SQLITE3_TRACE_CALLBACK)
         override val progressFunction: IndirectFunctionTableIndex = functionMap.getValue(SQLITE3_PROGRESS_CALLBACK)
         override val loggingCallbackFunction: IndirectFunctionTableIndex =
@@ -79,7 +79,7 @@ internal class SqliteCallbacksFunctionsBuilder(
 
         fun setupIndirectFunctionIndexes(
             instance: Instance,
-        ): Sqlite3CallbackFunctionIndexes {
+        ): SqliteCallbackFunctionIndexes {
             val sqliteFunctionIndexes: List<Pair<SqliteCallbacksModuleFunction, Int>> = sqliteCallbacksFunctionIndexes(
                 instance.imports().functions(),
             )
@@ -92,7 +92,7 @@ internal class SqliteCallbacksFunctionsBuilder(
                     funcTable.setRef(indirectIndex.funcId, hostImportFuncId, instance)
                     function to indirectIndex
                 }.toMap()
-            return ChicorySqlite3CallbackFunctionIndexes(indirectIndexes)
+            return ChicorySqliteCallbackFunctionIndexes(indirectIndexes)
         }
 
         private fun sqliteCallbacksFunctionIndexes(

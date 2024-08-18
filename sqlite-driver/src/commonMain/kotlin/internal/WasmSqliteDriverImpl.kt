@@ -18,7 +18,7 @@ import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementLogger
 import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementLogger.TraceEvent
 import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementProfileLogger
 import ru.pixnews.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfig
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntimeInstance
+import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntime
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.io.lock.SynchronizedObject
 import ru.pixnews.wasm.sqlite.open.helper.io.lock.synchronized
@@ -36,7 +36,7 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode.Companion.SQLITE_TRACE_STMT
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3CApi
 
-internal class WasmSqliteDriverImpl<R : SqliteRuntimeInstance>(
+internal class WasmSqliteDriverImpl<R : SqliteRuntime>(
     debugConfig: WasmSqliteDebugConfig,
     rootLogger: Logger,
     private val cApi: Sqlite3CApi,

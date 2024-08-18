@@ -9,8 +9,8 @@ package ru.pixnews.wasm.sqlite.open.helper.graalvm
 import org.graalvm.polyglot.Context
 import org.graalvm.polyglot.Value
 import org.graalvm.wasm.WasmInstance
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SQLiteEmbedderRuntimeInfo
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteWasmEnvironment
+import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderRuntimeInfo
+import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntimeInternal
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmEmbedderBuilder.Companion.SQLITE3_SOURCE_NAME
@@ -36,7 +36,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.pthread.Emscrip
 import ru.pixnews.wasm.sqlite.open.helper.host.include.StructPthread
 import java.util.concurrent.ThreadFactory
 
-internal class GraalvmSqliteWasmEnvironment internal constructor(
+internal class GraalvmSqliteRuntimeInternal internal constructor(
     private val mainThreadGraalContext: Context,
     internal val envModuleInstance: WasmInstance,
     host: EmbedderHost,
@@ -45,7 +45,7 @@ internal class GraalvmSqliteWasmEnvironment internal constructor(
     override val callbackFunctionIndexes: GraalvmSqliteCallbackFunctionIndexes,
     internal val memoryWaiters: SharedMemoryWaiterListStore,
     private val embedderBuilder: GraalvmEmbedderBuilder,
-) : SqliteWasmEnvironment<GraalvmRuntimeInstance>, ManagedThreadInitializer {
+) : SqliteRuntimeInternal<GraalvmRuntime>, ManagedThreadInitializer {
     private val logger = host.rootLogger.withTag("GraalvmSqliteWasmEnvironment")
     private val _localGraalContext = ThreadLocal<Context>().also {
         it.set(mainThreadGraalContext)
@@ -91,13 +91,13 @@ internal class GraalvmSqliteWasmEnvironment internal constructor(
         useManagedThreadPthreadRoutineFunction = callbackFunctionIndexes.useManagedThreadPthreadRoutineFunction,
         rootLogger = host.rootLogger,
     )
-    override val runtimeInstance: GraalvmRuntimeInstance = object : GraalvmRuntimeInstance {
-        override val embedderInfo: SQLiteEmbedderRuntimeInfo = embedderInfo
+    override val runtimeInstance: GraalvmRuntime = object : GraalvmRuntime {
+        override val embedderInfo: SqliteEmbedderRuntimeInfo = embedderInfo
         override val managedThreadFactory: ThreadFactory = GraalvmManagedThreadFactory(
             emscriptenPthread = emscriptenPthread,
             emscriptenPthreadInternal = emscriptenPthreadInternal,
             pthreadManager = pthreadManager,
-            managedThreadInitializer = this@GraalvmSqliteWasmEnvironment,
+            managedThreadInitializer = this@GraalvmSqliteRuntimeInternal,
             rootLogger = host.rootLogger,
         )
     }

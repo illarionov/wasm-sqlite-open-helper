@@ -14,24 +14,24 @@ import ru.pixnews.wasm.sqlite.open.helper.chasm.exports.ChicoryEmscriptenStackEx
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.ChasmInstanceBuilder
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.ChasmInstanceBuilder.ChasmInstance
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SQLiteEmbedderRuntimeInfo
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedder
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteWasmEnvironment
+import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderRuntimeInfo
+import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntimeInternal
 import ru.pixnews.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
-import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
+import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.SqliteCallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.EmscriptenRuntime
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.stack.EmscriptenStack
 
-public object ChasmSqliteEmbedder : SqliteEmbedder<ChasmSqliteEmbedderConfig, ChasmRuntimeInstance> {
+public object ChasmSqliteEmbedder : SqliteEmbedder<ChasmSqliteEmbedderConfig, ChasmRuntime> {
     @InternalWasmSqliteHelperApi
-    override fun createSqliteWasmEnvironment(
+    override fun createRuntime(
         commonConfig: WasmSqliteCommonConfig,
         embedderConfigBuilder: ChasmSqliteEmbedderConfig.() -> Unit,
-    ): SqliteWasmEnvironment<ChasmRuntimeInstance> {
+    ): SqliteRuntimeInternal<ChasmRuntime> {
         val config = mergeConfig(commonConfig, embedderConfigBuilder)
         return createChasmSqliteWasmEnvironment(
             config.host,
@@ -54,7 +54,7 @@ public object ChasmSqliteEmbedder : SqliteEmbedder<ChasmSqliteEmbedderConfig, Ch
         host: EmbedderHost,
         sqlite3Binary: WasmSqliteConfiguration,
         sourceReader: WasmSourceReader,
-    ): SqliteWasmEnvironment<ChasmRuntimeInstance> {
+    ): SqliteRuntimeInternal<ChasmRuntime> {
         require(!sqlite3Binary.requireThreads) {
             "The specified SQLite binary is compiled with threading support, which is not compatible with the " +
                     "Chasm WebAssembly runtime. Use a version of SQLite compiled without thread support."
@@ -80,19 +80,19 @@ public object ChasmSqliteEmbedder : SqliteEmbedder<ChasmSqliteEmbedderConfig, Ch
 
         emscriptenRuntime.initMainThread()
 
-        val runtimeInstance = object : ChasmRuntimeInstance {
-            override val embedderInfo: SQLiteEmbedderRuntimeInfo = object : SQLiteEmbedderRuntimeInfo {
+        val runtimeInstance = object : ChasmRuntime {
+            override val embedderInfo: SqliteEmbedderRuntimeInfo = object : SqliteEmbedderRuntimeInfo {
                 override val supportMultithreading: Boolean = false
             }
         }
 
-        return object : SqliteWasmEnvironment<ChasmRuntimeInstance> {
+        return object : SqliteRuntimeInternal<ChasmRuntime> {
             override val sqliteExports: SqliteExports = ChasmSqliteExports(chasmInstance)
             override val memory: Memory = chasmInstance.memory
             override val callbackStore: SqliteCallbackStore = callbackStore
-            override val callbackFunctionIndexes: Sqlite3CallbackFunctionIndexes =
+            override val callbackFunctionIndexes: SqliteCallbackFunctionIndexes =
                 chasmInstance.indirectFunctionIndexes
-            override val runtimeInstance: ChasmRuntimeInstance = runtimeInstance
+            override val runtimeInstance: ChasmRuntime = runtimeInstance
             override fun close() = Unit
         }
     }

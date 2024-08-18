@@ -8,15 +8,15 @@ package ru.pixnews.wasm.sqlite.open.helper.graalvm
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedder
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteWasmEnvironment
+import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntimeInternal
 import ru.pixnews.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
 
-public object GraalvmSqliteEmbedder : SqliteEmbedder<GraalvmSqliteEmbedderConfig, GraalvmRuntimeInstance> {
+public object GraalvmSqliteEmbedder : SqliteEmbedder<GraalvmSqliteEmbedderConfig, GraalvmRuntime> {
     @InternalWasmSqliteHelperApi
-    override fun createSqliteWasmEnvironment(
+    override fun createRuntime(
         commonConfig: WasmSqliteCommonConfig,
         embedderConfigBuilder: GraalvmSqliteEmbedderConfig.() -> Unit,
-    ): SqliteWasmEnvironment<GraalvmRuntimeInstance> {
+    ): SqliteRuntimeInternal<GraalvmRuntime> {
         val config = mergeConfig(commonConfig, embedderConfigBuilder)
         return GraalvmEmbedderBuilder(
             config.graalvmEngine,
