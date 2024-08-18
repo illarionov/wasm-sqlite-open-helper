@@ -4,14 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.embedder
+package ru.pixnews.wasm.sqlite.open.helper.chasm
 
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
+import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntime
 
-/**
- * Public interface for interacting with a runtime instance
- */
 @WasmSqliteOpenHelperDsl
-public interface SqliteRuntimeInstance {
-    public val embedderInfo: SQLiteEmbedderRuntimeInfo
-}
+public interface ChasmRuntime : SqliteRuntime

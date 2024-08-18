@@ -8,7 +8,7 @@ package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi
 
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
-import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
+import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.SqliteCallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteConfigParameter
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteLogCallback
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
@@ -19,7 +19,7 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
 public class Sqlite3ConfigFunctions internal constructor(
     private val sqliteExports: SqliteExports,
     private val callbackStore: SqliteCallbackStore,
-    private val callbackFunctionIndexes: Sqlite3CallbackFunctionIndexes,
+    private val callbackFunctionIndexes: SqliteCallbackFunctionIndexes,
 ) {
     public fun sqlite3initialize(): SqliteResultCode {
         return sqliteExports.sqlite3_initialize.executeForSqliteResultCode()

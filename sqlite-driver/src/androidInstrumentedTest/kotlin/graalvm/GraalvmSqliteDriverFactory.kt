@@ -14,17 +14,17 @@ import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
 import ru.pixnews.wasm.sqlite.driver.base.defaultTestSqliteDriverConfig
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.TestSqliteDriverFactory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmRuntimeInstance
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmRuntime
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmSqliteEmbedder
 
 class GraalvmSqliteDriverFactory(
     private val initialGraalvmEngine: Engine? = WASM_GRAALVM_ENGINE,
     override val defaultSqliteBinary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcuMtPthread346,
-) : TestSqliteDriverFactory<WasmSQLiteDriver<GraalvmRuntimeInstance>> {
+) : TestSqliteDriverFactory<WasmSQLiteDriver<GraalvmRuntime>> {
     override fun create(
         dbLogger: Logger,
         sqlite3Binary: WasmSqliteConfiguration,
-    ): WasmSQLiteDriver<GraalvmRuntimeInstance> {
+    ): WasmSQLiteDriver<GraalvmRuntime> {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         return WasmSQLiteDriver(GraalvmSqliteEmbedder, context) {
             defaultTestSqliteDriverConfig(dbLogger)

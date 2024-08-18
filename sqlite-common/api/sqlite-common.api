@@ -103,18 +103,18 @@ public abstract interface class ru/pixnews/wasm/sqlite/open/helper/debug/WasmSql
 	public abstract fun getKey ()Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Key;
 }
 
-public abstract interface class ru/pixnews/wasm/sqlite/open/helper/embedder/SQLiteEmbedderRuntimeInfo {
-	public abstract fun getSupportMultithreading ()Z
-}
-
 public abstract interface class ru/pixnews/wasm/sqlite/open/helper/embedder/SqliteEmbedder {
 }
 
 public abstract interface class ru/pixnews/wasm/sqlite/open/helper/embedder/SqliteEmbedderConfig {
 }
 
-public abstract interface class ru/pixnews/wasm/sqlite/open/helper/embedder/SqliteRuntimeInstance {
-	public abstract fun getEmbedderInfo ()Lru/pixnews/wasm/sqlite/open/helper/embedder/SQLiteEmbedderRuntimeInfo;
+public abstract interface class ru/pixnews/wasm/sqlite/open/helper/embedder/SqliteEmbedderRuntimeInfo {
+	public abstract fun getSupportMultithreading ()Z
+}
+
+public abstract interface class ru/pixnews/wasm/sqlite/open/helper/embedder/SqliteRuntime {
+	public abstract fun getEmbedderInfo ()Lru/pixnews/wasm/sqlite/open/helper/embedder/SqliteEmbedderRuntimeInfo;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/embedder/callback/SqliteCallbackStore$Companion {
@@ -165,7 +165,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/embedder/callback/SqliteCa
 	public final synthetic fun unbox-impl ()I
 }
 
-public abstract interface class ru/pixnews/wasm/sqlite/open/helper/embedder/functiontable/Sqlite3CallbackFunctionIndexes {
+public abstract interface class ru/pixnews/wasm/sqlite/open/helper/embedder/functiontable/SqliteCallbackFunctionIndexes {
 	public abstract fun getLoggingCallbackFunction-ZL8peo8 ()I
 	public abstract fun getProgressFunction-ZL8peo8 ()I
 	public abstract fun getTraceFunction-ZL8peo8 ()I
@@ -652,10 +652,10 @@ public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteTr
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3CApi {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/embedder/exports/SqliteExports;Lru/pixnews/wasm/sqlite/open/helper/embedder/SQLiteEmbedderRuntimeInfo;Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory;Lru/pixnews/wasm/sqlite/open/helper/embedder/callback/SqliteCallbackStore;Lru/pixnews/wasm/sqlite/open/helper/embedder/functiontable/Sqlite3CallbackFunctionIndexes;Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;)V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/embedder/exports/SqliteExports;Lru/pixnews/wasm/sqlite/open/helper/embedder/SqliteEmbedderRuntimeInfo;Lru/pixnews/wasm/sqlite/open/helper/host/base/memory/Memory;Lru/pixnews/wasm/sqlite/open/helper/embedder/callback/SqliteCallbackStore;Lru/pixnews/wasm/sqlite/open/helper/embedder/functiontable/SqliteCallbackFunctionIndexes;Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;)V
 	public final fun getConfig ()Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3ConfigFunctions;
 	public final fun getDb ()Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3DbFunctions;
-	public final fun getEmbedderInfo ()Lru/pixnews/wasm/sqlite/open/helper/embedder/SQLiteEmbedderRuntimeInfo;
+	public final fun getEmbedderInfo ()Lru/pixnews/wasm/sqlite/open/helper/embedder/SqliteEmbedderRuntimeInfo;
 	public final fun getErrors ()Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3ErrorFunctions;
 	public final fun getStatement ()Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3StatementFunctions;
 }

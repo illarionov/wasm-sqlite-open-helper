@@ -21,10 +21,10 @@ import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementProfileLogger
 import ru.pixnews.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfig
 import ru.pixnews.wasm.sqlite.open.helper.dsl.OpenParamsBlock
 import ru.pixnews.wasm.sqlite.open.helper.dsl.path.DatabasePathResolver
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntimeInstance
+import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntime
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
-import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
+import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.SqliteCallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.internal.DatabaseErrorHandler
 import ru.pixnews.wasm.sqlite.open.helper.internal.OpenHelperNativeBindings
@@ -36,14 +36,14 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3CApi
  * Implements [SupportSQLiteOpenHelper.Factory] using the SQLite implementation shipped in
  * this library.
  */
-internal class WasmSqliteOpenHelperFactoryImpl<R : SqliteRuntimeInstance>(
+internal class WasmSqliteOpenHelperFactoryImpl<R : SqliteRuntime>(
     private val pathResolver: DatabasePathResolver,
     private val debugConfig: WasmSqliteDebugConfig,
     private val openParams: OpenParamsBlock,
     private val sqliteExports: SqliteExports,
     private val memory: Memory,
     private val callbackStore: SqliteCallbackStore,
-    private val callbackFunctionIndexes: Sqlite3CallbackFunctionIndexes,
+    private val callbackFunctionIndexes: SqliteCallbackFunctionIndexes,
     override val runtime: R,
     rootLogger: Logger,
 ) : WasmSQLiteOpenHelperFactory<R> {

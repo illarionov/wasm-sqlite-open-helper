@@ -6,6 +6,6 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.embedder
 
-public interface SQLiteEmbedderRuntimeInfo {
+public interface SqliteEmbedderRuntimeInfo {
     public val supportMultithreading: Boolean
 }

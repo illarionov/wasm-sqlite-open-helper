@@ -30,7 +30,7 @@ import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.sqlitecb.SqliteCal
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.sqlitecb.SqliteCallbacksFunctionsBuilder.Companion.setupIndirectFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.wasi.WasiSnapshotPreview1ModuleBuilder
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
-import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.Sqlite3CallbackFunctionIndexes
+import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.SqliteCallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmModules.ENV_MODULE_NAME
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WASM_MEMORY_PAGE_SIZE
@@ -134,6 +134,6 @@ internal class MainInstanceBuilder(
     internal class ChicoryInstance(
         val instance: Instance,
         val memory: ChicoryMemoryAdapter,
-        val indirectFunctionIndexes: Sqlite3CallbackFunctionIndexes,
+        val indirectFunctionIndexes: SqliteCallbackFunctionIndexes,
     )
 }

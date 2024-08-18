@@ -18,8 +18,8 @@ import ru.pixnews.wasm.sqlite.open.helper.debug.EmbedderHostLogger
 import ru.pixnews.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfigBlock
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedder
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntimeInstance
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteWasmEnvironment
+import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntime
+import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntimeInternal
 import ru.pixnews.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3CApi
 
@@ -29,7 +29,7 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3CApi
  * @param embedder WebAssembly Runtime (embedder) for running SQLite compiled to Wasm.
  * For example, GraalvmSqliteEmbedder
  */
-public fun <E : SqliteEmbedderConfig, R : SqliteRuntimeInstance> WasmSQLiteDriver(
+public fun <E : SqliteEmbedderConfig, R : SqliteRuntime> WasmSQLiteDriver(
     embedder: SqliteEmbedder<E, R>,
     block: WasmSqliteDriverConfigBlock<E>.() -> Unit = {},
 ): WasmSQLiteDriver<R> = WasmSQLiteDriver(
@@ -38,7 +38,7 @@ public fun <E : SqliteEmbedderConfig, R : SqliteRuntimeInstance> WasmSQLiteDrive
     block = block,
 )
 
-internal fun <E : SqliteEmbedderConfig, R : SqliteRuntimeInstance> WasmSQLiteDriver(
+internal fun <E : SqliteEmbedderConfig, R : SqliteRuntime> WasmSQLiteDriver(
     embedder: SqliteEmbedder<E, R>,
     defaultWasmSourceReader: WasmSourceReader,
     block: WasmSqliteDriverConfigBlock<E>.() -> Unit = {},
@@ -71,12 +71,12 @@ internal fun <E : SqliteEmbedderConfig, R : SqliteRuntimeInstance> WasmSQLiteDri
     )
 }
 
-private fun <E : SqliteEmbedderConfig, R : SqliteRuntimeInstance> createEmbedder(
+private fun <E : SqliteEmbedderConfig, R : SqliteRuntime> createEmbedder(
     embedder: SqliteEmbedder<E, R>,
     embedderLogger: EmbedderHostLogger,
     embedderReader: WasmSourceReader,
     embedderConfig: E.() -> Unit,
-): SqliteWasmEnvironment<R> {
+): SqliteRuntimeInternal<R> {
     val embedderCommonConfig = object : WasmSqliteCommonConfig {
         override val logger: Logger = if (embedderLogger.enabled) {
             embedderLogger.logger
@@ -86,13 +86,13 @@ private fun <E : SqliteEmbedderConfig, R : SqliteRuntimeInstance> createEmbedder
         override val wasmReader: WasmSourceReader = embedderReader
     }
 
-    return embedder.createSqliteWasmEnvironment(
+    return embedder.createRuntime(
         commonConfig = embedderCommonConfig,
         embedderConfigBuilder = embedderConfig,
     )
 }
 
-public interface WasmSQLiteDriver<R : SqliteRuntimeInstance> : AutoCloseable, SQLiteDriver {
+public interface WasmSQLiteDriver<R : SqliteRuntime> : AutoCloseable, SQLiteDriver {
     public val runtime: R
 
     public override fun close()

@@ -14,7 +14,7 @@ import org.graalvm.wasm.WasmInstance
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.binary.reader.WasmSourceReader
 import ru.pixnews.wasm.sqlite.binary.reader.readBytesOrThrow
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SQLiteEmbedderRuntimeInfo
+import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderRuntimeInfo
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.SharedMemoryWaiterListStore
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.EmscriptenEnvModuleBuilder
@@ -49,7 +49,7 @@ internal class GraalvmEmbedderBuilder(
     val useSharedMemory = USE_UNSAFE_MEMORY || sqlite3Binary.requireThreads
     val wasmThreadsEnabled = sqlite3Binary.requireThreads
 
-    fun createEnvironment(): GraalvmSqliteWasmEnvironment {
+    fun createEnvironment(): GraalvmSqliteRuntimeInternal {
         val callbackStore = SqliteCallbackStore()
         val memoryWaiters = SharedMemoryWaiterListStore()
 
@@ -70,7 +70,7 @@ internal class GraalvmEmbedderBuilder(
 
         val indirectFunctionIndexes = modules.afterSourceEvaluated()
 
-        val env = GraalvmSqliteWasmEnvironment(
+        val env = GraalvmSqliteRuntimeInternal(
             mainThreadGraalContext = graalContext,
             envModuleInstance = modules.envModuleInstance,
             callbackFunctionIndexes = indirectFunctionIndexes,
@@ -90,7 +90,7 @@ internal class GraalvmEmbedderBuilder(
     }
 
     fun initChildThreadContext(
-        parent: GraalvmSqliteWasmEnvironment,
+        parent: GraalvmSqliteRuntimeInternal,
     ): Context {
         val callbackStore = parent.callbackStore
         val pthreadManagerRef = parent::pthreadManager
@@ -133,7 +133,7 @@ internal class GraalvmEmbedderBuilder(
 
     private fun setupModules(
         graalContext: Context,
-        mainThreadEnv: GraalvmSqliteWasmEnvironment?,
+        mainThreadEnv: GraalvmSqliteRuntimeInternal?,
         callbackStore: SqliteCallbackStore,
         memoryWaiters: SharedMemoryWaiterListStore,
         pthreadRef: () -> GraalvmPthreadManager,
@@ -186,7 +186,7 @@ internal class GraalvmEmbedderBuilder(
 
     internal class GraalvmEmbedderInfo private constructor(
         override val supportMultithreading: Boolean,
-    ) : SQLiteEmbedderRuntimeInfo {
+    ) : SqliteEmbedderRuntimeInfo {
         companion object {
             operator fun invoke(
                 wasmThreadsEnabled: Boolean,

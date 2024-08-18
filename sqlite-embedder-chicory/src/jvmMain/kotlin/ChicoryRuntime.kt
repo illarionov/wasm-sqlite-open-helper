@@ -7,7 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.chicory
 
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntimeInstance
+import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntime
 
 @WasmSqliteOpenHelperDsl
-public interface ChicoryRuntimeInstance : SqliteRuntimeInstance
+public interface ChicoryRuntime : SqliteRuntime

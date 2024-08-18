@@ -12,7 +12,7 @@ import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.memory.WasmMemory
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmSqliteWasmEnvironment
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmSqliteRuntimeInternal
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.setupWasmModuleFunctions
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.withWasmContext
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.SharedMemoryWaiterListStore
@@ -183,7 +183,7 @@ internal class EmscriptenEnvModuleBuilder(
     }
 
     fun setupChildThreadModule(
-        mainThreadEnv: GraalvmSqliteWasmEnvironment,
+        mainThreadEnv: GraalvmSqliteRuntimeInternal,
         childGraalContext: Context,
     ): WasmInstance = childGraalContext.withWasmContext { wasmContext ->
         val envModule = WasmModule.create(moduleName, null)

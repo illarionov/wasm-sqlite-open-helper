@@ -1,4 +1,4 @@
-public abstract interface class ru/pixnews/wasm/sqlite/open/helper/graalvm/GraalvmRuntimeInstance : ru/pixnews/wasm/sqlite/open/helper/embedder/SqliteRuntimeInstance {
+public abstract interface class ru/pixnews/wasm/sqlite/open/helper/graalvm/GraalvmRuntime : ru/pixnews/wasm/sqlite/open/helper/embedder/SqliteRuntime {
 	public abstract fun getManagedThreadFactory ()Ljava/util/concurrent/ThreadFactory;
 }
 

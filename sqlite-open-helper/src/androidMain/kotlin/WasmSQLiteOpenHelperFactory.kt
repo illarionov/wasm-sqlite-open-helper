@@ -23,8 +23,8 @@ import ru.pixnews.wasm.sqlite.open.helper.dsl.path.DatabasePathResolver
 import ru.pixnews.wasm.sqlite.open.helper.dsl.path.JvmDatabasePathResolver
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedder
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntimeInstance
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteWasmEnvironment
+import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntime
+import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntimeInternal
 import ru.pixnews.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard
@@ -38,7 +38,7 @@ import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard.Reporter
  * For example, GraalvmSqliteEmbedder
  *
  */
-public fun <E : SqliteEmbedderConfig, R : SqliteRuntimeInstance> WasmSqliteOpenHelperFactory(
+public fun <E : SqliteEmbedderConfig, R : SqliteRuntime> WasmSqliteOpenHelperFactory(
     embedder: SqliteEmbedder<E, R>,
     context: Context,
     block: WasmSqliteOpenHelperFactoryConfigBlock<E>.() -> Unit = {},
@@ -55,7 +55,7 @@ public fun <E : SqliteEmbedderConfig, R : SqliteRuntimeInstance> WasmSqliteOpenH
  * @param embedder WebAssembly Runtime (embedder) for running SQLite compiled to Wasm.
  * For example, GraalvmSqliteEmbedder
  */
-public fun <E : SqliteEmbedderConfig, R : SqliteRuntimeInstance> WasmSqliteOpenHelperFactory(
+public fun <E : SqliteEmbedderConfig, R : SqliteRuntime> WasmSqliteOpenHelperFactory(
     embedder: SqliteEmbedder<E, R>,
     block: WasmSqliteOpenHelperFactoryConfigBlock<E>.() -> Unit = {},
 ): WasmSQLiteOpenHelperFactory<R> = WasmSqliteOpenHelperFactory(
@@ -65,7 +65,7 @@ public fun <E : SqliteEmbedderConfig, R : SqliteRuntimeInstance> WasmSqliteOpenH
     block = block,
 )
 
-internal fun <E : SqliteEmbedderConfig, R : SqliteRuntimeInstance> WasmSqliteOpenHelperFactory(
+internal fun <E : SqliteEmbedderConfig, R : SqliteRuntime> WasmSqliteOpenHelperFactory(
     embedder: SqliteEmbedder<E, R>,
     defaultPathResolver: DatabasePathResolver,
     defaultWasmSourceReader: WasmSourceReader,
@@ -102,12 +102,12 @@ private fun setupCloseGuard(rootLogger: Logger) {
     }
 }
 
-private fun <E : SqliteEmbedderConfig, R : SqliteRuntimeInstance> createEmbedder(
+private fun <E : SqliteEmbedderConfig, R : SqliteRuntime> createEmbedder(
     embedder: SqliteEmbedder<E, R>,
     embedderLogger: EmbedderHostLogger,
     embedderWasmReader: WasmSourceReader,
     embedderConfig: E.() -> Unit,
-): SqliteWasmEnvironment<R> {
+): SqliteRuntimeInternal<R> {
     val embedderCommonConfig = object : WasmSqliteCommonConfig {
         override val logger: Logger = if (embedderLogger.enabled) {
             embedderLogger.logger
@@ -117,12 +117,12 @@ private fun <E : SqliteEmbedderConfig, R : SqliteRuntimeInstance> createEmbedder
         override val wasmReader: WasmSourceReader = embedderWasmReader
     }
 
-    return embedder.createSqliteWasmEnvironment(
+    return embedder.createRuntime(
         commonConfig = embedderCommonConfig,
         embedderConfigBuilder = embedderConfig,
     )
 }
 
-public interface WasmSQLiteOpenHelperFactory<R : SqliteRuntimeInstance> : SupportSQLiteOpenHelper.Factory {
+public interface WasmSQLiteOpenHelperFactory<R : SqliteRuntime> : SupportSQLiteOpenHelper.Factory {
     public val runtime: R
 }

@@ -4,13 +4,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.graalvm
+package ru.pixnews.wasm.sqlite.open.helper.embedder
 
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntimeInstance
-import java.util.concurrent.ThreadFactory
 
+/**
+ * Public interface for interacting with a runtime instance
+ */
 @WasmSqliteOpenHelperDsl
-public interface GraalvmRuntimeInstance : SqliteRuntimeInstance {
-    public val managedThreadFactory: ThreadFactory
+public interface SqliteRuntime {
+    public val embedderInfo: SqliteEmbedderRuntimeInfo
 }

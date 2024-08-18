@@ -16,10 +16,10 @@ import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
 import ru.pixnews.wasm.sqlite.driver.base.AndroidUserDatabaseSuspendFactory
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractSqliteDriverTest
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.room.UserDatabaseTests
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmRuntimeInstance
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmRuntime
 import java.util.concurrent.Executors
 
-class GraalvmBasicMultithreadingRoomTest : AbstractSqliteDriverTest<WasmSQLiteDriver<GraalvmRuntimeInstance>>(
+class GraalvmBasicMultithreadingRoomTest : AbstractSqliteDriverTest<WasmSQLiteDriver<GraalvmRuntime>>(
     driverFactory = GraalvmSqliteDriverFactory(),
 ) {
     @JvmField
