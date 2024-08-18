@@ -12,16 +12,16 @@ import arrow.core.raise.either
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystemByteBuffer
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy.CHANGE_POSITION
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy.DO_NOT_CHANGE_POSITION
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common.ChannelPositionError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common.ChannelPositionError.ClosedChannel
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common.ChannelPositionError.InvalidArgument
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common.ChannelPositionError.IoError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.Messages.fileDescriptorNotOpenedMessage
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.ReadError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.ReadFd
 import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.ext.asByteBuffer
 import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.ext.readCatching
-import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.fd.ChannelPositionError
-import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.fd.ChannelPositionError.ClosedChannel
-import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.fd.ChannelPositionError.InvalidArgument
-import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.fd.ChannelPositionError.IoError
-import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.fd.FdFileChannel
+import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.fd.NioFileHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.fd.getPosition
 import kotlin.concurrent.withLock
 
@@ -38,7 +38,7 @@ internal class NioReadFd(
     }
 
     private fun readDoNotChangePosition(
-        channel: FdFileChannel,
+        channel: NioFileHandle,
         iovecs: List<FileSystemByteBuffer>,
     ): Either<ReadError, ULong> = either {
         var position = channel.getPosition()
@@ -63,7 +63,7 @@ internal class NioReadFd(
     }
 
     private fun readChangePosition(
-        channel: FdFileChannel,
+        channel: NioFileHandle,
         iovecs: List<FileSystemByteBuffer>,
     ): Either<ReadError, ULong> {
         val byteBuffers = Array(iovecs.size) { iovecs[it].asByteBuffer() }

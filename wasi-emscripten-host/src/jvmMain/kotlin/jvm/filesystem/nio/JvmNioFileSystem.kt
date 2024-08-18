@@ -40,8 +40,8 @@ import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.nio.op.RunWithChan
 import java.nio.file.FileSystems
 
 public class JvmNioFileSystem(
-    rootLogger: Logger,
     javaFs: java.nio.file.FileSystem = FileSystems.getDefault(),
+    rootLogger: Logger = Logger,
 ) : FileSystem {
     private val fsState = JvmFileSystemState(rootLogger, javaFs)
     private val operations: Map<FileSystemOperation<*, *, *>, NioOperationHandler<*, *, *>> = mapOf(

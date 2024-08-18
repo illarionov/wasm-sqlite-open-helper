@@ -18,8 +18,8 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.AdvisoryLockError.I
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.AdvisoryLockError.NoLock
 import ru.pixnews.wasm.sqlite.open.helper.host.include.Fcntl
 import ru.pixnews.wasm.sqlite.open.helper.host.include.StructFlock
-import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.fd.FdFileChannel
 import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.fd.FileLockKey
+import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.fd.NioFileHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.fd.resolveWhencePosition
 import java.io.IOException
 import java.nio.channels.ClosedChannelException
@@ -41,7 +41,7 @@ internal class NioAddAdvisoryLockFd(
 
     companion object {
         internal fun addAdvisorylock(
-            channel: FdFileChannel,
+            channel: NioFileHandle,
             flock: StructFlock,
         ): Either<AdvisoryLockError, Unit> {
             val position = channel.resolveWhencePosition(flock.l_start.toLong(), flock.whence)
