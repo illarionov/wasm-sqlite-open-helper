@@ -8,20 +8,20 @@ package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.NioFileDescriptorTable
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.cwd.JvmPathResolver
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.cwd.PathResolver
 import java.nio.file.FileSystems
-import java.nio.file.Path
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock
+import java.nio.file.FileSystem as NioFileSystem
 
 internal class JvmFileSystemState(
     rootLogger: Logger,
-    val javaFs: java.nio.file.FileSystem = FileSystems.getDefault(),
+    val javaFs: NioFileSystem = FileSystems.getDefault(),
 ) : AutoCloseable {
     val fsLock: Lock = ReentrantLock()
     val fileDescriptors: NioFileDescriptorTable = NioFileDescriptorTable(this, rootLogger)
-
-    val currentWorkingDirectory: Path
-        get() = javaFs.getPath("").toAbsolutePath()
+    val pathResolver: PathResolver = JvmPathResolver(javaFs, fileDescriptors)
 
     override fun close() {
         fileDescriptors.close()

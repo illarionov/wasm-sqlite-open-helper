@@ -7,14 +7,15 @@
 package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio
 
 import arrow.core.Either
-import arrow.core.right
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.GetCurrentWorkingDirectoryError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.cwd.CurrentDirectoryProvider
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.cwd.GetCurrentWorkingDirectory
+import java.nio.file.Path
 
 internal class NioGetCurrentWorkingDirectory(
-    private val fsState: JvmFileSystemState,
+    private val currentDirectoryProvider: CurrentDirectoryProvider,
 ) : NioOperationHandler<GetCurrentWorkingDirectory, GetCurrentWorkingDirectoryError, String> {
     override fun invoke(input: GetCurrentWorkingDirectory): Either<GetCurrentWorkingDirectoryError, String> {
-        return fsState.currentWorkingDirectory.toString().right()
+        return currentDirectoryProvider.getCurrentWorkingDirectory().map(Path::toString)
     }
 }

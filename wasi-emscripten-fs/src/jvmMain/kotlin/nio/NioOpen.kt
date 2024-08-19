@@ -15,12 +15,11 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.IoError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.Nfile
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.OpenError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.PermissionDenied
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.asFileAttribute
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.resolvePath
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.toCommonError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.toPosixFilePermissions
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.cwd.PathResolver.ResolvePathError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.cwd.toCommonError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.open.Open
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.open.OpenFileFlags
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.open.OpenFileFlags.OpenFileFlag
@@ -37,7 +36,7 @@ internal class NioOpen(
     private val fsState: JvmFileSystemState,
 ) : NioOperationHandler<Open, OpenError, Fd> {
     override fun invoke(input: Open): Either<OpenError, Fd> = either {
-        val path = fsState.resolvePath(input.path, input.baseDirectory, false)
+        val path = fsState.pathResolver.resolve(input.path, input.baseDirectory, false)
             .mapLeft(ResolvePathError::toCommonError)
             .bind()
 
