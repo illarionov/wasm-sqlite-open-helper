@@ -12,7 +12,7 @@ import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.Emscrip
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.SyscallFcntl64FunctionHandle
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
 
 internal class SyscallFcntl64(
     host: EmbedderHost,

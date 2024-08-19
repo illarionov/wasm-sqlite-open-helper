@@ -13,7 +13,7 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Pages
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.EmscriptenResizeHeapFunctionHandle.Companion.calculateNewSizePages
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno
 
 internal class EmscriptenResizeHeap(host: EmbedderHost) : EmscriptenHostFunctionHandle {
     private val logger: Logger = host.rootLogger.withTag("wasm-func:emscripten_resize_heap")

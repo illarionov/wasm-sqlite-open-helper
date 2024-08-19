@@ -16,9 +16,9 @@ import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.wasi.WasiHostFunctio
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.function.FdSeekFunctionHandle
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 
 internal class FdSeek(
     host: EmbedderHost,

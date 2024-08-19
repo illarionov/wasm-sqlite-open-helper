@@ -10,7 +10,6 @@ import kotlinx.io.Source
 import kotlinx.io.readIntLe
 import kotlinx.io.readLongLe
 import kotlinx.io.readShortLe
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Whence
 
 /**
  * <include/fcntl.h> struct flock
@@ -23,11 +22,6 @@ public data class StructFlock(
     val l_len: off_t,
     val l_pid: pid_t,
 ) {
-    public val whence: Whence
-        get() = requireNotNull(Whence.fromIdOrNull(l_whence.toInt())) {
-            "Unknown whence $l_whence"
-        }
-
     public companion object {
         public const val STRUCT_FLOCK_SIZE: Int = 32
 

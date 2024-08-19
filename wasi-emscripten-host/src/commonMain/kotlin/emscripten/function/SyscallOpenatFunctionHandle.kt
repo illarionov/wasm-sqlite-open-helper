@@ -12,11 +12,13 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.BaseDirectory
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.Open
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.OpenError
-import ru.pixnews.wasm.sqlite.open.helper.host.include.FileMode
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
+import ru.pixnews.wasm.sqlite.open.helper.host.ext.fromRawDirFd
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.BaseDirectory
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.FileMode
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.open.Open
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.open.OpenError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.open.OpenFileFlags
 
 public class SyscallOpenatFunctionHandle(
     host: EmbedderHost,
@@ -25,12 +27,13 @@ public class SyscallOpenatFunctionHandle(
         memory: ReadOnlyMemory,
         rawDirFd: Int,
         pathnamePtr: WasmPtr<Byte>,
-        flags: UInt,
+        rawFlags: UInt,
         rawMode: UInt,
     ): Int {
         val fs = host.fileSystem
         val baseDirectory = BaseDirectory.fromRawDirFd(rawDirFd)
         val mode = FileMode(rawMode)
+        val flags = OpenFileFlags(rawFlags)
         val path = memory.readNullTerminatedString(pathnamePtr)
 
         val fsOperation = Open(
@@ -40,13 +43,7 @@ public class SyscallOpenatFunctionHandle(
             mode = mode,
         )
         return fs.execute(Open, fsOperation)
-            .onLeft {
-                logger.v {
-                    "$fsOperation error ${it.errno}, ${it.message}"
-                }
-            }.onRight {
-                logger.v { "$fsOperation; fd: $it" }
-            }.fold(
+            .fold(
                 ifLeft = { error: OpenError ->
                     -error.errno.code
                 },

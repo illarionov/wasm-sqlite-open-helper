@@ -7,6 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.host
 
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost.Builder
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.JvmNioFileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.jvm.JvmEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.jvm.JvmEmbedderHost.JvmClock
 import ru.pixnews.wasm.sqlite.open.helper.host.jvm.JvmEmbedderHost.JvmCommandArgsProvider
@@ -15,7 +16,6 @@ import ru.pixnews.wasm.sqlite.open.helper.host.jvm.JvmEmbedderHost.JvmSystemEnvP
 import ru.pixnews.wasm.sqlite.open.helper.host.jvm.JvmEntropySource
 import ru.pixnews.wasm.sqlite.open.helper.host.jvm.JvmLocalTimeFormatter
 import ru.pixnews.wasm.sqlite.open.helper.host.jvm.JvmTimeZoneInfoProvider
-import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.nio.JvmNioFileSystem
 
 internal actual fun createDefaultEmbedderHost(builder: Builder): EmbedderHost = JvmEmbedderHost(
     rootLogger = builder.rootLogger,

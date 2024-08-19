@@ -16,7 +16,7 @@ import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.Emscripte
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.SyscallFstat64FunctionHandle
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
 
 internal class SyscallFstat64(
     host: EmbedderHost,

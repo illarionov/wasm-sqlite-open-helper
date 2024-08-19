@@ -8,9 +8,9 @@ package ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.function
 
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno.SUCCESS
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction.SCHED_YIELD
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno.SUCCESS
 
 public class SchedYieldFunctionHandle(
     host: EmbedderHost,

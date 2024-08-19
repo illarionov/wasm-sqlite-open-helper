@@ -10,12 +10,12 @@ import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.SeekError
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.SeekFd
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Whence
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.seek.SeekError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.seek.SeekFd
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Whence
 
 public class FdSeekFunctionHandle(
     host: EmbedderHost,

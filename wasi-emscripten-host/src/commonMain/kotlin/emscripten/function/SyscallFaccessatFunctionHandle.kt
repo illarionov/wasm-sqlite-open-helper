@@ -12,12 +12,14 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
+import ru.pixnews.wasm.sqlite.open.helper.host.ext.fromRawDirFd
 import ru.pixnews.wasm.sqlite.open.helper.host.ext.negativeErrnoCode
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.BaseDirectory
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.CheckAccess
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.BaseDirectory
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.checkaccess.CheckAccess
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.checkaccess.FileAccessibilityCheck
+import ru.pixnews.wasm.sqlite.open.helper.host.include.Fcntl
 import ru.pixnews.wasm.sqlite.open.helper.host.include.Fcntl.AT_EACCESS
 import ru.pixnews.wasm.sqlite.open.helper.host.include.Fcntl.AT_SYMLINK_NOFOLLOW
-import ru.pixnews.wasm.sqlite.open.helper.host.include.FileAccessibilityCheck
 
 public class SyscallFaccessatFunctionHandle(
     host: EmbedderHost,
@@ -35,11 +37,27 @@ public class SyscallFaccessatFunctionHandle(
             CheckAccess(
                 path = path,
                 baseDirectory = BaseDirectory.fromRawDirFd(rawDirFd),
-                mode = FileAccessibilityCheck(amode),
+                mode = rawModeToFileAccessibilityCheck(amode),
                 useEffectiveUserId = flags and AT_EACCESS == AT_EACCESS,
                 allowEmptyPath = false,
                 followSymlinks = flags and AT_SYMLINK_NOFOLLOW != AT_SYMLINK_NOFOLLOW,
             ),
         ).negativeErrnoCode()
+    }
+
+    private companion object {
+        fun rawModeToFileAccessibilityCheck(amode: UInt): Set<FileAccessibilityCheck> {
+            return buildSet {
+                if (amode and Fcntl.R_OK == Fcntl.R_OK) {
+                    add(FileAccessibilityCheck.READABLE)
+                }
+                if (amode and Fcntl.W_OK == Fcntl.W_OK) {
+                    add(FileAccessibilityCheck.WRITEABLE)
+                }
+                if (amode and Fcntl.X_OK == Fcntl.X_OK) {
+                    add(FileAccessibilityCheck.EXECUTABLE)
+                }
+            }
+        }
     }
 }

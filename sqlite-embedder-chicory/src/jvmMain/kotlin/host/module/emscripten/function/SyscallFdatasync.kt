@@ -10,8 +10,8 @@ import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.wasm.types.Value
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.emscripten.EmscriptenHostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.function.FdSyncSyscallFdatasyncFunctionHandle
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 
 internal class SyscallFdatasync(host: EmbedderHost) : EmscriptenHostFunctionHandle {
     val handle = FdSyncSyscallFdatasyncFunctionHandle.syscallFdatasync(host)

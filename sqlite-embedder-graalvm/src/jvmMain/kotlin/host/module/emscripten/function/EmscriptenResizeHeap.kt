@@ -21,7 +21,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Pages
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.EmscriptenResizeHeapFunctionHandle.Companion.calculateNewSizePages
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno.NOMEM
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno.NOMEM
 
 internal class EmscriptenResizeHeap(
     language: WasmLanguage,

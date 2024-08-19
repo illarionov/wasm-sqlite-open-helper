@@ -12,9 +12,9 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.writeNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.host.base.plus
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.ext.WasiEnvironmentFunc.encodeEnvToWasi
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 
 public class EnvironGetFunctionHandle(
     host: EmbedderHost,

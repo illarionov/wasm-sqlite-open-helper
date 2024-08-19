@@ -13,9 +13,9 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.ext.negativeErrnoCode
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.BaseDirectory.CurrentWorkingDirectory
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.Chmod
-import ru.pixnews.wasm.sqlite.open.helper.host.include.FileMode
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.BaseDirectory.CurrentWorkingDirectory
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.FileMode
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.chmod.Chmod
 
 public class SyscallChmodFunctionHandle(
     host: EmbedderHost,

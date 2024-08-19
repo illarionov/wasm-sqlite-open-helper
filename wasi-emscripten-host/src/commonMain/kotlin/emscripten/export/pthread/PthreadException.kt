@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.pthread
 
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno
 
 public class PthreadException : RuntimeException {
     public val errCode: Errno?

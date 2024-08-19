@@ -15,11 +15,11 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WasiMemoryReader
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.plus
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.FileSystemOperationError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readwrite.ReadWriteStrategy
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Iovec
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.IovecArray
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Size

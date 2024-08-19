@@ -9,7 +9,7 @@ package ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.wasi.function
 import io.github.charlietap.chasm.executor.runtime.value.ExecutionValue
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.wasi.WasiHostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno
 
 internal class NotImplementedWasiFunction(
     private val function: HostFunction,

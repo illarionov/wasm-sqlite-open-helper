@@ -13,14 +13,14 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.DefaultWasiMemoryWriter
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WasiMemoryWriter
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ReadWriteStrategy.CHANGE_POSITION
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.writeCatching
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.op.RunWithChannelFd
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.FileSystemOperationError
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.WriteError
-import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.ext.writeCatching
-import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.nio.op.RunWithChannelFd
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readwrite.ReadWriteStrategy
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readwrite.ReadWriteStrategy.CHANGE_POSITION
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readwrite.WriteError
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.CiovecArray
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 import java.nio.channels.Channels
 import java.nio.channels.FileChannel
 

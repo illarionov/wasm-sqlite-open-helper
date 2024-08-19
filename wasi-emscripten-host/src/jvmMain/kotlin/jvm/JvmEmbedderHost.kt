@@ -16,7 +16,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost.MonotonicClock
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost.SystemEnvProvider
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost.TimeZoneInfoProvider
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
-import ru.pixnews.wasm.sqlite.open.helper.host.jvm.filesystem.nio.JvmNioFileSystem
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.JvmNioFileSystem
 
 public class JvmEmbedderHost(
     public override val rootLogger: Logger = Logger,

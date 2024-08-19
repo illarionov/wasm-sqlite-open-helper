@@ -13,14 +13,15 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmValueType.WebAssemblyTyp
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction.HostFunctionType
 import ru.pixnews.wasm.sqlite.open.helper.host.base.pointer
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Whence
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Advice
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.CiovecArray
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.ClockId
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Dircookie
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Event
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.ExitCode
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.FdFlags
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.FdStat
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.FileDelta
@@ -42,7 +43,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Subscription
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Timestamp
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.WasiValueTypes.U32
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.WasiValueTypes.U8
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Whence
+import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.wasmValueType
 
 /**
  * WASI Preview1 function descriptors
@@ -852,7 +853,7 @@ public enum class WasiHostFunction(
             Rights.wasmValueType, // fs_rights_base
             Rights.wasmValueType, // fs_rights_inheriting
             FdFlags.wasmValueType, // fdflags
-            Fd.pointer, // expected $fd
+            Fd.wasmValueType.pointer, // expected $fd
         ),
         retType = Errno.wasmValueType,
     ),
@@ -1122,7 +1123,7 @@ public enum class WasiHostFunction(
         paramTypes = listOf(
             Fd.wasmValueType, // fd
             FdFlags.wasmValueType, // flags
-            Fd.pointer, // expected fd
+            Fd.wasmValueType.pointer, // expected fd
         ),
         retType = Errno.wasmValueType,
     ),

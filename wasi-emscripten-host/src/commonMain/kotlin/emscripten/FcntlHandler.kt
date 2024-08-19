@@ -6,27 +6,32 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.emscripten
 
+import arrow.core.Either
+import arrow.core.getOrElse
+import arrow.core.left
+import arrow.core.right
 import kotlinx.io.buffered
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.sourceWithMaxSize
 import ru.pixnews.wasm.sqlite.open.helper.host.ext.negativeErrnoCode
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.AddAdvisoryLockFd
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.RemoveAdvisoryLockFd
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno.INVAL
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Whence
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.lock.AddAdvisoryLockFd
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.lock.AdvisoryLockError.InvalidArgument
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.lock.Advisorylock
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.lock.AdvisorylockLockType
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.lock.RemoveAdvisoryLockFd
 import ru.pixnews.wasm.sqlite.open.helper.host.include.Fcntl
 import ru.pixnews.wasm.sqlite.open.helper.host.include.StructFlock
 import ru.pixnews.wasm.sqlite.open.helper.host.include.StructFlock.Companion.STRUCT_FLOCK_SIZE
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Errno.INVAL
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
 
 internal class FcntlHandler(
     private val fileSystem: FileSystem,
-    rootLogger: Logger,
 ) {
-    private val logger: Logger = rootLogger.withTag("FcntlHandler")
     private val handlers: Map<UInt, FcntlOperationHandler> = mapOf(
         Fcntl.F_SETLK to FcntlSetLockOperation(),
     )
@@ -60,21 +65,43 @@ internal class FcntlHandler(
             val flock = memory.sourceWithMaxSize(structStatPtr, STRUCT_FLOCK_SIZE).buffered().use {
                 StructFlock.unpack(it)
             }
-
-            logger.v { "F_SETLK($fd, $flock)" }
+            val advisoryLock = flock.toAdvisoryLock().getOrElse {
+                return -it.errno.code
+            }
             return when (flock.l_type) {
                 Fcntl.F_RDLCK, Fcntl.F_WRLCK -> fileSystem.execute(
                     AddAdvisoryLockFd,
-                    AddAdvisoryLockFd(fd, flock),
+                    AddAdvisoryLockFd(fd, advisoryLock),
                 ).negativeErrnoCode()
 
                 Fcntl.F_UNLCK -> fileSystem.execute(
                     RemoveAdvisoryLockFd,
-                    RemoveAdvisoryLockFd(fd, flock),
+                    RemoveAdvisoryLockFd(fd, advisoryLock),
                 ).negativeErrnoCode()
 
                 else -> -INVAL.code
             }
+        }
+    }
+
+    private companion object {
+        fun StructFlock.toAdvisoryLock(): Either<InvalidArgument, Advisorylock> {
+            val type = when (this.l_type) {
+                Fcntl.F_RDLCK -> AdvisorylockLockType.READ
+                Fcntl.F_WRLCK -> AdvisorylockLockType.WRITE
+                Fcntl.F_UNLCK -> AdvisorylockLockType.WRITE
+                else -> return InvalidArgument("Incorrect l_type").left()
+            }
+            val whence = Whence.fromIdOrNull(this.l_whence.toInt())
+                ?: return InvalidArgument("Incorrect whence `${this.l_whence}`").left()
+
+            return Advisorylock(
+                type = type,
+                whence = whence,
+                start = this.l_start.toLong(),
+                length = this.l_len.toLong(),
+                pid = this.l_pid,
+            ).right()
         }
     }
 }

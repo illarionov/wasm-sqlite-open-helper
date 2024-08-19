@@ -17,7 +17,7 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsUlong
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.function.SyscallFtruncate64FunctionHandle
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Fd
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
 
 internal class SyscallFtruncate64(
     language: WasmLanguage,
