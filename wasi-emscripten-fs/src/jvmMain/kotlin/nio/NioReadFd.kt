@@ -9,18 +9,14 @@ package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio
 import arrow.core.Either
 import arrow.core.left
 import arrow.core.raise.either
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common.ChannelPositionError
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common.ChannelPositionError.ClosedChannel
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common.ChannelPositionError.InvalidArgument
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common.ChannelPositionError.IoError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.BadFileDescriptor
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.FileSystemOperationError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.ReadError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.asByteBuffer
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.readCatching
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.getPosition
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.internal.ChannelPositionError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.Messages.fileDescriptorNotOpenedMessage
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readwrite.FileSystemByteBuffer
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.ReadError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readwrite.ReadFd
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readwrite.ReadWriteStrategy.CHANGE_POSITION
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readwrite.ReadWriteStrategy.DO_NOT_CHANGE_POSITION
@@ -80,9 +76,9 @@ internal class NioReadFd(
 
     private companion object {
         private fun ChannelPositionError.toReadError(): ReadError = when (this) {
-            is ClosedChannel -> FileSystemOperationIoError(message)
-            is InvalidArgument -> FileSystemOperationInvalidArgument(message)
-            is IoError -> FileSystemOperationIoError(message)
+            is ChannelPositionError.ClosedChannel -> FileSystemOperationIoError(message)
+            is ChannelPositionError.InvalidArgument -> FileSystemOperationInvalidArgument(message)
+            is ChannelPositionError.IoError -> FileSystemOperationIoError(message)
         }
     }
 }

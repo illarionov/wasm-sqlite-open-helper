@@ -8,8 +8,8 @@ package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd
 
 import arrow.core.Either
 import arrow.core.right
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common.ChannelPositionError
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common.ChannelPositionError.ClosedChannel
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.internal.ChannelPositionError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.internal.ChannelPositionError.ClosedChannel
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Whence
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.JvmFileSystemState

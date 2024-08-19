@@ -11,7 +11,14 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno
 public data class ReadOnlyFileSystem(
     override val message: String,
 ) : FileSystemOperationError,
-    WriteError
-{
+    CheckAccessError,
+    ChmodError,
+    ChownError,
+    MkdirError,
+    OpenError,
+    SetTimestampError,
+    TruncateError,
+    UnlinkError,
+    WriteError {
     override val errno: Errno = Errno.ROFS
 }

@@ -13,11 +13,11 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.EmscriptenHostFunction
 import ru.pixnews.wasm.sqlite.open.helper.host.ext.fromRawDirFd
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.OpenError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.BaseDirectory
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.FileMode
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.open.Open
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.open.OpenError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.open.OpenFileFlags
 
 public class SyscallOpenatFunctionHandle(

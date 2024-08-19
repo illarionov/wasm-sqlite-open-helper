@@ -12,7 +12,22 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno.BADF
 public data class BadFileDescriptor(
     override val message: String,
 ) : FileSystemOperationError,
+    AdvisoryLockError,
+    ReadLinkError,
+    CheckAccessError,
+    ChmodError,
+    ChownError,
+    CloseError,
+    MkdirError,
+    OpenError,
     ReadError,
-    WriteError {
+    ResolveRelativePathErrors,
+    WriteError,
+    SeekError,
+    SetTimestampError,
+    StatError,
+    SyncError,
+    TruncateError,
+    UnlinkError {
     override val errno: Errno = BADF
 }

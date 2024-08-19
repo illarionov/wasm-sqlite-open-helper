@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common
+package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.internal
 
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.FileSystemOperationError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno
 
 internal sealed class ChannelPositionError(
     override val errno: Errno,

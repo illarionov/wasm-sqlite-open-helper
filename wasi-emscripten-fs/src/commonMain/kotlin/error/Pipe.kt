@@ -11,7 +11,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno
 public data class Pipe(
     override val message: String,
 ) : FileSystemOperationError,
-    WriteError
-{
+    SeekError,
+    WriteError {
     override val errno: Errno = Errno.PIPE
 }

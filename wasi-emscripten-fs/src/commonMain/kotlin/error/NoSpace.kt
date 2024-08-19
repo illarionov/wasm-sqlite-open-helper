@@ -11,7 +11,10 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno
 public data class NoSpace(
     override val message: String,
 ) : FileSystemOperationError,
-    WriteError
-{
+    CloseError,
+    MkdirError,
+    OpenError,
+    UnlinkError,
+    WriteError {
     override val errno: Errno = Errno.NOSPC
 }

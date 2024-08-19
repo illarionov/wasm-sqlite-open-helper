@@ -9,15 +9,13 @@ package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio
 import arrow.core.Either
 import arrow.core.left
 import arrow.core.raise.either
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common.ChannelPositionError
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common.ChannelPositionError.ClosedChannel
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common.ChannelPositionError.InvalidArgument
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common.ChannelPositionError.IoError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.BadFileDescriptor
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.WriteError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.asByteBuffer
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.writeCatching
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.NioFileHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.getPosition
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.internal.ChannelPositionError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.Messages.fileDescriptorNotOpenedMessage
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readwrite.FileSystemByteBuffer
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readwrite.ReadWriteStrategy.CHANGE_POSITION
@@ -40,7 +38,7 @@ internal class NioWriteFd(
     }
 
     private fun writeDoNotChangePosition(
-        channel: ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.NioFileHandle,
+        channel: NioFileHandle,
         cIovecs: List<FileSystemByteBuffer>,
     ): Either<WriteError, ULong> = either {
         var position = channel.getPosition()
@@ -65,7 +63,7 @@ internal class NioWriteFd(
     }
 
     private fun writeChangePosition(
-        channel: ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.NioFileHandle,
+        channel: NioFileHandle,
         cIovecs: List<FileSystemByteBuffer>,
     ): Either<WriteError, ULong> {
         val byteBuffers = Array(cIovecs.size) { cIovecs[it].asByteBuffer() }
@@ -76,9 +74,9 @@ internal class NioWriteFd(
 
     private companion object {
         private fun ChannelPositionError.toWriteError(): WriteError = when (this) {
-            is ClosedChannel -> BaseIoError(message)
-            is InvalidArgument -> BaseInvalidArgument(message)
-            is IoError -> BaseIoError(message)
+            is ChannelPositionError.ClosedChannel -> BaseIoError(message)
+            is ChannelPositionError.InvalidArgument -> BaseInvalidArgument(message)
+            is ChannelPositionError.IoError -> BaseIoError(message)
         }
     }
 }

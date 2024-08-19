@@ -11,5 +11,4 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno
 public interface FileSystemOperationError {
     public val message: String
     public val errno: Errno
-
 }

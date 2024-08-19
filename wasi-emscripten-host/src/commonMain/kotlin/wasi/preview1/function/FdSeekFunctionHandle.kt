@@ -10,10 +10,10 @@ import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.SeekError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Whence
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.seek.SeekError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.seek.SeekFd
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.WasiHostFunction
 

@@ -9,9 +9,10 @@ package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio
 import arrow.core.Either
 import arrow.core.getOrElse
 import arrow.core.left
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.NotDirectory
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.UnlinkError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.resolvePath
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.NioUnlinkFile.Companion.toUnlinkError
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.unlink.UnlinkError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.unlink.UnlinkFile
 import java.nio.file.Files
 import java.nio.file.Path
@@ -27,7 +28,7 @@ internal class NioUnlinkDirectory(
             .getOrElse { return it.left() }
 
         if (!path.isDirectory()) {
-            return UnlinkError.NotDirectory("`$path` is not a directory").left()
+            return NotDirectory("`$path` is not a directory").left()
         }
 
         return Either.catch {

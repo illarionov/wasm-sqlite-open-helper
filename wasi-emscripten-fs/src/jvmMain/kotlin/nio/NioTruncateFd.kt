@@ -8,9 +8,12 @@ package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio
 
 import arrow.core.Either
 import arrow.core.left
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.BadFileDescriptor
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.InvalidArgument
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.IoError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.TruncateError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.Messages.fileDescriptorNotOpenedMessage
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.truncate.TruncateError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.truncate.TruncateFd
 import java.io.IOException
 import java.nio.channels.ClosedChannelException
@@ -21,7 +24,7 @@ internal class NioTruncateFd(
 ) : NioOperationHandler<TruncateFd, TruncateError, Unit> {
     override fun invoke(input: TruncateFd): Either<TruncateError, Unit> {
         val channel = fsState.fileDescriptors.get(input.fd)
-            ?: return TruncateError.BadFileDescriptor(fileDescriptorNotOpenedMessage(input.fd)).left()
+            ?: return BadFileDescriptor(fileDescriptorNotOpenedMessage(input.fd)).left()
         return Either.catch {
             channel.channel.truncate(input.length.toLong())
             // TODO: extend file size to length?
@@ -32,10 +35,10 @@ internal class NioTruncateFd(
     }
 
     private fun Throwable.toTruncateError(fd: Fd): TruncateError = when (this) {
-        is NonReadableChannelException -> TruncateError.InvalidArgument("Read-only channel")
-        is ClosedChannelException -> TruncateError.BadFileDescriptor(fileDescriptorNotOpenedMessage(fd))
-        is IllegalArgumentException -> TruncateError.InvalidArgument("Negative length")
-        is IOException -> TruncateError.IoError("I/O Error: $message")
+        is NonReadableChannelException -> InvalidArgument("Read-only channel")
+        is ClosedChannelException -> BadFileDescriptor(fileDescriptorNotOpenedMessage(fd))
+        is IllegalArgumentException -> InvalidArgument("Negative length")
+        is IOException -> IoError("I/O Error: $message")
         else -> throw IllegalStateException("Unexpected error", this)
     }
 }

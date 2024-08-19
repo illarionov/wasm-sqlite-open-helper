@@ -13,9 +13,9 @@ import assertk.assertions.isEqualTo
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.writeNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.host.base.plus
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.AccessDenied
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readlink.ReadLink
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readlink.ReadLinkError
 import ru.pixnews.wasm.sqlite.open.helper.host.include.Fcntl
 import ru.pixnews.wasm.sqlite.open.helper.host.test.assertions.byteAt
 import ru.pixnews.wasm.sqlite.open.helper.host.test.assertions.hasBytesAt
@@ -96,7 +96,7 @@ class SyscallReadlinkatFunctionHandleTest {
             memory.writeNullTerminatedString(it, "/")
         }
         fileSystem.onOperation(ReadLink) { _ ->
-            ReadLinkError.AccessDenied("Test access denied").left()
+            AccessDenied("Test access denied").left()
         }
 
         val sizeOrErrno = readlinkatFunctionHandle.execute(

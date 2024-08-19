@@ -9,9 +9,9 @@ package ru.pixnews.wasm.sqlite.open.helper.host.test.fixtures
 import arrow.core.Either
 import arrow.core.left
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.FileSystemOperation
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.FileSystemOperationError
-import error.NotImplemented
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.NotImplemented
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.FileSystemOperation
 
 public open class TestFileSystem : FileSystem {
     private val operations: MutableMap<FileSystemOperation<*, *, *>, OperationHandler<*, *, *>> =

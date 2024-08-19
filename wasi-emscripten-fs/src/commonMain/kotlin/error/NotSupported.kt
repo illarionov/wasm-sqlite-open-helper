@@ -11,7 +11,10 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno
 public data class NotSupported(
     override val message: String,
 ) : FileSystemOperationError,
-    ReadError
-{
+    AdvisoryLockError,
+    ChmodError,
+    ChownError,
+    OpenError,
+    ReadError {
     override val errno: Errno = Errno.NOTSUP
 }

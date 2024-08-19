@@ -9,6 +9,12 @@ package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio
 import arrow.core.Either
 import arrow.core.getOrElse
 import arrow.core.left
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.BadFileDescriptor
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.DirectoryNotEmpty
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.IoError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.NoEntry
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.PathIsDirectory
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.UnlinkError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.EmptyPath
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.FileDescriptorNotOpen
@@ -16,7 +22,6 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.I
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.NotDirectory
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.RelativePath
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.resolvePath
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.unlink.UnlinkError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.unlink.UnlinkFile
 import java.io.IOException
 import java.nio.file.DirectoryNotEmptyException
@@ -24,6 +29,7 @@ import java.nio.file.Files
 import java.nio.file.NoSuchFileException
 import java.nio.file.Path
 import kotlin.io.path.isDirectory
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.NotDirectory as BaseNotDirectory
 
 internal class NioUnlinkFile(
     private val fsState: JvmFileSystemState,
@@ -35,7 +41,7 @@ internal class NioUnlinkFile(
             .getOrElse { return it.left() }
 
         if (path.isDirectory()) {
-            return UnlinkError.PathIsDirectory("`$path` is a directory").left()
+            return PathIsDirectory("`$path` is a directory").left()
         }
 
         return Either.catch {
@@ -47,17 +53,17 @@ internal class NioUnlinkFile(
 
     companion object {
         internal fun ResolvePathError.toUnlinkError(): UnlinkError = when (this) {
-            is EmptyPath -> UnlinkError.NoEntry(message)
-            is FileDescriptorNotOpen -> UnlinkError.BadFileDescriptor(message)
-            is InvalidPath -> UnlinkError.BadFileDescriptor(message)
-            is NotDirectory -> UnlinkError.NotDirectory(message)
-            is RelativePath -> UnlinkError.BadFileDescriptor(message)
+            is EmptyPath -> NoEntry(message)
+            is FileDescriptorNotOpen -> BadFileDescriptor(message)
+            is InvalidPath -> BadFileDescriptor(message)
+            is NotDirectory -> BaseNotDirectory(message)
+            is RelativePath -> BadFileDescriptor(message)
         }
 
         internal fun Throwable.toUnlinkError(path: Path): UnlinkError = when (this) {
-            is NoSuchFileException -> UnlinkError.NoEntry("No file `$path`")
-            is DirectoryNotEmptyException -> UnlinkError.DirectoryNotEmpty("Directory not empty")
-            is IOException -> UnlinkError.IoError("I/O Error: $message")
+            is NoSuchFileException -> NoEntry("No file `$path`")
+            is DirectoryNotEmptyException -> DirectoryNotEmpty("Directory not empty")
+            is IOException -> IoError("I/O Error: $message")
             else -> throw IllegalStateException("Unexpected error", this)
         }
     }

@@ -9,17 +9,17 @@ package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio
 import arrow.core.Either
 import arrow.core.getOrElse
 import arrow.core.left
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.AccessDenied
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.ChmodError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.InvalidArgument
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.IoError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.PermissionDenied
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.EmptyPath
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.FileDescriptorNotOpen
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.InvalidPath
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.NotDirectory
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.RelativePath
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.resolvePath
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.toCommonError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.toPosixFilePermissions
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.FileMode
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.chmod.Chmod
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.chmod.ChmodError
 import java.io.IOException
 import java.nio.file.Path
 import kotlin.io.path.setPosixFilePermissions
@@ -29,7 +29,7 @@ internal class NioChmod(
 ) : NioOperationHandler<Chmod, ChmodError, Unit> {
     override fun invoke(input: Chmod): Either<ChmodError, Unit> {
         val path: Path = fsState.resolvePath(input.path, input.baseDirectory, false)
-            .mapLeft { it.toChmodError() }
+            .mapLeft(ResolvePathError::toCommonError)
             .getOrElse { return it.left() }
         return setPosixFilePermissions(path, input.mode)
     }
@@ -43,20 +43,12 @@ internal class NioChmod(
             Unit
         }.mapLeft {
             when (it) {
-                is UnsupportedOperationException -> ChmodError.PermissionDenied("Read-only channel")
-                is ClassCastException -> ChmodError.InvalidArgument("Invalid flags")
-                is IOException -> ChmodError.IoError("I/O exception: ${it.message}")
-                is SecurityException -> ChmodError.AccessDenied("Security Exception")
+                is UnsupportedOperationException -> PermissionDenied("Read-only channel")
+                is ClassCastException -> InvalidArgument("Invalid flags")
+                is IOException -> IoError("I/O exception: ${it.message}")
+                is SecurityException -> AccessDenied("Security Exception")
                 else -> throw IllegalStateException("Unexpected error", it)
             }
-        }
-
-        private fun ResolvePathError.toChmodError(): ChmodError = when (this) {
-            is EmptyPath -> ChmodError.InvalidArgument(message)
-            is FileDescriptorNotOpen -> ChmodError.BadFileDescriptor(message)
-            is InvalidPath -> ChmodError.BadFileDescriptor(message)
-            is NotDirectory -> ChmodError.NotDirectory(message)
-            is RelativePath -> ChmodError.InvalidArgument(message)
         }
     }
 }

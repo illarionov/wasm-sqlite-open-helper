@@ -8,9 +8,9 @@ package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.op
 
 import arrow.core.Either
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.BadFileDescriptor
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.FileSystemOperationError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.FileSystemOperation
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.FileSystemOperationError
 import java.nio.channels.FileChannel
 
 public class RunWithChannelFd<R>(

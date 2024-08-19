@@ -11,7 +11,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno
 public data class FileTooBig(
     override val message: String,
 ) : FileSystemOperationError,
-    WriteError
-{
+    TruncateError,
+    WriteError {
     override val errno: Errno = Errno.FBIG
 }

@@ -6,6 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.chown
 
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.ChownError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.FileSystemOperation
 

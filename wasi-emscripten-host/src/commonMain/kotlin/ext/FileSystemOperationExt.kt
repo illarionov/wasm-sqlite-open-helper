@@ -7,8 +7,8 @@
 package ru.pixnews.wasm.sqlite.open.helper.host.ext
 
 import arrow.core.Either
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.FileSystemOperationError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno
 
 internal fun Either<FileSystemOperationError, Unit>.negativeErrnoCode(): Int = this.fold(
     ifLeft = { -it.errno.code },

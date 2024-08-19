@@ -4,18 +4,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common
+package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.internal
 
 import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common.FileDescriptorTable.FileDescriptorError.BadFileDescriptor
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common.FileDescriptorTable.FileDescriptorError.Nfile
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno.BADF
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno.NFILE
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.BadFileDescriptor
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.Nfile
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.FileSystemOperationError
 
 internal class FileDescriptorTable<V : Any> {
     private val fds: MutableMap<Fd, V> = mutableMapOf()
@@ -49,14 +45,6 @@ internal class FileDescriptorTable<V : Any> {
             }
         }
         return Nfile("file descriptor limit exhausted").left()
-    }
-
-    internal sealed class FileDescriptorError(
-        override val errno: Errno,
-        override val message: String,
-    ) : FileSystemOperationError {
-        internal data class BadFileDescriptor(override val message: String) : FileDescriptorError(BADF, message)
-        internal data class Nfile(override val message: String) : FileDescriptorError(NFILE, message)
     }
 
     companion object {
