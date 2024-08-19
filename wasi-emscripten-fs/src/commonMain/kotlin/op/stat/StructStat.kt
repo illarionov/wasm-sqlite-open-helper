@@ -9,42 +9,41 @@ package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.stat
 /**
  * <sys/stat.h> struct stat
  *
- * @param st_dev ID of device containing file
- * @param st_ino Inode number
- * @param st_mode File type and mode
- * @param st_nlink Number of hard links
- * @param st_uid User ID of owner
- * @param st_gid Group ID of owner
- * @param st_rdev Device ID (if special file)
- * @param st_size Total size, in bytes
- * @param st_blksize Block size for filesystem I/O
- * @param st_blocks Number of 512 B blocks allocated
- * @param st_atim Time of last access
- * @param st_mtim Time of last modification
- * @param st_ctim Time of last status change
+ * @param deviceId ID of device containing file
+ * @param inode Inode number
+ * @param mode File type and mode
+ * @param links Number of hard links
+ * @param usedId User ID of owner
+ * @param groupId Group ID of owner
+ * @param specialFileDeviceId Device ID (if special file)
+ * @param size Total size, in bytes
+ * @param blockSize Block size for filesystem I/O
+ * @param blocks Number of 512 B blocks allocated
+ * @param accessTime Time of last access
+ * @param modificationTime Time of last modification
+ * @param changeStatusTime Time of last status change
  */
-@Suppress("PropertyName", "ConstructorParameterNaming")
 public data class StructStat(
-    val st_dev: ULong,
-    val st_ino: ULong,
-    val st_mode: FileModeType,
-    val st_nlink: ULong,
-    val st_uid: ULong,
-    val st_gid: ULong,
-    val st_rdev: ULong,
-    val st_size: ULong,
-    val st_blksize: ULong,
-    val st_blocks: ULong,
-    val st_atim: StructTimespec,
-    val st_mtim: StructTimespec,
-    val st_ctim: StructTimespec,
+    val deviceId: ULong,
+    val inode: ULong,
+    val mode: FileModeType,
+    val links: ULong,
+    val usedId: ULong,
+    val groupId: ULong,
+    val specialFileDeviceId: ULong,
+    val size: ULong,
+    val blockSize: ULong,
+    val blocks: ULong,
+    val accessTime: StructTimespec,
+    val modificationTime: StructTimespec,
+    val changeStatusTime: StructTimespec,
 ) {
     override fun toString(): String {
-        return "StructStat($st_dev/$st_rdev $st_ino $st_nlink; $st_mode $st_uid $st_gid; " +
-                "$st_size $st_blksize $st_blocks; " +
-                "${st_atim.tv_sec}:${st_atim.tv_nsec} " +
-                "${st_mtim.tv_sec}:${st_mtim.tv_nsec} " +
-                "${st_ctim.tv_sec}:${st_ctim.tv_nsec}" +
+        return "StructStat($deviceId/$specialFileDeviceId $inode $links; $mode $usedId $groupId; " +
+                "$size $blockSize $blocks; " +
+                "${accessTime.seconds}:${accessTime.nanoseconds} " +
+                "${modificationTime.seconds}:${modificationTime.nanoseconds} " +
+                "${changeStatusTime.seconds}:${changeStatusTime.nanoseconds}" +
                 ")"
     }
 }
