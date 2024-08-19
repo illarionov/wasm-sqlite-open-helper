@@ -10,6 +10,11 @@ import arrow.core.Either
 import arrow.core.getOrElse
 import arrow.core.left
 import arrow.core.raise.either
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.AccessDenied
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.BadFileDescriptor
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.IoError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.NoEntry
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.StatError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.EmptyPath
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.FileDescriptorNotOpen
@@ -20,7 +25,6 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.asLinkOptions
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.resolvePath
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.stat.FileModeType
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.stat.Stat
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.stat.StatError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.stat.StructStat
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.stat.StructTimespec
 import java.io.IOException
@@ -29,6 +33,7 @@ import java.nio.file.attribute.BasicFileAttributes
 import java.nio.file.attribute.FileTime
 import kotlin.io.path.exists
 import kotlin.io.path.readAttributes
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.NotDirectory as BaseNotDirectory
 
 internal class NioStat(
     private val fsState: JvmFileSystemState,
@@ -68,7 +73,7 @@ internal class NioStat(
             val linkOptions = asLinkOptions(followSymlinks)
 
             if (!path.exists(options = linkOptions)) {
-                raise(StatError.NoEntry("No such file file: `$path`"))
+                raise(NoEntry("No such file file: `$path`"))
             }
 
             val basicFileAttrs: BasicFileAttributes = Either.catch {
@@ -98,7 +103,7 @@ internal class NioStat(
 
             val cTimeFileTime = unixAttrs[ATTR_UNI_CTIME] ?: basicFileAttrs.creationTime()
             val ctim: StructTimespec = (cTimeFileTime as? FileTime)?.toTimeSpec()
-                ?: raise(StatError.IoError("Can not get file creation time"))
+                ?: raise(IoError("Can not get file creation time"))
             val atim: StructTimespec = basicFileAttrs.lastAccessTime().toTimeSpec()
 
             StructStat(
@@ -141,18 +146,18 @@ internal class NioStat(
         }
 
         private fun Throwable.readAttributesToStatError(): StatError = when (this) {
-            is UnsupportedOperationException -> StatError.AccessDenied("Can not get BasicFileAttributeView")
-            is IOException -> StatError.IoError("Can not read attributes: $message")
-            is SecurityException -> StatError.AccessDenied("Can not read attributes: $message")
+            is UnsupportedOperationException -> AccessDenied("Can not get BasicFileAttributeView")
+            is IOException -> IoError("Can not read attributes: $message")
+            is SecurityException -> AccessDenied("Can not read attributes: $message")
             else -> throw IllegalStateException("Unexpected error", this)
         }
 
         private fun ResolvePathError.toStatError(): StatError = when (this) {
-            is EmptyPath -> StatError.NoEntry(message)
-            is FileDescriptorNotOpen -> StatError.BadFileDescriptor(message)
-            is InvalidPath -> StatError.BadFileDescriptor(message)
-            is NotDirectory -> StatError.NotDirectory(message)
-            is RelativePath -> StatError.BadFileDescriptor(message)
+            is EmptyPath -> NoEntry(message)
+            is FileDescriptorNotOpen -> BadFileDescriptor(message)
+            is InvalidPath -> BadFileDescriptor(message)
+            is NotDirectory -> BaseNotDirectory(message)
+            is RelativePath -> BadFileDescriptor(message)
         }
     }
 }

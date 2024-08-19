@@ -9,16 +9,13 @@ package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio
 import arrow.core.Either
 import arrow.core.getOrElse
 import arrow.core.left
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.IoError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.SetTimestampError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.EmptyPath
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.FileDescriptorNotOpen
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.InvalidPath
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.NotDirectory
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.RelativePath
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.asLinkOptions
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.resolvePath
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.toCommonError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.settimestamp.SetTimestamp
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.settimestamp.SetTimestampError
 import java.io.IOException
 import java.nio.file.Path
 import java.nio.file.attribute.BasicFileAttributeView
@@ -31,7 +28,7 @@ internal class NioSetTimestamp(
 ) : NioOperationHandler<SetTimestamp, SetTimestampError, Unit> {
     override fun invoke(input: SetTimestamp): Either<SetTimestampError, Unit> {
         val path: Path = fsState.resolvePath(input.path, input.baseDirectory, false)
-            .mapLeft { it.toSetTimestampError() }
+            .mapLeft(ResolvePathError::toCommonError)
             .getOrElse { return it.left() }
         return setTimestamp(path, input.followSymlinks, input.atimeNanoseconds, input.mtimeNanoseconds)
     }
@@ -53,18 +50,10 @@ internal class NioSetTimestamp(
                     )
             }.mapLeft {
                 when (it) {
-                    is IOException -> SetTimestampError.IoError("I/O error: ${it.message}")
+                    is IOException -> IoError("I/O error: ${it.message}")
                     else -> throw IllegalStateException("Unexpected error", it)
                 }
             }
-        }
-
-        fun ResolvePathError.toSetTimestampError(): SetTimestampError = when (this) {
-            is EmptyPath -> SetTimestampError.InvalidArgument(message)
-            is FileDescriptorNotOpen -> SetTimestampError.BadFileDescriptor(message)
-            is InvalidPath -> SetTimestampError.InvalidArgument(message)
-            is NotDirectory -> SetTimestampError.NotDirectory(message)
-            is RelativePath -> SetTimestampError.InvalidArgument(message)
         }
     }
 }

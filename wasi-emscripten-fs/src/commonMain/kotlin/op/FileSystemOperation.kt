@@ -6,4 +6,6 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op
 
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.FileSystemOperationError
+
 public interface FileSystemOperation<I : Any, E : FileSystemOperationError, R : Any>

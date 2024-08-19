@@ -7,8 +7,8 @@
 package ru.pixnews.wasm.sqlite.open.helper.host.filesystem
 
 import arrow.core.Either
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.FileSystemOperationError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.FileSystemOperation
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.FileSystemOperationError
 
 public interface FileSystem : AutoCloseable {
     public fun <I : Any, E : FileSystemOperationError, R : Any> execute(

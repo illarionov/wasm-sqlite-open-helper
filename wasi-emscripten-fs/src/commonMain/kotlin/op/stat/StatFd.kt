@@ -6,6 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.stat
 
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.StatError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.FileSystemOperation
 

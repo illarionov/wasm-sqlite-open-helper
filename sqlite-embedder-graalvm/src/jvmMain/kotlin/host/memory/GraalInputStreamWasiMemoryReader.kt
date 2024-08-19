@@ -12,12 +12,12 @@ import arrow.core.left
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.DefaultWasiMemoryReader
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WasiMemoryReader
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.BadFileDescriptor
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.ReadError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.readCatching
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.JvmNioFileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.op.RunWithChannelFd
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.FileSystemOperationError
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readwrite.ReadError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readwrite.ReadWriteStrategy
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readwrite.ReadWriteStrategy.CHANGE_POSITION
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.IovecArray
@@ -50,11 +50,11 @@ internal class GraalInputStreamWasiMemoryReader(
     }
 
     private fun readChangePosition(
-        channelResult: Either<FileSystemOperationError.BadFileDescriptor, FileChannel>,
+        channelResult: Either<BadFileDescriptor, FileChannel>,
         iovecs: IovecArray,
     ): Either<ReadError, ULong> {
         val channel = channelResult.mapLeft {
-            ReadError.BadFileDescriptor(it.message)
+            BadFileDescriptor(it.message)
         }.getOrElse {
             return it.left()
         }

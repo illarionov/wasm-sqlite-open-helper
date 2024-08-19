@@ -6,6 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.seek
 
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.SeekError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Whence
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.FileSystemOperation

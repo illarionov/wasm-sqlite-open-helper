@@ -11,14 +11,15 @@ import arrow.core.flatMap
 import arrow.core.getOrElse
 import arrow.core.left
 import arrow.core.right
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.AdvisoryLockError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.Again
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.BadFileDescriptor
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.InvalidArgument
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.NoLock
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.FileLockKey
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.NioFileHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.resolveWhencePosition
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.lock.AddAdvisoryLockFd
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.lock.AdvisoryLockError
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.lock.AdvisoryLockError.BadFileDescriptor
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.lock.AdvisoryLockError.InvalidArgument
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.lock.AdvisoryLockError.NoLock
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.lock.Advisorylock
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.lock.AdvisorylockLockType
 import java.io.IOException
@@ -66,7 +67,7 @@ internal class NioAddAdvisoryLockFd(
             }.mapLeft { error ->
                 error.toAdvisoryLockError()
             }.flatMap { fileLock ->
-                fileLock?.right() ?: AdvisoryLockError.Again("Lock held").left()
+                fileLock?.right() ?: Again("Lock held").left()
             }
 
             return lockResult.onRight { lock ->

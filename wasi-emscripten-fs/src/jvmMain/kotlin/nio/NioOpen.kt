@@ -9,24 +9,19 @@ package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio
 import arrow.core.Either
 import arrow.core.raise.either
 import com.sun.nio.file.ExtendedOpenOption
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.Exists
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.InvalidArgument
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.IoError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.Nfile
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.OpenError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.PermissionDenied
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.EmptyPath
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.FileDescriptorNotOpen
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.InvalidPath
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.NotDirectory
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.RelativePath
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.asFileAttribute
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.resolvePath
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.toCommonError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.toPosixFilePermissions
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.open.Open
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.open.OpenError
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.open.OpenError.BadFileDescriptor
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.open.OpenError.Exists
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.open.OpenError.InvalidArgument
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.open.OpenError.IoError
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.open.OpenError.NoEntry
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.open.OpenError.PermissionDenied
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.open.OpenFileFlags
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.open.OpenFileFlags.OpenFileFlag
 import java.io.IOException
@@ -43,7 +38,7 @@ internal class NioOpen(
 ) : NioOperationHandler<Open, OpenError, Fd> {
     override fun invoke(input: Open): Either<OpenError, Fd> = either {
         val path = fsState.resolvePath(input.path, input.baseDirectory, false)
-            .mapLeft { it.toOpenError() }
+            .mapLeft(ResolvePathError::toCommonError)
             .bind()
 
         val openOptionsResult = getOpenOptions(input.flags)
@@ -62,7 +57,7 @@ internal class NioOpen(
                 .mapLeft { error -> error.toOpenError(path) }
                 .bind()
             val fdChannel = fsState.fileDescriptors.add(path, nioChannel)
-                .mapLeft { noFileDescriptorError -> OpenError.NFile(noFileDescriptorError.message) }
+                .mapLeft { noFileDescriptorError -> Nfile(noFileDescriptorError.message) }
                 .bind()
             fdChannel.fd
         }
@@ -79,13 +74,6 @@ private fun Throwable.toOpenError(path: Path): OpenError = when (this) {
     is IOException -> IoError("Can not open `$path`: I/O error ($message)")
     is SecurityException -> PermissionDenied("Can not open `$path`: Permission denied ($message)")
     else -> throw IllegalStateException("Unexpected error", this)
-}
-
-private fun ResolvePathError.toOpenError(): OpenError = when (this) {
-    is EmptyPath -> NoEntry(this.message)
-    is FileDescriptorNotOpen -> BadFileDescriptor(this.message)
-    is NotDirectory -> OpenError.NotDirectory(this.message)
-    is InvalidPath, is RelativePath -> InvalidArgument(this.message)
 }
 
 @Suppress("CyclomaticComplexMethod", "LOCAL_VARIABLE_EARLY_DECLARATION", "LongMethod")

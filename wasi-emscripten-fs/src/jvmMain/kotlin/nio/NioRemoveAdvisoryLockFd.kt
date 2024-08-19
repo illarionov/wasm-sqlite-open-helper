@@ -10,26 +10,26 @@ import arrow.core.Either
 import arrow.core.getOrElse
 import arrow.core.left
 import arrow.core.right
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common.ChannelPositionError
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common.ChannelPositionError.ClosedChannel
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common.ChannelPositionError.InvalidArgument
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common.ChannelPositionError.IoError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.AdvisoryLockError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.BadFileDescriptor
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.IoError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.NioFileHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.resolveWhencePosition
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.lock.AdvisoryLockError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.internal.ChannelPositionError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.lock.Advisorylock
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.lock.RemoveAdvisoryLockFd
 import java.io.IOException
 import java.nio.channels.ClosedChannelException
 import java.nio.channels.FileLock
 import kotlin.concurrent.withLock
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.InvalidArgument as BaseInvalidArgument
 
 internal class NioRemoveAdvisoryLockFd(
     private val fsState: JvmFileSystemState,
 ) : NioOperationHandler<RemoveAdvisoryLockFd, AdvisoryLockError, Unit> {
     override fun invoke(input: RemoveAdvisoryLockFd): Either<AdvisoryLockError, Unit> {
         val channel = fsState.fileDescriptors.get(input.fd)
-            ?: return AdvisoryLockError.BadFileDescriptor("File descriptor ${input.fd} is not opened").left()
+            ?: return BadFileDescriptor("File descriptor ${input.fd} is not opened").left()
 
         return removeAdvisoryLock(channel, input.flock)
     }
@@ -63,8 +63,8 @@ internal fun removeAdvisoryLock(
             fileLock.release()
         }.mapLeft {
             when (it) {
-                is ClosedChannelException -> AdvisoryLockError.BadFileDescriptor("Channel `$fileLock` already closed")
-                is IOException -> AdvisoryLockError.IoError("I/O error (${it.message})")
+                is ClosedChannelException -> BadFileDescriptor("Channel `$fileLock` already closed")
+                is IOException -> IoError("I/O error (${it.message})")
                 else -> throw IllegalStateException("Unexpected error", it)
             }
         }
@@ -74,7 +74,7 @@ internal fun removeAdvisoryLock(
 }
 
 internal fun ChannelPositionError.toAdvisoryLockError(): AdvisoryLockError = when (this) {
-    is ClosedChannel -> AdvisoryLockError.BadFileDescriptor(message)
-    is InvalidArgument -> AdvisoryLockError.InvalidArgument(message)
-    is IoError -> AdvisoryLockError.IoError(message)
+    is ChannelPositionError.ClosedChannel -> BadFileDescriptor(message)
+    is ChannelPositionError.InvalidArgument -> BaseInvalidArgument(message)
+    is ChannelPositionError.IoError -> IoError(message)
 }

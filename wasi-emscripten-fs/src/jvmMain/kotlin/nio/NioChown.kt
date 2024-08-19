@@ -9,15 +9,14 @@ package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio
 import arrow.core.Either
 import arrow.core.getOrElse
 import arrow.core.left
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.ChownError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.InvalidArgument
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.IoError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.NotSupported
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.EmptyPath
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.FileDescriptorNotOpen
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.InvalidPath
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.NotDirectory
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.RelativePath
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.resolvePath
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.toCommonError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.chown.Chown
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.chown.ChownError
 import java.io.IOException
 import java.nio.file.Path
 import java.nio.file.attribute.PosixFileAttributeView
@@ -29,7 +28,7 @@ internal class NioChown(
 ) : NioOperationHandler<Chown, ChownError, Unit> {
     override fun invoke(input: Chown): Either<ChownError, Unit> {
         val path: Path = fsState.resolvePath(input.path, input.baseDirectory, false)
-            .mapLeft { it.toChownError() }
+            .mapLeft(ResolvePathError::toCommonError)
             .getOrElse { return it.left() }
         return setPosixUserGroup(fsState.javaFs, path, input.owner, input.group)
     }
@@ -50,19 +49,11 @@ internal class NioChown(
             }
         }.mapLeft {
             when (it) {
-                is UserPrincipalNotFoundException -> ChownError.InvalidArgument("User not exists: ${it.message}")
-                is UnsupportedOperationException -> ChownError.NotSupported("Operation not supported: ${it.message}")
-                is IOException -> ChownError.IoError("I/O error: ${it.message}")
+                is UserPrincipalNotFoundException -> InvalidArgument("User not exists: ${it.message}")
+                is UnsupportedOperationException -> NotSupported("Operation not supported: ${it.message}")
+                is IOException -> IoError("I/O error: ${it.message}")
                 else -> throw IllegalStateException("Unexpected error", it)
             }
-        }
-
-        private fun ResolvePathError.toChownError(): ChownError = when (this) {
-            is EmptyPath -> ChownError.InvalidArgument(message)
-            is FileDescriptorNotOpen -> ChownError.BadFileDescriptor(message)
-            is InvalidPath -> ChownError.BadFileDescriptor(message)
-            is NotDirectory -> ChownError.NotDirectory(message)
-            is RelativePath -> ChownError.InvalidArgument(message)
         }
     }
 }

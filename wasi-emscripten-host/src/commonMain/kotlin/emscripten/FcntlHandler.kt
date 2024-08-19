@@ -17,11 +17,11 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.sourceWithMaxSize
 import ru.pixnews.wasm.sqlite.open.helper.host.ext.negativeErrnoCode
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.InvalidArgument
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno.INVAL
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Whence
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.lock.AddAdvisoryLockFd
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.lock.AdvisoryLockError.InvalidArgument
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.lock.Advisorylock
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.lock.AdvisorylockLockType
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.lock.RemoveAdvisoryLockFd

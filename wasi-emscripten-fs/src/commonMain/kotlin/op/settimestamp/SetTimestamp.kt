@@ -6,6 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.settimestamp
 
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.SetTimestampError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.BaseDirectory
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.BaseDirectory.CurrentWorkingDirectory
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.FileSystemOperation

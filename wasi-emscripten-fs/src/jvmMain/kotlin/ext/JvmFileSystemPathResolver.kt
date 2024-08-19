@@ -10,6 +10,10 @@ import arrow.core.Either
 import arrow.core.flatMap
 import arrow.core.left
 import arrow.core.right
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.BadFileDescriptor
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.FileSystemOperationError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.InvalidArgument
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.ResolveRelativePathErrors
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.EmptyPath
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.FileDescriptorNotOpen
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.InvalidPath
@@ -25,11 +29,11 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno.INVAL
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno.NOENT
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno.NOTDIR
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.JvmFileSystemState
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.FileSystemOperationError
 import java.nio.file.InvalidPathException
 import kotlin.io.path.isDirectory
 import kotlin.io.path.pathString
 import java.nio.file.Path as NioPath
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.NotDirectory as BaseNotDirectory
 
 @Suppress("SwallowedException", "ReturnCount")
 internal fun JvmFileSystemState.resolvePath(
@@ -71,29 +75,37 @@ internal fun JvmFileSystemState.resolvePath(
     return baseDirectoryPath.map { it.resolve(nioPath) }
 }
 
-internal sealed class ResolvePathError : FileSystemOperationError {
+internal sealed interface ResolvePathError : FileSystemOperationError {
     class RelativePath(
         override val message: String,
         override val errno: Errno = INVAL,
-    ) : ResolvePathError()
+    ) : ResolvePathError
 
     class InvalidPath(
         override val message: String,
         override val errno: Errno = INVAL,
-    ) : ResolvePathError()
+    ) : ResolvePathError
 
     class NotDirectory(
         override val message: String,
         override val errno: Errno = NOTDIR,
-    ) : ResolvePathError()
+    ) : ResolvePathError
 
     class FileDescriptorNotOpen(
         override val message: String,
         override val errno: Errno = BADF,
-    ) : ResolvePathError()
+    ) : ResolvePathError
 
     class EmptyPath(
         override val message: String,
         override val errno: Errno = NOENT,
-    ) : ResolvePathError()
+    ) : ResolvePathError
+}
+
+internal fun ResolvePathError.toCommonError(): ResolveRelativePathErrors = when (this) {
+    is EmptyPath -> InvalidArgument(message)
+    is FileDescriptorNotOpen -> BadFileDescriptor(message)
+    is InvalidPath -> BadFileDescriptor(message)
+    is NotDirectory -> BaseNotDirectory(message)
+    is RelativePath -> InvalidArgument(message)
 }

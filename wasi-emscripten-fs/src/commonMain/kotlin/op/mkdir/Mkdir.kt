@@ -6,6 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.mkdir
 
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.MkdirError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.BaseDirectory
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.BaseDirectory.CurrentWorkingDirectory
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.FileMode

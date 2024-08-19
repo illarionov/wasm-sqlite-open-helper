@@ -8,8 +8,11 @@ package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext
 
 import arrow.core.Either
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readwrite.ReadError
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readwrite.WriteError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.BadFileDescriptor
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.Interrupted
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.IoError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.ReadError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.WriteError
 import java.io.IOException
 import java.nio.channels.AsynchronousCloseException
 import java.nio.channels.ClosedByInterruptException
@@ -24,11 +27,11 @@ public inline fun <R : Any> readCatching(
     block()
 }.mapLeft {
     when (it) {
-        is ClosedByInterruptException -> ReadError.IoError("Interrupted")
-        is AsynchronousCloseException -> ReadError.IoError("Channel closed on other thread")
-        is ClosedChannelException -> ReadError.Interrupted("Channel closed")
-        is NonReadableChannelException -> ReadError.BadFileDescriptor("Non readable channel")
-        is IOException -> ReadError.IoError("I/O error: ${it.message}")
+        is ClosedByInterruptException -> IoError("Interrupted")
+        is AsynchronousCloseException -> IoError("Channel closed on other thread")
+        is ClosedChannelException -> Interrupted("Channel closed")
+        is NonReadableChannelException -> BadFileDescriptor("Non readable channel")
+        is IOException -> IoError("I/O error: ${it.message}")
         else -> throw IllegalStateException("Unexpected error", it)
     }
 }
@@ -40,11 +43,11 @@ public inline fun <R : Any> writeCatching(
     block()
 }.mapLeft {
     when (it) {
-        is ClosedByInterruptException -> WriteError.IoError("Interrupted")
-        is AsynchronousCloseException -> WriteError.IoError("Channel closed on other thread")
-        is ClosedChannelException -> WriteError.Interrupted("Channel closed")
-        is NonWritableChannelException -> WriteError.BadFileDescriptor("Non writeable channel")
-        is IOException -> WriteError.IoError("I/O error: ${it.message}")
+        is ClosedByInterruptException -> IoError("Interrupted")
+        is AsynchronousCloseException -> IoError("Channel closed on other thread")
+        is ClosedChannelException -> Interrupted("Channel closed")
+        is NonWritableChannelException -> BadFileDescriptor("Non writeable channel")
+        is IOException -> IoError("I/O error: ${it.message}")
         else -> throw IllegalStateException("Unexpected error", it)
     }
 }

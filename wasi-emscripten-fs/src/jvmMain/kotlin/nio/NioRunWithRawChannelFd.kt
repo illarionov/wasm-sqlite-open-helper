@@ -9,9 +9,9 @@ package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio
 import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.BadFileDescriptor
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.FileSystemOperationError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.op.RunWithChannelFd
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.FileSystemOperationError
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.FileSystemOperationError.BadFileDescriptor
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.Messages.fileDescriptorNotOpenedMessage
 import kotlin.concurrent.withLock
 

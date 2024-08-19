@@ -8,9 +8,9 @@ package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd
 
 import arrow.core.Either
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common.FileDescriptorTable
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common.FileDescriptorTable.FileDescriptorError.BadFileDescriptor
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common.FileDescriptorTable.FileDescriptorError.Nfile
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.BadFileDescriptor
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.Nfile
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.internal.FileDescriptorTable
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.JvmFileSystemState
 import java.nio.channels.FileChannel
