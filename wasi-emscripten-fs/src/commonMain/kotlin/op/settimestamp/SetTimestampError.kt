@@ -7,7 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.settimestamp
 
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.FileSystemOperationError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.FileSystemOperationError
 
 public sealed class SetTimestampError(
     override val errno: Errno,

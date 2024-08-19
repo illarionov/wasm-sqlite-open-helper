@@ -9,6 +9,7 @@ package ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory
 import arrow.core.Either
 import arrow.core.getOrElse
 import arrow.core.left
+import error.BadFileDescriptor
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.DefaultWasiMemoryWriter
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WasiMemoryWriter
@@ -16,10 +17,9 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.writeCatching
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.op.RunWithChannelFd
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.FileSystemOperationError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readwrite.ReadWriteStrategy
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readwrite.ReadWriteStrategy.CHANGE_POSITION
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readwrite.WriteError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.WriteError
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.CiovecArray
 import java.nio.channels.Channels
 import java.nio.channels.FileChannel
@@ -47,7 +47,7 @@ internal class GraalOutputStreamWasiMemoryWriter(
     }
 
     private fun writeChangePosition(
-        channelResult: Either<FileSystemOperationError.BadFileDescriptor, FileChannel>,
+        channelResult: Either<BadFileDescriptor, FileChannel>,
         cioVecs: CiovecArray,
     ): Either<WriteError, ULong> {
         logger.v { "writeChangePosition($channelResult, ${cioVecs.ciovecList.map { it.bufLen.value }})" }

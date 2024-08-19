@@ -14,7 +14,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readwrite.FileSystemByteBuffer
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readwrite.ReadWriteStrategy
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readwrite.WriteError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.WriteError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readwrite.WriteFd
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.CiovecArray
 

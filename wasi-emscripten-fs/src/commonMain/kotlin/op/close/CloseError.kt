@@ -7,7 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.close
 
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.FileSystemOperationError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.FileSystemOperationError
 
 public sealed class CloseError(
     override val errno: Errno,

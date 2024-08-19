@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op
+package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error
 
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno
 
@@ -12,13 +12,4 @@ public interface FileSystemOperationError {
     public val message: String
     public val errno: Errno
 
-    public data object NotImplemented : FileSystemOperationError {
-        override val message: String = "Operation not implemented"
-        override val errno: Errno = Errno.NOTSUP
-    }
-
-    public data class BadFileDescriptor(
-        override val message: String,
-        override val errno: Errno = Errno.BADF,
-    ) : FileSystemOperationError
 }

@@ -13,23 +13,27 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common.ChannelPosition
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common.ChannelPositionError.ClosedChannel
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common.ChannelPositionError.InvalidArgument
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.common.ChannelPositionError.IoError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.BadFileDescriptor
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.FileSystemOperationError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.asByteBuffer
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.readCatching
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.getPosition
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.Messages.fileDescriptorNotOpenedMessage
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readwrite.FileSystemByteBuffer
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readwrite.ReadError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.ReadError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readwrite.ReadFd
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readwrite.ReadWriteStrategy.CHANGE_POSITION
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readwrite.ReadWriteStrategy.DO_NOT_CHANGE_POSITION
 import kotlin.concurrent.withLock
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.InvalidArgument as FileSystemOperationInvalidArgument
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.IoError as FileSystemOperationIoError
 
 internal class NioReadFd(
     private val fsState: JvmFileSystemState,
 ) : NioOperationHandler<ReadFd, ReadError, ULong> {
     override fun invoke(input: ReadFd): Either<ReadError, ULong> = fsState.fsLock.withLock {
         val channel = fsState.fileDescriptors.get(input.fd)
-            ?: return ReadError.BadFileDescriptor(fileDescriptorNotOpenedMessage(input.fd)).left()
+            ?: return BadFileDescriptor(fileDescriptorNotOpenedMessage(input.fd)).left()
         return when (input.strategy) {
             DO_NOT_CHANGE_POSITION -> readDoNotChangePosition(channel, input.iovecs)
             CHANGE_POSITION -> readChangePosition(channel, input.iovecs)
@@ -76,9 +80,9 @@ internal class NioReadFd(
 
     private companion object {
         private fun ChannelPositionError.toReadError(): ReadError = when (this) {
-            is ClosedChannel -> ReadError.IoError(message)
-            is InvalidArgument -> ReadError.InvalidArgument(message)
-            is IoError -> ReadError.IoError(message)
+            is ClosedChannel -> FileSystemOperationIoError(message)
+            is InvalidArgument -> FileSystemOperationInvalidArgument(message)
+            is IoError -> FileSystemOperationIoError(message)
         }
     }
 }

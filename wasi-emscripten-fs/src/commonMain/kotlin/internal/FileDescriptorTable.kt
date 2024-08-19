@@ -15,7 +15,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno.BADF
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno.NFILE
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.FileSystemOperationError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.FileSystemOperationError
 
 internal class FileDescriptorTable<V : Any> {
     private val fds: MutableMap<Fd, V> = mutableMapOf()

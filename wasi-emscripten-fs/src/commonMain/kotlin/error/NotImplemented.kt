@@ -4,8 +4,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op
+package error
 
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.FileSystemOperationError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno.NOTSUP
 
-public interface FileSystemOperation<I : Any, E : FileSystemOperationError, R : Any>
+public data object NotImplemented : FileSystemOperationError {
+    override val message: String = "Operation not implemented"
+    override val errno: Errno = NOTSUP
+}

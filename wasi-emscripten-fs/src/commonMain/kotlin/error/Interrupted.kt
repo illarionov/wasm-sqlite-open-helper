@@ -4,13 +4,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.host.ext
+package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error
 
-import arrow.core.Either
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.FileSystemOperationError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno.INTR
 
-internal fun Either<FileSystemOperationError, Unit>.negativeErrnoCode(): Int = this.fold(
-    ifLeft = { -it.errno.code },
-    ifRight = { Errno.SUCCESS.code },
-)
+public data class Interrupted(
+    override val message: String,
+) : FileSystemOperationError,
+    ReadError,
+    WriteError
+{
+    override val errno: Errno = INTR
+}

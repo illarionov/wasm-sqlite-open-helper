@@ -4,8 +4,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op
+package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error
 
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.FileSystemOperationError
-
-public interface FileSystemOperation<I : Any, E : FileSystemOperationError, R : Any>
+public sealed interface WriteError : FileSystemOperationError

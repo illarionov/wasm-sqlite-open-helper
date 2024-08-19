@@ -7,7 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.cwd
 
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.FileSystemOperationError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.FileSystemOperationError
 
 public sealed class GetCurrentWorkingDirectoryError(
     override val errno: Errno,

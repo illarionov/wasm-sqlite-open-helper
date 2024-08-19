@@ -25,7 +25,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno.INVAL
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno.NOENT
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno.NOTDIR
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.JvmFileSystemState
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.FileSystemOperationError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.FileSystemOperationError
 import java.nio.file.InvalidPathException
 import kotlin.io.path.isDirectory
 import kotlin.io.path.pathString
@@ -71,29 +71,29 @@ internal fun JvmFileSystemState.resolvePath(
     return baseDirectoryPath.map { it.resolve(nioPath) }
 }
 
-internal sealed class ResolvePathError : FileSystemOperationError {
+internal sealed interface ResolvePathError : FileSystemOperationError {
     class RelativePath(
         override val message: String,
         override val errno: Errno = INVAL,
-    ) : ResolvePathError()
+    ) : ResolvePathError
 
     class InvalidPath(
         override val message: String,
         override val errno: Errno = INVAL,
-    ) : ResolvePathError()
+    ) : ResolvePathError
 
     class NotDirectory(
         override val message: String,
         override val errno: Errno = NOTDIR,
-    ) : ResolvePathError()
+    ) : ResolvePathError
 
     class FileDescriptorNotOpen(
         override val message: String,
         override val errno: Errno = BADF,
-    ) : ResolvePathError()
+    ) : ResolvePathError
 
     class EmptyPath(
         override val message: String,
         override val errno: Errno = NOENT,
-    ) : ResolvePathError()
+    ) : ResolvePathError
 }
