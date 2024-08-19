@@ -15,14 +15,8 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.BadFileDescripto
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.IoError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.NoEntry
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.StatError
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.EmptyPath
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.FileDescriptorNotOpen
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.InvalidPath
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.NotDirectory
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.RelativePath
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.asLinkOptions
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.resolvePath
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.cwd.PathResolver.ResolvePathError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.stat.FileModeType
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.stat.Stat
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.stat.StructStat
@@ -39,7 +33,7 @@ internal class NioStat(
     private val fsState: JvmFileSystemState,
 ) : NioOperationHandler<Stat, StatError, StructStat> {
     override fun invoke(input: Stat): Either<StatError, StructStat> {
-        val path: Path = fsState.resolvePath(input.path, input.baseDirectory, false)
+        val path: Path = fsState.pathResolver.resolve(input.path, input.baseDirectory, false)
             .mapLeft { it.toStatError() }
             .getOrElse { return it.left() }
         return statCatching(path, input.followSymlinks)
@@ -153,11 +147,11 @@ internal class NioStat(
         }
 
         private fun ResolvePathError.toStatError(): StatError = when (this) {
-            is EmptyPath -> NoEntry(message)
-            is FileDescriptorNotOpen -> BadFileDescriptor(message)
-            is InvalidPath -> BadFileDescriptor(message)
-            is NotDirectory -> BaseNotDirectory(message)
-            is RelativePath -> BadFileDescriptor(message)
+            is ResolvePathError.EmptyPath -> NoEntry(message)
+            is ResolvePathError.FileDescriptorNotOpen -> BadFileDescriptor(message)
+            is ResolvePathError.InvalidPath -> BadFileDescriptor(message)
+            is ResolvePathError.NotDirectory -> BaseNotDirectory(message)
+            is ResolvePathError.RelativePath -> BadFileDescriptor(message)
         }
     }
 }

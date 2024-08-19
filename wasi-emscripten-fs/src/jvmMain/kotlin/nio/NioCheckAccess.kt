@@ -12,14 +12,9 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.AccessDenied
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.BadFileDescriptor
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.CheckAccessError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.NoEntry
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.EmptyPath
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.FileDescriptorNotOpen
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.InvalidPath
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.NotDirectory
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.RelativePath
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.asLinkOptions
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.resolvePath
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.cwd.PathResolver
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.cwd.PathResolver.ResolvePathError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.checkaccess.CheckAccess
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.checkaccess.FileAccessibilityCheck.EXECUTABLE
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.checkaccess.FileAccessibilityCheck.READABLE
@@ -31,10 +26,10 @@ import kotlin.io.path.isWritable
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.NotDirectory as BaseNotDirectory
 
 internal class NioCheckAccess(
-    private val fsState: JvmFileSystemState,
+    private val pathResolver: PathResolver,
 ) : NioOperationHandler<CheckAccess, CheckAccessError, Unit> {
     override fun invoke(input: CheckAccess): Either<CheckAccessError, Unit> = either {
-        val path = fsState.resolvePath(input.path, input.baseDirectory, input.allowEmptyPath)
+        val path = pathResolver.resolve(input.path, input.baseDirectory, input.allowEmptyPath)
             .mapLeft { it.toCheckAccessError() }
             .bind()
         if (!path.exists(options = asLinkOptions(input.followSymlinks))) {
@@ -52,10 +47,10 @@ internal class NioCheckAccess(
     }
 
     private fun ResolvePathError.toCheckAccessError(): CheckAccessError = when (this) {
-        is EmptyPath -> NoEntry(message)
-        is FileDescriptorNotOpen -> BadFileDescriptor(message)
-        is NotDirectory -> BaseNotDirectory(message)
-        is InvalidPath -> NoEntry(message)
-        is RelativePath -> NoEntry(message)
+        is ResolvePathError.EmptyPath -> NoEntry(message)
+        is ResolvePathError.FileDescriptorNotOpen -> BadFileDescriptor(message)
+        is ResolvePathError.NotDirectory -> BaseNotDirectory(message)
+        is ResolvePathError.InvalidPath -> NoEntry(message)
+        is ResolvePathError.RelativePath -> NoEntry(message)
     }
 }

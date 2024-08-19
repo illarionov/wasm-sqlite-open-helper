@@ -15,13 +15,8 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.IoError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.NoEntry
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.PathIsDirectory
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.UnlinkError
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.EmptyPath
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.FileDescriptorNotOpen
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.InvalidPath
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.NotDirectory
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError.RelativePath
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.resolvePath
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.cwd.PathResolver
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.cwd.PathResolver.ResolvePathError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.unlink.UnlinkFile
 import java.io.IOException
 import java.nio.file.DirectoryNotEmptyException
@@ -32,11 +27,11 @@ import kotlin.io.path.isDirectory
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.NotDirectory as BaseNotDirectory
 
 internal class NioUnlinkFile(
-    private val fsState: JvmFileSystemState,
+    private val pathResolver: PathResolver,
 ) : NioOperationHandler<UnlinkFile, UnlinkError, Unit> {
     @Suppress("ReturnCount")
     override fun invoke(input: UnlinkFile): Either<UnlinkError, Unit> {
-        val path: Path = fsState.resolvePath(input.path, input.baseDirectory, false)
+        val path: Path = pathResolver.resolve(input.path, input.baseDirectory, false)
             .mapLeft { it.toUnlinkError() }
             .getOrElse { return it.left() }
 
@@ -53,11 +48,11 @@ internal class NioUnlinkFile(
 
     companion object {
         internal fun ResolvePathError.toUnlinkError(): UnlinkError = when (this) {
-            is EmptyPath -> NoEntry(message)
-            is FileDescriptorNotOpen -> BadFileDescriptor(message)
-            is InvalidPath -> BadFileDescriptor(message)
-            is NotDirectory -> BaseNotDirectory(message)
-            is RelativePath -> BadFileDescriptor(message)
+            is ResolvePathError.EmptyPath -> NoEntry(message)
+            is ResolvePathError.FileDescriptorNotOpen -> BadFileDescriptor(message)
+            is ResolvePathError.InvalidPath -> BadFileDescriptor(message)
+            is ResolvePathError.NotDirectory -> BaseNotDirectory(message)
+            is ResolvePathError.RelativePath -> BadFileDescriptor(message)
         }
 
         internal fun Throwable.toUnlinkError(path: Path): UnlinkError = when (this) {

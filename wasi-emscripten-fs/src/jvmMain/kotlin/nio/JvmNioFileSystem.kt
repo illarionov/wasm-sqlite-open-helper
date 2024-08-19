@@ -12,6 +12,8 @@ import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.FileSystemOperationError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.NotImplemented
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.cwd.CurrentDirectoryProvider
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.cwd.JvmCurrentDirectoryProvider
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.op.RunWithChannelFd
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.FileSystemOperation
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.checkaccess.CheckAccess
@@ -43,18 +45,19 @@ public class JvmNioFileSystem(
     javaFs: java.nio.file.FileSystem = FileSystems.getDefault(),
     rootLogger: Logger = Logger,
 ) : FileSystem {
+    private val currentDirectoryProvider: CurrentDirectoryProvider = JvmCurrentDirectoryProvider(javaFs)
     private val fsState = JvmFileSystemState(rootLogger, javaFs)
     private val operations: Map<FileSystemOperation<*, *, *>, NioOperationHandler<*, *, *>> = mapOf(
         Open to NioOpen(fsState),
         CloseFd to NioCloseFd(fsState),
         AddAdvisoryLockFd to NioAddAdvisoryLockFd(fsState),
         RemoveAdvisoryLockFd to NioRemoveAdvisoryLockFd(fsState),
-        CheckAccess to NioCheckAccess(fsState),
+        CheckAccess to NioCheckAccess(fsState.pathResolver),
         Chmod to NioChmod(fsState),
         ChmodFd to NioChmodFd(fsState),
         Chown to NioChown(fsState),
         ChownFd to NioChownFd(fsState),
-        GetCurrentWorkingDirectory to NioGetCurrentWorkingDirectory(fsState),
+        GetCurrentWorkingDirectory to NioGetCurrentWorkingDirectory(currentDirectoryProvider),
         Mkdir to NioMkdir(fsState),
         ReadFd to NioReadFd(fsState),
         ReadLink to NioReadLink(fsState),
@@ -65,8 +68,8 @@ public class JvmNioFileSystem(
         StatFd to NioStatFd(fsState),
         SyncFd to NioSync(fsState),
         TruncateFd to NioTruncateFd(fsState),
-        UnlinkFile to NioUnlinkFile(fsState),
-        UnlinkDirectory to NioUnlinkDirectory(fsState),
+        UnlinkFile to NioUnlinkFile(fsState.pathResolver),
+        UnlinkDirectory to NioUnlinkDirectory(fsState.pathResolver),
         WriteFd to NioWriteFd(fsState),
         RunWithChannelFd to NioRunWithRawChannelFd<Any>(fsState),
     )

@@ -13,11 +13,10 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.Exists
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.IoError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.MkdirError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.PermissionDenied
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.ResolvePathError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.asFileAttribute
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.resolvePath
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.toCommonError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.toPosixFilePermissions
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.cwd.PathResolver.ResolvePathError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.cwd.toCommonError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.mkdir.Mkdir
 import java.io.IOException
 import java.nio.file.FileAlreadyExistsException
@@ -28,7 +27,7 @@ internal class NioMkdir(
     private val fsState: JvmFileSystemState,
 ) : NioOperationHandler<Mkdir, MkdirError, Unit> {
     override fun invoke(input: Mkdir): Either<MkdirError, Unit> {
-        val path: Path = fsState.resolvePath(input.path, input.baseDirectory, false)
+        val path: Path = fsState.pathResolver.resolve(input.path, input.baseDirectory, false)
             .mapLeft(ResolvePathError::toCommonError)
             .getOrElse { return it.left() }
         return Either.catch {
