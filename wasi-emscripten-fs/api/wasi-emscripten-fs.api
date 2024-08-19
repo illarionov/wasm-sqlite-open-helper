@@ -1180,19 +1180,19 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/stat/St
 	public final fun copy-9c4U17A (JJIJJJJJJJLru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/stat/StructTimespec;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/stat/StructTimespec;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/stat/StructTimespec;)Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/stat/StructStat;
 	public static synthetic fun copy-9c4U17A$default (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/stat/StructStat;JJIJJJJJJJLru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/stat/StructTimespec;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/stat/StructTimespec;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/stat/StructTimespec;ILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/stat/StructStat;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getSt_atim ()Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/stat/StructTimespec;
-	public final fun getSt_blksize-s-VKNKU ()J
-	public final fun getSt_blocks-s-VKNKU ()J
-	public final fun getSt_ctim ()Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/stat/StructTimespec;
-	public final fun getSt_dev-s-VKNKU ()J
-	public final fun getSt_gid-s-VKNKU ()J
-	public final fun getSt_ino-s-VKNKU ()J
-	public final fun getSt_mode-bLFKZKI ()I
-	public final fun getSt_mtim ()Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/stat/StructTimespec;
-	public final fun getSt_nlink-s-VKNKU ()J
-	public final fun getSt_rdev-s-VKNKU ()J
-	public final fun getSt_size-s-VKNKU ()J
-	public final fun getSt_uid-s-VKNKU ()J
+	public final fun getAccessTime ()Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/stat/StructTimespec;
+	public final fun getBlockSize-s-VKNKU ()J
+	public final fun getBlocks-s-VKNKU ()J
+	public final fun getChangeStatusTime ()Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/stat/StructTimespec;
+	public final fun getDeviceId-s-VKNKU ()J
+	public final fun getGroupId-s-VKNKU ()J
+	public final fun getInode-s-VKNKU ()J
+	public final fun getLinks-s-VKNKU ()J
+	public final fun getMode-bLFKZKI ()I
+	public final fun getModificationTime ()Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/stat/StructTimespec;
+	public final fun getSize-s-VKNKU ()J
+	public final fun getSpecialFileDeviceId-s-VKNKU ()J
+	public final fun getUsedId-s-VKNKU ()J
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -1204,8 +1204,8 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/stat/St
 	public final fun copy-PWzV0Is (JJ)Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/stat/StructTimespec;
 	public static synthetic fun copy-PWzV0Is$default (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/stat/StructTimespec;JJILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/stat/StructTimespec;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getTv_nsec-s-VKNKU ()J
-	public final fun getTv_sec-s-VKNKU ()J
+	public final fun getNanoseconds-s-VKNKU ()J
+	public final fun getSeconds-s-VKNKU ()J
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

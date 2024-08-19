@@ -107,19 +107,19 @@ internal class NioStat(
             val atim: StructTimespec = basicFileAttrs.lastAccessTime().toTimeSpec()
 
             StructStat(
-                st_dev = dev,
-                st_ino = ino,
-                st_mode = mode,
-                st_nlink = nlink,
-                st_uid = uid,
-                st_gid = gid,
-                st_rdev = rdev,
-                st_size = size,
-                st_blksize = blksize,
-                st_blocks = blocks,
-                st_atim = atim,
-                st_mtim = mtim,
-                st_ctim = ctim,
+                deviceId = dev,
+                inode = ino,
+                mode = mode,
+                links = nlink,
+                usedId = uid,
+                groupId = gid,
+                specialFileDeviceId = rdev,
+                size = size,
+                blockSize = blksize,
+                blocks = blocks,
+                accessTime = atim,
+                modificationTime = mtim,
+                changeStatusTime = ctim,
             )
         }
 
@@ -140,8 +140,8 @@ internal class NioStat(
 
         private fun FileTime.toTimeSpec(): StructTimespec = toInstant().run {
             StructTimespec(
-                tv_sec = epochSecond.toULong(),
-                tv_nsec = nano.toULong(),
+                seconds = epochSecond.toULong(),
+                nanoseconds = nano.toULong(),
             )
         }
 

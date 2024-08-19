@@ -6,18 +6,14 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.stat
 
-@Suppress("PropertyName", "ConstructorParameterNaming")
 public data class StructTimespec(
-    val tv_sec: time_t,
-    val tv_nsec: ULong,
+    val seconds: ULong,
+    val nanoseconds: ULong,
 ) {
     override fun toString(): String {
-        return "TS($tv_sec sec $tv_nsec nsec)"
+        return "TS($seconds sec $nanoseconds nsec)"
     }
 }
 
-@Suppress("TYPEALIAS_NAME_INCORRECT_CASE")
-public typealias time_t = ULong
-
 public val StructTimespec.timeMillis: ULong
-    get(): ULong = tv_sec * 1000U + tv_nsec / 1_000_000U
+    get(): ULong = seconds * 1000U + nanoseconds / 1_000_000U
