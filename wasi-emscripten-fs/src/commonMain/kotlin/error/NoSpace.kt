@@ -14,6 +14,8 @@ public data class NoSpace(
     CloseError,
     MkdirError,
     OpenError,
+    SyncError,
+    TruncateError,
     UnlinkError,
     WriteError {
     override val errno: Errno = Errno.NOSPC

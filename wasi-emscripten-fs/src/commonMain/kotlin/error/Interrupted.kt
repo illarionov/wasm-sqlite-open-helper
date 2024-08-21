@@ -12,9 +12,11 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno.INTR
 public data class Interrupted(
     override val message: String,
 ) : FileSystemOperationError,
+    AdvisoryLockError,
     CloseError,
     OpenError,
     ReadError,
+    SyncError,
     WriteError {
     override val errno: Errno = INTR
 }

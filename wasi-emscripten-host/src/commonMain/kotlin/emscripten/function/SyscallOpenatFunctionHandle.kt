@@ -17,8 +17,8 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.OpenError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.BaseDirectory
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.FileMode
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.open.Open
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.open.OpenFileFlags
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.opencreate.Open
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.opencreate.OpenFileFlags
 
 public class SyscallOpenatFunctionHandle(
     host: EmbedderHost,

@@ -100,7 +100,6 @@ internal class FcntlHandler(
                 whence = whence,
                 start = this.l_start.toLong(),
                 length = this.l_len.toLong(),
-                pid = this.l_pid,
             ).right()
         }
     }

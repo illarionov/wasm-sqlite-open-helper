@@ -20,9 +20,9 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.toPosixFilePermiss
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.cwd.PathResolver.ResolvePathError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.cwd.toCommonError
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.open.Open
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.open.OpenFileFlags
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.open.OpenFileFlags.OpenFileFlag
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.opencreate.Open
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.opencreate.OpenFileFlags
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.opencreate.OpenFileFlags.OpenFileFlag
 import java.io.IOException
 import java.nio.channels.FileChannel
 import java.nio.file.FileAlreadyExistsException

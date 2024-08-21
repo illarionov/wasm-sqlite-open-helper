@@ -12,6 +12,8 @@ public data class Nxio(
     override val message: String,
 ) : FileSystemOperationError,
     OpenError,
-    SeekError {
+    ReadError,
+    SeekError,
+    WriteError {
     override val errno: Errno = Errno.NXIO
 }

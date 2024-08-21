@@ -13,5 +13,4 @@ public data class Advisorylock(
     val whence: Whence,
     val start: Long,
     val length: Long,
-    val pid: Int,
 )

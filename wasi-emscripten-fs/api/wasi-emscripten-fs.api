@@ -18,7 +18,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/Acce
 public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/AdvisoryLockError : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/FileSystemOperationError {
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/Again : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/AdvisoryLockError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/FileSystemOperationError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/WriteError {
+public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/Again : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/AdvisoryLockError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/FileSystemOperationError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/OpenError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/WriteError {
 	public fun <init> (Ljava/lang/String;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun copy (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/Again;
@@ -42,7 +42,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/BadF
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/Busy : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/FileSystemOperationError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/ReadError {
+public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/Busy : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/FileSystemOperationError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/ReadError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/UnlinkError {
 	public fun <init> (Ljava/lang/String;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun copy (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/Busy;
@@ -122,7 +122,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/File
 public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/GetCurrentWorkingDirectoryError : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/FileSystemOperationError {
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/Interrupted : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/CloseError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/FileSystemOperationError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/OpenError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/ReadError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/WriteError {
+public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/Interrupted : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/AdvisoryLockError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/CloseError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/FileSystemOperationError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/OpenError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/ReadError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/SyncError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/WriteError {
 	public fun <init> (Ljava/lang/String;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun copy (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/Interrupted;
@@ -134,7 +134,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/Inte
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/InvalidArgument : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/AdvisoryLockError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/CheckAccessError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/ChmodError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/ChownError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/FileSystemOperationError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/MkdirError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/OpenError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/ReadError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/ReadLinkError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/ResolveRelativePathErrors, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/SeekError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/SetTimestampError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/SyncError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/TruncateError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/UnlinkError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/WriteError {
+public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/InvalidArgument : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/AdvisoryLockError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/CheckAccessError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/ChmodError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/ChownError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/FileSystemOperationError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/GetCurrentWorkingDirectoryError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/MkdirError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/OpenError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/ReadError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/ReadLinkError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/ResolveRelativePathErrors, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/SeekError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/SetTimestampError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/StatError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/SyncError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/TruncateError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/UnlinkError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/WriteError {
 	public fun <init> (Ljava/lang/String;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun copy (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/InvalidArgument;
@@ -245,7 +245,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/NoLo
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/NoSpace : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/CloseError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/FileSystemOperationError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/MkdirError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/OpenError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/UnlinkError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/WriteError {
+public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/NoSpace : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/CloseError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/FileSystemOperationError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/MkdirError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/OpenError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/SyncError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/TruncateError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/UnlinkError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/WriteError {
 	public fun <init> (Ljava/lang/String;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun copy (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/NoSpace;
@@ -314,7 +314,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/NotS
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/Nxio : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/FileSystemOperationError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/OpenError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/SeekError {
+public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/Nxio : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/FileSystemOperationError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/OpenError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/ReadError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/SeekError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/WriteError {
 	public fun <init> (Ljava/lang/String;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun copy (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/Nxio;
@@ -353,7 +353,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/Path
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/PermissionDenied : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/ChmodError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/ChownError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/FileSystemOperationError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/MkdirError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/OpenError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/SetTimestampError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/TruncateError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/UnlinkError {
+public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/PermissionDenied : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/ChmodError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/ChownError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/FileSystemOperationError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/MkdirError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/OpenError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/SetTimestampError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/TruncateError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/UnlinkError, ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/WriteError {
 	public fun <init> (Ljava/lang/String;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun copy (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/PermissionDenied;
@@ -811,17 +811,15 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/lock/Ad
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/lock/Advisorylock {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/lock/AdvisorylockLockType;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/model/Whence;JJI)V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/lock/AdvisorylockLockType;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/model/Whence;JJ)V
 	public final fun component1 ()Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/lock/AdvisorylockLockType;
 	public final fun component2 ()Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/model/Whence;
 	public final fun component3 ()J
 	public final fun component4 ()J
-	public final fun component5 ()I
-	public final fun copy (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/lock/AdvisorylockLockType;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/model/Whence;JJI)Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/lock/Advisorylock;
-	public static synthetic fun copy$default (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/lock/Advisorylock;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/lock/AdvisorylockLockType;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/model/Whence;JJIILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/lock/Advisorylock;
+	public final fun copy (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/lock/AdvisorylockLockType;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/model/Whence;JJ)Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/lock/Advisorylock;
+	public static synthetic fun copy$default (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/lock/Advisorylock;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/lock/AdvisorylockLockType;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/model/Whence;JJILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/lock/Advisorylock;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getLength ()J
-	public final fun getPid ()I
 	public final fun getStart ()J
 	public final fun getType ()Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/lock/AdvisorylockLockType;
 	public final fun getWhence ()Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/model/Whence;
@@ -874,29 +872,29 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/mkdir/M
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/mkdir/Mkdir$Companion : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/FileSystemOperation {
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/open/Open {
-	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/open/Open$Companion;
+public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/opencreate/Open {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/opencreate/Open$Companion;
 	public synthetic fun <init> (Ljava/lang/String;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/model/BaseDirectory;IIILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun <init> (Ljava/lang/String;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/model/BaseDirectory;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/model/BaseDirectory;
-	public final fun component3-5skuukg ()I
+	public final fun component3-r9JdMvE ()I
 	public final fun component4-XwgOSmU ()I
-	public final fun copy-MDD6tlI (Ljava/lang/String;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/model/BaseDirectory;II)Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/open/Open;
-	public static synthetic fun copy-MDD6tlI$default (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/open/Open;Ljava/lang/String;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/model/BaseDirectory;IIILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/open/Open;
+	public final fun copy-ZMXUQqQ (Ljava/lang/String;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/model/BaseDirectory;II)Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/opencreate/Open;
+	public static synthetic fun copy-ZMXUQqQ$default (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/opencreate/Open;Ljava/lang/String;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/model/BaseDirectory;IIILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/opencreate/Open;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getBaseDirectory ()Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/model/BaseDirectory;
-	public final fun getFlags-5skuukg ()I
+	public final fun getFlags-r9JdMvE ()I
 	public final fun getMode-XwgOSmU ()I
 	public final fun getPath ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/open/Open$Companion : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/FileSystemOperation {
+public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/opencreate/Open$Companion : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/FileSystemOperation {
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/open/OpenFileFlags : ru/pixnews/wasm/sqlite/open/helper/common/api/SqliteUintBitMask {
+public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/opencreate/OpenFileFlags : ru/pixnews/wasm/sqlite/open/helper/common/api/SqliteUintBitMask {
 	public static final field O_APPEND I
 	public static final field O_ASYNC I
 	public static final field O_CLOEXEC I
@@ -919,8 +917,8 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/open/Op
 	public static final field O_TMPFILE I
 	public static final field O_TRUNC I
 	public static final field O_WRONLY I
-	public static final field OpenFileFlag Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/open/OpenFileFlags$OpenFileFlag;
-	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/open/OpenFileFlags;
+	public static final field OpenFileFlag Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/opencreate/OpenFileFlags$OpenFileFlag;
+	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/opencreate/OpenFileFlags;
 	public static fun constructor-impl (I)I
 	public fun equals (Ljava/lang/Object;)Z
 	public static fun equals-impl (ILjava/lang/Object;)Z
@@ -935,7 +933,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/open/Op
 	public final synthetic fun unbox-impl ()I
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/open/OpenFileFlags$OpenFileFlag {
+public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/opencreate/OpenFileFlags$OpenFileFlag {
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/readlink/ReadLink {

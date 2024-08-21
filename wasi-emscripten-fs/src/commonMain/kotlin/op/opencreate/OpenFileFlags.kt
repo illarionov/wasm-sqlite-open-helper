@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.open
+package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.opencreate
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.SqliteUintBitMask
 import kotlin.jvm.JvmInline
