@@ -20,6 +20,7 @@ public class RunWithChannelFd<R>(
     ) -> Either<FileSystemOperationError, R>,
 ) {
     public companion object : FileSystemOperation<RunWithChannelFd<Any>, FileSystemOperationError, Any> {
+        override val tag: String = "runwithchanfd"
         public fun <R : Any> key(): FileSystemOperation<RunWithChannelFd<R>, FileSystemOperationError, R> {
             @Suppress("UNCHECKED_CAST")
             return Companion as FileSystemOperation<RunWithChannelFd<R>, FileSystemOperationError, R>

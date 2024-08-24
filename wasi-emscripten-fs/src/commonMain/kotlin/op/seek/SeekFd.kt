@@ -16,5 +16,7 @@ public data class SeekFd(
     public val fileDelta: Long,
     public val whence: Whence,
 ) {
-    public companion object : FileSystemOperation<SeekFd, SeekError, Long>
+    public companion object : FileSystemOperation<SeekFd, SeekError, Long> {
+        override val tag: String = "seekfd"
+    }
 }

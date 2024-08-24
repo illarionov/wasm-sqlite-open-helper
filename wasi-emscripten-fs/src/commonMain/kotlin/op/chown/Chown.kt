@@ -18,5 +18,7 @@ public data class Chown(
     public val group: Int,
     public val followSymlinks: Boolean = true,
 ) {
-    public companion object : FileSystemOperation<Chown, ChownError, Unit>
+    public companion object : FileSystemOperation<Chown, ChownError, Unit> {
+        override val tag: String = "chown"
+    }
 }

@@ -38,6 +38,7 @@ kotlin {
         commonTest.dependencies {
             implementation(projects.sqliteTests.sqliteTestUtils)
             implementation(projects.wasiEmscriptenHostTestFixtures)
+            implementation(projects.wasiEmscriptenFsTestFixtures)
             implementation(kotlin("test"))
             implementation(libs.assertk)
         }

@@ -16,11 +16,11 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.plus
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.AccessDenied
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Errno
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readlink.ReadLink
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.test.fixtures.TestFileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.include.Fcntl
 import ru.pixnews.wasm.sqlite.open.helper.host.test.assertions.byteAt
 import ru.pixnews.wasm.sqlite.open.helper.host.test.assertions.hasBytesAt
 import ru.pixnews.wasm.sqlite.open.helper.host.test.fixtures.TestEmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.host.test.fixtures.TestFileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.test.fixtures.TestMemory
 import ru.pixnews.wasm.sqlite.test.utils.TestEnv
 import kotlin.test.AfterTest

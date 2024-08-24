@@ -15,5 +15,7 @@ public data class ChmodFd(
     public val fd: Fd,
     public val mode: FileMode,
 ) {
-    public companion object : FileSystemOperation<ChmodFd, ChmodError, Unit>
+    public companion object : FileSystemOperation<ChmodFd, ChmodError, Unit> {
+        override val tag: String = "chmodfd"
+    }
 }

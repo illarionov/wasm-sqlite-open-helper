@@ -9,4 +9,6 @@ package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.cwd
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.GetCurrentWorkingDirectoryError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.FileSystemOperation
 
-public data object GetCurrentWorkingDirectory : FileSystemOperation<Unit, GetCurrentWorkingDirectoryError, String>
+public data object GetCurrentWorkingDirectory : FileSystemOperation<Unit, GetCurrentWorkingDirectoryError, String> {
+    override val tag: String = "getcwd"
+}

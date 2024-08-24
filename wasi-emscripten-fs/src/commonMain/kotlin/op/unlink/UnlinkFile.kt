@@ -14,5 +14,7 @@ public data class UnlinkFile(
     public val path: String,
     public val baseDirectory: BaseDirectory = BaseDirectory.CurrentWorkingDirectory,
 ) {
-    public companion object : FileSystemOperation<UnlinkFile, UnlinkError, Unit>
+    public companion object : FileSystemOperation<UnlinkFile, UnlinkError, Unit> {
+        override val tag: String = "unlinkfile"
+    }
 }

@@ -16,5 +16,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.FileSystemOperation
 public data class StatFd(
     val fd: Fd,
 ) {
-   public companion object : FileSystemOperation<StatFd, StatError, StructStat>
+   public companion object : FileSystemOperation<StatFd, StatError, StructStat> {
+       override val tag: String = "statfd"
+   }
 }

@@ -18,5 +18,7 @@ public data class CheckAccess(
     public val allowEmptyPath: Boolean = false,
     public val followSymlinks: Boolean = true,
 ) {
-    public companion object : FileSystemOperation<CheckAccess, CheckAccessError, Unit>
+    public companion object : FileSystemOperation<CheckAccess, CheckAccessError, Unit> {
+        override val tag: String = "checkaccess"
+    }
 }

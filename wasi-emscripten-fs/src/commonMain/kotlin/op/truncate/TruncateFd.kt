@@ -14,5 +14,7 @@ public data class TruncateFd(
     public val fd: Fd,
     public val length: ULong,
 ) {
-    public companion object : FileSystemOperation<TruncateFd, TruncateError, Unit>
+    public companion object : FileSystemOperation<TruncateFd, TruncateError, Unit> {
+        override val tag: String = "truncatefd"
+    }
 }
