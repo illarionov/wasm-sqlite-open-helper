@@ -443,6 +443,69 @@ public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/filesyst
 public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/WriteError : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/error/FileSystemOperationError {
 }
 
+public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/FileSystem {
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/FileSystem;Lkotlin/jvm/functions/Function1;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$LoggingEvents;Ljava/util/Map;)V
+	public synthetic fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/FileSystem;Lkotlin/jvm/functions/Function1;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$LoggingEvents;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun close ()V
+	public fun execute (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/FileSystemOperation;Ljava/lang/Object;)Larrow/core/Either;
+	public fun isOperationSupported (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/FileSystemOperation;)Z
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$LoggingEvents {
+	public fun <init> ()V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$LoggingEvents$OperationStart;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$LoggingEvents$OperationEnd;)V
+	public synthetic fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$LoggingEvents$OperationStart;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$LoggingEvents$OperationEnd;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$LoggingEvents$OperationStart;
+	public final fun component2 ()Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$LoggingEvents$OperationEnd;
+	public final fun copy (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$LoggingEvents$OperationStart;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$LoggingEvents$OperationEnd;)Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$LoggingEvents;
+	public static synthetic fun copy$default (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$LoggingEvents;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$LoggingEvents$OperationStart;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$LoggingEvents$OperationEnd;ILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$LoggingEvents;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEnd ()Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$LoggingEvents$OperationEnd;
+	public final fun getStart ()Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$LoggingEvents$OperationStart;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$LoggingEvents$OperationEnd {
+	public fun <init> ()V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$OperationLoggingLevel;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$OperationLoggingLevel;Z)V
+	public synthetic fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$OperationLoggingLevel;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$OperationLoggingLevel;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$OperationLoggingLevel;
+	public final fun component2 ()Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$OperationLoggingLevel;
+	public final fun component3 ()Z
+	public final fun copy (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$OperationLoggingLevel;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$OperationLoggingLevel;Z)Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$LoggingEvents$OperationEnd;
+	public static synthetic fun copy$default (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$LoggingEvents$OperationEnd;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$OperationLoggingLevel;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$OperationLoggingLevel;ZILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$LoggingEvents$OperationEnd;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getInputs ()Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$OperationLoggingLevel;
+	public final fun getOutputs ()Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$OperationLoggingLevel;
+	public final fun getTrackDuration ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$LoggingEvents$OperationStart {
+	public fun <init> ()V
+	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$OperationLoggingLevel;)V
+	public synthetic fun <init> (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$OperationLoggingLevel;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$OperationLoggingLevel;
+	public final fun copy (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$OperationLoggingLevel;)Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$LoggingEvents$OperationStart;
+	public static synthetic fun copy$default (Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$LoggingEvents$OperationStart;Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$OperationLoggingLevel;ILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$LoggingEvents$OperationStart;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getInputs ()Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$OperationLoggingLevel;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$OperationLoggingLevel : java/lang/Enum {
+	public static final field BASIC Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$OperationLoggingLevel;
+	public static final field NAME Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$OperationLoggingLevel;
+	public static final field NONE Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$OperationLoggingLevel;
+	public static final field VERBOSE Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$OperationLoggingLevel;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$OperationLoggingLevel;
+	public static fun values ()[Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/logging/LoggingFileSystemDecorator$OperationLoggingLevel;
+}
+
 public abstract class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/model/BaseDirectory {
 	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/model/BaseDirectory$Companion;
 }
@@ -648,10 +711,12 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/nio/op/Run
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/nio/op/RunWithChannelFd$Companion : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/FileSystemOperation {
+	public fun getTag ()Ljava/lang/String;
 	public final fun key ()Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/FileSystemOperation;
 }
 
 public abstract interface class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/FileSystemOperation {
+	public abstract fun getTag ()Ljava/lang/String;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/checkaccess/CheckAccess {
@@ -678,6 +743,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/checkac
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/checkaccess/CheckAccess$Companion : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/FileSystemOperation {
+	public fun getTag ()Ljava/lang/String;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/checkaccess/FileAccessibilityCheck : java/lang/Enum {
@@ -709,6 +775,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/chmod/C
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/chmod/Chmod$Companion : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/FileSystemOperation {
+	public fun getTag ()Ljava/lang/String;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/chmod/ChmodFd {
@@ -726,6 +793,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/chmod/C
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/chmod/ChmodFd$Companion : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/FileSystemOperation {
+	public fun getTag ()Ljava/lang/String;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/chown/Chown {
@@ -750,6 +818,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/chown/C
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/chown/Chown$Companion : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/FileSystemOperation {
+	public fun getTag ()Ljava/lang/String;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/chown/ChownFd {
@@ -769,6 +838,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/chown/C
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/chown/ChownFd$Companion : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/FileSystemOperation {
+	public fun getTag ()Ljava/lang/String;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/close/CloseFd {
@@ -784,11 +854,13 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/close/C
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/close/CloseFd$Companion : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/FileSystemOperation {
+	public fun getTag ()Ljava/lang/String;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/cwd/GetCurrentWorkingDirectory : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/FileSystemOperation {
 	public static final field INSTANCE Lru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/cwd/GetCurrentWorkingDirectory;
 	public fun equals (Ljava/lang/Object;)Z
+	public fun getTag ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -808,6 +880,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/lock/Ad
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/lock/AddAdvisoryLockFd$Companion : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/FileSystemOperation {
+	public fun getTag ()Ljava/lang/String;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/lock/Advisorylock {
@@ -850,6 +923,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/lock/Re
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/lock/RemoveAdvisoryLockFd$Companion : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/FileSystemOperation {
+	public fun getTag ()Ljava/lang/String;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/mkdir/Mkdir {
@@ -870,6 +944,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/mkdir/M
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/mkdir/Mkdir$Companion : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/FileSystemOperation {
+	public fun getTag ()Ljava/lang/String;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/opencreate/Open {
@@ -892,6 +967,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/opencre
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/opencreate/Open$Companion : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/FileSystemOperation {
+	public fun getTag ()Ljava/lang/String;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/opencreate/OpenFileFlags : ru/pixnews/wasm/sqlite/open/helper/common/api/SqliteUintBitMask {
@@ -952,6 +1028,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/readlin
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/readlink/ReadLink$Companion : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/FileSystemOperation {
+	public fun getTag ()Ljava/lang/String;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/readwrite/FileSystemByteBuffer {
@@ -982,6 +1059,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/readwri
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/readwrite/ReadFd$Companion : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/FileSystemOperation {
+	public fun getTag ()Ljava/lang/String;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/readwrite/ReadWriteStrategy : java/lang/Enum {
@@ -1010,6 +1088,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/readwri
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/readwrite/WriteFd$Companion : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/FileSystemOperation {
+	public fun getTag ()Ljava/lang/String;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/seek/SeekFd {
@@ -1029,6 +1108,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/seek/Se
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/seek/SeekFd$Companion : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/FileSystemOperation {
+	public fun getTag ()Ljava/lang/String;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/settimestamp/SetTimestamp {
@@ -1053,6 +1133,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/settime
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/settimestamp/SetTimestamp$Companion : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/FileSystemOperation {
+	public fun getTag ()Ljava/lang/String;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/settimestamp/SetTimestampFd {
@@ -1074,6 +1155,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/settime
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/settimestamp/SetTimestampFd$Companion : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/FileSystemOperation {
+	public fun getTag ()Ljava/lang/String;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/stat/FileModeType : ru/pixnews/wasm/sqlite/open/helper/common/api/SqliteUintBitMask {
@@ -1143,6 +1225,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/stat/St
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/stat/Stat$Companion : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/FileSystemOperation {
+	public fun getTag ()Ljava/lang/String;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/stat/StatFd {
@@ -1158,6 +1241,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/stat/St
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/stat/StatFd$Companion : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/FileSystemOperation {
+	public fun getTag ()Ljava/lang/String;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/stat/StructStat {
@@ -1228,6 +1312,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/sync/Sy
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/sync/SyncFd$Companion : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/FileSystemOperation {
+	public fun getTag ()Ljava/lang/String;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/truncate/TruncateFd {
@@ -1245,6 +1330,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/truncat
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/truncate/TruncateFd$Companion : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/FileSystemOperation {
+	public fun getTag ()Ljava/lang/String;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/unlink/UnlinkDirectory {
@@ -1263,6 +1349,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/unlink/
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/unlink/UnlinkDirectory$Companion : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/FileSystemOperation {
+	public fun getTag ()Ljava/lang/String;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/unlink/UnlinkFile {
@@ -1281,5 +1368,6 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/unlink/
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/unlink/UnlinkFile$Companion : ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/FileSystemOperation {
+	public fun getTag ()Ljava/lang/String;
 }
 
