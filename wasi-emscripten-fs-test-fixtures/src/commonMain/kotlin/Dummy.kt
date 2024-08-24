@@ -4,10 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op
+@file:Suppress("FILE_CONTAINS_ONLY_COMMENTS", "FILE_NO_BLANK_LINE_BETWEEN_BLOCKS")
 
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.FileSystemOperationError
-
-public interface FileSystemOperation<I : Any, E : FileSystemOperationError, R : Any> {
-    public val tag: String
-}
+// Workaround for https://youtrack.jetbrains.com/issue/KTIJ-15797
+package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.test

@@ -14,5 +14,7 @@ public data class SyncFd(
     public val fd: Fd,
     public val syncMetadata: Boolean = true,
 ) {
-   public companion object : FileSystemOperation<SyncFd, SyncError, Unit>
+   public companion object : FileSystemOperation<SyncFd, SyncError, Unit> {
+       override val tag: String = "syncfd"
+   }
 }

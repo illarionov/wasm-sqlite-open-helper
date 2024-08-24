@@ -15,5 +15,7 @@ public data class AddAdvisoryLockFd(
 
     public val flock: Advisorylock,
 ) {
-    public companion object : FileSystemOperation<AddAdvisoryLockFd, AdvisoryLockError, Unit>
+    public companion object : FileSystemOperation<AddAdvisoryLockFd, AdvisoryLockError, Unit> {
+        override val tag: String = "addlockfd"
+    }
 }

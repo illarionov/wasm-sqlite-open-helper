@@ -15,5 +15,7 @@ public data class ChownFd(
     public val owner: Int,
     public val group: Int,
 ) {
-    public companion object : FileSystemOperation<ChownFd, ChownError, Unit>
+    public companion object : FileSystemOperation<ChownFd, ChownError, Unit> {
+        override val tag: String = "chownfd"
+    }
 }

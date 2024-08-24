@@ -43,6 +43,7 @@ kotlin {
         commonTest.dependencies {
             implementation(kotlin("test"))
             implementation(projects.sqliteTests.sqliteTestUtils)
+            implementation(projects.wasiEmscriptenFsTestFixtures)
             implementation(libs.assertk)
         }
     }

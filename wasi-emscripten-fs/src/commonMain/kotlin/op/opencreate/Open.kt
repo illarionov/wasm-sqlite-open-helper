@@ -30,9 +30,11 @@ public data class Open(
     override fun toString(): String = "Open(" +
             "path=$path, " +
             "baseDirectory=$baseDirectory, " +
-            "flags=$flags" +
+            "flags=0x${flags.mask.toString(16)}, " +
             "mode=$mode" +
             ")"
 
-    public companion object : FileSystemOperation<Open, OpenError, Fd>
+    public companion object : FileSystemOperation<Open, OpenError, Fd> {
+        override val tag: String = "open"
+    }
 }

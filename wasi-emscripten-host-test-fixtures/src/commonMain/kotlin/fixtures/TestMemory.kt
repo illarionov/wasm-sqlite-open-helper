@@ -16,6 +16,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.DefaultWasiMemoryRead
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.DefaultWasiMemoryWriter
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.test.fixtures.TestFileSystem
 import ru.pixnews.wasm.sqlite.test.utils.KermitLogger
 
 public open class TestMemory(

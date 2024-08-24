@@ -14,5 +14,7 @@ public data class RemoveAdvisoryLockFd(
     public val fd: Fd,
     public val flock: Advisorylock,
 ) {
-    public companion object : FileSystemOperation<RemoveAdvisoryLockFd, AdvisoryLockError, Unit>
+    public companion object : FileSystemOperation<RemoveAdvisoryLockFd, AdvisoryLockError, Unit> {
+        override val tag: String = "removelockfd"
+    }
 }

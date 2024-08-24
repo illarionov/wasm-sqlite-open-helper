@@ -17,5 +17,7 @@ public data class Mkdir(
     public val baseDirectory: BaseDirectory = CurrentWorkingDirectory,
     public val mode: FileMode,
 ) {
-    public companion object : FileSystemOperation<Mkdir, MkdirError, Unit>
+    public companion object : FileSystemOperation<Mkdir, MkdirError, Unit> {
+        override val tag: String = "mkdir"
+    }
 }

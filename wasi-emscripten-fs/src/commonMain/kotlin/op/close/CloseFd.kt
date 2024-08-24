@@ -13,5 +13,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.FileSystemOperation
 public data class CloseFd(
     public val fd: Fd,
 ) {
-    public companion object : FileSystemOperation<CloseFd, CloseError, Unit>
+    public companion object : FileSystemOperation<CloseFd, CloseError, Unit> {
+        override val tag: String = "closefd"
+    }
 }

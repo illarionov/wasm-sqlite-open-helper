@@ -23,9 +23,8 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            api(projects.wasiEmscriptenHost)
+            api(projects.wasiEmscriptenFs)
             api(projects.sqliteTests.sqliteTestUtils)
-            implementation(projects.wasiEmscriptenFsTestFixtures)
             implementation(libs.kotlinx.io)
             implementation(libs.kotlinx.datetime)
         }

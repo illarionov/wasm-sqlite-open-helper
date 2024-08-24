@@ -23,5 +23,7 @@ public data class Stat(
     val baseDirectory: BaseDirectory = CurrentWorkingDirectory,
     val followSymlinks: Boolean = true,
 ) {
-    public companion object : FileSystemOperation<Stat, StatError, StructStat>
+    public companion object : FileSystemOperation<Stat, StatError, StructStat> {
+        override val tag: String = "stat"
+    }
 }

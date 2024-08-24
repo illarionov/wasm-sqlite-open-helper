@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.host.test.fixtures
+package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.test.fixtures
 
 import arrow.core.Either
 import arrow.core.left
