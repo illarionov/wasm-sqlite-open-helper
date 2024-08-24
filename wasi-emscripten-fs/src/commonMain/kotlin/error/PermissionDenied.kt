@@ -17,6 +17,7 @@ public data class PermissionDenied(
     OpenError,
     SetTimestampError,
     TruncateError,
-    UnlinkError {
+    UnlinkError,
+    WriteError {
     override val errno: Errno = Errno.PERM
 }

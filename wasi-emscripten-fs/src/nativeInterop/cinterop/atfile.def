@@ -1,0 +1,25 @@
+headers = linux/openat2.h sys/stat.h
+compilerOpts = -D_ANSI_SOURCE -D_POSIX_C_SOURCE=199309 -D_BSD_SOURCE -D_XOPEN_SOURCE=700
+
+---
+
+// bits/syscall.h
+#define SYS_openat2 437
+#define SYS_faccessat2 439
+
+// /usr/include/linux/fcntl.h
+#define AT_FDCWD -100
+
+#define AT_SYMLINK_NOFOLLOW 0x100
+#define AT_EACCESS 0x200
+
+#define AT_REMOVEDIR 0x200
+
+#define AT_SYMLINK_FOLLOW 0x400
+#define AT_NO_AUTOMOUNT 0x800
+#define AT_EMPTY_PATH 0x1000
+
+// unistd.h
+extern int fchownat (int fd, const char *file, int owner, int group, int flag);
+extern long readlinkat (int fd, const char *path, char *buf, unsigned long len);
+extern int unlinkat (int fd, const char *path, int flags);

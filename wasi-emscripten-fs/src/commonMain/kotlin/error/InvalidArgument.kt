@@ -16,6 +16,7 @@ public data class InvalidArgument(
     CheckAccessError,
     ChmodError,
     ChownError,
+    GetCurrentWorkingDirectoryError,
     MkdirError,
     OpenError,
     ReadError,
@@ -24,6 +25,7 @@ public data class InvalidArgument(
     SeekError,
     SetTimestampError,
     SyncError,
+    StatError,
     TruncateError,
     UnlinkError,
     WriteError {

@@ -26,7 +26,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.cwd.GetCurrentWorki
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.lock.AddAdvisoryLockFd
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.lock.RemoveAdvisoryLockFd
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.mkdir.Mkdir
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.open.Open
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.opencreate.Open
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readlink.ReadLink
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readwrite.ReadFd
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readwrite.WriteFd

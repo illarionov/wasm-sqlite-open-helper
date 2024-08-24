@@ -11,7 +11,6 @@ import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractBasicSqliteDriverTe
 import ru.pixnews.wasm.sqlite.test.utils.TempFolder
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
-import kotlin.test.Ignore
 import kotlin.test.Test
 
 class ChasmBaseSqliteDriverTest : AbstractBasicSqliteDriverTest<WasmSQLiteDriver<*>>(
@@ -19,7 +18,7 @@ class ChasmBaseSqliteDriverTest : AbstractBasicSqliteDriverTest<WasmSQLiteDriver
 ) {
     private lateinit var tempDir: TempFolder
 
-    override fun fileInTempDir(databaseName: String): String = tempDir.resolve("$databaseName.db")
+    override fun fileInTempDir(databaseName: String): String = tempDir.resolve(databaseName)
 
     @BeforeTest
     fun setup() {
@@ -32,7 +31,6 @@ class ChasmBaseSqliteDriverTest : AbstractBasicSqliteDriverTest<WasmSQLiteDriver
     }
 
     @Test
-    @Ignore
     override fun Driver_initialization_should_work() {
         super.Driver_initialization_should_work()
     }
