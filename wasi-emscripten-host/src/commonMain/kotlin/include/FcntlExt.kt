@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.include
 
-import kotlin.reflect.KProperty0
+import ru.pixnews.wasm.sqlite.open.helper.common.ext.maskToString
 
 public fun Fcntl.oMaskToString(mask: UInt): String {
     val startNames = if (mask.and(O_ACCMODE) == 0U) {
@@ -40,27 +40,4 @@ public fun Fcntl.oMaskToString(mask: UInt): String {
         ),
         startNames,
     )
-}
-
-internal fun maskToString(
-    mask: UInt,
-    maskProps: List<KProperty0<UInt>>,
-    startNames: List<String> = emptyList(),
-): String {
-    var left = mask
-    val names = startNames.toMutableList()
-    maskProps.forEach { prop: KProperty0<UInt> ->
-        val propMask: UInt = prop.get()
-        if (left.and(propMask) != 0U) {
-            names.add(prop.name)
-            left = left.and(propMask.inv())
-        }
-    }
-    return buildString {
-        names.joinTo(this, ",")
-        if (left != 0U) {
-            append("0")
-            append(left.toString(8))
-        }
-    }
 }

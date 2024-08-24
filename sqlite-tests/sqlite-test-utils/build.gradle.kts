@@ -36,6 +36,7 @@ kotlin {
             api(kotlin("test"))
             api(libs.assertk)
             api(libs.kermit)
+            api(libs.kotlinx.io)
             api(project.dependencies.platform(libs.kotlinx.coroutines.bom))
             api(projects.commonApi)
             implementation(libs.kotlinx.coroutines.test)

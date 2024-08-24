@@ -30,7 +30,7 @@ public data class Open(
     override fun toString(): String = "Open(" +
             "path=$path, " +
             "baseDirectory=$baseDirectory, " +
-            "flags=0x${flags.mask.toString(16)}, " +
+            "flags=$flags, " +
             "mode=$mode" +
             ")"
 

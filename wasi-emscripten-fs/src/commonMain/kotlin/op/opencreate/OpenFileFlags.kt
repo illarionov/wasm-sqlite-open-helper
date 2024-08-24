@@ -7,6 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.opencreate
 
 import ru.pixnews.wasm.sqlite.open.helper.common.api.SqliteUintBitMask
+import ru.pixnews.wasm.sqlite.open.helper.common.ext.maskToString
 import kotlin.jvm.JvmInline
 
 @JvmInline
@@ -16,7 +17,7 @@ public value class OpenFileFlags(
     override val newInstance: (UInt) -> OpenFileFlags get() = ::OpenFileFlags
 
     override fun toString(): String {
-        return "OpenFileFlags(0x${mask.toString(16)})"
+        return "OpenFileFlags(0x${mask.toString(16)}: ${this.toStringVerbose()})"
     }
 
     @Suppress("BLANK_LINE_BETWEEN_PROPERTIES")
@@ -24,6 +25,7 @@ public value class OpenFileFlags(
         public const val O_RDONLY: UInt = 0x0U
         public const val O_WRONLY: UInt = 0x1U
         public const val O_RDWR: UInt = 0x2U
+        public const val O_ACCMODE: UInt = 0x3U
 
         public const val O_CREAT: UInt = 0x40U
         public const val O_EXCL: UInt = 0x80U
@@ -44,5 +46,38 @@ public value class OpenFileFlags(
         public const val O_PATH: UInt = 0x200000U
         public const val O_TMPFILE: UInt = 0x410000U
         public const val O_SEARCH: UInt = O_PATH
+
+        internal fun OpenFileFlags.toStringVerbose(): String {
+            val startNames = if (mask.and(O_ACCMODE) == 0U) {
+                listOf(::O_RDONLY.name)
+            } else {
+                emptyList()
+            }
+            return maskToString(
+                mask,
+                listOf(
+                    ::O_WRONLY,
+                    ::O_RDWR,
+                    ::O_CREAT,
+                    ::O_EXCL,
+                    ::O_NOCTTY,
+                    ::O_TRUNC,
+                    ::O_APPEND,
+                    ::O_NONBLOCK,
+                    ::O_SYNC,
+                    ::O_TMPFILE,
+                    ::O_DSYNC,
+                    ::O_ASYNC,
+                    ::O_DIRECT,
+                    ::O_LARGEFILE,
+                    ::O_DIRECTORY,
+                    ::O_NOFOLLOW,
+                    ::O_NOATIME,
+                    ::O_CLOEXEC,
+                    ::O_PATH,
+                ),
+                startNames,
+            )
+        }
     }
 }
