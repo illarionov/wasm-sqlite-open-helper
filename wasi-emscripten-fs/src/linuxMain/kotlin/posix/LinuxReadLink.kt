@@ -43,7 +43,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.platform.linux.AT_EMPTY_PATH
 import ru.pixnews.wasm.sqlite.open.helper.host.platform.linux.fstatat
 import ru.pixnews.wasm.sqlite.open.helper.host.platform.linux.readlinkat
 
-internal object LinuxX64ReadLink : PosixOperationHandler<ReadLink, ReadLinkError, String> {
+internal object LinuxReadLink : PosixOperationHandler<ReadLink, ReadLinkError, String> {
     private const val PATH_STEP = 1024
     private val MAX_PATH_SIZE = maxOf(1024 * 1024, PATH_MAX)
 
