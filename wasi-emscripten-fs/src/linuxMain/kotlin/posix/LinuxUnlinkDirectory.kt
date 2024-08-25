@@ -35,40 +35,41 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.PathIsDirectory
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.PermissionDenied
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.TooManySymbolicLinks
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.UnlinkError
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.unlink.UnlinkFile
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.unlink.UnlinkDirectory
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.posix.base.PosixOperationHandler
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.posix.ext.toDirFd
+import ru.pixnews.wasm.sqlite.open.helper.host.platform.linux.AT_REMOVEDIR
 import ru.pixnews.wasm.sqlite.open.helper.host.platform.linux.unlinkat
 
-internal object LinuxX64UnlinkFile : PosixOperationHandler<UnlinkFile, UnlinkError, Unit> {
-    override fun invoke(input: UnlinkFile): Either<UnlinkError, Unit> {
+internal object LinuxUnlinkDirectory : PosixOperationHandler<UnlinkDirectory, UnlinkError, Unit> {
+    override fun invoke(input: UnlinkDirectory): Either<UnlinkError, Unit> {
         val resultCode = unlinkat(
             input.baseDirectory.toDirFd(),
             input.path,
-            0,
+            AT_REMOVEDIR,
         )
         return if (resultCode == 0) {
             Unit.right()
         } else {
-            errno.errnoToUnlinkFileError(input).left()
+            errno.errnoToUnlinkDirectoryError(input).left()
         }
     }
 
     @Suppress("CyclomaticComplexMethod")
-    fun Int.errnoToUnlinkFileError(request: UnlinkFile): UnlinkError = when (this) {
-        EACCES -> AccessDenied("Cannot unlink file, access denied. Request: $request")
+    private fun Int.errnoToUnlinkDirectoryError(request: UnlinkDirectory): UnlinkError = when (this) {
+        EACCES -> AccessDenied("Cannot unlink directory, access denied. Request: $request")
         EBADF -> BadFileDescriptor("Bad file descriptor `${request.baseDirectory}`")
-        EBUSY -> Busy("Cannot delete file because it is being used by another process. Request: $request")
+        EBUSY -> Busy("Cannot delete directory because it is being used by another process. Request: $request")
         EINVAL -> InvalidArgument("Invalid flag value specified in unlinkat()")
-        EIO -> IoError("Cannot delete file: I/O error.`")
+        EIO -> IoError("Cannot delete directory: I/O error.`")
         EISDIR -> PathIsDirectory("`$request` refers to directory")
         ELOOP -> TooManySymbolicLinks("Too many symlinks while resolving `$request`")
         ENAMETOOLONG -> NameTooLong("Name too long while resolving `$request`")
         ENOENT -> NoEntry("Component of `${request.path}` does not exist or empty")
         ENOMEM -> IoError("No memory")
         ENOTDIR -> NotDirectory("`${request.path}` is not a directory")
-        EPERM -> PermissionDenied("Can not delete `$request`: permission denied")
-        EROFS -> InvalidArgument("Can node delete file: read-only file system")
+        EPERM -> PermissionDenied("Can not delete directory: permission denied. Request: `$request`")
+        EROFS -> InvalidArgument("Can node delete directory: read-only file system. Request: `$request`")
         else -> InvalidArgument("Other error. Errno: $this")
     }
 }

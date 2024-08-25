@@ -20,84 +20,46 @@ import platform.posix.ENOMEM
 import platform.posix.ENOTDIR
 import platform.posix.EPERM
 import platform.posix.EROFS
-import platform.posix.ETXTBSY
-import platform.posix.F_OK
-import platform.posix.R_OK
-import platform.posix.W_OK
-import platform.posix.X_OK
 import platform.posix.errno
-import platform.posix.syscall
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.AccessDenied
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.BadFileDescriptor
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.CheckAccessError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.ChownError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.InvalidArgument
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.IoError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.NameTooLong
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.NoEntry
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.NotDirectory
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.ReadOnlyFileSystem
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.TextFileBusy
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.TooManySymbolicLinks
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.checkaccess.CheckAccess
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.checkaccess.FileAccessibilityCheck
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.checkaccess.FileAccessibilityCheck.EXECUTABLE
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.checkaccess.FileAccessibilityCheck.READABLE
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.checkaccess.FileAccessibilityCheck.WRITEABLE
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.chown.Chown
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.posix.base.PosixOperationHandler
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.posix.ext.toDirFd
-import ru.pixnews.wasm.sqlite.open.helper.host.platform.linux.AT_EACCESS
-import ru.pixnews.wasm.sqlite.open.helper.host.platform.linux.AT_EMPTY_PATH
 import ru.pixnews.wasm.sqlite.open.helper.host.platform.linux.AT_SYMLINK_NOFOLLOW
-import ru.pixnews.wasm.sqlite.open.helper.host.platform.linux.SYS_faccessat2
+import ru.pixnews.wasm.sqlite.open.helper.host.platform.linux.fchownat
 
-internal object LinuxX64CheckAccess : PosixOperationHandler<CheckAccess, CheckAccessError, Unit> {
-    override fun invoke(input: CheckAccess): Either<CheckAccessError, Unit> {
-        val resultCode = syscall(
-            SYS_faccessat2.toLong(),
+internal object LinuxChown : PosixOperationHandler<Chown, ChownError, Unit> {
+    override fun invoke(input: Chown): Either<ChownError, Unit> {
+        val resultCode = fchownat(
             input.baseDirectory.toDirFd(),
             input.path,
-            input.mode.toModeFlags(),
-            input.toCheckAccessFlags(),
+            input.owner,
+            input.group,
+            input.getChownFlags(),
         )
-        return if (resultCode == 0L) {
+        return if (resultCode == 0) {
             Unit.right()
         } else {
-            errno.errnoToCheckAccessError(input).left()
+            errno.errnoToChownError(input).left()
         }
     }
 
-    private fun Set<FileAccessibilityCheck>.toModeFlags(): Int {
-        if (this.isEmpty()) {
-            return F_OK
-        }
-        var mask = 0
-        if (this.contains(READABLE)) {
-            mask = mask and R_OK
-        }
-        if (this.contains(WRITEABLE)) {
-            mask = mask and W_OK
-        }
-        if (this.contains(EXECUTABLE)) {
-            mask = mask and X_OK
-        }
-        return mask
+    private fun Chown.getChownFlags(): Int = if (!this.followSymlinks) {
+        AT_SYMLINK_NOFOLLOW
+    } else {
+        0
     }
 
-    private fun CheckAccess.toCheckAccessFlags(): Int {
-        var mask = 0
-        if (this.useEffectiveUserId) {
-            mask = mask and AT_EACCESS
-        }
-        if (this.allowEmptyPath) {
-            mask = mask and AT_EMPTY_PATH
-        }
-        if (!this.followSymlinks) {
-            mask = mask and AT_SYMLINK_NOFOLLOW
-        }
-        return mask
-    }
-
-    private fun Int.errnoToCheckAccessError(request: CheckAccess): CheckAccessError = when (this) {
+    private fun Int.errnoToChownError(request: Chown): ChownError = when (this) {
         EACCES -> AccessDenied("Access denied for `$request`")
         EBADF -> BadFileDescriptor("Bad file descriptor ${request.baseDirectory}")
         EINVAL -> InvalidArgument("Invalid argument in `$request`")
@@ -107,12 +69,11 @@ internal object LinuxX64CheckAccess : PosixOperationHandler<CheckAccess, CheckAc
         ENOENT -> NoEntry("Component of `${request.path}` does not exist")
         ENOMEM -> IoError("No memory")
         ENOTDIR -> NotDirectory("Error while resolving `${request.path}`: not a directory")
-        EPERM -> AccessDenied("Write permission requested to a file with immutable flag. Request: `$request`")
+        EPERM -> AccessDenied("File is immutable or append-only. Request: `$request`")
         EROFS -> ReadOnlyFileSystem(
             "Write permission requested for a file on a read-only filesystem. Request: `$request`",
         )
 
-        ETXTBSY -> TextFileBusy("Write permission requested to executed file. Request: $request")
-        else -> InvalidArgument("Unexpected error `$this`")
+        else -> InvalidArgument("Error `$this`")
     }
 }
