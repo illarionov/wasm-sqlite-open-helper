@@ -971,6 +971,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/opencre
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/host/filesystem/op/opencreate/OpenFileFlags : ru/pixnews/wasm/sqlite/open/helper/common/api/SqliteUintBitMask {
+	public static final field O_ACCMODE I
 	public static final field O_APPEND I
 	public static final field O_ASYNC I
 	public static final field O_CLOEXEC I

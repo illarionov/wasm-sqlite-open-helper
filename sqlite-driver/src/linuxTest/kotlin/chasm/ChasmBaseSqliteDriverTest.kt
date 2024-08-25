@@ -11,8 +11,6 @@ import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractBasicSqliteDriverTe
 import ru.pixnews.wasm.sqlite.test.utils.TempFolder
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
-import kotlin.test.Ignore
-import kotlin.test.Test
 
 class ChasmBaseSqliteDriverTest : AbstractBasicSqliteDriverTest<WasmSQLiteDriver<*>>(
     driverCreator = ChasmSqliteDriverFactory,
@@ -29,16 +27,5 @@ class ChasmBaseSqliteDriverTest : AbstractBasicSqliteDriverTest<WasmSQLiteDriver
     @AfterTest
     fun cleanup() {
         tempDir.delete()
-    }
-
-    @Test
-    @Ignore
-    override fun Driver_initialization_should_work() {
-        super.Driver_initialization_should_work()
-    }
-
-    @Test
-    override fun Driver_initialization_with_in_memory_database_should_work() {
-        super.Driver_initialization_with_in_memory_database_should_work()
     }
 }

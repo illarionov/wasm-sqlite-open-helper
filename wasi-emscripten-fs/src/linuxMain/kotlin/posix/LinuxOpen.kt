@@ -25,6 +25,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.FileMode
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.opencreate.Open
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.opencreate.OpenFileFlags
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.opencreate.OpenFileFlags.OpenFileFlag
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.opencreate.OpenFileFlags.OpenFileFlag.O_ACCMODE
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.posix.ResolveModeFlag.RESOLVE_NO_MAGICLINKS
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.posix.base.PosixFileSystemState
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.posix.base.PosixOperationHandler
@@ -36,7 +37,7 @@ internal class LinuxOpen(
         val fdOrErrno = syscallOpenat2(
             baseDirectory = input.baseDirectory,
             pathname = input.path,
-            openFlags = input.flags.toFlagsMask(),
+            openFlags = input.flags.toLinuxMask(),
             openMode = input.mode,
             resolveMode = setOf(RESOLVE_NO_MAGICLINKS),
         )
@@ -67,12 +68,19 @@ private val openFileFlagsMaskToPosixMask = listOf(
 )
 
 @Suppress("CyclomaticComplexMethod")
-private fun OpenFileFlags.toFlagsMask(): ULong {
+internal fun OpenFileFlags.toLinuxMask(): ULong {
     val openFlagsMask: UInt = this.mask
-    var mask = 0
-    openFileFlagsMaskToPosixMask.forEach { (openFileFlagsMask, posixMask) ->
-        if (openFlagsMask and openFileFlagsMask == openFlagsMask) {
-            mask = mask and posixMask
+
+    var mask = when (val mode = openFlagsMask and O_ACCMODE) {
+        OpenFileFlag.O_RDONLY -> platform.posix.O_RDONLY
+        OpenFileFlag.O_WRONLY -> platform.posix.O_WRONLY
+        OpenFileFlag.O_RDWR -> platform.posix.O_RDWR
+        else -> error("Unknown mode $mode")
+    }
+
+    openFileFlagsMaskToPosixMask.forEach { (testMask, posixMask) ->
+        if (openFlagsMask and testMask == testMask) {
+            mask = mask or posixMask
         }
     }
     // O_DIRECT, O_LARGEFILE, O_NOATIME: Not supported
