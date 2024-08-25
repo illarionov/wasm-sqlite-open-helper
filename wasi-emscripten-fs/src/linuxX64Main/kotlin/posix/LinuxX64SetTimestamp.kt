@@ -25,6 +25,7 @@ import platform.posix.EPERM
 import platform.posix.EROFS
 import platform.posix.ESRCH
 import platform.posix.errno
+import platform.posix.timespec
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.AccessDenied
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.BadFileDescriptor
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.InvalidArgument
@@ -41,7 +42,6 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.posix.base.PosixOperat
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.posix.ext.toDirFd
 import ru.pixnews.wasm.sqlite.open.helper.host.platform.linux.AT_SYMLINK_NOFOLLOW
 import ru.pixnews.wasm.sqlite.open.helper.host.platform.linux.UTIME_OMIT
-import ru.pixnews.wasm.sqlite.open.helper.host.platform.linux.timespec
 import ru.pixnews.wasm.sqlite.open.helper.host.platform.linux.utimensat
 
 internal object LinuxX64SetTimestamp : PosixOperationHandler<SetTimestamp, SetTimestampError, Unit> {

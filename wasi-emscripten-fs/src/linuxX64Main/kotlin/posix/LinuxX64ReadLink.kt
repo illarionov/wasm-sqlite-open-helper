@@ -26,6 +26,7 @@ import platform.posix.ENOMEM
 import platform.posix.ENOTDIR
 import platform.posix.PATH_MAX
 import platform.posix.errno
+import platform.posix.stat
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.AccessDenied
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.BadFileDescriptor
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.InvalidArgument
@@ -41,7 +42,6 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.posix.ext.toDirFd
 import ru.pixnews.wasm.sqlite.open.helper.host.platform.linux.AT_EMPTY_PATH
 import ru.pixnews.wasm.sqlite.open.helper.host.platform.linux.fstatat
 import ru.pixnews.wasm.sqlite.open.helper.host.platform.linux.readlinkat
-import ru.pixnews.wasm.sqlite.open.helper.host.platform.linux.stat
 
 internal object LinuxX64ReadLink : PosixOperationHandler<ReadLink, ReadLinkError, String> {
     private const val PATH_STEP = 1024

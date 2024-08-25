@@ -13,6 +13,8 @@ import kotlinx.cinterop.alloc
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
 import platform.posix.errno
+import platform.posix.stat
+import platform.posix.timespec
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.StatError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.stat.FileModeType
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.stat.Stat
@@ -22,8 +24,6 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.posix.base.PosixOperat
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.posix.ext.toDirFd
 import ru.pixnews.wasm.sqlite.open.helper.host.platform.linux.AT_SYMLINK_NOFOLLOW
 import ru.pixnews.wasm.sqlite.open.helper.host.platform.linux.fstatat
-import ru.pixnews.wasm.sqlite.open.helper.host.platform.linux.stat
-import ru.pixnews.wasm.sqlite.open.helper.host.platform.linux.timespec
 
 internal object LinuxX64Stat : PosixOperationHandler<Stat, StatError, StructStat> {
     override fun invoke(input: Stat): Either<StatError, StructStat> = memScoped {

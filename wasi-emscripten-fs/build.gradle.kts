@@ -25,7 +25,7 @@ kotlin {
     iosArm64()
     iosX64()
     linuxArm64 {
-        // TODO: compile interops for arm64
+        setupLinuxInterops()
     }
     linuxX64 {
         setupLinuxInterops()
@@ -53,7 +53,6 @@ fun KotlinNativeTarget.setupLinuxInterops() = compilations.named("main") {
     cinterops {
         create("atfile") {
             packageName("ru.pixnews.wasm.sqlite.open.helper.host.platform.linux")
-            compilerOpts("-I/usr/include/x86_64-linux-gnu", "-I/usr/include")
         }
     }
 }
