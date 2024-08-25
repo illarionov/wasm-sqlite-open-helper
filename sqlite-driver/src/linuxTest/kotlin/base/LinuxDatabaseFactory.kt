@@ -13,7 +13,7 @@ import ru.pixnews.wasm.sqlite.driver.test.base.room.UserDatabaseSuspend
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.room.UserDatabaseTests.UserDatabaseFactory
 import kotlin.coroutines.CoroutineContext
 
-internal object JvmDatabaseFactory : UserDatabaseFactory {
+class LinuxDatabaseFactory : UserDatabaseFactory {
     override fun create(
         driver: SQLiteDriver,
         databaseName: String?,
