@@ -13,13 +13,13 @@ import kotlinx.cinterop.alloc
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
 import platform.posix.errno
+import platform.posix.fstat
+import platform.posix.stat
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.StatError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.stat.StatFd
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.stat.StructStat
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.posix.LinuxX64Stat.toStructStat
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.posix.base.PosixOperationHandler
-import ru.pixnews.wasm.sqlite.open.helper.host.platform.linux.fstat
-import ru.pixnews.wasm.sqlite.open.helper.host.platform.linux.stat
 
 internal object LinuxX64StatFd : PosixOperationHandler<StatFd, StatError, StructStat> {
     override fun invoke(input: StatFd): Either<StatError, StructStat> = memScoped {
