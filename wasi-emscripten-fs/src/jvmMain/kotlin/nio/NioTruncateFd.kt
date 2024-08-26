@@ -12,6 +12,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.BadFileDescripto
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.InvalidArgument
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.IoError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.TruncateError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.internal.delegatefs.FileSystemOperationHandler
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.Messages.fileDescriptorNotOpenedMessage
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.truncate.TruncateFd
@@ -20,8 +21,8 @@ import java.nio.channels.ClosedChannelException
 import java.nio.channels.NonReadableChannelException
 
 internal class NioTruncateFd(
-    private val fsState: JvmFileSystemState,
-) : NioOperationHandler<TruncateFd, TruncateError, Unit> {
+    private val fsState: NioFileSystemState,
+) : FileSystemOperationHandler<TruncateFd, TruncateError, Unit> {
     override fun invoke(input: TruncateFd): Either<TruncateError, Unit> {
         val channel = fsState.fileDescriptors.get(input.fd)
             ?: return BadFileDescriptor(fileDescriptorNotOpenedMessage(input.fd)).left()

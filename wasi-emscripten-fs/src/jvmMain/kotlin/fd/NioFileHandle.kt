@@ -12,7 +12,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.internal.ChannelPositi
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.internal.ChannelPositionError.ClosedChannel
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Whence
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.JvmFileSystemState
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.NioFileSystemState
 import java.io.IOException
 import java.nio.channels.ClosedChannelException
 import java.nio.channels.FileChannel
@@ -22,7 +22,7 @@ import java.util.concurrent.locks.ReentrantLock
 import java.nio.file.Path as NioPath
 
 internal class NioFileHandle(
-    val fileSystem: JvmFileSystemState,
+    val fileSystem: NioFileSystemState,
     val fd: Fd,
     val path: NioPath,
     val channel: FileChannel,

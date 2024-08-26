@@ -7,12 +7,11 @@
 package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd
 
 import arrow.core.Either
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.BadFileDescriptor
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.Nfile
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.internal.FileDescriptorTable
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.JvmFileSystemState
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.NioFileSystemState
 import java.nio.channels.FileChannel
 import java.nio.file.Path
 import java.util.concurrent.locks.Lock
@@ -20,10 +19,8 @@ import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
 internal class NioFileDescriptorTable(
-    private val fsState: JvmFileSystemState,
-    logger: Logger,
+    private val fsState: NioFileSystemState,
 ) : AutoCloseable {
-    private val logger = logger.withTag("NioFileDescriptorTable")
     private val fds: FileDescriptorTable<NioFileHandle> = FileDescriptorTable()
     private val lock: Lock = ReentrantLock()
 
@@ -59,7 +56,7 @@ internal class NioFileDescriptorTable(
             try {
                 chan.channel.close()
             } catch (@Suppress("TooGenericExceptionCaught", "SwallowedException") ex: Exception) {
-                logger.i { "close(${chan.path}) failed. Ignore." }
+                // close(${chan.path}) failed. Ignore.
             }
         }
     }

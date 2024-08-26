@@ -13,6 +13,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.BadFileDescripto
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.CheckAccessError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.NoEntry
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.asLinkOptions
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.internal.delegatefs.FileSystemOperationHandler
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.cwd.PathResolver
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.cwd.PathResolver.ResolvePathError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.checkaccess.CheckAccess
@@ -27,7 +28,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.NotDirectory as 
 
 internal class NioCheckAccess(
     private val pathResolver: PathResolver,
-) : NioOperationHandler<CheckAccess, CheckAccessError, Unit> {
+) : FileSystemOperationHandler<CheckAccess, CheckAccessError, Unit> {
     override fun invoke(input: CheckAccess): Either<CheckAccessError, Unit> = either {
         val path = pathResolver.resolve(input.path, input.baseDirectory, input.allowEmptyPath)
             .mapLeft { it.toCheckAccessError() }

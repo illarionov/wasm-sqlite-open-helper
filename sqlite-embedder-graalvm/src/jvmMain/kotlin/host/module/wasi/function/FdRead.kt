@@ -21,7 +21,6 @@ import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WasiMemoryReader
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.JvmNioFileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.function.FdReadFdPreadFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.Iovec
 
@@ -73,7 +72,7 @@ private class FdRead(
         val hostMemory = memory.toHostMemory()
         val wasiMemoryReader: WasiMemoryReader = GraalInputStreamWasiMemoryReader(
             hostMemory,
-            handle.host.fileSystem as? JvmNioFileSystem ?: error("JvmFileSystem expected"),
+            handle.host.fileSystem,
             this.handle.host.rootLogger,
         )
         return handle.execute(hostMemory, wasiMemoryReader, Fd(fd), pIov, iovCnt, pNum).code

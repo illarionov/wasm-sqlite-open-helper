@@ -11,6 +11,7 @@ import arrow.core.getOrElse
 import arrow.core.left
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.NotDirectory
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.UnlinkError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.internal.delegatefs.FileSystemOperationHandler
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.NioUnlinkFile.Companion.toUnlinkError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.cwd.PathResolver
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.unlink.UnlinkFile
@@ -20,7 +21,7 @@ import kotlin.io.path.isDirectory
 
 internal class NioUnlinkDirectory(
     private val pathResolver: PathResolver,
-) : NioOperationHandler<UnlinkFile, UnlinkError, Unit> {
+) : FileSystemOperationHandler<UnlinkFile, UnlinkError, Unit> {
     @Suppress("ReturnCount")
     override fun invoke(input: UnlinkFile): Either<UnlinkError, Unit> {
         val path: Path = pathResolver.resolve(input.path, input.baseDirectory, false)

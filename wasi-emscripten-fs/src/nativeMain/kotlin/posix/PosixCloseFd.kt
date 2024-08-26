@@ -20,16 +20,16 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.CloseError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.Interrupted
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.IoError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.NoSpace
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.internal.delegatefs.FileSystemOperationHandler
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.close.CloseFd
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.posix.base.PosixFileSystemState
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.posix.base.PosixOperationHandler
 
 internal expect fun Int.platformSpecificErrnoToCloseError(fd: Fd): CloseError
 
 internal class PosixCloseFd(
     private val fsState: PosixFileSystemState,
-) : PosixOperationHandler<CloseFd, CloseError, Unit> {
+) : FileSystemOperationHandler<CloseFd, CloseError, Unit> {
     override fun invoke(input: CloseFd): Either<CloseError, Unit> {
         fsState.remove(input.fd)
         val retval = close(input.fd.fd)

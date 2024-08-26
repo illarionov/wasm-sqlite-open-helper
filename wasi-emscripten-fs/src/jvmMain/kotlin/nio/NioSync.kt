@@ -11,14 +11,15 @@ import arrow.core.left
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.BadFileDescriptor
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.IoError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.SyncError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.internal.delegatefs.FileSystemOperationHandler
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.Messages.fileDescriptorNotOpenedMessage
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.sync.SyncFd
 import java.io.IOException
 import java.nio.channels.ClosedChannelException
 
 internal class NioSync(
-    private val fsState: JvmFileSystemState,
-) : NioOperationHandler<SyncFd, SyncError, Unit> {
+    private val fsState: NioFileSystemState,
+) : FileSystemOperationHandler<SyncFd, SyncError, Unit> {
     override fun invoke(input: SyncFd): Either<SyncError, Unit> {
         val channel = fsState.fileDescriptors.get(input.fd)
             ?: return BadFileDescriptor(fileDescriptorNotOpenedMessage(input.fd)).left()

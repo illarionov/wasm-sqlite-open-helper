@@ -17,6 +17,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.OpenError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.PermissionDenied
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.asFileAttribute
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.toPosixFilePermissions
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.internal.delegatefs.FileSystemOperationHandler
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.cwd.PathResolver.ResolvePathError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.cwd.toCommonError
@@ -33,8 +34,8 @@ import java.nio.file.StandardOpenOption
 import kotlin.concurrent.withLock
 
 internal class NioOpen(
-    private val fsState: JvmFileSystemState,
-) : NioOperationHandler<Open, OpenError, Fd> {
+    private val fsState: NioFileSystemState,
+) : FileSystemOperationHandler<Open, OpenError, Fd> {
     override fun invoke(input: Open): Either<OpenError, Fd> = either {
         val path = fsState.pathResolver.resolve(input.path, input.baseDirectory, false)
             .mapLeft(ResolvePathError::toCommonError)

@@ -13,12 +13,12 @@ import platform.posix.errno
 import platform.posix.lseek
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.Overflow
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.SeekError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.internal.delegatefs.FileSystemOperationHandler
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.seek.SeekFd
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.posix.base.PosixOperationHandler
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.posix.ext.errnoToSeekError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.posix.ext.toPosixWhence
 
-internal object MingwSeekFd : PosixOperationHandler<SeekFd, SeekError, Long> {
+internal object MingwSeekFd : FileSystemOperationHandler<SeekFd, SeekError, Long> {
     override fun invoke(input: SeekFd): Either<SeekError, Long> {
         if (input.fileDelta > Int.MAX_VALUE) {
             return Overflow("input.fileDelta too big. Request: $input").left()

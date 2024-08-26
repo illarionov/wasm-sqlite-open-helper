@@ -6,16 +6,12 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.posix.base
 
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
 import ru.pixnews.wasm.sqlite.open.helper.io.lock.ReentrantLock
 import ru.pixnews.wasm.sqlite.open.helper.io.lock.reentrantLock
 import ru.pixnews.wasm.sqlite.open.helper.io.lock.withLock
 
-internal class PosixFileSystemState(
-    rootLogger: Logger,
-) : AutoCloseable {
-    private val logger: Logger = rootLogger.withTag("PosixFileSystemState")
+internal class PosixFileSystemState : AutoCloseable {
     private val lock: ReentrantLock = reentrantLock()
     private val openFileDescriptors: MutableSet<Fd> = mutableSetOf()
 
@@ -39,7 +35,7 @@ internal class PosixFileSystemState(
         for (fd in fileDescriptors) {
             val errNo = platform.posix.close(fd.fd)
             if (errNo != 0) {
-                logger.i { "close($fd) failed with errno $errNo. Ignore." }
+                // close($fd) failed with errno $errNo. Ignore.
             }
         }
     }

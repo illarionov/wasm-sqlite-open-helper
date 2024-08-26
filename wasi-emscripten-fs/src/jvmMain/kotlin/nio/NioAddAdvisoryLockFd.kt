@@ -19,6 +19,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.NoLock
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.FileLockKey
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.NioFileHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.resolveWhencePosition
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.internal.delegatefs.FileSystemOperationHandler
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.lock.AddAdvisoryLockFd
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.lock.Advisorylock
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.lock.AdvisorylockLockType
@@ -31,8 +32,8 @@ import java.nio.channels.OverlappingFileLockException
 import kotlin.concurrent.withLock
 
 internal class NioAddAdvisoryLockFd(
-    private val fsState: JvmFileSystemState,
-) : NioOperationHandler<AddAdvisoryLockFd, AdvisoryLockError, Unit> {
+    private val fsState: NioFileSystemState,
+) : FileSystemOperationHandler<AddAdvisoryLockFd, AdvisoryLockError, Unit> {
     override fun invoke(input: AddAdvisoryLockFd): Either<AdvisoryLockError, Unit> = fsState.fsLock.withLock {
         val channel = fsState.fileDescriptors.get(input.fd)
             ?: return BadFileDescriptor("File descriptor ${input.fd} is not opened").left()

@@ -16,6 +16,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.writeCatching
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.NioFileHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.getPosition
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.internal.ChannelPositionError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.internal.delegatefs.FileSystemOperationHandler
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.Messages.fileDescriptorNotOpenedMessage
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readwrite.FileSystemByteBuffer
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readwrite.ReadWriteStrategy.CHANGE_POSITION
@@ -26,8 +27,8 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.InvalidArgument 
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.IoError as BaseIoError
 
 internal class NioWriteFd(
-    private val fsState: JvmFileSystemState,
-) : NioOperationHandler<WriteFd, WriteError, ULong> {
+    private val fsState: NioFileSystemState,
+) : FileSystemOperationHandler<WriteFd, WriteError, ULong> {
     override fun invoke(input: WriteFd): Either<WriteError, ULong> = fsState.fsLock.withLock {
         val channel = fsState.fileDescriptors.get(input.fd)
             ?: return BadFileDescriptor(fileDescriptorNotOpenedMessage(input.fd)).left()
