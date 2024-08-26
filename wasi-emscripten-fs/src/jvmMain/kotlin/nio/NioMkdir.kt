@@ -15,6 +15,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.MkdirError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.PermissionDenied
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.asFileAttribute
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.toPosixFilePermissions
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.internal.delegatefs.FileSystemOperationHandler
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.cwd.PathResolver.ResolvePathError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.cwd.toCommonError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.mkdir.Mkdir
@@ -24,8 +25,8 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 internal class NioMkdir(
-    private val fsState: JvmFileSystemState,
-) : NioOperationHandler<Mkdir, MkdirError, Unit> {
+    private val fsState: NioFileSystemState,
+) : FileSystemOperationHandler<Mkdir, MkdirError, Unit> {
     override fun invoke(input: Mkdir): Either<MkdirError, Unit> {
         val path: Path = fsState.pathResolver.resolve(input.path, input.baseDirectory, false)
             .mapLeft(ResolvePathError::toCommonError)

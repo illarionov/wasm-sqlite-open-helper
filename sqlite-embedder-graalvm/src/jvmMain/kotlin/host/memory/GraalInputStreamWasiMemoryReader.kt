@@ -12,11 +12,11 @@ import arrow.core.left
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.DefaultWasiMemoryReader
 import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.WasiMemoryReader
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.BadFileDescriptor
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.ReadError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.readCatching
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.Fd
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.JvmNioFileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.op.RunWithChannelFd
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readwrite.ReadWriteStrategy
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readwrite.ReadWriteStrategy.CHANGE_POSITION
@@ -26,7 +26,7 @@ import java.nio.channels.FileChannel
 
 internal class GraalInputStreamWasiMemoryReader(
     private val memory: GraalvmWasmHostMemoryAdapter,
-    private val fileSystem: JvmNioFileSystem,
+    private val fileSystem: FileSystem,
     logger: Logger,
 ) : WasiMemoryReader {
     private val wasmMemory get() = memory.wasmMemory

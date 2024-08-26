@@ -15,11 +15,12 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.SeekError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.resolveWhencePosition
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.setPosition
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.internal.ChannelPositionError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.internal.delegatefs.FileSystemOperationHandler
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.seek.SeekFd
 
 internal class NioSeekFd(
-    private val fsState: JvmFileSystemState,
-) : NioOperationHandler<SeekFd, SeekError, Long> {
+    private val fsState: NioFileSystemState,
+) : FileSystemOperationHandler<SeekFd, SeekError, Long> {
     override fun invoke(input: SeekFd): Either<SeekError, Long> {
         val channel = fsState.fileDescriptors.get(input.fd)
             ?: return BadFileDescriptor("File descriptor `${input.fd}` is not opened").left()

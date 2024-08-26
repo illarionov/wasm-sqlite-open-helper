@@ -12,13 +12,14 @@ import arrow.core.left
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.BadFileDescriptor
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.CloseError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.IoError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.internal.delegatefs.FileSystemOperationHandler
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.close.CloseFd
 import java.io.IOException
 import kotlin.concurrent.withLock
 
 internal class NioCloseFd(
-    private val fsState: JvmFileSystemState,
-) : NioOperationHandler<CloseFd, CloseError, Unit> {
+    private val fsState: NioFileSystemState,
+) : FileSystemOperationHandler<CloseFd, CloseError, Unit> {
     override fun invoke(input: CloseFd): Either<CloseError, Unit> = fsState.fsLock.withLock {
         val fileChannel = fsState.fileDescriptors.remove(input.fd)
             .mapLeft { BadFileDescriptor(it.message) }

@@ -16,6 +16,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.IoError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.NoEntry
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.StatError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.asLinkOptions
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.internal.delegatefs.FileSystemOperationHandler
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.cwd.PathResolver.ResolvePathError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.stat.FileModeType
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.stat.Stat
@@ -30,8 +31,8 @@ import kotlin.io.path.readAttributes
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.NotDirectory as BaseNotDirectory
 
 internal class NioStat(
-    private val fsState: JvmFileSystemState,
-) : NioOperationHandler<Stat, StatError, StructStat> {
+    private val fsState: NioFileSystemState,
+) : FileSystemOperationHandler<Stat, StatError, StructStat> {
     override fun invoke(input: Stat): Either<StatError, StructStat> {
         val path: Path = fsState.pathResolver.resolve(input.path, input.baseDirectory, false)
             .mapLeft { it.toStatError() }

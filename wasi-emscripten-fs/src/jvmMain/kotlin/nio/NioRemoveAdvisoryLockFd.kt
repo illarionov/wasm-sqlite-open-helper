@@ -16,6 +16,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.IoError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.NioFileHandle
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.fd.resolveWhencePosition
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.internal.ChannelPositionError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.internal.delegatefs.FileSystemOperationHandler
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.lock.Advisorylock
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.lock.RemoveAdvisoryLockFd
 import java.io.IOException
@@ -25,8 +26,8 @@ import kotlin.concurrent.withLock
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.InvalidArgument as BaseInvalidArgument
 
 internal class NioRemoveAdvisoryLockFd(
-    private val fsState: JvmFileSystemState,
-) : NioOperationHandler<RemoveAdvisoryLockFd, AdvisoryLockError, Unit> {
+    private val fsState: NioFileSystemState,
+) : FileSystemOperationHandler<RemoveAdvisoryLockFd, AdvisoryLockError, Unit> {
     override fun invoke(input: RemoveAdvisoryLockFd): Either<AdvisoryLockError, Unit> {
         val channel = fsState.fileDescriptors.get(input.fd)
             ?: return BadFileDescriptor("File descriptor ${input.fd} is not opened").left()

@@ -13,6 +13,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.ChownError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.InvalidArgument
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.IoError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.NotSupported
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.internal.delegatefs.FileSystemOperationHandler
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.cwd.PathResolver.ResolvePathError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.cwd.toCommonError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.chown.Chown
@@ -23,8 +24,8 @@ import java.nio.file.attribute.UserPrincipalNotFoundException
 import kotlin.io.path.fileAttributesView
 
 internal class NioChown(
-    private val fsState: JvmFileSystemState,
-) : NioOperationHandler<Chown, ChownError, Unit> {
+    private val fsState: NioFileSystemState,
+) : FileSystemOperationHandler<Chown, ChownError, Unit> {
     override fun invoke(input: Chown): Either<ChownError, Unit> {
         val path: Path = fsState.pathResolver.resolve(input.path, input.baseDirectory, false)
             .mapLeft(ResolvePathError::toCommonError)

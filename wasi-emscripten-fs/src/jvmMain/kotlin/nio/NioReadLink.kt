@@ -13,6 +13,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.AccessDenied
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.InvalidArgument
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.IoError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.ReadLinkError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.internal.delegatefs.FileSystemOperationHandler
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.cwd.PathResolver.ResolvePathError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.cwd.toCommonError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readlink.ReadLink
@@ -21,8 +22,8 @@ import java.nio.file.Files
 import java.nio.file.NotLinkException
 
 internal class NioReadLink(
-    private val fsState: JvmFileSystemState,
-) : NioOperationHandler<ReadLink, ReadLinkError, String> {
+    private val fsState: NioFileSystemState,
+) : FileSystemOperationHandler<ReadLink, ReadLinkError, String> {
     override fun invoke(input: ReadLink): Either<ReadLinkError, String> {
         val path: java.nio.file.Path = fsState.pathResolver.resolve(input.path, input.baseDirectory, false)
             .mapLeft(ResolvePathError::toCommonError)

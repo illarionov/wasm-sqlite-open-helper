@@ -15,14 +15,15 @@ import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost.LocalTimeFormatter
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost.MonotonicClock
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost.SystemEnvProvider
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost.TimeZoneInfoProvider
+import ru.pixnews.wasm.sqlite.open.helper.host.ext.DefaultFileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.JvmNioFileSystem
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.NioFileSystem
 
 public class JvmEmbedderHost(
     public override val rootLogger: Logger = Logger,
     public override val systemEnvProvider: SystemEnvProvider = JvmSystemEnvProvider,
     public override val commandArgsProvider: CommandArgsProvider = JvmCommandArgsProvider,
-    public override val fileSystem: FileSystem = JvmNioFileSystem(rootLogger = rootLogger),
+    public override val fileSystem: FileSystem = DefaultFileSystem(NioFileSystem, rootLogger.withTag("FSnio")),
     public override val clock: Clock = JvmClock,
     public override val monotonicClock: MonotonicClock = JvmMonotonicClock,
     public override val localTimeFormatter: LocalTimeFormatter = JvmLocalTimeFormatter(),

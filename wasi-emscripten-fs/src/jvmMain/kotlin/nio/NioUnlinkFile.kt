@@ -15,6 +15,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.IoError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.NoEntry
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.PathIsDirectory
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.UnlinkError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.internal.delegatefs.FileSystemOperationHandler
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.cwd.PathResolver
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.cwd.PathResolver.ResolvePathError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.unlink.UnlinkFile
@@ -28,7 +29,7 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.NotDirectory as 
 
 internal class NioUnlinkFile(
     private val pathResolver: PathResolver,
-) : NioOperationHandler<UnlinkFile, UnlinkError, Unit> {
+) : FileSystemOperationHandler<UnlinkFile, UnlinkError, Unit> {
     @Suppress("ReturnCount")
     override fun invoke(input: UnlinkFile): Either<UnlinkError, Unit> {
         val path: Path = pathResolver.resolve(input.path, input.baseDirectory, false)

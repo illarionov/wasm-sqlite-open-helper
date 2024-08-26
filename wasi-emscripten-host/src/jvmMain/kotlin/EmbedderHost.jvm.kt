@@ -7,7 +7,8 @@
 package ru.pixnews.wasm.sqlite.open.helper.host
 
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost.Builder
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.JvmNioFileSystem
+import ru.pixnews.wasm.sqlite.open.helper.host.ext.DefaultFileSystem
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.NioFileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.jvm.JvmEmbedderHost
 import ru.pixnews.wasm.sqlite.open.helper.host.jvm.JvmEmbedderHost.JvmClock
 import ru.pixnews.wasm.sqlite.open.helper.host.jvm.JvmEmbedderHost.JvmCommandArgsProvider
@@ -21,7 +22,7 @@ internal actual fun createDefaultEmbedderHost(builder: Builder): EmbedderHost = 
     rootLogger = builder.rootLogger,
     systemEnvProvider = builder.systemEnvProvider ?: JvmSystemEnvProvider,
     commandArgsProvider = builder.commandArgsProvider ?: JvmCommandArgsProvider,
-    fileSystem = builder.fileSystem ?: JvmNioFileSystem(rootLogger = builder.rootLogger),
+    fileSystem = builder.fileSystem ?: DefaultFileSystem(NioFileSystem, builder.rootLogger.withTag("FSnio")),
     clock = builder.clock ?: JvmClock,
     monotonicClock = builder.monotonicClock ?: JvmMonotonicClock,
     localTimeFormatter = builder.localTimeFormatter ?: JvmLocalTimeFormatter(),

@@ -6,14 +6,9 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host
 
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost.Builder
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
+import ru.pixnews.wasm.sqlite.open.helper.host.ext.DefaultFileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.LinuxFileSystem
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.logging.LoggingFileSystemDecorator
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.logging.LoggingFileSystemDecorator.LoggingEvents
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.logging.LoggingFileSystemDecorator.LoggingEvents.OperationEnd
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.logging.LoggingFileSystemDecorator.OperationLoggingLevel.BASIC
 import ru.pixnews.wasm.sqlite.open.helper.host.internal.CommonClock
 import ru.pixnews.wasm.sqlite.open.helper.host.internal.CommonMonotonicClock
 import ru.pixnews.wasm.sqlite.open.helper.host.linux.LinuxEmbedderHost
@@ -27,27 +22,10 @@ internal actual fun createDefaultEmbedderHost(builder: Builder): EmbedderHost = 
     rootLogger = builder.rootLogger,
     systemEnvProvider = builder.systemEnvProvider ?: NativeSystemEnvProvider,
     commandArgsProvider = builder.commandArgsProvider ?: NativeCommandArgsProvider,
-    fileSystem = builder.fileSystem ?: createLinuxFileSystem(builder.rootLogger),
+    fileSystem = builder.fileSystem ?: DefaultFileSystem(LinuxFileSystem, builder.rootLogger.withTag("FSlnx")),
     monotonicClock = builder.monotonicClock ?: CommonMonotonicClock(),
     clock = builder.clock ?: CommonClock(),
     localTimeFormatter = builder.localTimeFormatter ?: LinuxLocalTimeFormatter(),
     timeZoneInfo = builder.timeZoneInfo ?: LinuxTimeZoneInfoProvider(),
     entropySource = builder.entropySource ?: LinuxEntropySource(),
 )
-
-private fun createLinuxFileSystem(logger: Logger): FileSystem {
-    val linuxFileSystem = LinuxFileSystem(logger)
-    val fsLogger = logger.withTag("FSlnx")
-    val loggingDecorator = LoggingFileSystemDecorator(
-        delegate = linuxFileSystem,
-        logger = { fsLogger.v(null, it) },
-        logEvents = LoggingEvents(
-            end = OperationEnd(
-                inputs = BASIC,
-                outputs = BASIC,
-                trackDuration = true,
-            ),
-        ),
-    )
-    return loggingDecorator
-}

@@ -13,6 +13,7 @@ import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractSqliteDriverTest
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.TestSqliteDriverFactory
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.room.UserDatabaseTests.UserDatabaseFactory
 import kotlin.test.Test
+import kotlin.time.Duration.Companion.minutes
 
 public abstract class AbstractBasicRoomTest<S>(
     driverFactory: TestSqliteDriverFactory<S>,
@@ -25,7 +26,7 @@ public abstract class AbstractBasicRoomTest<S>(
     val tests = UserDatabaseTests(driverFactory, databaseFactory, logger, dbLogger)
 
     @Test
-    open fun Test_Room() = runTest {
+    open fun Test_Room() = runTest(timeout = 3.minutes) {
         tests.testRoomOnUserDatabase(
             databaseName = fileInTempDir("test.db"),
             queryCoroutineContext = coroutineContext,
@@ -34,7 +35,7 @@ public abstract class AbstractBasicRoomTest<S>(
     }
 
     @Test
-    open fun Test_In_Memory_Room() = runTest {
+    open fun Test_In_Memory_Room() = runTest(timeout = 3.minutes) {
         tests.testRoomOnUserDatabase(
             databaseName = null,
             queryCoroutineContext = this.coroutineContext,

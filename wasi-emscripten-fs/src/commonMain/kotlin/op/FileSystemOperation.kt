@@ -8,6 +8,6 @@ package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op
 
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.FileSystemOperationError
 
-public interface FileSystemOperation<I : Any, E : FileSystemOperationError, R : Any> {
+public interface FileSystemOperation<in I : Any, out E : FileSystemOperationError, out R : Any> {
     public val tag: String
 }

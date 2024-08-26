@@ -12,6 +12,7 @@ import arrow.core.left
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.IoError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.SetTimestampError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.ext.asLinkOptions
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.internal.delegatefs.FileSystemOperationHandler
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.cwd.PathResolver.ResolvePathError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.nio.cwd.toCommonError
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.settimestamp.SetTimestamp
@@ -23,8 +24,8 @@ import java.util.concurrent.TimeUnit.NANOSECONDS
 import kotlin.io.path.fileAttributesView
 
 internal class NioSetTimestamp(
-    private val fsState: JvmFileSystemState,
-) : NioOperationHandler<SetTimestamp, SetTimestampError, Unit> {
+    private val fsState: NioFileSystemState,
+) : FileSystemOperationHandler<SetTimestamp, SetTimestampError, Unit> {
     override fun invoke(input: SetTimestamp): Either<SetTimestampError, Unit> {
         val path: Path = fsState.pathResolver.resolve(input.path, input.baseDirectory, false)
             .mapLeft(ResolvePathError::toCommonError)

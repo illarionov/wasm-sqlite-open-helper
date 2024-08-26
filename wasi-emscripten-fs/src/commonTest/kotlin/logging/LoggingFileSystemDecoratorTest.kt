@@ -6,16 +6,19 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.loggin
 
+import arrow.core.Either
 import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.containsExactly
-import assertk.assertions.isTrue
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.logging.LoggingFileSystemDecorator
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.logging.LoggingFileSystemDecorator.LoggingEvents
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.logging.LoggingFileSystemDecorator.LoggingEvents.OperationEnd
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.logging.LoggingFileSystemDecorator.LoggingEvents.OperationStart
-import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.logging.LoggingFileSystemDecorator.OperationLoggingLevel.BASIC
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystemInterceptor.Chain
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error.ReadLinkError
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.logging.LoggingFileSystemInterceptor
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.logging.LoggingFileSystemInterceptor.LoggingEvents
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.logging.LoggingFileSystemInterceptor.LoggingEvents.OperationEnd
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.logging.LoggingFileSystemInterceptor.LoggingEvents.OperationStart
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.logging.LoggingFileSystemInterceptor.OperationLoggingLevel.BASIC
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.model.BaseDirectory.CurrentWorkingDirectory
+import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.FileSystemOperation
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.op.readlink.ReadLink
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.test.fixtures.TestFileSystem
 import kotlin.test.Test
@@ -29,8 +32,7 @@ class LoggingFileSystemDecoratorTest {
         }
 
         val loggedMessages: MutableList<String> = mutableListOf()
-        val loggingDecorator = LoggingFileSystemDecorator(
-            delegate = delegateFs,
+        val loggingInterceptor = LoggingFileSystemInterceptor(
             logger = {
                 loggedMessages += it()
             },
@@ -43,30 +45,17 @@ class LoggingFileSystemDecoratorTest {
                 ),
             ),
         )
-        loggingDecorator.execute(ReadLink, ReadLink(path = "/testPath", baseDirectory = CurrentWorkingDirectory))
+        val chain = object : Chain<ReadLink, ReadLinkError, String> {
+            override val operation: FileSystemOperation<ReadLink, ReadLinkError, String> = ReadLink.Companion
+            override val input: ReadLink = ReadLink(path = "/testPath", baseDirectory = CurrentWorkingDirectory)
+            override fun proceed(input: ReadLink): Either<ReadLinkError, String> = "/link".right()
+        }
+
+        loggingInterceptor.intercept(chain)
 
         assertThat(loggedMessages).containsExactly(
             "^readlink(ReadLink(path=/testPath, baseDirectory=CurrentWorkingDirectory))",
             "readlink(): OK. Inputs: ReadLink(path=/testPath, baseDirectory=CurrentWorkingDirectory). Outputs: /link",
         )
-    }
-
-    @Test
-    fun close_should_close_delegate() {
-        var closeCalled = false
-        val delegateFs = object : TestFileSystem() {
-            override fun close() {
-                closeCalled = true
-            }
-        }
-
-        val loggingDecorator = LoggingFileSystemDecorator(
-            delegate = delegateFs,
-            logger = { },
-        )
-
-        loggingDecorator.close()
-
-        assertThat(closeCalled).isTrue()
     }
 }
