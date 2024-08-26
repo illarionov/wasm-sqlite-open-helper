@@ -6,11 +6,19 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.host.linux
 
+import kotlinx.cinterop.get
+import kotlinx.cinterop.toKStringFromUtf8
+import platform.posix.tzname
 import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost.TimeZoneInfoProvider
 import ru.pixnews.wasm.sqlite.open.helper.host.include.TimeZoneInfo
 
-internal class LinuxTimeZoneInfoProvider : TimeZoneInfoProvider {
+internal object LinuxTimeZoneInfoProvider : TimeZoneInfoProvider {
     override fun getTimeZoneInfo(): TimeZoneInfo {
-        error("Not implemented")
+        return TimeZoneInfo(
+            timeZone = platform.posix.timezone_,
+            daylight = platform.posix.daylight,
+            stdName = tzname[0]?.toKStringFromUtf8() ?: "unk",
+            dstName = tzname[1]?.toKStringFromUtf8() ?: "unk",
+        )
     }
 }

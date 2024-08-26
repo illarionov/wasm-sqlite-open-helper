@@ -24,6 +24,7 @@ public class JvmLocalTimeFormatter(
             localTimeZoneProvider(),
         )
         val zone = date.zone
+        @Suppress("COMPLEX_EXPRESSION")
         return StructTm(
             tm_sec = date.second,
             tm_min = date.minute,
@@ -38,7 +39,7 @@ public class JvmLocalTimeFormatter(
             } else {
                 StructTm.IsDstFlag.NOT_IN_EFFECT
             }.asTmIsdstValue(),
-            tm_gmtoff = zone.rules.getOffset(date.toInstant()).totalSeconds,
+            tm_gmtoff = zone.rules.getOffset(date.toInstant()).totalSeconds.toLong(),
             tm_zone = zone.id,
         )
     }
