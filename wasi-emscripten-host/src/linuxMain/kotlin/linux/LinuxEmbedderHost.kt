@@ -20,23 +20,16 @@ import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.FileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.filesystem.LinuxFileSystem
 import ru.pixnews.wasm.sqlite.open.helper.host.internal.CommonClock
 import ru.pixnews.wasm.sqlite.open.helper.host.internal.CommonMonotonicClock
+import ru.pixnews.wasm.sqlite.open.helper.host.internal.EmptyCommandArgsProvider
 
 public class LinuxEmbedderHost(
     override val rootLogger: Logger,
-    override val systemEnvProvider: SystemEnvProvider = NativeSystemEnvProvider,
-    override val commandArgsProvider: CommandArgsProvider = NativeCommandArgsProvider,
+    override val systemEnvProvider: SystemEnvProvider = LinuxSystemEnvProvider,
+    override val commandArgsProvider: CommandArgsProvider = EmptyCommandArgsProvider,
     override val fileSystem: FileSystem = DefaultFileSystem(LinuxFileSystem, rootLogger.withTag("FSlnx")),
     override val monotonicClock: MonotonicClock = CommonMonotonicClock(),
     override val clock: Clock = CommonClock(),
-    override val localTimeFormatter: LocalTimeFormatter = LinuxLocalTimeFormatter(),
-    override val timeZoneInfo: TimeZoneInfoProvider = LinuxTimeZoneInfoProvider(),
+    override val localTimeFormatter: LocalTimeFormatter = LinuxLocalTimeFormatter,
+    override val timeZoneInfo: TimeZoneInfoProvider = LinuxTimeZoneInfoProvider,
     override val entropySource: EntropySource = LinuxEntropySource(),
-) : EmbedderHost {
-    internal object NativeSystemEnvProvider : SystemEnvProvider {
-        override fun getSystemEnv(): Map<String, String> = emptyMap() // TODO:
-    }
-
-    internal object NativeCommandArgsProvider : CommandArgsProvider {
-        override fun getCommandArgs(): List<String> = emptyList()
-    }
-}
+) : EmbedderHost

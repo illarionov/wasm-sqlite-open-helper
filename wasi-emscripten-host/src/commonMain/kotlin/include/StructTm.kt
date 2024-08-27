@@ -38,7 +38,7 @@ public data class StructTm(
     val tm_wday: Int,
     val tm_yday: Int,
     val tm_isdst: Int,
-    val tm_gmtoff: Int,
+    val tm_gmtoff: Long,
     val tm_zone: String? = null,
 ) {
     val isDstFlag: IsDstFlag = when {
@@ -82,7 +82,7 @@ public fun StructTm.packTo(sink: Sink): Unit = sink.run {
     writeIntLe(tm_wday) // 24
     writeIntLe(tm_yday) // 28
     writeIntLe(tm_isdst) // 32
-    writeIntLe(tm_gmtoff) // 36
+    writeIntLe(tm_gmtoff.toInt()) // 36
 }
 
 public fun StructTm.pack(): Buffer = Buffer().also {
