@@ -325,6 +325,11 @@
             <pgp value="2E92113263FC31C74CCBAAB20E91C2DE43B72BB1"/>
          </artifact>
       </component>
+      <component group="org.eclipse.jgit" name="org.eclipse.jgit" version="6.10.0.202406032230-r">
+         <artifact name="org.eclipse.jgit-6.10.0.202406032230-r.jar">
+            <pgp value="7C669810892CBD3148FA92995B05CCDE140C2876"/>
+         </artifact>
+      </component>
       <component group="org.eclipse.jgit" name="org.eclipse.jgit" version="6.7.0.202309050840-r">
          <artifact name="org.eclipse.jgit-6.7.0.202309050840-r.jar">
             <pgp value="7C669810892CBD3148FA92995B05CCDE140C2876"/>
