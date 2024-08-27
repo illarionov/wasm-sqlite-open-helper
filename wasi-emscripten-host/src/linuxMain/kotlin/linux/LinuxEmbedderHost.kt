@@ -31,5 +31,5 @@ public class LinuxEmbedderHost(
     override val clock: Clock = CommonClock(),
     override val localTimeFormatter: LocalTimeFormatter = LinuxLocalTimeFormatter,
     override val timeZoneInfo: TimeZoneInfoProvider = LinuxTimeZoneInfoProvider,
-    override val entropySource: EntropySource = LinuxEntropySource(),
+    override val entropySource: EntropySource = LinuxEntropySource,
 ) : EmbedderHost

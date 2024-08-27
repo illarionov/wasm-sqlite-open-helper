@@ -27,5 +27,5 @@ internal actual fun createDefaultEmbedderHost(builder: Builder): EmbedderHost = 
     clock = builder.clock ?: CommonClock(),
     localTimeFormatter = builder.localTimeFormatter ?: LinuxLocalTimeFormatter,
     timeZoneInfo = builder.timeZoneInfo ?: LinuxTimeZoneInfoProvider,
-    entropySource = builder.entropySource ?: LinuxEntropySource(),
+    entropySource = builder.entropySource ?: LinuxEntropySource,
 )
