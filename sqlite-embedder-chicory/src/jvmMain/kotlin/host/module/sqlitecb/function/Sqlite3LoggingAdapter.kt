@@ -6,13 +6,13 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.sqlitecb.function
 
+import at.released.weh.host.EmbedderHost
+import at.released.weh.host.base.memory.ReadOnlyMemory
 import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.runtime.WasmFunctionHandle
 import com.dylibso.chicory.wasm.types.Value
 import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.asWasmAddr
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.function.Sqlite3LoggingFunctionHandler
-import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteLogCallback
 
 internal class Sqlite3LoggingAdapter(

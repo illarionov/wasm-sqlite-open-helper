@@ -32,7 +32,7 @@ kotlin {
             implementation(libs.kotlinx.io)
             api(projects.commonApi)
             implementation(projects.commonLock)
-            api(projects.wasiEmscriptenHost)
+            api(libs.wasi.emscripten.host)
             api(libs.wsoh.binary.reader)
         }
         commonTest.dependencies {

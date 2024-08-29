@@ -6,13 +6,13 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chicory.ext
 
+import at.released.weh.host.base.binding.WasmFunctionBinding
 import com.dylibso.chicory.runtime.ExportFunction
 import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.wasm.exceptions.ChicoryException
 import com.dylibso.chicory.wasm.types.Value
 import ru.pixnews.wasm.sqlite.open.helper.chicory.exports.ChicoryWasmFunctionBinding
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SinglePropertyLazyValue
-import ru.pixnews.wasm.sqlite.open.helper.host.base.binding.WasmFunctionBinding
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty

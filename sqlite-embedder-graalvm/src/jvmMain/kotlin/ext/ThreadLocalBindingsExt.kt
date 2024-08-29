@@ -6,10 +6,10 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.ext
 
+import at.released.weh.host.base.binding.WasmFunctionBinding
 import org.graalvm.polyglot.Value
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SinglePropertyLazyValue
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.exports.GraalWasmFunctionBinding
-import ru.pixnews.wasm.sqlite.open.helper.host.base.binding.WasmFunctionBinding
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty

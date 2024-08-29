@@ -37,6 +37,7 @@ kotlin {
             implementation(libs.androidx.room.testing)
             implementation(libs.kotlinx.coroutines.test)
             implementation(libs.kotlinx.datetime)
+            implementation(libs.wasi.emscripten.host.test.logger)
         }
         jvmMain.dependencies {
             compileOnly(kotlin("test-junit"))

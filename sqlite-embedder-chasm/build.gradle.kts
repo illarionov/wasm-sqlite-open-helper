@@ -34,23 +34,18 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            api(libs.wsoh.binary.reader)
-            implementation(libs.chasm)
-            implementation(libs.kotlinx.io)
-            compileOnly(libs.chasm.decoder)
-            compileOnly(libs.chasm.instantiator)
-            compileOnly(libs.chasm.memory)
-            compileOnly(libs.chasm.runtime)
-            compileOnly(libs.chasm.validator)
             api(projects.sqliteCommon)
-            implementation(projects.wasiEmscriptenHost)
+            api(libs.wsoh.binary.reader)
+            implementation(libs.chasm.decoder)
+            implementation(libs.chasm.runtime)
+            implementation(libs.wasi.emscripten.host.chasm)
             implementation(libs.wsoh.sqlite.st)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
             implementation(libs.assertk)
             implementation(projects.sqliteTests.sqliteTestUtils)
-            implementation(projects.wasiEmscriptenHostTestFixtures)
+            implementation(libs.wasi.emscripten.host.fixtures)
         }
     }
 }

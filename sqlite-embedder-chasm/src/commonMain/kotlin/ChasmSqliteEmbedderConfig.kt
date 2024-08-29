@@ -6,13 +6,13 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chasm
 
+import at.released.weh.common.api.Logger
+import at.released.weh.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcu346
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.binary.reader.WasmSourceReader
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
-import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 
 /**
  * Configuration of the Chasm engine

@@ -6,11 +6,11 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chasm
 
+import at.released.weh.host.EmbedderHost
+import at.released.weh.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.binary.reader.WasmSourceReader
-import ru.pixnews.wasm.sqlite.open.helper.chasm.exports.ChasmEmscriptenMainExports
 import ru.pixnews.wasm.sqlite.open.helper.chasm.exports.ChasmSqliteExports
-import ru.pixnews.wasm.sqlite.open.helper.chasm.exports.ChicoryEmscriptenStackExports
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.ChasmInstanceBuilder
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.ChasmInstanceBuilder.ChasmInstance
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
@@ -21,10 +21,6 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.SqliteCallbackFunctionIndexes
-import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
-import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.EmscriptenRuntime
-import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.stack.EmscriptenStack
 
 public object ChasmSqliteEmbedder : SqliteEmbedder<ChasmSqliteEmbedderConfig, ChasmRuntime> {
     @InternalWasmSqliteHelperApi
@@ -61,24 +57,12 @@ public object ChasmSqliteEmbedder : SqliteEmbedder<ChasmSqliteEmbedderConfig, Ch
         }
 
         val callbackStore = SqliteCallbackStore()
-        lateinit var emscriptenStack: EmscriptenStack
         val chasmInstance: ChasmInstance = ChasmInstanceBuilder(
             host = host,
             callbackStore = callbackStore,
-            emscriptenStackRef = { emscriptenStack },
             sqlite3Binary = sqlite3Binary,
             sourceReader = sourceReader,
         ).setupChasmInstance()
-
-        val emscriptenRuntime = EmscriptenRuntime.emscriptenSingleThreadedRuntime(
-            mainExports = ChasmEmscriptenMainExports(chasmInstance),
-            stackExports = ChicoryEmscriptenStackExports(chasmInstance),
-            memory = chasmInstance.memory,
-            logger = host.rootLogger,
-        )
-        emscriptenStack = emscriptenRuntime.stack
-
-        emscriptenRuntime.initMainThread()
 
         val runtimeInstance = object : ChasmRuntime {
             override val embedderInfo: SqliteEmbedderRuntimeInfo = object : SqliteEmbedderRuntimeInfo {

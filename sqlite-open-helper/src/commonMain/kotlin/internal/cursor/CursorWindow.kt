@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.internal.cursor
 
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
+import at.released.weh.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteException
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.CursorFieldType
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.Field

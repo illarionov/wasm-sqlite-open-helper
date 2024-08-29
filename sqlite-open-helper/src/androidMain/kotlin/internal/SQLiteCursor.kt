@@ -22,7 +22,7 @@ import android.database.DataSetObserver
 import android.database.StaleDataException
 import android.net.Uri
 import android.os.Bundle
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
+import at.released.weh.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard.CloseGuardFinalizeAction
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.CursorWindow
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow

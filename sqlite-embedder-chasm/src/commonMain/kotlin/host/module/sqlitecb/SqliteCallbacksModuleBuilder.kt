@@ -6,27 +6,26 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb
 
+import at.released.weh.host.EmbedderHost
+import at.released.weh.host.base.memory.ReadOnlyMemory
 import io.github.charlietap.chasm.embedding.function
-import io.github.charlietap.chasm.executor.runtime.store.Store
-import io.github.charlietap.chasm.import.Import
+import io.github.charlietap.chasm.embedding.shapes.Import
+import io.github.charlietap.chasm.embedding.shapes.Store
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.toChasmFunctionTypes
-import ru.pixnews.wasm.sqlite.open.helper.chasm.host.memory.ChasmMemoryAdapter
-import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.EmscriptenHostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.function.Sqlite3LoggingAdapter
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.function.Sqlite3ProgressAdapter
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.function.Sqlite3TraceAdapter
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
+import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SQLITE3_CALLBACK_MANAGER_MODULE_NAME
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction.SQLITE3_LOGGING_CALLBACK
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction.SQLITE3_PROGRESS_CALLBACK
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction.SQLITE3_TRACE_CALLBACK
-import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmModules.SQLITE3_CALLBACK_MANAGER_MODULE_NAME
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
+import io.github.charlietap.chasm.embedding.shapes.HostFunction as ChasmHostFunction
 
-internal fun getSqliteCallbacksHostFunctions(
+internal fun setupSqliteCallbacksHostFunctions(
     store: Store,
-    memory: ChasmMemoryAdapter,
+    memory: ReadOnlyMemory,
     host: EmbedderHost,
     callbackStore: SqliteCallbackStore,
     moduleName: String = SQLITE3_CALLBACK_MANAGER_MODULE_NAME,
@@ -51,7 +50,7 @@ private fun SqliteCallbacksModuleFunction.createChasmHostFunction(
     host: EmbedderHost,
     memory: ReadOnlyMemory,
     callbackStore: SqliteCallbackStore,
-): EmscriptenHostFunctionHandle = when (this) {
+): ChasmHostFunction = when (this) {
     SQLITE3_TRACE_CALLBACK -> Sqlite3TraceAdapter(
         host,
         memory,

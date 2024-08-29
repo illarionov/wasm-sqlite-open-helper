@@ -16,7 +16,7 @@ package ru.pixnews.wasm.sqlite.open.helper.internal
 import android.database.sqlite.SQLiteDatabaseCorruptException
 import android.database.sqlite.SQLiteException
 import androidx.core.os.CancellationSignal
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
+import at.released.weh.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.CursorWindow
 
 /**

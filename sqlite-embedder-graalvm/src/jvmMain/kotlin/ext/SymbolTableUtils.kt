@@ -6,6 +6,11 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.ext
 
+import at.released.weh.host.EmbedderHost
+import at.released.weh.host.base.WasmValueType
+import at.released.weh.host.base.function.HostFunction
+import at.released.weh.host.base.function.HostFunction.HostFunctionType
+import at.released.weh.host.base.function.functionTypes
 import org.graalvm.wasm.SymbolTable
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmFunction
@@ -13,11 +18,6 @@ import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.constants.Sizes
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.NodeFactory
-import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmValueType
-import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction.HostFunctionType
-import ru.pixnews.wasm.sqlite.open.helper.host.base.function.functionTypes
 
 internal fun setupWasmModuleFunctions(
     context: WasmContext,

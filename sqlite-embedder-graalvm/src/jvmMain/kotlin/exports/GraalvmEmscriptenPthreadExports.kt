@@ -6,11 +6,11 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.exports
 
+import at.released.weh.host.emscripten.export.pthread.EmscriptenPthreadExports
 import org.graalvm.polyglot.Value
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.functionMember
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.intGlobalMember
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.optionalFunctionMember
-import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.pthread.EmscriptenPthreadExports
 
 internal class GraalvmEmscriptenPthreadExports(
     mainBindings: () -> Value,

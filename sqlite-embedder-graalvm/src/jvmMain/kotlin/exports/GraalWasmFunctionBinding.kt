@@ -6,10 +6,10 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.exports
 
+import at.released.weh.host.base.WasmPtr
+import at.released.weh.host.base.binding.WasmFunctionBinding
 import org.graalvm.polyglot.Value
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.asWasmAddr
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.host.base.binding.WasmFunctionBinding
 
 internal class GraalWasmFunctionBinding(
     private val member: Value,

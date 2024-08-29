@@ -8,11 +8,11 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chicory.exports
 
+import at.released.weh.host.base.WasmPtr
+import at.released.weh.host.base.isNull
 import com.dylibso.chicory.runtime.Instance
 import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.functionMember
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteDynamicMemoryExports
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.host.base.isSqlite3Null
 
 internal class ChicorySqliteDynamicMemoryExports(
     mainBindings: Instance,
@@ -27,7 +27,7 @@ internal class ChicorySqliteDynamicMemoryExports(
         check(len > 0U)
         val mem: WasmPtr<P> = sqlite3_malloc.executeForPtr(len.toInt())
 
-        if (mem.isSqlite3Null()) {
+        if (mem.isNull()) {
             throw OutOfMemoryError()
         }
 

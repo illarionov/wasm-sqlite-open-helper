@@ -15,7 +15,7 @@ package ru.pixnews.wasm.sqlite.open.helper.internal
 
 import androidx.core.os.CancellationSignal
 import androidx.core.os.OperationCanceledException
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
+import at.released.weh.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfig
 import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard.CloseGuardFinalizeAction
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.AcquiredConnectionStatus.DISCARD

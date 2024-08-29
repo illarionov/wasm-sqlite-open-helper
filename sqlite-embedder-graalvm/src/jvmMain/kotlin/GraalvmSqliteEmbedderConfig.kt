@@ -6,14 +6,14 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm
 
+import at.released.weh.common.api.Logger
+import at.released.weh.host.EmbedderHost
 import org.graalvm.polyglot.Engine
 import ru.pixnews.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcuMtPthread346
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.binary.reader.WasmSourceReader
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
-import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 
 /**
  * Configuration of the GraalVM engine

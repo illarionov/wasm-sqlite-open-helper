@@ -6,12 +6,12 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module
 
+import at.released.weh.bindings.graalvm240.host.memory.GraalvmWasmHostMemoryAdapter
+import at.released.weh.host.base.function.HostFunctionHandle
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.memory.WasmMemory
 import org.graalvm.wasm.nodes.WasmRootNode
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.GraalvmWasmHostMemoryAdapter
-import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 
 internal open class BaseWasmNode<H : HostFunctionHandle>(
     language: WasmLanguage,

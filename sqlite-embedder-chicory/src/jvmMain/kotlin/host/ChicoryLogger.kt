@@ -8,6 +8,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chicory.host
 
+import at.released.weh.common.api.Logger
 import com.dylibso.chicory.log.Logger.Level
 import com.dylibso.chicory.log.Logger.Level.ALL
 import com.dylibso.chicory.log.Logger.Level.DEBUG
@@ -16,7 +17,6 @@ import com.dylibso.chicory.log.Logger.Level.INFO
 import com.dylibso.chicory.log.Logger.Level.OFF
 import com.dylibso.chicory.log.Logger.Level.TRACE
 import com.dylibso.chicory.log.Logger.Level.WARNING
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import java.util.function.Supplier
 import com.dylibso.chicory.log.Logger as ChicoryLogger
 

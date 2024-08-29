@@ -8,8 +8,8 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.embedder.exports
 
+import at.released.weh.host.base.binding.WasmFunctionBinding
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
-import ru.pixnews.wasm.sqlite.open.helper.host.base.binding.WasmFunctionBinding
 
 @InternalWasmSqliteHelperApi
 public interface SqliteExports {

@@ -6,26 +6,29 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm
 
+import at.released.weh.bindings.graalvm240.GraalvmEmscriptenEnvironment
+import at.released.weh.bindings.graalvm240.GraalvmHostFunctionInstaller
+import at.released.weh.bindings.graalvm240.MemorySource.ExportedMemory
+import at.released.weh.bindings.graalvm240.MemorySource.ImportedMemory
+import at.released.weh.bindings.graalvm240.MemorySpec
+import at.released.weh.bindings.graalvm240.host.pthread.ManagedThreadInitializer
+import at.released.weh.host.EmbedderHost
+import at.released.weh.host.base.WasmModules.WASI_SNAPSHOT_PREVIEW1_MODULE_NAME
+import at.released.weh.host.base.WasmPtr
+import at.released.weh.host.base.memory.WASM_MEMORY_PAGE_SIZE
+import at.released.weh.host.include.StructPthread
 import org.graalvm.polyglot.Context
 import org.graalvm.polyglot.Engine
 import org.graalvm.polyglot.Source
 import org.graalvm.polyglot.io.ByteSequence
-import org.graalvm.wasm.WasmInstance
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.binary.reader.WasmSourceReader
 import ru.pixnews.wasm.sqlite.binary.reader.readBytesOrThrow
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderRuntimeInfo
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.memory.SharedMemoryWaiterListStore
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.emscripten.EmscriptenEnvModuleBuilder
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.GraalvmSqliteCallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.SqliteCallbacksModuleBuilder
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.wasi.WasiSnapshotPreview1ModuleBuilder
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.GraalvmPthreadManager
-import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.stack.EmscriptenStack
 import java.net.URI
-import java.util.concurrent.atomic.AtomicReference
 
 internal class GraalvmEmbedderBuilder(
     private val graalvmEngine: Engine,
@@ -34,7 +37,7 @@ internal class GraalvmEmbedderBuilder(
     private val wasmSourceReader: WasmSourceReader,
 ) {
     val logger = host.rootLogger
-    val sqliteSource: Source by lazy(LazyThreadSafetyMode.NONE) {
+    private val sqliteSource: Source by lazy(LazyThreadSafetyMode.NONE) {
         val rawUrl = sqlite3Binary.sqliteUrl.url
         val builder = if (rawUrl.startsWith("jar:")) {
             Source.newBuilder("wasm", URI(rawUrl).toURL())
@@ -46,71 +49,106 @@ internal class GraalvmEmbedderBuilder(
             .name(SQLITE3_SOURCE_NAME)
             .build()
     }
-    val useSharedMemory = USE_UNSAFE_MEMORY || sqlite3Binary.requireThreads
-    val wasmThreadsEnabled = sqlite3Binary.requireThreads
+    private val wasmThreadsEnabled = sqlite3Binary.requireThreads
+    private val memorySpec = MemorySpec {
+        this.minSizePages = sqlite3Binary.wasmMinMemorySize / WASM_MEMORY_PAGE_SIZE
+        this.shared = sqlite3Binary.requireThreads
+        this.useUnsafe = USE_UNSAFE_MEMORY || sqlite3Binary.requireThreads
+    }
+    private val sqliteCallbacksStore = SqliteCallbackStore()
 
     fun createEnvironment(): GraalvmSqliteRuntimeInternal {
-        val callbackStore = SqliteCallbackStore()
-        val memoryWaiters = SharedMemoryWaiterListStore()
-
-        val pthreadRef: AtomicReference<GraalvmPthreadManager> = AtomicReference()
-        val stackBindingsRef: AtomicReference<EmscriptenStack> = AtomicReference()
-
         val graalContext: Context = createGraalContext()
-        val modules = setupModules(
-            graalContext = graalContext,
-            mainThreadEnv = null,
-            callbackStore = callbackStore,
-            pthreadRef = pthreadRef::get,
-            stackBindingsRef = stackBindingsRef::get,
-            memoryWaiters = memoryWaiters,
+        val installer = GraalvmHostFunctionInstaller(graalContext) {
+            this.host = this@GraalvmEmbedderBuilder.host
+        }
+
+        installer.setupWasiPreview1Module(
+            moduleName = WASI_SNAPSHOT_PREVIEW1_MODULE_NAME,
+            memory = ImportedMemory(
+                moduleName = "env",
+                memoryName = "memory",
+                spec = memorySpec,
+            ),
         )
+
+        val envInstaller = installer.setupEmscriptenFunctions(
+            moduleName = "env",
+            memory = ExportedMemory(spec = memorySpec),
+        )
+
+        val callbacksModuleInstaller = setupCallbacksModule(graalContext, sqliteCallbacksStore)
 
         graalContext.eval(sqliteSource)
 
-        val indirectFunctionIndexes = modules.afterSourceEvaluated()
+        val indirectFunctionIndexes = callbacksModuleInstaller.afterSourceEvaluated()
 
-        val env = GraalvmSqliteRuntimeInternal(
-            mainThreadGraalContext = graalContext,
-            envModuleInstance = modules.envModuleInstance,
-            callbackFunctionIndexes = indirectFunctionIndexes,
-            host = host,
+        val graalInternalEnvironment: GraalvmEmscriptenEnvironment = envInstaller.finalize(
+            mainModuleName = SQLITE3_SOURCE_NAME,
+        ).apply {
+            externalManagedThreadStartRoutine = indirectFunctionIndexes.externalManagedThreadStartRoutine
+            managedThreadInitializer = object : ManagedThreadInitializer {
+                override fun destroyThreadLocalGraalvmAgent() {
+                    logger.v { "destroyThreadLocalGraalvmAgent()" }
+                    threadLocalGraalContext.remove()
+                    // Does not close the context in the dying thread, as this leads to the closing of shared memory
+                    // used in other threads
+                    // context?.close()
+                }
+
+                override fun initThreadLocalGraalvmAgent() {
+                    val newContext = initWorkerThreadContext(this@apply)
+                    threadLocalGraalContext.apply {
+                        check(get() == null) {
+                            "Graalvm agent already initialized in this thread"
+                        }
+                        set(newContext)
+                    }
+                }
+
+                override fun initWorkerThread(threadPtr: WasmPtr<StructPthread>) {
+                    emscriptenRuntime.initWorkerThread(threadPtr)
+                }
+            }
+        }
+
+        graalInternalEnvironment.emscriptenRuntime.initMainThread()
+
+        return GraalvmSqliteRuntimeInternal(
+            mainModuleName = SQLITE3_SOURCE_NAME,
+            rootContext = graalContext,
             embedderInfo = GraalvmEmbedderInfo(wasmThreadsEnabled),
-            memoryWaiters = memoryWaiters,
-            callbackStore = callbackStore,
-            embedderBuilder = this,
+            emscriptenEnvironment = graalInternalEnvironment,
+            callbackStore = sqliteCallbacksStore,
+            callbackFunctionIndexes = indirectFunctionIndexes,
         )
-
-        stackBindingsRef.set(env.emscriptenRuntime.stack)
-        pthreadRef.set(env.pthreadManager)
-
-        env.emscriptenRuntime.initMainThread()
-
-        return env
     }
 
-    fun initChildThreadContext(
-        parent: GraalvmSqliteRuntimeInternal,
+    fun initWorkerThreadContext(
+        parentEnv: GraalvmEmscriptenEnvironment,
     ): Context {
-        val callbackStore = parent.callbackStore
-        val pthreadManagerRef = parent::pthreadManager
-        val stackBindingsRef = parent.emscriptenRuntime::stack
+        val workerContext: Context = createGraalContext()
+        parentEnv.getWorkerThreadInstaller(workerContext).apply {
+            setupWasiPreview1Module(
+                moduleName = WASI_SNAPSHOT_PREVIEW1_MODULE_NAME,
+                memory = ImportedMemory(
+                    moduleName = "env",
+                    memoryName = "memory",
+                    spec = memorySpec,
+                ),
+            )
 
-        val childContext: Context = createGraalContext()
-        val modules = setupModules(
-            graalContext = childContext,
-            mainThreadEnv = parent,
-            callbackStore = callbackStore,
-            pthreadRef = pthreadManagerRef,
-            memoryWaiters = parent.memoryWaiters,
-            stackBindingsRef = stackBindingsRef::get,
-        )
+            setupEmscriptenFunctions()
+        }
 
-        childContext.eval(sqliteSource)
+        val callbacksModuleInstaller = setupCallbacksModule(workerContext, sqliteCallbacksStore)
+
+        workerContext.eval(sqliteSource)
 
         // XXX indirectFunctionIndexes should be thread-local?
-        modules.afterSourceEvaluated()
-        return childContext
+        callbacksModuleInstaller.afterSourceEvaluated()
+
+        return workerContext
     }
 
     private fun createGraalContext(): Context {
@@ -118,7 +156,7 @@ internal class GraalvmEmbedderBuilder(
             .engine(graalvmEngine)
             .allowAllAccess(true)
             .apply {
-                if (useSharedMemory) {
+                if (memorySpec.useUnsafeMemory) {
                     this.option("wasm.UseUnsafeMemory", "true")
                 }
                 if (wasmThreadsEnabled) {
@@ -131,39 +169,10 @@ internal class GraalvmEmbedderBuilder(
         return graalContext
     }
 
-    private fun setupModules(
+    private fun setupCallbacksModule(
         graalContext: Context,
-        mainThreadEnv: GraalvmSqliteRuntimeInternal?,
         callbackStore: SqliteCallbackStore,
-        memoryWaiters: SharedMemoryWaiterListStore,
-        pthreadRef: () -> GraalvmPthreadManager,
-        stackBindingsRef: () -> EmscriptenStack,
     ): WasmModuleInstances {
-        val emscriptenModuleBuilder = EmscriptenEnvModuleBuilder(
-            host = host,
-            pthreadRef = pthreadRef,
-            emscriptenStackRef = stackBindingsRef,
-            memoryWaiters = memoryWaiters,
-        )
-        val envModuleInstance = if (mainThreadEnv == null) {
-            emscriptenModuleBuilder.setupModule(
-                graalContext = graalContext,
-                minMemorySize = sqlite3Binary.wasmMinMemorySize,
-                sharedMemory = sqlite3Binary.requireThreads,
-                useUnsafeMemory = useSharedMemory,
-            )
-        } else {
-            emscriptenModuleBuilder.setupChildThreadModule(
-                mainThreadEnv = mainThreadEnv,
-                childGraalContext = graalContext,
-            )
-        }
-
-        WasiSnapshotPreview1ModuleBuilder(graalContext, host).setupModule(
-            sharedMemory = sqlite3Binary.requireThreads,
-            useUnsafeMemory = useSharedMemory,
-        )
-
         val sqliteCallbacksModuleBuilder = SqliteCallbacksModuleBuilder(
             graalContext = graalContext,
             host = host,
@@ -171,16 +180,14 @@ internal class GraalvmEmbedderBuilder(
         )
         sqliteCallbacksModuleBuilder.setupModule(
             sharedMemory = sqlite3Binary.requireThreads,
-            useUnsafeMemory = useSharedMemory,
+            useUnsafeMemory = memorySpec.useUnsafeMemory,
         )
         return WasmModuleInstances(
-            envModuleInstance = envModuleInstance,
             afterSourceEvaluated = sqliteCallbacksModuleBuilder::setupIndirectFunctionTable,
         )
     }
 
     private class WasmModuleInstances(
-        val envModuleInstance: WasmInstance,
         val afterSourceEvaluated: () -> GraalvmSqliteCallbackFunctionIndexes,
     )
 

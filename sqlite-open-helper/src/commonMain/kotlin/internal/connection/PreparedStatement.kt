@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.internal.connection
 
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
+import at.released.weh.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.Companion.ExtendedStatementType
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_SELECT
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteStatement

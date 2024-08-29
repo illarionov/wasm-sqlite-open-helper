@@ -6,19 +6,19 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi
 
+import at.released.weh.host.base.WasmPtr
+import at.released.weh.host.base.memory.Memory
+import at.released.weh.host.base.memory.readNullableNullTerminatedString
+import at.released.weh.host.base.memory.readPtr
+import at.released.weh.host.base.memory.sinkWithMaxSize
+import at.released.weh.host.base.memory.sourceWithMaxSize
+import at.released.weh.host.ext.encodeToNullTerminatedBuffer
 import kotlinx.io.Buffer
 import kotlinx.io.buffered
 import kotlinx.io.readByteArray
 import kotlinx.io.writeString
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.sqliteFreeSilent
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readNullableNullTerminatedString
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readPtr
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.sinkWithMaxSize
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.sourceWithMaxSize
-import ru.pixnews.wasm.sqlite.open.helper.host.ext.encodeToNullTerminatedBuffer
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteColumnType
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDestructorType
@@ -40,8 +40,8 @@ public class Sqlite3StatementFunctions internal constructor(
         sqliteDb: WasmPtr<SqliteDb>,
         sql: String,
     ): Sqlite3Result<WasmPtr<SqliteStatement>> {
-        var sqlBytesPtr: WasmPtr<Byte> = WasmPtr.sqlite3Null()
-        var ppStatement: WasmPtr<WasmPtr<SqliteStatement>> = WasmPtr.sqlite3Null()
+        var sqlBytesPtr: WasmPtr<Byte> = WasmPtr.cNull()
+        var ppStatement: WasmPtr<WasmPtr<SqliteStatement>> = WasmPtr.cNull()
 
         try {
             val sqlEncoded: Buffer = sql.encodeToNullTerminatedBuffer()
@@ -59,7 +59,7 @@ public class Sqlite3StatementFunctions internal constructor(
                 sqlBytesPtr.addr,
                 nullTerminatedSqlSize,
                 ppStatement.addr,
-                WasmPtr.sqlite3Null<Unit>().addr,
+                WasmPtr.cNull<Unit>().addr,
             )
             val result = sqliteErrorApi.createSqlite3Result(
                 errCode,

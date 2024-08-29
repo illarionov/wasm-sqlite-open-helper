@@ -6,23 +6,23 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.function
 
-import io.github.charlietap.chasm.executor.runtime.value.ExecutionValue
+import at.released.weh.host.EmbedderHost
+import at.released.weh.host.base.memory.ReadOnlyMemory
+import io.github.charlietap.chasm.embedding.shapes.Value
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.asInt
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.asWasmAddr
-import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.EmscriptenHostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.function.Sqlite3LoggingFunctionHandler
-import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteLogCallback
+import io.github.charlietap.chasm.embedding.shapes.HostFunction as ChasmHostFunction
 
 internal class Sqlite3LoggingAdapter(
     host: EmbedderHost,
     private val memory: ReadOnlyMemory,
     logCallbackStore: () -> SqliteLogCallback?,
-) : EmscriptenHostFunctionHandle {
+) : ChasmHostFunction {
     private val handle = Sqlite3LoggingFunctionHandler(host, logCallbackStore)
 
-    override fun invoke(args: List<ExecutionValue>): List<ExecutionValue> {
+    override fun invoke(args: List<Value>): List<Value> {
         handle.execute(
             memory,
             // unused context pointer args.getArgAsWasmPtr(0),

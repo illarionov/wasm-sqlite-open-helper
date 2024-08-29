@@ -31,6 +31,7 @@ kotlin {
             api(projects.sqliteTests.sqliteTestUtils)
             implementation(libs.kotlinx.coroutines.test)
             implementation(libs.kermit)
+            implementation(libs.wasi.emscripten.host.test.logger)
         }
         androidMain.dependencies {
             api(libs.androidx.room.runtime26)

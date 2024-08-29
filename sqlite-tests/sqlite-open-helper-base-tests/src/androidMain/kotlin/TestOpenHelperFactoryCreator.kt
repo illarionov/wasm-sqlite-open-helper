@@ -7,8 +7,8 @@
 package ru.pixnews.wasm.sqlite.open.helper.test.base
 
 import androidx.sqlite.db.SupportSQLiteOpenHelper
+import at.released.weh.common.api.Logger
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 
 interface TestOpenHelperFactoryCreator {
     public val defaultSqliteBinary: WasmSqliteConfiguration

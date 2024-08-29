@@ -6,6 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.driver.chasm
 
+import at.released.weh.common.api.Logger
 import ru.pixnews.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcu346
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
@@ -13,7 +14,6 @@ import ru.pixnews.wasm.sqlite.driver.base.defaultNativeTestSqliteDriverConfig
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.TestSqliteDriverFactory
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ChasmRuntime
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ChasmSqliteEmbedder
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 
 object ChasmSqliteDriverFactory : TestSqliteDriverFactory<WasmSQLiteDriver<ChasmRuntime>> {
     override val defaultSqliteBinary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcu346

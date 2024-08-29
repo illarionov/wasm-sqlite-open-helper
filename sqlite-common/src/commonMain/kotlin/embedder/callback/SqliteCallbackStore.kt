@@ -6,8 +6,8 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.embedder.callback
 
+import at.released.weh.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteComparatorCallback
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteExecCallback

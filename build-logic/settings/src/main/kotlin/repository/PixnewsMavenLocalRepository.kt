@@ -15,6 +15,7 @@ fun RepositoryHandler.pixnewsMavenLocal() = mavenLocal {
     name = "PixnewsMavenLocal"
     mavenContent {
         includeGroup("ru.pixnews.wasm-sqlite-open-helper")
+        includeGroup("at.released.weh")
         snapshotsOnly()
     }
 }
