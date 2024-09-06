@@ -7,13 +7,13 @@
 package ru.pixnews.wasm.sqlite.driver.test.base.tests.room
 
 import androidx.sqlite.SQLiteDriver
+import at.released.weh.common.api.Logger
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import ru.pixnews.wasm.sqlite.driver.test.base.room.User
 import ru.pixnews.wasm.sqlite.driver.test.base.room.UserDatabaseSuspend
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.TestSqliteDriverFactory
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import kotlin.coroutines.CoroutineContext
 
 class UserDatabaseTests<S>(

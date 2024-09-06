@@ -6,6 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.driver.graalvm
 
+import at.released.weh.common.api.Logger
 import org.graalvm.polyglot.Engine
 import ru.pixnews.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcuMtPthread346
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
@@ -13,7 +14,6 @@ import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
 import ru.pixnews.wasm.sqlite.driver.base.defaultTestSqliteDriverConfig
 import ru.pixnews.wasm.sqlite.driver.dsl.WasmSqliteDriverConfigBlock
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.TestSqliteDriverFactory
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmRuntime
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmSqliteEmbedder
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmSqliteEmbedderConfig

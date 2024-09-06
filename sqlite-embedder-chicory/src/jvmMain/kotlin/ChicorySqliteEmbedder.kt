@@ -6,13 +6,13 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chicory
 
+import at.released.weh.host.EmbedderHost
+import at.released.weh.host.base.memory.Memory
 import com.dylibso.chicory.log.Logger.Level
 import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.runtime.Machine
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.binary.reader.WasmSourceReader
-import ru.pixnews.wasm.sqlite.open.helper.chicory.exports.ChicoryEmscriptenMainExports
-import ru.pixnews.wasm.sqlite.open.helper.chicory.exports.ChicoryEmscriptenStackExports
 import ru.pixnews.wasm.sqlite.open.helper.chicory.exports.ChicorySqliteExports
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.ChicoryLogger
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.MainInstanceBuilder
@@ -25,11 +25,6 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.SqliteCallbackFunctionIndexes
-import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
-import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.EmscriptenRuntime
-import ru.pixnews.wasm.sqlite.open.helper.host.emscripten.export.stack.EmscriptenStack
-import java.util.concurrent.atomic.AtomicReference
 
 public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig, ChicoryRuntime> {
     @InternalWasmSqliteHelperApi
@@ -73,26 +68,15 @@ public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig
             severity = logSeverity,
         )
         val callbackStore = SqliteCallbackStore()
-        val stackBindingsRef: AtomicReference<EmscriptenStack> = AtomicReference()
+
         val chicoryInstance: ChicoryInstance = MainInstanceBuilder(
             host = host,
             callbackStore = callbackStore,
             chicoryLogger = chicoryLogger,
-            stackBindingsRef = stackBindingsRef::get,
             sqlite3Binary = sqlite3Binary,
             machineFactory = machineFactory,
             wasmSourceReader = wasmSourceReader,
         ).setupModule()
-
-        val emscriptenRuntime = EmscriptenRuntime.emscriptenSingleThreadedRuntime(
-            mainExports = ChicoryEmscriptenMainExports(chicoryInstance.instance),
-            stackExports = ChicoryEmscriptenStackExports(chicoryInstance.instance),
-            memory = chicoryInstance.memory,
-            logger = host.rootLogger,
-        )
-        stackBindingsRef.set(emscriptenRuntime.stack)
-
-        emscriptenRuntime.initMainThread()
 
         val runtimeInstance = object : ChicoryRuntime {
             override val embedderInfo: SqliteEmbedderRuntimeInfo = object : SqliteEmbedderRuntimeInfo {

@@ -90,7 +90,7 @@ kotlin {
             api(projects.sqliteCommon)
             implementation(projects.commonCleaner)
             implementation(projects.commonLock)
-            implementation(projects.wasiEmscriptenHost)
+            implementation(libs.wasi.emscripten.host)
             api(libs.androidx.collection)
         }
         commonTest.dependencies {

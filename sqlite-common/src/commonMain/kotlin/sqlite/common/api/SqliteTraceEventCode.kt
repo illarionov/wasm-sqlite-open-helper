@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api
 
-import ru.pixnews.wasm.sqlite.open.helper.common.api.SqliteUintBitMask
+import at.released.weh.common.api.UintBitMask
 import kotlin.jvm.JvmInline
 
 /**
@@ -17,7 +17,7 @@ import kotlin.jvm.JvmInline
 @JvmInline
 public value class SqliteTraceEventCode(
     override val mask: UInt,
-) : SqliteUintBitMask<SqliteTraceEventCode> {
+) : UintBitMask<SqliteTraceEventCode> {
     override val newInstance: (UInt) -> SqliteTraceEventCode get() = ::SqliteTraceEventCode
 
     override fun toString(): String = "0x${mask.toString(16)}"

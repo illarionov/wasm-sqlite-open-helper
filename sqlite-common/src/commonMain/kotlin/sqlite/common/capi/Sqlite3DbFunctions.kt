@@ -6,15 +6,15 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi
 
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
+import at.released.weh.common.api.Logger
+import at.released.weh.host.base.WasmPtr
+import at.released.weh.host.base.memory.Memory
+import at.released.weh.host.base.memory.readPtr
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.allocNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.sqliteFreeSilent
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.SqliteCallbackFunctionIndexes
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readPtr
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDbConfigParameter
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDbStatusParameter
@@ -47,9 +47,9 @@ public class Sqlite3DbFunctions internal constructor(
         flags: SqliteOpenFlags,
         vfsName: String?,
     ): Sqlite3Result<WasmPtr<SqliteDb>> {
-        var ppDb: WasmPtr<WasmPtr<SqliteDb>> = WasmPtr.sqlite3Null()
-        var pFileName: WasmPtr<Byte> = WasmPtr.sqlite3Null()
-        var pVfsName: WasmPtr<Byte> = WasmPtr.sqlite3Null()
+        var ppDb: WasmPtr<WasmPtr<SqliteDb>> = WasmPtr.cNull()
+        var pFileName: WasmPtr<Byte> = WasmPtr.cNull()
+        var pVfsName: WasmPtr<Byte> = WasmPtr.cNull()
 
         logger.v { "sqlite3OpenV2($filename, $flags, $vfsName)" }
 
@@ -105,7 +105,7 @@ public class Sqlite3DbFunctions internal constructor(
         val pDbName = if (dbName != null) {
             memoryBindings.allocNullTerminatedString(memory, dbName)
         } else {
-            WasmPtr.sqlite3Null()
+            WasmPtr.cNull()
         }
 
         try {
@@ -176,7 +176,7 @@ public class Sqlite3DbFunctions internal constructor(
         sqliteDb: WasmPtr<SqliteDb>,
         newLocale: String,
     ): Sqlite3Result<Unit> {
-        var pNewLocale: WasmPtr<Byte> = WasmPtr.sqlite3Null()
+        var pNewLocale: WasmPtr<Byte> = WasmPtr.cNull()
         try {
             pNewLocale = memoryBindings.allocNullTerminatedString(memory, newLocale)
             val errCode = sqliteExports.register_localized_collators.executeForSqliteResultCode(
@@ -225,8 +225,8 @@ public class Sqlite3DbFunctions internal constructor(
         op: SqliteDbStatusParameter,
         resetFlag: Boolean,
     ): Sqlite3Result<SqliteDbStatusResult> {
-        var pCur: WasmPtr<Int> = WasmPtr.sqlite3Null()
-        var pHiwtr: WasmPtr<Int> = WasmPtr.sqlite3Null()
+        var pCur: WasmPtr<Int> = WasmPtr.cNull()
+        var pHiwtr: WasmPtr<Int> = WasmPtr.cNull()
 
         try {
             pCur = memoryBindings.sqliteAllocOrThrow(4U)

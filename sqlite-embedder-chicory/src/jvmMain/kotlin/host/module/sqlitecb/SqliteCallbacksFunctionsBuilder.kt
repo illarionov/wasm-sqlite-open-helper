@@ -6,6 +6,10 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.sqlitecb
 
+import at.released.weh.host.EmbedderHost
+import at.released.weh.host.base.WasmValueType
+import at.released.weh.host.base.function.IndirectFunctionTableIndex
+import at.released.weh.host.base.memory.ReadOnlyMemory
 import com.dylibso.chicory.runtime.HostFunction
 import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.runtime.WasmFunctionHandle
@@ -15,15 +19,11 @@ import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.sqlitecb.function.
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.sqlitecb.function.Sqlite3TraceAdapter
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.SqliteCallbackFunctionIndexes
+import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SQLITE3_CALLBACK_MANAGER_MODULE_NAME
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction.SQLITE3_LOGGING_CALLBACK
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction.SQLITE3_PROGRESS_CALLBACK
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction.SQLITE3_TRACE_CALLBACK
-import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmModules.SQLITE3_CALLBACK_MANAGER_MODULE_NAME
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmValueType
-import ru.pixnews.wasm.sqlite.open.helper.host.base.function.IndirectFunctionTableIndex
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
 
 internal class SqliteCallbacksFunctionsBuilder(
     private val memory: ReadOnlyMemory,

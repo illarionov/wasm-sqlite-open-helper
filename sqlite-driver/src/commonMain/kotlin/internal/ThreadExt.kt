@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.driver.internal
 
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
+import at.released.weh.common.api.Logger
 
 internal expect val currentThreadId: ULong
 

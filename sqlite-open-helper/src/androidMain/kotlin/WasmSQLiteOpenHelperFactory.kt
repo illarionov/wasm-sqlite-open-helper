@@ -10,10 +10,10 @@ package ru.pixnews.wasm.sqlite.open.helper
 
 import android.content.Context
 import androidx.sqlite.db.SupportSQLiteOpenHelper
+import at.released.weh.common.api.Logger
 import ru.pixnews.wasm.sqlite.binary.reader.AndroidAssetsWasmSourceReader
 import ru.pixnews.wasm.sqlite.binary.reader.JvmResourcesWasmSourceReader
 import ru.pixnews.wasm.sqlite.binary.reader.WasmSourceReader
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.debug.EmbedderHostLogger
 import ru.pixnews.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfigBlock
 import ru.pixnews.wasm.sqlite.open.helper.dsl.OpenParamsBlock

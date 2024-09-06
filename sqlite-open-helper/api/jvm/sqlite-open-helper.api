@@ -1,4 +1,4 @@
-public final class ru/pixnews/wasm/sqlite/open/helper/OpenFlags : ru/pixnews/wasm/sqlite/open/helper/common/api/SqliteUintBitMask {
+public final class ru/pixnews/wasm/sqlite/open/helper/OpenFlags : at/released/weh/common/api/UintBitMask {
 	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/OpenFlags$Companion;
 	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/OpenFlags;
 	public static fun constructor-impl (I)I
@@ -45,7 +45,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/debug/SqliteSlowQueryLogge
 public final class ru/pixnews/wasm/sqlite/open/helper/debug/SqliteSlowQueryLogger$Companion : ru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Key {
 	public fun create (Lru/pixnews/wasm/sqlite/open/helper/embedder/WasmSqliteCommonConfig;Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Factory$Type;)Lru/pixnews/wasm/sqlite/open/helper/debug/SqliteSlowQueryLogger;
 	public synthetic fun create (Lru/pixnews/wasm/sqlite/open/helper/embedder/WasmSqliteCommonConfig;Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Factory$Type;)Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugFeature;
-	public final fun createStatementLogger (Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;)Lkotlin/jvm/functions/Function1;
+	public final fun createStatementLogger (Lat/released/weh/common/api/Logger;)Lkotlin/jvm/functions/Function1;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/dsl/OpenParamsBlock {
@@ -69,10 +69,10 @@ public final class ru/pixnews/wasm/sqlite/open/helper/dsl/WasmSqliteOpenHelperFa
 	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/dsl/path/DatabasePathResolver;)V
 	public final fun debug (Lkotlin/jvm/functions/Function1;)V
 	public final fun embedder (Lkotlin/jvm/functions/Function1;)V
-	public final fun getLogger ()Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;
+	public final fun getLogger ()Lat/released/weh/common/api/Logger;
 	public final fun getPathResolver ()Lru/pixnews/wasm/sqlite/open/helper/dsl/path/DatabasePathResolver;
 	public final fun openParams (Lkotlin/jvm/functions/Function1;)V
-	public final fun setLogger (Lru/pixnews/wasm/sqlite/open/helper/common/api/Logger;)V
+	public final fun setLogger (Lat/released/weh/common/api/Logger;)V
 	public final fun setPathResolver (Lru/pixnews/wasm/sqlite/open/helper/dsl/path/DatabasePathResolver;)V
 }
 

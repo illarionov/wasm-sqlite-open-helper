@@ -6,11 +6,11 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi
 
+import at.released.weh.host.base.WasmPtr
+import at.released.weh.host.base.isNull
+import at.released.weh.host.base.memory.ReadOnlyMemory
+import at.released.weh.host.base.memory.readNullableNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.host.base.isSqlite3Null
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.readNullableNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrorInfo
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
@@ -61,7 +61,7 @@ public class Sqlite3ErrorFunctions internal constructor(
         public fun Sqlite3ErrorFunctions.readSqliteErrorInfo(
             sqliteDb: WasmPtr<SqliteDb>,
         ): SqliteErrorInfo {
-            if (sqliteDb.isSqlite3Null()) {
+            if (sqliteDb.isNull()) {
                 return SqliteErrorInfo(SQLITE_OK, SQLITE_OK, null)
             }
 

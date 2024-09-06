@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.host.filesystem.error
+package ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb
 
-public sealed interface AdvisoryLockError : FileSystemOperationError
+import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
+
+@InternalWasmSqliteHelperApi
+public const val SQLITE3_CALLBACK_MANAGER_MODULE_NAME: String = "sqlite3-callback-manager"

@@ -6,12 +6,12 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi
 
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
+import at.released.weh.common.api.Logger
+import at.released.weh.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderRuntimeInfo
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.SqliteCallbackFunctionIndexes
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.databaseresources.SqliteDatabaseResourcesRegistry
 
 public class Sqlite3CApi(

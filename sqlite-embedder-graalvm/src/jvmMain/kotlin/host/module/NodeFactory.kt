@@ -6,9 +6,9 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module
 
+import at.released.weh.host.EmbedderHost
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
-import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
 
 internal typealias NodeFactory = (
     language: WasmLanguage,

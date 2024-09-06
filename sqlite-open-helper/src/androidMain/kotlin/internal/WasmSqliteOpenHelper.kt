@@ -17,9 +17,9 @@ package ru.pixnews.wasm.sqlite.open.helper.internal
 
 import android.database.sqlite.SQLiteException
 import androidx.sqlite.db.SupportSQLiteOpenHelper
+import at.released.weh.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.OPEN_READONLY
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfig
 import ru.pixnews.wasm.sqlite.open.helper.dsl.path.DatabasePathResolver
 import java.nio.file.FileSystems

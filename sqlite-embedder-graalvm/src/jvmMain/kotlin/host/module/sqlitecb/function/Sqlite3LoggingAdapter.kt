@@ -6,6 +6,8 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.function
 
+import at.released.weh.host.EmbedderHost
+import at.released.weh.host.base.WasmPtr
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary
 import com.oracle.truffle.api.frame.VirtualFrame
 import org.graalvm.wasm.WasmContext
@@ -17,8 +19,6 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.function.Sqlite3Logg
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteLogCallback
 
 internal class Sqlite3LoggingAdapter(

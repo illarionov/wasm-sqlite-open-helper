@@ -7,10 +7,10 @@
 package ru.pixnews.wasm.sqlite.driver.test.base.tests
 
 import androidx.sqlite.SQLiteDriver
+import at.released.weh.common.api.Logger
+import at.released.weh.test.logger.TestLogger
 import co.touchlab.kermit.Severity
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
-import ru.pixnews.wasm.sqlite.test.utils.KermitLogger
 import ru.pixnews.wasm.sqlite.test.utils.TestEnv
 import kotlin.test.BeforeTest
 
@@ -18,8 +18,8 @@ public abstract class AbstractSqliteDriverTest<S>(
     val driverFactory: TestSqliteDriverFactory<S>,
     dbLoggerSeverity: Severity = Severity.Info,
 ) where S : SQLiteDriver, S : AutoCloseable {
-    protected open val logger: Logger = KermitLogger("AbstractSqliteDriverTest")
-    protected open val dbLogger: Logger = KermitLogger(tag = "WasmSQLiteDriver", minSeverity = dbLoggerSeverity)
+    protected open val logger: Logger = TestLogger("AbstractSqliteDriverTest")
+    protected open val dbLogger: Logger = TestLogger(tag = "WasmSQLiteDriver", minSeverity = dbLoggerSeverity)
 
     abstract fun fileInTempDir(databaseName: String): String
 

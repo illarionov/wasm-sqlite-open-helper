@@ -6,6 +6,9 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.threadfactory
 
+import at.released.weh.host.EmbedderHost
+import at.released.weh.host.base.WasmPtr
+import at.released.weh.host.base.function.HostFunctionHandle
 import com.oracle.truffle.api.CompilerDirectives
 import com.oracle.truffle.api.frame.VirtualFrame
 import org.graalvm.wasm.WasmContext
@@ -15,9 +18,6 @@ import org.graalvm.wasm.WasmModule
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.threadfactory.UseManagedThreadPthreadRoutineAdapter.UseManagedThreadPthreadRoutineFunctionHandle
-import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunctionHandle
 
 internal class UseManagedThreadPthreadRoutineAdapter(
     language: WasmLanguage,
@@ -35,7 +35,7 @@ internal class UseManagedThreadPthreadRoutineAdapter(
 
     internal class UseManagedThreadPthreadRoutineFunctionHandle(
         host: EmbedderHost,
-    ) : HostFunctionHandle(ExternalManagedThreadOrchestrator.USE_MANAGED_THREAD_PTHREAD_ROUTINE_FUNCTION, host) {
+    ) : HostFunctionHandle(EXTERNAL_MANAGED_THREAD_START_ROUTINE, host) {
         @CompilerDirectives.TruffleBoundary
         fun execute(arg: WasmPtr<Unit>): Int {
             logger.v { "Managed thread start_routine called with arg $arg. Do nothing." }

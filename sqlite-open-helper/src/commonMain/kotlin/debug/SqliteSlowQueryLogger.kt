@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.debug
 
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
+import at.released.weh.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfigBlock.Factory.Type
 import ru.pixnews.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfigBlock.Factory.Type.KEY_DEFINED
 import ru.pixnews.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig

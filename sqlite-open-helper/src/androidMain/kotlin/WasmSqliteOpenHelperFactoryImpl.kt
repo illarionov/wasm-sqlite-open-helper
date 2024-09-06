@@ -14,7 +14,8 @@ package ru.pixnews.wasm.sqlite.open.helper
  */
 
 import androidx.sqlite.db.SupportSQLiteOpenHelper
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
+import at.released.weh.common.api.Logger
+import at.released.weh.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteErrorLogger
 import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementLogger
 import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementProfileLogger
@@ -25,7 +26,6 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntime
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.SqliteCallbackFunctionIndexes
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.internal.DatabaseErrorHandler
 import ru.pixnews.wasm.sqlite.open.helper.internal.OpenHelperNativeBindings
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDatabaseOpenParams

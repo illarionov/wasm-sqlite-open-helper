@@ -8,10 +8,10 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chicory.exports
 
+import at.released.weh.host.base.WasmPtr
+import at.released.weh.host.base.binding.WasmFunctionBinding
 import com.dylibso.chicory.runtime.ExportFunction
 import com.dylibso.chicory.wasm.types.Value
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.host.base.binding.WasmFunctionBinding
 
 internal class ChicoryWasmFunctionBinding(
     private val func: ExportFunction,

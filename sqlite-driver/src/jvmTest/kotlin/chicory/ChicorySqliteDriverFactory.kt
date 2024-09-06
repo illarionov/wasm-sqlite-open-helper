@@ -6,6 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.driver.chicory
 
+import at.released.weh.common.api.Logger
 import com.dylibso.chicory.aot.AotMachine
 import ru.pixnews.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcu346
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
@@ -14,7 +15,6 @@ import ru.pixnews.wasm.sqlite.driver.base.defaultTestSqliteDriverConfig
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.TestSqliteDriverFactory
 import ru.pixnews.wasm.sqlite.open.helper.chicory.ChicoryRuntime
 import ru.pixnews.wasm.sqlite.open.helper.chicory.ChicorySqliteEmbedder
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 
 class ChicorySqliteDriverFactory(
     private val useAot: Boolean = false,

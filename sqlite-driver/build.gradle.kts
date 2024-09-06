@@ -99,7 +99,7 @@ kotlin {
             api(libs.androidx.sqlite.sqlite)
             implementation(projects.commonCleaner)
             implementation(projects.commonLock)
-            implementation(projects.wasiEmscriptenHost)
+            implementation(libs.wasi.emscripten.host)
         }
 
         listOf(
@@ -125,6 +125,7 @@ kotlin {
             implementation(libs.kermit)
             implementation(libs.wsoh.sqlite.st)
             implementation(libs.wsoh.sqlite.st.plain)
+            implementation(libs.wasi.emscripten.host.test.logger)
         }
 
         val jvmAndAndroidMain by creating {

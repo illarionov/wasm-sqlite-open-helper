@@ -6,24 +6,23 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.function
 
-import io.github.charlietap.chasm.executor.runtime.value.ExecutionValue
-import io.github.charlietap.chasm.executor.runtime.value.NumberValue.I32
+import at.released.weh.host.EmbedderHost
+import at.released.weh.host.base.WasmPtr
+import io.github.charlietap.chasm.embedding.shapes.Value
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.asWasmAddr
-import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.EmscriptenHostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.function.Sqlite3ProgressFunctionHandle
-import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteProgressCallback
+import io.github.charlietap.chasm.embedding.shapes.HostFunction as ChasmHostFunction
 
 internal class Sqlite3ProgressAdapter(
     host: EmbedderHost,
     progressCallbackStore: (WasmPtr<SqliteDb>) -> SqliteProgressCallback?,
-) : EmscriptenHostFunctionHandle {
+) : ChasmHostFunction {
     private val handle = Sqlite3ProgressFunctionHandle(host, progressCallbackStore)
 
-    override fun invoke(args: List<ExecutionValue>): List<ExecutionValue> {
+    override fun invoke(args: List<Value>): List<Value> {
         val result = handle.execute(args[0].asWasmAddr())
-        return listOf(I32(result))
+        return listOf(Value.Number.I32(result))
     }
 }

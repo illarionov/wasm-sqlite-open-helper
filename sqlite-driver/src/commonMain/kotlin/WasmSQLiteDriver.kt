@@ -9,11 +9,11 @@
 package ru.pixnews.wasm.sqlite.driver
 
 import androidx.sqlite.SQLiteDriver
+import at.released.weh.common.api.Logger
 import ru.pixnews.wasm.sqlite.binary.reader.WasmSourceReader
 import ru.pixnews.wasm.sqlite.driver.dsl.OpenParamsBlock
 import ru.pixnews.wasm.sqlite.driver.dsl.WasmSqliteDriverConfigBlock
 import ru.pixnews.wasm.sqlite.driver.internal.WasmSqliteDriverImpl
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
 import ru.pixnews.wasm.sqlite.open.helper.debug.EmbedderHostLogger
 import ru.pixnews.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfigBlock
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedder

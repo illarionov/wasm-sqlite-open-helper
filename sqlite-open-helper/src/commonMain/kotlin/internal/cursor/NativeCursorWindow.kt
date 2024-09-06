@@ -6,8 +6,8 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.internal.cursor
 
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
-import ru.pixnews.wasm.sqlite.open.helper.host.ext.encodedNullTerminatedStringLength
+import at.released.weh.common.api.Logger
+import at.released.weh.host.ext.encodedNullTerminatedStringLength
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.CursorFieldType.BLOB
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.CursorFieldType.FLOAT
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.CursorFieldType.INTEGER

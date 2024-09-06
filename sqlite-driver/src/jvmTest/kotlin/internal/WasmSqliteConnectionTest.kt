@@ -6,20 +6,20 @@
 
 package ru.pixnews.wasm.sqlite.driver.internal
 
-import co.touchlab.kermit.Severity
+import at.released.weh.host.base.WasmPtr
+import at.released.weh.test.logger.TestLogger
+import co.touchlab.kermit.Severity.Assert
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Test
 import ru.pixnews.wasm.sqlite.driver.dsl.OpenParamsBlock
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3CApi
-import ru.pixnews.wasm.sqlite.test.utils.KermitLogger
 
 class WasmSqliteConnectionTest {
-    val logger = KermitLogger(minSeverity = Severity.Assert)
+    val logger = TestLogger(minSeverity = Assert)
 
     @Test
     fun `WasmSqliteConnection should close underlying connection on close() only once`() {

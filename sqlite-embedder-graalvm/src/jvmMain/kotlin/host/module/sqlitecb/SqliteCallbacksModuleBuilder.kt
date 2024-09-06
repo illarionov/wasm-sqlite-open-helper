@@ -6,11 +6,15 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb
 
+import at.released.weh.host.EmbedderHost
+import at.released.weh.host.base.function.HostFunction
+import at.released.weh.host.base.function.IndirectFunctionTableIndex
 import org.graalvm.polyglot.Context
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
+import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SQLITE3_CALLBACK_MANAGER_MODULE_NAME
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.functionTable
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.setupImportedEnvMemory
@@ -20,12 +24,8 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.NodeFactory
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.function.Sqlite3LoggingAdapter
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.function.Sqlite3ProgressAdapter
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.function.Sqlite3TraceAdapter
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.threadfactory.ExternalManagedThreadOrchestrator.Companion.USE_MANAGED_THREAD_PTHREAD_ROUTINE_FUNCTION
+import ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.threadfactory.EXTERNAL_MANAGED_THREAD_START_ROUTINE
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.threadfactory.UseManagedThreadPthreadRoutineAdapter
-import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmModules.SQLITE3_CALLBACK_MANAGER_MODULE_NAME
-import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.base.function.IndirectFunctionTableIndex
 
 internal class SqliteCallbacksModuleBuilder(
     private val graalContext: Context,
@@ -46,7 +46,7 @@ internal class SqliteCallbacksModuleBuilder(
         SqliteCallbacksModuleFunction.SQLITE3_LOGGING_CALLBACK to { language, module, host ->
             Sqlite3LoggingAdapter(language, module, host, callbackStore::sqlite3LogCallback)
         },
-        USE_MANAGED_THREAD_PTHREAD_ROUTINE_FUNCTION to { language, module, host ->
+        EXTERNAL_MANAGED_THREAD_START_ROUTINE to { language, module, host ->
             UseManagedThreadPthreadRoutineAdapter(language, module, host)
         },
     )

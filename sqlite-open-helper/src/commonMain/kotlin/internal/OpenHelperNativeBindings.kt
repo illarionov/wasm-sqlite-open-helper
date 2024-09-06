@@ -6,16 +6,16 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.internal
 
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
-import ru.pixnews.wasm.sqlite.open.helper.common.api.contains
-import ru.pixnews.wasm.sqlite.open.helper.common.api.or
+import at.released.weh.common.api.Logger
+import at.released.weh.common.api.contains
+import at.released.weh.common.api.or
+import at.released.weh.host.base.WasmPtr
+import at.released.weh.host.ext.encodedNullTerminatedStringLength
 import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteErrorLogger
 import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementLogger
 import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementLogger.TraceEvent
 import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementProfileLogger
 import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteCantOpenDatabaseException
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.host.ext.encodedNullTerminatedStringLength
 import ru.pixnews.wasm.sqlite.open.helper.internal.OpenHelperNativeBindings.CopyRowResult.CPR_FULL
 import ru.pixnews.wasm.sqlite.open.helper.internal.OpenHelperNativeBindings.CopyRowResult.CPR_OK
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow
@@ -95,7 +95,7 @@ internal class OpenHelperNativeBindings(
                 cApi.db.sqlite3DbConfig(
                     db,
                     SqliteDbConfigParameter.SQLITE_DBCONFIG_LOOKASIDE,
-                    WasmPtr.SQLITE3_NULL,
+                    WasmPtr.C_NULL,
                     lookasideSlotSize,
                     lookasideSlotCount,
                 ).getOrThrow("sqlite3DbConfig() failed")

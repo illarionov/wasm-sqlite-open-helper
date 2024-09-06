@@ -6,13 +6,13 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api
 
-import ru.pixnews.wasm.sqlite.open.helper.common.api.SqliteUintBitMask
+import at.released.weh.common.api.UintBitMask
 import kotlin.jvm.JvmInline
 
 @JvmInline
 public value class SqliteOpenFlags(
     override val mask: UInt,
-) : SqliteUintBitMask<SqliteOpenFlags> {
+) : UintBitMask<SqliteOpenFlags> {
     override val newInstance: (UInt) -> SqliteOpenFlags get() = ::SqliteOpenFlags
 
     public companion object {

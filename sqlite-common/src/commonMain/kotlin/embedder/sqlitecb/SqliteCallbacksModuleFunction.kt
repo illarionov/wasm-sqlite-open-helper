@@ -6,12 +6,12 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb
 
-import ru.pixnews.wasm.sqlite.open.helper.host.base.POINTER
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmValueType
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmValueType.WebAssemblyTypes.I32
-import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction
-import ru.pixnews.wasm.sqlite.open.helper.host.base.function.HostFunction.HostFunctionType
-import ru.pixnews.wasm.sqlite.open.helper.host.wasi.preview1.type.WasiValueTypes.U32
+import at.released.weh.host.base.POINTER
+import at.released.weh.host.base.WasmValueType
+import at.released.weh.host.base.WasmValueType.WebAssemblyTypes.I32
+import at.released.weh.host.base.function.HostFunction
+import at.released.weh.host.base.function.HostFunction.HostFunctionType
+import at.released.weh.host.wasi.preview1.type.WasiValueTypes.U32
 
 /**
  * Implementation of host functions that are called from SQLite callbacks.

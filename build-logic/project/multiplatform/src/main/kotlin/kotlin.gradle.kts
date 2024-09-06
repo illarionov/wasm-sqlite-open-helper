@@ -37,6 +37,7 @@ kotlin {
                     "kotlin.RequiresOptIn",
                     "kotlin.ExperimentalStdlibApi",
                     "kotlinx.cinterop.ExperimentalForeignApi",
+                    "at.released.weh.common.api.InternalWasiEmscriptenHostApi",
                     "ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi",
                 ).forEach(::optIn)
             }

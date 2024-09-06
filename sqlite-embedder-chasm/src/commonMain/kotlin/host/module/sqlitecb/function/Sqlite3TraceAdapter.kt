@@ -6,28 +6,27 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.function
 
-import io.github.charlietap.chasm.executor.runtime.value.ExecutionValue
-import io.github.charlietap.chasm.executor.runtime.value.NumberValue.I32
+import at.released.weh.host.EmbedderHost
+import at.released.weh.host.base.WasmPtr
+import at.released.weh.host.base.memory.ReadOnlyMemory
+import io.github.charlietap.chasm.embedding.shapes.Value
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.asInt
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.asUInt
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.asWasmAddr
-import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.emscripten.EmscriptenHostFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.function.Sqlite3TraceFunctionHandle
-import ru.pixnews.wasm.sqlite.open.helper.host.EmbedderHost
-import ru.pixnews.wasm.sqlite.open.helper.host.base.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.host.base.memory.ReadOnlyMemory
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceCallback
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode
+import io.github.charlietap.chasm.embedding.shapes.HostFunction as ChasmHostFunction
 
 internal class Sqlite3TraceAdapter(
     host: EmbedderHost,
     private val memory: ReadOnlyMemory,
     traceCallbackStore: (WasmPtr<SqliteDb>) -> SqliteTraceCallback?,
-) : EmscriptenHostFunctionHandle {
+) : ChasmHostFunction {
     private val handle = Sqlite3TraceFunctionHandle(host, traceCallbackStore)
 
-    override fun invoke(args: List<ExecutionValue>): List<ExecutionValue> {
+    override fun invoke(args: List<Value>): List<Value> {
         val result = handle.execute(
             memory,
             SqliteTraceEventCode(args[0].asUInt()),
@@ -35,6 +34,6 @@ internal class Sqlite3TraceAdapter(
             args[2].asWasmAddr(),
             args[3].asInt().toLong(),
         )
-        return listOf(I32(result))
+        return listOf(Value.Number.I32(result))
     }
 }

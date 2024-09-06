@@ -8,7 +8,7 @@ package ru.pixnews.wasm.sqlite.open.helper.test.base
 
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteOpenHelper
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Logger
+import at.released.weh.common.api.Logger
 
 internal class LoggingOpenHelperCallback(
     private val logger: Logger = Logger.withTag("SupportSQLiteOpenHelperCallback"),
