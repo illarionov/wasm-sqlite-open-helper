@@ -2,7 +2,7 @@
 androidMinSdk = "26"
 androidCompileSdk = "34"
 
-agp = "8.6.0"
+agp = "8.5.2"
 androidx-collection = "1.4.3"
 androidx-core = "1.13.1"
 androidx-sqlite = "2.5.0-alpha07"
@@ -15,16 +15,16 @@ androidx-test-rules = "1.6.1"
 atomicfu = "0.25.0"
 arrow = "2.0.0-alpha.3"
 assertk = "0.28.1"
-chasm = "0.9.0"
+chasm = "0.9.1"
 chicory = "0.0.12"
 desugar_jdk_libs = "2.1.2"
-detekt = "1.23.6"
+detekt = "1.23.7"
 diktat = "2.0.0"
 dokka = "1.9.20"
 graalvm = "24.0.2"
 gradle-maven-publish-plugin = "0.29.0"
 kotlin = "2.0.20"
-kotlinx-coroutines = "1.9.0-RC.2"
+kotlinx-coroutines = "1.9.0"
 kotlinx-binary-compatibility-validator = "0.16.3"
 kotlinx-datetime = "0.6.1"
 kotlinx-io ="0.5.3"
@@ -33,7 +33,7 @@ ksp = "2.0.20-1.0.24"
 mockk = "1.13.12"
 spotless = "7.0.0.BETA2"
 sqlite-wasm-binary = "0.3"
-wasi-emscripten-host = "0.1-alpha01"
+wasi-emscripten-host = "0.1-alpha02-SNAPSHOT"
 
 [libraries]
 androidx-collection = { group = "androidx.collection", name = "collection", version.ref = "androidx-collection" }
@@ -55,7 +55,6 @@ androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "
 arrow-core = { group = "io.arrow-kt", name = "arrow-core", version.ref = "arrow" }
 assertk = { group = "com.willowtreeapps.assertk", name = "assertk", version.ref = "assertk" }
 chasm = { group = "io.github.charlietap.chasm", name = "chasm", version.ref = "chasm" }
-chasm-decoder = { group = "io.github.charlietap.chasm", name = "decoder", version.ref = "chasm" }
 chasm-runtime = { group = "io.github.charlietap.chasm", name = "runtime", version.ref = "chasm" }
 chicory-runtime = { group = "com.dylibso.chicory", name = "runtime", version.ref = "chicory" }
 chicory-aot = { group = "com.dylibso.chicory", name = "aot", version.ref = "chicory" }

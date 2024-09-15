@@ -14,10 +14,10 @@ import at.released.weh.host.base.function.IndirectFunctionTableIndex
 import at.released.weh.host.base.memory.WASM_MEMORY_DEFAULT_MAX_PAGES
 import at.released.weh.host.base.memory.WASM_MEMORY_PAGE_SIZE
 import com.github.michaelbull.result.getOrThrow
-import io.github.charlietap.chasm.decoder.reader.SourceReader
 import io.github.charlietap.chasm.embedding.error.ChasmError.DecodeError
 import io.github.charlietap.chasm.embedding.instance
 import io.github.charlietap.chasm.embedding.memory
+import io.github.charlietap.chasm.embedding.module
 import io.github.charlietap.chasm.embedding.shapes.Function
 import io.github.charlietap.chasm.embedding.shapes.Import
 import io.github.charlietap.chasm.embedding.shapes.Instance
@@ -31,6 +31,7 @@ import io.github.charlietap.chasm.executor.runtime.ext.table
 import io.github.charlietap.chasm.executor.runtime.instance.TableInstance
 import io.github.charlietap.chasm.executor.runtime.store.Address
 import io.github.charlietap.chasm.executor.runtime.value.ReferenceValue
+import io.github.charlietap.chasm.stream.SourceReader
 import kotlinx.io.RawSource
 import kotlinx.io.buffered
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
@@ -81,8 +82,7 @@ internal class ChasmInstanceBuilder(
 
         val sqliteModule: Module = sourceReader.readOrThrow(sqlite3Binary.sqliteUrl) { source: RawSource, _ ->
             val sourceReader: SourceReader = source.buffered().toChasmSourceReader()
-            @Suppress("INVISIBLE_MEMBER")
-            io.github.charlietap.chasm.embedding.module(sourceReader = sourceReader)
+            module(sourceReader = sourceReader)
                 .fold(
                     onSuccess = { Result.success(it) },
                     onError = { error: DecodeError ->

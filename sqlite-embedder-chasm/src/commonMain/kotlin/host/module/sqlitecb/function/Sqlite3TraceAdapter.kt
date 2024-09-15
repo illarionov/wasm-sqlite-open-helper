@@ -23,10 +23,9 @@ internal class Sqlite3TraceAdapter(
     host: EmbedderHost,
     private val memory: ReadOnlyMemory,
     traceCallbackStore: (WasmPtr<SqliteDb>) -> SqliteTraceCallback?,
-) : ChasmHostFunction {
+) {
     private val handle = Sqlite3TraceFunctionHandle(host, traceCallbackStore)
-
-    override fun invoke(args: List<Value>): List<Value> {
+    val function: ChasmHostFunction = { args ->
         val result = handle.execute(
             memory,
             SqliteTraceEventCode(args[0].asUInt()),
@@ -34,6 +33,6 @@ internal class Sqlite3TraceAdapter(
             args[2].asWasmAddr(),
             args[3].asInt().toLong(),
         )
-        return listOf(Value.Number.I32(result))
+        listOf(Value.Number.I32(result))
     }
 }

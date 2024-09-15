@@ -18,11 +18,10 @@ import io.github.charlietap.chasm.embedding.shapes.HostFunction as ChasmHostFunc
 internal class Sqlite3ProgressAdapter(
     host: EmbedderHost,
     progressCallbackStore: (WasmPtr<SqliteDb>) -> SqliteProgressCallback?,
-) : ChasmHostFunction {
+) {
     private val handle = Sqlite3ProgressFunctionHandle(host, progressCallbackStore)
-
-    override fun invoke(args: List<Value>): List<Value> {
+    val function: ChasmHostFunction = { args ->
         val result = handle.execute(args[0].asWasmAddr())
-        return listOf(Value.Number.I32(result))
+        listOf(Value.Number.I32(result))
     }
 }

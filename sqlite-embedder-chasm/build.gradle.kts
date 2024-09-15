@@ -36,7 +36,6 @@ kotlin {
         commonMain.dependencies {
             api(projects.sqliteCommon)
             api(libs.wsoh.binary.reader)
-            implementation(libs.chasm.decoder)
             implementation(libs.chasm.runtime)
             implementation(libs.wasi.emscripten.host.chasm)
             implementation(libs.wsoh.sqlite.st)

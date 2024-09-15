@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chasm.host
 
-import io.github.charlietap.chasm.decoder.reader.SourceReader
+import io.github.charlietap.chasm.stream.SourceReader
 import kotlinx.io.Source
 import kotlinx.io.readByteArray
 

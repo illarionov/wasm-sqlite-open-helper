@@ -55,16 +55,16 @@ private fun SqliteCallbacksModuleFunction.createChasmHostFunction(
         host,
         memory,
         callbackStore.sqlite3TraceCallbacks::get,
-    )
+    ).function
 
     SQLITE3_PROGRESS_CALLBACK -> Sqlite3ProgressAdapter(
         host,
         callbackStore.sqlite3ProgressCallbacks::get,
-    )
+    ).function
 
     SQLITE3_LOGGING_CALLBACK -> Sqlite3LoggingAdapter(
         host,
         memory,
         callbackStore::sqlite3LogCallback,
-    )
+    ).function
 }
