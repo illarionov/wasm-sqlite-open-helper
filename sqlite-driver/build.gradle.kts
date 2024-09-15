@@ -5,6 +5,7 @@
  */
 
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.mpp.TestExecutable
 
 plugins {
     id("com.google.devtools.ksp")
@@ -63,7 +64,12 @@ kotlin {
     iosArm64()
     iosX64()
     jvm()
-    linuxX64()
+    linuxX64 {
+        binaries.withType(TestExecutable::class.java).all {
+            debuggable = false
+            optimized = true
+        }
+    }
     linuxArm64()
     macosArm64()
     macosX64()
