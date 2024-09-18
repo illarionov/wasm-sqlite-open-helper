@@ -28,7 +28,7 @@ kotlin {
             implementation(libs.wasi.emscripten.host)
         }
         jvmMain.dependencies {
-            implementation(libs.wasi.emscripten.host.graalvm240)
+            implementation(libs.wasi.emscripten.host.graalvm241)
             api(libs.graalvm.polyglot.polyglot)
             compileOnly(libs.graalvm.wasm.language)
             implementation(libs.graalvm.polyglot.wasm)

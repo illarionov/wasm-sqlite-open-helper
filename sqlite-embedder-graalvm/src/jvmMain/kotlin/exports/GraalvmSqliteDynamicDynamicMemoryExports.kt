@@ -6,11 +6,11 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.exports
 
-import at.released.weh.host.base.WasmPtr
-import at.released.weh.host.base.isNull
 import org.graalvm.polyglot.Value
+import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteDynamicMemoryExports
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.functionMember
+import ru.pixnews.wasm.sqlite.open.helper.isNull
 
 @Suppress("VariableNaming", "MagicNumber", "UnusedPrivateProperty", "BLANK_LINE_BETWEEN_PROPERTIES")
 internal class GraalvmSqliteDynamicDynamicMemoryExports(
@@ -24,7 +24,7 @@ internal class GraalvmSqliteDynamicDynamicMemoryExports(
 
     override fun <P : Any?> sqliteAllocOrThrow(len: UInt): WasmPtr<P> {
         check(len > 0U)
-        val mem: WasmPtr<P> = sqlite3_malloc.executeForPtr(len.toInt())
+        val mem: WasmPtr<P> = WasmPtr(sqlite3_malloc.executeForPtr(len.toInt()))
 
         if (mem.isNull()) {
             throw OutOfMemoryError()

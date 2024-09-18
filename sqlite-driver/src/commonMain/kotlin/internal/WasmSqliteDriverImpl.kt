@@ -9,11 +9,10 @@ package ru.pixnews.wasm.sqlite.driver.internal
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.SQLiteException
 import at.released.weh.common.api.Logger
-import at.released.weh.common.api.or
-import at.released.weh.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
 import ru.pixnews.wasm.sqlite.driver.dsl.OpenFlags
 import ru.pixnews.wasm.sqlite.driver.dsl.OpenParamsBlock
+import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteErrorLogger
 import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementLogger
 import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementLogger.TraceEvent
@@ -22,6 +21,7 @@ import ru.pixnews.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfig
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntime
 import ru.pixnews.wasm.sqlite.open.helper.io.lock.SynchronizedObject
 import ru.pixnews.wasm.sqlite.open.helper.io.lock.synchronized
+import ru.pixnews.wasm.sqlite.open.helper.or
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteConfigParameter
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDbConfigParameter

@@ -6,9 +6,9 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.embedder.exports
 
-import at.released.weh.host.base.WasmPtr
 import at.released.weh.host.base.memory.Memory
 import at.released.weh.host.base.memory.writeNullTerminatedString
+import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
 
 @InternalWasmSqliteHelperApi
@@ -18,6 +18,6 @@ public fun SqliteDynamicMemoryExports.allocNullTerminatedString(
 ): WasmPtr<Byte> {
     val bytes = string.encodeToByteArray()
     val mem: WasmPtr<Byte> = sqliteAllocOrThrow(bytes.size.toUInt() + 1U)
-    memory.writeNullTerminatedString(mem, string)
+    memory.writeNullTerminatedString(mem.addr, string)
     return mem
 }

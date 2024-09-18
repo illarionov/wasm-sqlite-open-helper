@@ -6,10 +6,8 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.exports
 
-import at.released.weh.host.base.WasmPtr
 import at.released.weh.host.base.binding.WasmFunctionBinding
 import org.graalvm.polyglot.Value
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.asWasmAddr
 
 internal class GraalWasmFunctionBinding(
     private val member: Value,
@@ -22,5 +20,5 @@ internal class GraalWasmFunctionBinding(
     override fun executeForLong(vararg args: Any?): Long = member.execute(*args).asLong()
     override fun executeForFloat(vararg args: Any?): Float = member.execute(*args).asFloat()
     override fun executeForDouble(vararg args: Any?): Double = member.execute(*args).asDouble()
-    override fun <P> executeForPtr(vararg args: Any?): WasmPtr<P> = member.execute(*args).asWasmAddr()
+    override fun executeForPtr(vararg args: Any?): Int = member.execute(*args).asInt()
 }

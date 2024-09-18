@@ -8,8 +8,8 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chicory.exports
 
-import at.released.weh.host.base.WasmPtr
 import at.released.weh.host.base.binding.WasmFunctionBinding
+import at.released.weh.wasm.core.IntWasmPtr
 import com.dylibso.chicory.runtime.ExportFunction
 import com.dylibso.chicory.wasm.types.Value
 
@@ -24,7 +24,9 @@ internal class ChicoryWasmFunctionBinding(
     override fun executeForLong(vararg args: Any?): Long = func.apply(*args.argsToValues())[0].asLong()
     override fun executeForFloat(vararg args: Any?): Float = func.apply(*args.argsToValues())[0].asFloat()
     override fun executeForDouble(vararg args: Any?): Double = func.apply(*args.argsToValues())[0].asDouble()
-    override fun <P> executeForPtr(vararg args: Any?): WasmPtr<P> = WasmPtr(func.apply(*args.argsToValues())[0].asInt())
+
+    @IntWasmPtr
+    override fun executeForPtr(vararg args: Any?): Int = func.apply(*args.argsToValues())[0].asInt()
 
     private fun Array<out Any?>.argsToValues(): Array<Value> {
         return if (this.isEmpty()) {

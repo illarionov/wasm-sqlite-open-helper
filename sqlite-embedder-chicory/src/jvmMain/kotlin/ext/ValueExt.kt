@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chicory.ext
 
-import at.released.weh.host.base.WasmPtr
 import com.dylibso.chicory.wasm.types.Value
+import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
 
 internal fun <P : Any?> Value.asWasmAddr(): WasmPtr<P> = WasmPtr(asInt())

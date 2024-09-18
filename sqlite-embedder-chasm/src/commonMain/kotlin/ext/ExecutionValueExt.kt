@@ -8,9 +8,9 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chasm.ext
 
-import at.released.weh.host.base.WasmPtr
 import io.github.charlietap.chasm.embedding.shapes.Value
 import io.github.charlietap.chasm.embedding.shapes.Value.Number
+import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
 
 internal fun Value.asInt(): Int = (this as Number<Int>).value
 internal fun Value.asUInt(): UInt = (this as Number<Int>).value.toUInt()

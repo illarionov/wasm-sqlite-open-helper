@@ -7,6 +7,7 @@
 package ru.pixnews.wasm.sqlite.driver.graalvm
 
 import org.junit.Rule
+import org.junit.Test
 import org.junit.experimental.runners.Enclosed
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
@@ -24,6 +25,11 @@ class GraalvmBaseSqliteDriverTest {
         val tempFolder: TemporaryFolder = TemporaryFolder()
 
         override fun fileInTempDir(databaseName: String): String = tempFolder.root.resolve(databaseName).path
+
+        @Test
+        override fun Driver_initialization_should_work() {
+            super.Driver_initialization_should_work()
+        }
     }
 
     class SingleThreadedSqliteTest : AbstractBasicSqliteDriverTest<WasmSQLiteDriver<*>>(

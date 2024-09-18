@@ -6,7 +6,6 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chasm.exports
 
-import at.released.weh.host.base.WasmPtr
 import at.released.weh.host.base.binding.WasmFunctionBinding
 import io.github.charlietap.chasm.embedding.error.ChasmError
 import io.github.charlietap.chasm.embedding.invoke
@@ -16,7 +15,6 @@ import io.github.charlietap.chasm.embedding.shapes.Value
 import io.github.charlietap.chasm.embedding.shapes.fold
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.asInt
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.asLong
-import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.asWasmAddr
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.orThrow
 
 internal class ChasmFunctionBinding(
@@ -58,9 +56,9 @@ internal class ChasmFunctionBinding(
             ::throwOnError,
         )
 
-    override fun <P> executeForPtr(vararg args: Any?): WasmPtr<P> = invoke(store, instance, name, args.argsToValues())
+    override fun executeForPtr(vararg args: Any?): Int = invoke(store, instance, name, args.argsToValues())
         .fold(
-            { it[0].asWasmAddr() },
+            { it[0].asInt() },
             ::throwOnError,
         )
 }

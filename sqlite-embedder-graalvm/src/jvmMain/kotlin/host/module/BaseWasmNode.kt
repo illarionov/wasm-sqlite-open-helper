@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module
 
-import at.released.weh.bindings.graalvm240.host.memory.GraalvmWasmHostMemoryAdapter
+import at.released.weh.bindings.graalvm241.host.memory.GraalvmWasmHostMemoryAdapter
 import at.released.weh.host.base.function.HostFunctionHandle
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule

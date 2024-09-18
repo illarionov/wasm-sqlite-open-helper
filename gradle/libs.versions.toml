@@ -21,13 +21,13 @@ desugar_jdk_libs = "2.1.2"
 detekt = "1.23.7"
 diktat = "2.0.0"
 dokka = "1.9.20"
-graalvm = "24.0.2"
+graalvm = "24.1.0"
 gradle-maven-publish-plugin = "0.29.0"
-kotlin = "2.0.20"
+kotlin = "2.1.0-Beta1"
 kotlinx-coroutines = "1.9.0"
 kotlinx-binary-compatibility-validator = "0.16.3"
 kotlinx-datetime = "0.6.1"
-kotlinx-io ="0.5.3"
+kotlinx-io ="0.5.4"
 kermit = "2.0.4"
 ksp = "2.0.20-1.0.24"
 mockk = "1.13.12"
@@ -89,7 +89,7 @@ wasi-emscripten-host-fixtures = { group = "at.released.weh", name = "host-test-f
 wasi-emscripten-host-test-logger = { group = "at.released.weh", name = "test-logger", version.ref = "wasi-emscripten-host" }
 wasi-emscripten-host-chasm = { group = "at.released.weh", name = "bindings-chasm", version.ref = "wasi-emscripten-host" }
 wasi-emscripten-host-chicory = { group = "at.released.weh", name = "bindings-chicory", version.ref = "wasi-emscripten-host" }
-wasi-emscripten-host-graalvm240 = { group = "at.released.weh", name = "bindings-graalvm240", version.ref = "wasi-emscripten-host" }
+wasi-emscripten-host-graalvm241 = { group = "at.released.weh", name = "bindings-graalvm241", version.ref = "wasi-emscripten-host" }
 
 # Dependencies of the included build-logic
 agp-plugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }

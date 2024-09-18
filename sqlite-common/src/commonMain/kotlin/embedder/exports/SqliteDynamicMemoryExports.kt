@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.embedder.exports
 
-import at.released.weh.host.base.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
 
 @InternalWasmSqliteHelperApi

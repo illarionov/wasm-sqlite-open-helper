@@ -7,8 +7,8 @@
 package ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.function
 
 import at.released.weh.host.EmbedderHost
-import at.released.weh.host.base.WasmPtr
 import io.github.charlietap.chasm.embedding.shapes.Value
+import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.asWasmAddr
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.function.Sqlite3ProgressFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb

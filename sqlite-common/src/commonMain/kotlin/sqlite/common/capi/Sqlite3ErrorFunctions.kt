@@ -6,11 +6,11 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi
 
-import at.released.weh.host.base.WasmPtr
-import at.released.weh.host.base.isNull
 import at.released.weh.host.base.memory.ReadOnlyMemory
 import at.released.weh.host.base.memory.readNullableNullTerminatedString
+import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
+import ru.pixnews.wasm.sqlite.open.helper.isNull
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrorInfo
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
@@ -38,8 +38,8 @@ public class Sqlite3ErrorFunctions internal constructor(
     public fun sqlite3ErrMsg(
         sqliteDb: WasmPtr<SqliteDb>,
     ): String? {
-        val errorAddr: WasmPtr<Byte> = sqliteExports.sqlite3_errmsg.executeForPtr(sqliteDb.addr)
-        return memory.readNullableNullTerminatedString(errorAddr)
+        val errorAddr: WasmPtr<Byte> = WasmPtr(sqliteExports.sqlite3_errmsg.executeForPtr(sqliteDb.addr))
+        return memory.readNullableNullTerminatedString(errorAddr.addr)
     }
 
     public companion object {

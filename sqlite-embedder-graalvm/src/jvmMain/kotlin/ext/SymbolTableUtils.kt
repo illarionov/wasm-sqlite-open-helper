@@ -7,10 +7,8 @@
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.ext
 
 import at.released.weh.host.EmbedderHost
-import at.released.weh.host.base.WasmValueType
-import at.released.weh.host.base.function.HostFunction
-import at.released.weh.host.base.function.HostFunction.HostFunctionType
-import at.released.weh.host.base.function.functionTypes
+import at.released.weh.wasm.core.HostFunction
+import at.released.weh.wasm.core.HostFunction.HostFunctionType
 import org.graalvm.wasm.SymbolTable
 import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmFunction
@@ -25,7 +23,10 @@ internal fun setupWasmModuleFunctions(
     module: WasmModule,
     functions: Map<out HostFunction, NodeFactory>,
 ): WasmInstance {
-    val functionTypes: Map<HostFunctionType, Int> = allocateFunctionTypes(module, functions.keys.functionTypes())
+    val functionTypes: Map<HostFunctionType, Int> = allocateFunctionTypes(
+        module,
+        functions.keys.map(HostFunction::type),
+    )
     val exportedFunctions: Map<String, WasmFunction> = declareExportedFunctions(module, functionTypes, functions.keys)
 
     val moduleInstance: WasmInstance = context.readInstance(module)
@@ -56,9 +57,7 @@ internal fun allocateFunctionTypes(
     return functionTypeMap
 }
 
-internal fun List<WasmValueType>.toTypesByteArray(): ByteArray = ByteArray(this.size) {
-    requireNotNull(this[it].opcode).toByte()
-}
+internal fun List<Int>.toTypesByteArray(): ByteArray = ByteArray(this.size) { this[it].toByte() }
 
 internal fun declareExportedFunctions(
     symbolTable: SymbolTable,

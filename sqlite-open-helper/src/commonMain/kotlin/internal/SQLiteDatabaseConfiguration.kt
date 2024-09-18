@@ -6,9 +6,9 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.internal
 
-import at.released.weh.common.api.contains
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale
+import ru.pixnews.wasm.sqlite.open.helper.contains
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDatabaseJournalMode
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDatabaseSyncMode
 import kotlin.LazyThreadSafetyMode.NONE

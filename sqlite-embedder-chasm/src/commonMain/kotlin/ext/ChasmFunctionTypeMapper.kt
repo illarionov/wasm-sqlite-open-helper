@@ -6,8 +6,12 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chasm.ext
 
-import at.released.weh.host.base.WasmValueType
-import at.released.weh.host.base.function.HostFunction.HostFunctionType
+import at.released.weh.wasm.core.HostFunction.HostFunctionType
+import at.released.weh.wasm.core.WasmValueType
+import at.released.weh.wasm.core.WasmValueTypes.F32
+import at.released.weh.wasm.core.WasmValueTypes.F64
+import at.released.weh.wasm.core.WasmValueTypes.I32
+import at.released.weh.wasm.core.WasmValueTypes.I64
 import io.github.charlietap.chasm.embedding.shapes.ValueType
 import io.github.charlietap.chasm.embedding.shapes.FunctionType as ChasmFunctionType
 
@@ -16,14 +20,14 @@ internal fun List<HostFunctionType>.toChasmFunctionTypes(): Map<HostFunctionType
 )
 
 internal fun HostFunctionType.toChasmFunctionType(): ChasmFunctionType = ChasmFunctionType(
-    paramTypes.map(WasmValueType::toChasmValueTypes),
-    returnTypes.map(WasmValueType::toChasmValueTypes),
+    paramTypes.map(::toChasmValueTypes),
+    returnTypes.map(::toChasmValueTypes),
 )
 
-internal fun WasmValueType.toChasmValueTypes(): ValueType = when (this) {
-    WasmValueType.I32 -> ValueType.Number.I32
-    WasmValueType.I64 -> ValueType.Number.I64
-    WasmValueType.F32 -> ValueType.Number.F32
-    WasmValueType.F64 -> ValueType.Number.F64
-    else -> error("Unsupported WASM value type `$this`")
+internal fun toChasmValueTypes(@WasmValueType type: Int): ValueType = when (type) {
+    I32 -> ValueType.Number.I32
+    I64 -> ValueType.Number.I64
+    F32 -> ValueType.Number.F32
+    F64 -> ValueType.Number.F64
+    else -> error("Unsupported WASM value type `$type`")
 }

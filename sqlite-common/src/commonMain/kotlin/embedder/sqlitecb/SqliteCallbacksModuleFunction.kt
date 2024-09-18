@@ -7,11 +7,11 @@
 package ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb
 
 import at.released.weh.host.base.POINTER
-import at.released.weh.host.base.WasmValueType
-import at.released.weh.host.base.WasmValueType.WebAssemblyTypes.I32
-import at.released.weh.host.base.function.HostFunction
-import at.released.weh.host.base.function.HostFunction.HostFunctionType
-import at.released.weh.host.wasi.preview1.type.WasiValueTypes.U32
+import at.released.weh.wasi.preview1.type.WasiValueTypes.U32
+import at.released.weh.wasm.core.HostFunction
+import at.released.weh.wasm.core.HostFunction.HostFunctionType
+import at.released.weh.wasm.core.WasmValueType
+import at.released.weh.wasm.core.WasmValueTypes.I32
 
 /**
  * Implementation of host functions that are called from SQLite callbacks.
@@ -39,8 +39,8 @@ public enum class SqliteCallbacksModuleFunction(
 
     constructor(
         wasmName: String,
-        paramTypes: List<WasmValueType>,
-        retType: WasmValueType? = null,
+        paramTypes: List<@WasmValueType Int>,
+        retType: @WasmValueType Int? = null,
     ) : this(
         wasmName = wasmName,
         type = HostFunctionType(

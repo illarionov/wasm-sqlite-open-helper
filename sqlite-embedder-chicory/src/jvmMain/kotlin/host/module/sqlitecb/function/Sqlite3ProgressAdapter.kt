@@ -7,10 +7,10 @@
 package ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.sqlitecb.function
 
 import at.released.weh.host.EmbedderHost
-import at.released.weh.host.base.WasmPtr
 import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.runtime.WasmFunctionHandle
 import com.dylibso.chicory.wasm.types.Value
+import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.asWasmAddr
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.function.Sqlite3ProgressFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
