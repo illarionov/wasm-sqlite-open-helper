@@ -1,3 +1,31 @@
+public final class ru/pixnews/wasm/sqlite/open/helper/UIntBitMaskKt {
+	public static final fun and (Lru/pixnews/wasm/sqlite/open/helper/UintBitMask;Lru/pixnews/wasm/sqlite/open/helper/UintBitMask;)Lru/pixnews/wasm/sqlite/open/helper/UintBitMask;
+	public static final fun clear (Lru/pixnews/wasm/sqlite/open/helper/UintBitMask;Lru/pixnews/wasm/sqlite/open/helper/UintBitMask;)Lru/pixnews/wasm/sqlite/open/helper/UintBitMask;
+	public static final fun contains (Lru/pixnews/wasm/sqlite/open/helper/UintBitMask;Lru/pixnews/wasm/sqlite/open/helper/UintBitMask;)Z
+	public static final fun or (Lru/pixnews/wasm/sqlite/open/helper/UintBitMask;Lru/pixnews/wasm/sqlite/open/helper/UintBitMask;)Lru/pixnews/wasm/sqlite/open/helper/UintBitMask;
+	public static final fun xor (Lru/pixnews/wasm/sqlite/open/helper/UintBitMask;Lru/pixnews/wasm/sqlite/open/helper/UintBitMask;)Lru/pixnews/wasm/sqlite/open/helper/UintBitMask;
+}
+
+public abstract interface class ru/pixnews/wasm/sqlite/open/helper/UintBitMask {
+	public abstract fun getMask-pVg5ArA ()I
+	public abstract fun getNewInstance ()Lkotlin/jvm/functions/Function1;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/WasmPtr {
+	public static final field WASM_SIZEOF_PTR I
+	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/WasmPtr;
+	public static fun constructor-impl (I)I
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (ILjava/lang/Object;)Z
+	public static final fun equals-impl0 (II)Z
+	public final fun getAddr ()I
+	public fun hashCode ()I
+	public static fun hashCode-impl (I)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (I)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()I
+}
+
 public abstract interface annotation class ru/pixnews/wasm/sqlite/open/helper/WasmSqliteOpenHelperDsl : java/lang/annotation/Annotation {
 }
 
@@ -166,18 +194,18 @@ public final class ru/pixnews/wasm/sqlite/open/helper/embedder/callback/SqliteCa
 }
 
 public abstract interface class ru/pixnews/wasm/sqlite/open/helper/embedder/functiontable/SqliteCallbackFunctionIndexes {
-	public abstract fun getLoggingCallbackFunction-DhFWE8A ()I
-	public abstract fun getProgressFunction-DhFWE8A ()I
-	public abstract fun getTraceFunction-DhFWE8A ()I
+	public abstract fun getLoggingCallbackFunction ()Lat/released/weh/host/base/function/IndirectFunctionTableIndex;
+	public abstract fun getProgressFunction ()Lat/released/weh/host/base/function/IndirectFunctionTableIndex;
+	public abstract fun getTraceFunction ()Lat/released/weh/host/base/function/IndirectFunctionTableIndex;
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/embedder/sqlitecb/SqliteCallbacksModuleFunction : java/lang/Enum, at/released/weh/host/base/function/HostFunction {
+public final class ru/pixnews/wasm/sqlite/open/helper/embedder/sqlitecb/SqliteCallbacksModuleFunction : java/lang/Enum, at/released/weh/wasm/core/HostFunction {
 	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/embedder/sqlitecb/SqliteCallbacksModuleFunction$Companion;
 	public static final field SQLITE3_LOGGING_CALLBACK Lru/pixnews/wasm/sqlite/open/helper/embedder/sqlitecb/SqliteCallbacksModuleFunction;
 	public static final field SQLITE3_PROGRESS_CALLBACK Lru/pixnews/wasm/sqlite/open/helper/embedder/sqlitecb/SqliteCallbacksModuleFunction;
 	public static final field SQLITE3_TRACE_CALLBACK Lru/pixnews/wasm/sqlite/open/helper/embedder/sqlitecb/SqliteCallbacksModuleFunction;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
-	public fun getType ()Lat/released/weh/host/base/function/HostFunction$HostFunctionType;
+	public fun getType ()Lat/released/weh/wasm/core/HostFunction$HostFunctionType;
 	public fun getWasmName ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/embedder/sqlitecb/SqliteCallbacksModuleFunction;
 	public static fun values ()[Lru/pixnews/wasm/sqlite/open/helper/embedder/sqlitecb/SqliteCallbacksModuleFunction;
@@ -189,17 +217,17 @@ public final class ru/pixnews/wasm/sqlite/open/helper/embedder/sqlitecb/SqliteCa
 
 public final class ru/pixnews/wasm/sqlite/open/helper/embedder/sqlitecb/function/Sqlite3LoggingFunctionHandler : at/released/weh/host/base/function/HostFunctionHandle {
 	public fun <init> (Lat/released/weh/host/EmbedderHost;Lkotlin/jvm/functions/Function0;)V
-	public final fun execute-Br7cVXU (Lat/released/weh/host/base/memory/ReadOnlyMemory;II)V
+	public final fun execute-91fd9Qo (Lat/released/weh/host/base/memory/ReadOnlyMemory;II)V
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/embedder/sqlitecb/function/Sqlite3ProgressFunctionHandle : at/released/weh/host/base/function/HostFunctionHandle {
 	public fun <init> (Lat/released/weh/host/EmbedderHost;Lkotlin/jvm/functions/Function1;)V
-	public final fun execute-e-C6Vng (I)I
+	public final fun execute-MkiKMww (I)I
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/embedder/sqlitecb/function/Sqlite3TraceFunctionHandle : at/released/weh/host/base/function/HostFunctionHandle {
 	public fun <init> (Lat/released/weh/host/EmbedderHost;Lkotlin/jvm/functions/Function1;)V
-	public final fun execute-O0v8sSA (Lat/released/weh/host/base/memory/ReadOnlyMemory;IIIJ)I
+	public final fun execute-WNU7dnc (Lat/released/weh/host/base/memory/ReadOnlyMemory;IIIJ)I
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteColumnType {
@@ -402,7 +430,7 @@ public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteEr
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteOpenFlags : at/released/weh/common/api/UintBitMask {
+public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteOpenFlags : ru/pixnews/wasm/sqlite/open/helper/UintBitMask {
 	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteOpenFlags$Companion;
 	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteOpenFlags;
 	public static fun constructor-impl (I)I
@@ -604,30 +632,30 @@ public abstract class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/Sqlit
 
 public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteTrace$TraceClose : ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteTrace {
 	public synthetic fun <init> (ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun getDb-CbBLMKg ()I
+	public final fun getDb-7DTMQRQ ()I
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteTrace$TraceProfile : ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteTrace {
 	public synthetic fun <init> (IIJLkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun getDb-CbBLMKg ()I
-	public final fun getStatement-CbBLMKg ()I
+	public final fun getDb-7DTMQRQ ()I
+	public final fun getStatement-7DTMQRQ ()I
 	public final fun getTime-UwyO8pc ()J
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteTrace$TraceRow : ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteTrace {
 	public synthetic fun <init> (IILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun getDb-CbBLMKg ()I
-	public final fun getStatement-CbBLMKg ()I
+	public final fun getDb-7DTMQRQ ()I
+	public final fun getStatement-7DTMQRQ ()I
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteTrace$TraceStmt : ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteTrace {
 	public synthetic fun <init> (IILjava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun getDb-CbBLMKg ()I
-	public final fun getStatement-CbBLMKg ()I
+	public final fun getDb-7DTMQRQ ()I
+	public final fun getStatement-7DTMQRQ ()I
 	public final fun getUnexpandedSql ()Ljava/lang/String;
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteTraceEventCode : at/released/weh/common/api/UintBitMask {
+public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteTraceEventCode : ru/pixnews/wasm/sqlite/open/helper/UintBitMask {
 	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteTraceEventCode$Companion;
 	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteTraceEventCode;
 	public static fun constructor-impl (I)I
@@ -668,18 +696,18 @@ public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3DbFunctions {
-	public final fun registerAndroidFunctions-e-C6Vng (I)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3Result;
-	public final fun registerLocalizedCollators-N0MNGDA (ILjava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3Result;
-	public final fun sqlite3BusyTimeout-N0MNGDA (II)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3Result;
-	public final fun sqlite3Changes-e-C6Vng (I)I
-	public final fun sqlite3Close-Eb4nr0s (I)I
-	public final fun sqlite3DbConfig-uQhdXo0 (IIIII)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3Result;
-	public final fun sqlite3DbReadonly-N0MNGDA (ILjava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3DbFunctions$SqliteDbReadonlyResult;
-	public final fun sqlite3DbStatus-5j5U_QI (IIZ)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3Result;
-	public final fun sqlite3LastInsertRowId-e-C6Vng (I)J
+	public final fun registerAndroidFunctions-MkiKMww (I)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3Result;
+	public final fun registerLocalizedCollators-zXPCc-s (ILjava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3Result;
+	public final fun sqlite3BusyTimeout-zXPCc-s (II)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3Result;
+	public final fun sqlite3Changes-MkiKMww (I)I
+	public final fun sqlite3Close-bMgm7dM (I)I
+	public final fun sqlite3DbConfig-WdIX7y0 (IIIII)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3Result;
+	public final fun sqlite3DbReadonly-zXPCc-s (ILjava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3DbFunctions$SqliteDbReadonlyResult;
+	public final fun sqlite3DbStatus-NsArx2U (IIZ)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3Result;
+	public final fun sqlite3LastInsertRowId-MkiKMww (I)J
 	public final fun sqlite3OpenV2-9ifsV-U (Ljava/lang/String;ILjava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3Result;
-	public final fun sqlite3ProgressHandler-8A16jWI (IILkotlin/jvm/functions/Function1;)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3Result;
-	public final fun sqlite3Trace-V_KTK9Q (IILkotlin/jvm/functions/Function1;)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3Result;
+	public final fun sqlite3ProgressHandler-3nR9EGE (IILkotlin/jvm/functions/Function1;)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3Result;
+	public final fun sqlite3Trace-KpjkV_0 (IILkotlin/jvm/functions/Function1;)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3Result;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3DbFunctions$SqliteDbReadonlyResult : java/lang/Enum {
@@ -705,15 +733,15 @@ public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3
 
 public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3ErrorFunctions {
 	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3ErrorFunctions$Companion;
-	public final fun sqlite3ErrCode-Eb4nr0s (I)I
-	public final fun sqlite3ErrMsg-e-C6Vng (I)Ljava/lang/String;
-	public final fun sqlite3ExtendedErrCode-Eb4nr0s (I)I
+	public final fun sqlite3ErrCode-bMgm7dM (I)I
+	public final fun sqlite3ErrMsg-MkiKMww (I)Ljava/lang/String;
+	public final fun sqlite3ExtendedErrCode-bMgm7dM (I)I
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3ErrorFunctions$Companion {
-	public final fun createSqlite3Result-wqPmP28 (Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3ErrorFunctions;ILjava/lang/Object;Lat/released/weh/host/base/WasmPtr;)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3Result;
-	public static synthetic fun createSqlite3Result-wqPmP28$default (Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3ErrorFunctions$Companion;Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3ErrorFunctions;ILjava/lang/Object;Lat/released/weh/host/base/WasmPtr;ILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3Result;
-	public final fun readSqliteErrorInfo-XZvYtOA (Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3ErrorFunctions;I)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteErrorInfo;
+	public final fun createSqlite3Result-bn1p3FQ (Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3ErrorFunctions;ILjava/lang/Object;Lru/pixnews/wasm/sqlite/open/helper/WasmPtr;)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3Result;
+	public static synthetic fun createSqlite3Result-bn1p3FQ$default (Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3ErrorFunctions$Companion;Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3ErrorFunctions;ILjava/lang/Object;Lru/pixnews/wasm/sqlite/open/helper/WasmPtr;ILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3Result;
+	public final fun readSqliteErrorInfo-yL9-y2A (Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3ErrorFunctions;I)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteErrorInfo;
 }
 
 public abstract interface class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3Result {
@@ -753,25 +781,25 @@ public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3StatementFunctions {
-	public final fun sqlite3BindBlobTransient-2_-Wn50 (II[B)I
-	public final fun sqlite3BindDouble-2_-Wn50 (IID)I
-	public final fun sqlite3BindLong-2_-Wn50 (IIJ)I
-	public final fun sqlite3BindNull-Gb-9470 (II)I
-	public final fun sqlite3BindParameterCount-e-C6Vng (I)I
-	public final fun sqlite3BindStringTransient-2_-Wn50 (IILjava/lang/String;)I
-	public final fun sqlite3ClearBindings-Eb4nr0s (I)I
-	public final fun sqlite3ColumnBlob-N0MNGDA (II)[B
-	public final fun sqlite3ColumnCount-e-C6Vng (I)I
-	public final fun sqlite3ColumnDouble-N0MNGDA (II)D
-	public final fun sqlite3ColumnInt64-N0MNGDA (II)J
-	public final fun sqlite3ColumnName-N0MNGDA (II)Ljava/lang/String;
-	public final fun sqlite3ColumnText-N0MNGDA (II)Ljava/lang/String;
-	public final fun sqlite3ColumnType-L_Y3-Hg (II)I
-	public final fun sqlite3ExpandedSql-e-C6Vng (I)Ljava/lang/String;
-	public final fun sqlite3Finalize-Z5Htsd4 (II)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3Result;
-	public final fun sqlite3PrepareV2-N0MNGDA (ILjava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3Result;
-	public final fun sqlite3Reset-Eb4nr0s (I)I
-	public final fun sqlite3Step-Eb4nr0s (I)I
-	public final fun sqlite3StmtReadonly-e-C6Vng (I)Z
+	public final fun sqlite3BindBlobTransient-_3hpRAc (II[B)I
+	public final fun sqlite3BindDouble-_3hpRAc (IID)I
+	public final fun sqlite3BindLong-_3hpRAc (IIJ)I
+	public final fun sqlite3BindNull-azIcglc (II)I
+	public final fun sqlite3BindParameterCount-MkiKMww (I)I
+	public final fun sqlite3BindStringTransient-_3hpRAc (IILjava/lang/String;)I
+	public final fun sqlite3ClearBindings-bMgm7dM (I)I
+	public final fun sqlite3ColumnBlob-zXPCc-s (II)[B
+	public final fun sqlite3ColumnCount-MkiKMww (I)I
+	public final fun sqlite3ColumnDouble-zXPCc-s (II)D
+	public final fun sqlite3ColumnInt64-zXPCc-s (II)J
+	public final fun sqlite3ColumnName-zXPCc-s (II)Ljava/lang/String;
+	public final fun sqlite3ColumnText-zXPCc-s (II)Ljava/lang/String;
+	public final fun sqlite3ColumnType-ohn4PPg (II)I
+	public final fun sqlite3ExpandedSql-MkiKMww (I)Ljava/lang/String;
+	public final fun sqlite3Finalize-BdoPJZE (II)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3Result;
+	public final fun sqlite3PrepareV2-zXPCc-s (ILjava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/capi/Sqlite3Result;
+	public final fun sqlite3Reset-bMgm7dM (I)I
+	public final fun sqlite3Step-bMgm7dM (I)I
+	public final fun sqlite3StmtReadonly-MkiKMww (I)Z
 }
 

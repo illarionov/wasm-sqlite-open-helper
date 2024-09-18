@@ -8,12 +8,12 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chasm.exports
 
-import at.released.weh.host.base.WasmPtr
-import at.released.weh.host.base.isNull
+import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.functionMember
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.ChasmInstanceBuilder.ChasmInstance
 import ru.pixnews.wasm.sqlite.open.helper.chasm.platform.throwOutOfMemoryError
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteDynamicMemoryExports
+import ru.pixnews.wasm.sqlite.open.helper.isNull
 
 internal class ChasmSqliteDynamicMemoryExports(
     instance: ChasmInstance,
@@ -26,7 +26,7 @@ internal class ChasmSqliteDynamicMemoryExports(
 
     override fun <P : Any?> sqliteAllocOrThrow(len: UInt): WasmPtr<P> {
         check(len > 0U)
-        val mem: WasmPtr<P> = sqlite3_malloc.executeForPtr(len.toInt())
+        val mem: WasmPtr<P> = WasmPtr(sqlite3_malloc.executeForPtr(len.toInt()))
 
         if (mem.isNull()) {
             throwOutOfMemoryError()

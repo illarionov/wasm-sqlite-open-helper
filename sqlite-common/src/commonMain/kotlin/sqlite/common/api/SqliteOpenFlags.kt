@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api
 
-import at.released.weh.common.api.UintBitMask
+import ru.pixnews.wasm.sqlite.open.helper.UintBitMask
 import kotlin.jvm.JvmInline
 
 @JvmInline

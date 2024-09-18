@@ -7,13 +7,12 @@
 package ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.sqlitecb
 
 import at.released.weh.host.EmbedderHost
-import at.released.weh.host.base.WasmValueType
 import at.released.weh.host.base.function.IndirectFunctionTableIndex
 import at.released.weh.host.base.memory.ReadOnlyMemory
 import com.dylibso.chicory.runtime.HostFunction
 import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.runtime.WasmFunctionHandle
-import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.chicory
+import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.opcodeToChicory
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.sqlitecb.function.Sqlite3LoggingAdapter
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.sqlitecb.function.Sqlite3ProgressAdapter
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.sqlitecb.function.Sqlite3TraceAdapter
@@ -38,8 +37,8 @@ internal class SqliteCallbacksFunctionsBuilder(
                 sqliteCallbackFunction.createFunctionHandle(host, memory, callbackStore),
                 moduleName,
                 sqliteCallbackFunction.wasmName,
-                sqliteCallbackFunction.type.paramTypes.map(WasmValueType::chicory),
-                sqliteCallbackFunction.type.returnTypes.map(WasmValueType::chicory),
+                sqliteCallbackFunction.type.paramTypes.map(::opcodeToChicory),
+                sqliteCallbackFunction.type.returnTypes.map(::opcodeToChicory),
             )
         }
     }

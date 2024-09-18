@@ -19,11 +19,11 @@ import android.database.sqlite.SQLiteBindOrColumnIndexOutOfRangeException
 import android.database.sqlite.SQLiteException
 import androidx.core.os.CancellationSignal
 import at.released.weh.common.api.Logger
-import at.released.weh.common.api.contains
-import at.released.weh.host.base.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.CREATE_IF_NECESSARY
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.NO_LOCALIZED_COLLATORS
+import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.contains
 import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteSlowQueryLogger
 import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementLogger
 import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementProfileLogger

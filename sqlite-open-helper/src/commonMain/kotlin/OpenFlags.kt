@@ -6,9 +6,6 @@
 
 package ru.pixnews.wasm.sqlite.open.helper
 
-import at.released.weh.common.api.UintBitMask
-import at.released.weh.common.api.clear
-import at.released.weh.common.api.or
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteOpenFlags
 

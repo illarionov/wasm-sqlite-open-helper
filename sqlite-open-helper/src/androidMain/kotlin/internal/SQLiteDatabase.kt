@@ -27,15 +27,14 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteStatement
 import at.released.weh.common.api.Logger
-import at.released.weh.common.api.clear
-import at.released.weh.common.api.contains
-import at.released.weh.common.api.or
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.CREATE_IF_NECESSARY
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.ENABLE_WRITE_AHEAD_LOGGING
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.OPEN_CREATE
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.OPEN_READONLY
+import ru.pixnews.wasm.sqlite.open.helper.clear
 import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale
+import ru.pixnews.wasm.sqlite.open.helper.contains
 import ru.pixnews.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfig
 import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteDatabaseCorruptException
 import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard.CloseGuardFinalizeAction
@@ -49,6 +48,7 @@ import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteSession.Companion.TRANS
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.Companion.getSqlStatementType
 import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_DDL
 import ru.pixnews.wasm.sqlite.open.helper.internal.ext.DatabaseUtils
+import ru.pixnews.wasm.sqlite.open.helper.or
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDatabaseJournalMode
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDatabaseJournalMode.WAL
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDatabaseSyncMode

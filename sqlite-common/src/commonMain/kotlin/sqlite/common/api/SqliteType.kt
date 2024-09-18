@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api
 
-import at.released.weh.host.base.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
 import kotlin.time.Duration
 
 public class SqliteDb private constructor()

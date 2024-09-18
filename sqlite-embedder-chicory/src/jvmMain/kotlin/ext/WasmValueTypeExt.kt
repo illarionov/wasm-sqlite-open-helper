@@ -6,8 +6,6 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chicory.ext
 
-import at.released.weh.host.base.WasmValueType
 import com.dylibso.chicory.wasm.types.ValueType
 
-internal val WasmValueType.chicory: ValueType
-    get() = ValueType.forId(requireNotNull(opcode) { "Can not convert Wasi type without opcode" }.toInt())
+internal fun opcodeToChicory(opcode: Int): ValueType = ValueType.forId(opcode)

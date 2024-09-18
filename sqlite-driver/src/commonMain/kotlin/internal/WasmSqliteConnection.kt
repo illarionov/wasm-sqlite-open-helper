@@ -9,11 +9,11 @@ package ru.pixnews.wasm.sqlite.driver.internal
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.SQLiteStatement
 import at.released.weh.common.api.Logger
-import at.released.weh.host.base.WasmPtr
 import kotlinx.atomicfu.AtomicBoolean
 import kotlinx.atomicfu.atomic
 import ru.pixnews.wasm.sqlite.driver.dsl.OpenFlags
 import ru.pixnews.wasm.sqlite.driver.dsl.OpenParamsBlock
+import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.internal.wasmSqliteCleaner
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode

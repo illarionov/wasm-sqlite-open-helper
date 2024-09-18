@@ -7,10 +7,9 @@
 package ru.pixnews.wasm.sqlite.open.helper.internal
 
 import at.released.weh.common.api.Logger
-import at.released.weh.common.api.contains
-import at.released.weh.common.api.or
-import at.released.weh.host.base.WasmPtr
 import at.released.weh.host.ext.encodedNullTerminatedStringLength
+import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.contains
 import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteErrorLogger
 import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementLogger
 import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementLogger.TraceEvent
@@ -21,6 +20,7 @@ import ru.pixnews.wasm.sqlite.open.helper.internal.OpenHelperNativeBindings.Copy
 import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow
 import ru.pixnews.wasm.sqlite.open.helper.internal.ext.throwAndroidSqliteException
 import ru.pixnews.wasm.sqlite.open.helper.internal.platform.yieldSleepAroundMSec
+import ru.pixnews.wasm.sqlite.open.helper.or
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteColumnType
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteConfigParameter
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb

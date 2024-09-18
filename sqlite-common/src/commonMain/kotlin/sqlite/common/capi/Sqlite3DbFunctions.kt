@@ -7,9 +7,9 @@
 package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi
 
 import at.released.weh.common.api.Logger
-import at.released.weh.host.base.WasmPtr
 import at.released.weh.host.base.memory.Memory
 import at.released.weh.host.base.memory.readPtr
+import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.allocNullTerminatedString
@@ -66,7 +66,7 @@ public class Sqlite3DbFunctions internal constructor(
                 flags.mask.toInt(),
                 pVfsName.addr,
             )
-            val pDb: WasmPtr<SqliteDb> = memory.readPtr(ppDb)
+            val pDb: WasmPtr<SqliteDb> = WasmPtr(memory.readPtr(ppDb.addr))
             val result = sqliteErrorApi.createSqlite3Result(resultCode, pDb, pDb)
 
             when (result) {
@@ -242,8 +242,8 @@ public class Sqlite3DbFunctions internal constructor(
             // TODO: check
             val result = if (errCode == SQLITE_OK) {
                 SqliteDbStatusResult(
-                    memory.readI32(pCur),
-                    memory.readI32(pHiwtr),
+                    memory.readI32(pCur.addr),
+                    memory.readI32(pHiwtr.addr),
                 )
             } else {
                 SqliteDbStatusResult(0, 0)

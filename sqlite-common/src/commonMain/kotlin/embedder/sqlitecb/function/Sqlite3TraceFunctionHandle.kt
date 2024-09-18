@@ -6,12 +6,12 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.function
 
-import at.released.weh.common.api.contains
 import at.released.weh.host.EmbedderHost
-import at.released.weh.host.base.WasmPtr
 import at.released.weh.host.base.function.HostFunctionHandle
 import at.released.weh.host.base.memory.ReadOnlyMemory
 import at.released.weh.host.base.memory.readNullTerminatedString
+import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
+import ru.pixnews.wasm.sqlite.open.helper.contains
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteStatement
@@ -42,12 +42,12 @@ public class Sqlite3TraceFunctionHandle(
             val traceInfo = SqliteTrace.TraceStmt(
                 db = contextPointer,
                 statement = arg1 as WasmPtr<SqliteStatement>,
-                unexpandedSql = memory.readNullTerminatedString(WasmPtr(arg2.toInt())),
+                unexpandedSql = memory.readNullTerminatedString(arg2.toInt()),
             )
             delegate.invoke(traceInfo)
         }
         if (flags.contains(SQLITE_TRACE_PROFILE)) {
-            val timeNs = memory.readI64(WasmPtr<Long>(arg2.toInt()))
+            val timeNs = memory.readI64(arg2.toInt())
             val traceInfo = SqliteTrace.TraceProfile(
                 db = contextPointer,
                 statement = arg1 as WasmPtr<SqliteStatement>,

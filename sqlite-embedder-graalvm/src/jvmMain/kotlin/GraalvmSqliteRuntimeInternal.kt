@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm
 
-import at.released.weh.bindings.graalvm240.GraalvmEmscriptenEnvironment
+import at.released.weh.bindings.graalvm241.GraalvmEmscriptenEnvironment
 import at.released.weh.host.base.memory.Memory
 import org.graalvm.polyglot.Context
 import org.graalvm.polyglot.Value

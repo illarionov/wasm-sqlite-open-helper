@@ -1,4 +1,4 @@
-public final class ru/pixnews/wasm/sqlite/open/helper/OpenFlags : at/released/weh/common/api/UintBitMask {
+public final class ru/pixnews/wasm/sqlite/open/helper/OpenFlags : ru/pixnews/wasm/sqlite/open/helper/UintBitMask {
 	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/OpenFlags$Companion;
 	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/OpenFlags;
 	public static fun constructor-impl (I)I

@@ -7,7 +7,6 @@
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.threadfactory
 
 import at.released.weh.host.EmbedderHost
-import at.released.weh.host.base.WasmPtr
 import at.released.weh.host.base.function.HostFunctionHandle
 import com.oracle.truffle.api.CompilerDirectives
 import com.oracle.truffle.api.frame.VirtualFrame
@@ -15,6 +14,7 @@ import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
+import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.BaseWasmNode
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.threadfactory.UseManagedThreadPthreadRoutineAdapter.UseManagedThreadPthreadRoutineFunctionHandle

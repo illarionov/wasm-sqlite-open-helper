@@ -6,7 +6,6 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi
 
-import at.released.weh.host.base.WasmPtr
 import at.released.weh.host.base.memory.Memory
 import at.released.weh.host.base.memory.readNullableNullTerminatedString
 import at.released.weh.host.base.memory.readPtr
@@ -17,6 +16,7 @@ import kotlinx.io.Buffer
 import kotlinx.io.buffered
 import kotlinx.io.readByteArray
 import kotlinx.io.writeString
+import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.sqliteFreeSilent
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteColumnType
@@ -50,7 +50,7 @@ public class Sqlite3StatementFunctions internal constructor(
             sqlBytesPtr = memoryBindings.sqliteAllocOrThrow(nullTerminatedSqlSize.toUInt())
             ppStatement = memoryBindings.sqliteAllocOrThrow(WasmPtr.WASM_SIZEOF_PTR)
 
-            memory.sinkWithMaxSize(sqlBytesPtr, nullTerminatedSqlSize).use {
+            memory.sinkWithMaxSize(sqlBytesPtr.addr, nullTerminatedSqlSize).use {
                 it.write(sqlEncoded, sqlEncoded.size)
             }
 
@@ -63,7 +63,7 @@ public class Sqlite3StatementFunctions internal constructor(
             )
             val result = sqliteErrorApi.createSqlite3Result(
                 errCode,
-                memory.readPtr(ppStatement),
+                WasmPtr<SqliteStatement>(memory.readPtr(ppStatement.addr)),
                 sqliteDb,
             )
             if (result is Success) {
@@ -111,7 +111,7 @@ public class Sqlite3StatementFunctions internal constructor(
         value: ByteArray,
     ): SqliteResultCode {
         val pValue: WasmPtr<Byte> = memoryBindings.sqliteAllocOrThrow(value.size.toUInt())
-        memory.sinkWithMaxSize(pValue, value.size).buffered().use {
+        memory.sinkWithMaxSize(pValue.addr, value.size).buffered().use {
             it.write(value)
         }
         val errCode = try {
@@ -138,7 +138,7 @@ public class Sqlite3StatementFunctions internal constructor(
         val size = encoded.size.toInt()
 
         val pValue: WasmPtr<Byte> = memoryBindings.sqliteAllocOrThrow(size.toUInt())
-        memory.sinkWithMaxSize(pValue, size).use {
+        memory.sinkWithMaxSize(pValue.addr, size).use {
             it.write(encoded, encoded.size)
         }
         val errCode = try {
@@ -191,7 +191,7 @@ public class Sqlite3StatementFunctions internal constructor(
         statement: WasmPtr<SqliteStatement>,
         index: Int,
     ): String? {
-        val ptr: WasmPtr<Byte> = sqliteExports.sqlite3_column_name.executeForPtr(statement.addr, index)
+        val ptr = sqliteExports.sqlite3_column_name.executeForPtr(statement.addr, index)
         return memory.readNullableNullTerminatedString(ptr)
     }
 
@@ -216,7 +216,7 @@ public class Sqlite3StatementFunctions internal constructor(
     }
 
     public fun sqlite3ExpandedSql(statement: WasmPtr<SqliteStatement>): String? {
-        val ptr: WasmPtr<Byte> = sqliteExports.sqlite3_expanded_sql.executeForPtr(statement.addr)
+        val ptr = sqliteExports.sqlite3_expanded_sql.executeForPtr(statement.addr)
         return memory.readNullableNullTerminatedString(ptr)
     }
 
@@ -224,7 +224,7 @@ public class Sqlite3StatementFunctions internal constructor(
         statement: WasmPtr<SqliteStatement>,
         columnIndex: Int,
     ): String? {
-        val ptr: WasmPtr<Byte> = sqliteExports.sqlite3_column_text.executeForPtr(statement.addr, columnIndex)
+        val ptr = sqliteExports.sqlite3_column_text.executeForPtr(statement.addr, columnIndex)
         return memory.readNullableNullTerminatedString(ptr)
     }
 
@@ -246,10 +246,7 @@ public class Sqlite3StatementFunctions internal constructor(
         statement: WasmPtr<SqliteStatement>,
         columnIndex: Int,
     ): ByteArray {
-        val ptr: WasmPtr<Byte> = sqliteExports.sqlite3_column_text.executeForPtr(
-            statement.addr,
-            columnIndex,
-        )
+        val ptr = sqliteExports.sqlite3_column_text.executeForPtr(statement.addr, columnIndex)
         val bytes: Int = sqliteExports.sqlite3_column_bytes.executeForInt(
             statement.addr,
             columnIndex,

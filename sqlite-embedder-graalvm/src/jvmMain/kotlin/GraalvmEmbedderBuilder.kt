@@ -6,17 +6,16 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm
 
-import at.released.weh.bindings.graalvm240.GraalvmEmscriptenEnvironment
-import at.released.weh.bindings.graalvm240.GraalvmHostFunctionInstaller
-import at.released.weh.bindings.graalvm240.MemorySource.ExportedMemory
-import at.released.weh.bindings.graalvm240.MemorySource.ImportedMemory
-import at.released.weh.bindings.graalvm240.MemorySpec
-import at.released.weh.bindings.graalvm240.host.pthread.ManagedThreadInitializer
+import at.released.weh.bindings.graalvm241.GraalvmEmscriptenEnvironment
+import at.released.weh.bindings.graalvm241.GraalvmHostFunctionInstaller
+import at.released.weh.bindings.graalvm241.MemorySource.ExportedMemory
+import at.released.weh.bindings.graalvm241.MemorySource.ImportedMemory
+import at.released.weh.bindings.graalvm241.MemorySpec
+import at.released.weh.bindings.graalvm241.host.pthread.ManagedThreadInitializer
 import at.released.weh.host.EmbedderHost
 import at.released.weh.host.base.WasmModules.WASI_SNAPSHOT_PREVIEW1_MODULE_NAME
-import at.released.weh.host.base.WasmPtr
+import at.released.weh.host.base.memory.Pages
 import at.released.weh.host.base.memory.WASM_MEMORY_PAGE_SIZE
-import at.released.weh.host.include.StructPthread
 import org.graalvm.polyglot.Context
 import org.graalvm.polyglot.Engine
 import org.graalvm.polyglot.Source
@@ -51,7 +50,7 @@ internal class GraalvmEmbedderBuilder(
     }
     private val wasmThreadsEnabled = sqlite3Binary.requireThreads
     private val memorySpec = MemorySpec {
-        this.minSizePages = sqlite3Binary.wasmMinMemorySize / WASM_MEMORY_PAGE_SIZE
+        this.minSize = Pages(sqlite3Binary.wasmMinMemorySize / WASM_MEMORY_PAGE_SIZE)
         this.shared = sqlite3Binary.requireThreads
         this.useUnsafe = USE_UNSAFE_MEMORY || sqlite3Binary.requireThreads
     }
@@ -106,7 +105,7 @@ internal class GraalvmEmbedderBuilder(
                     }
                 }
 
-                override fun initWorkerThread(threadPtr: WasmPtr<StructPthread>) {
+                override fun initWorkerThread(threadPtr: Int) {
                     emscriptenRuntime.initWorkerThread(threadPtr)
                 }
             }
