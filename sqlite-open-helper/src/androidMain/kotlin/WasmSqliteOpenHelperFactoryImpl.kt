@@ -15,7 +15,7 @@ package ru.pixnews.wasm.sqlite.open.helper
 
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import at.released.weh.common.api.Logger
-import at.released.weh.host.base.memory.Memory
+import at.released.weh.wasm.core.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteErrorLogger
 import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementLogger
 import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementProfileLogger

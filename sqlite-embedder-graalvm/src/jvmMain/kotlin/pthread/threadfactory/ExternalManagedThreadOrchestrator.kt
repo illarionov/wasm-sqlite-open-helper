@@ -6,8 +6,8 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.threadfactory
 
-import at.released.weh.host.base.POINTER
 import at.released.weh.wasm.core.HostFunction
+import at.released.weh.wasm.core.POINTER
 
 internal val EXTERNAL_MANAGED_THREAD_START_ROUTINE = object : HostFunction {
     override val wasmName: String = "use_managed_thread_pthread_routine"

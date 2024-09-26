@@ -9,10 +9,9 @@ package ru.pixnews.wasm.sqlite.open.helper.chasm.host
 import at.released.weh.bindings.chasm.ChasmHostFunctionInstaller
 import at.released.weh.bindings.chasm.memory.ChasmMemoryAdapter
 import at.released.weh.host.EmbedderHost
-import at.released.weh.host.base.WasmModules.ENV_MODULE_NAME
-import at.released.weh.host.base.function.IndirectFunctionTableIndex
-import at.released.weh.host.base.memory.WASM_MEMORY_DEFAULT_MAX_PAGES
-import at.released.weh.host.base.memory.WASM_MEMORY_PAGE_SIZE
+import at.released.weh.wasm.core.WasmModules.ENV_MODULE_NAME
+import at.released.weh.wasm.core.memory.WASM_MEMORY_DEFAULT_MAX_PAGES
+import at.released.weh.wasm.core.memory.WASM_MEMORY_PAGE_SIZE
 import com.github.michaelbull.result.getOrThrow
 import io.github.charlietap.chasm.embedding.error.ChasmError.DecodeError
 import io.github.charlietap.chasm.embedding.instance
@@ -43,9 +42,9 @@ import ru.pixnews.wasm.sqlite.open.helper.chasm.host.exception.ChasmException
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.ChasmSqliteCallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.setupSqliteCallbacksHostFunctions
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
+import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.IndirectFunctionTableIndex
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.SqliteCallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
-import at.released.weh.host.base.memory.Memory as WasmMemory
 import io.github.charlietap.chasm.embedding.shapes.Import as ChasmImport
 import io.github.charlietap.chasm.embedding.shapes.Memory as ChasmMemoryImportable
 import io.github.charlietap.chasm.embedding.shapes.MemoryType as ChasmMemoryType
@@ -172,7 +171,7 @@ internal class ChasmInstanceBuilder(
     internal class ChasmInstance(
         val store: Store,
         val instance: Instance,
-        val memory: WasmMemory,
+        val memory: ChasmMemoryAdapter,
         val indirectFunctionIndexes: SqliteCallbackFunctionIndexes,
     )
 }

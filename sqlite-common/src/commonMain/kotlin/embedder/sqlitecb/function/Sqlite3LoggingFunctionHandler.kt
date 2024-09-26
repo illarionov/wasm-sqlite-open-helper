@@ -7,9 +7,8 @@
 package ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.function
 
 import at.released.weh.host.EmbedderHost
-import at.released.weh.host.base.function.HostFunctionHandle
-import at.released.weh.host.base.memory.ReadOnlyMemory
-import at.released.weh.host.base.memory.readNullTerminatedString
+import at.released.weh.wasm.core.memory.ReadOnlyMemory
+import at.released.weh.wasm.core.memory.readNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteLogCallback
@@ -17,7 +16,7 @@ import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteLogCallback
 public class Sqlite3LoggingFunctionHandler(
     host: EmbedderHost,
     private val logCallbackStore: () -> SqliteLogCallback?,
-) : HostFunctionHandle(SqliteCallbacksModuleFunction.SQLITE3_LOGGING_CALLBACK, host) {
+) : SqliteHostFunctionHandle(SqliteCallbacksModuleFunction.SQLITE3_LOGGING_CALLBACK, host) {
     public fun execute(
         memory: ReadOnlyMemory,
         errCode: Int,

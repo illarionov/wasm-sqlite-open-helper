@@ -6,12 +6,12 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi
 
-import at.released.weh.host.base.memory.Memory
-import at.released.weh.host.base.memory.readNullableNullTerminatedString
-import at.released.weh.host.base.memory.readPtr
-import at.released.weh.host.base.memory.sinkWithMaxSize
-import at.released.weh.host.base.memory.sourceWithMaxSize
-import at.released.weh.host.ext.encodeToNullTerminatedBuffer
+import at.released.weh.common.ext.encodeToNullTerminatedBuffer
+import at.released.weh.wasm.core.memory.Memory
+import at.released.weh.wasm.core.memory.readNullableNullTerminatedString
+import at.released.weh.wasm.core.memory.readPtr
+import at.released.weh.wasm.core.memory.sinkWithMaxSize
+import at.released.weh.wasm.core.memory.sourceWithMaxSize
 import kotlinx.io.Buffer
 import kotlinx.io.buffered
 import kotlinx.io.readByteArray

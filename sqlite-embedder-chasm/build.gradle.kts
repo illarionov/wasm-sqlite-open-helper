@@ -38,6 +38,7 @@ kotlin {
             api(libs.wsoh.binary.reader)
             implementation(libs.chasm.runtime)
             implementation(libs.wasi.emscripten.host.chasm)
+            implementation(libs.wasi.emscripten.host.emscripten.runtime)
             implementation(libs.wsoh.sqlite.st)
         }
         commonTest.dependencies {

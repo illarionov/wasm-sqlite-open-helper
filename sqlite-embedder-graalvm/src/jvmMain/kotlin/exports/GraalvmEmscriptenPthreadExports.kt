@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.exports
 
-import at.released.weh.host.emscripten.export.pthread.EmscriptenPthreadExports
+import at.released.weh.emcripten.runtime.export.pthread.EmscriptenPthreadExports
 import org.graalvm.polyglot.Value
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.functionMember
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.intGlobalMember

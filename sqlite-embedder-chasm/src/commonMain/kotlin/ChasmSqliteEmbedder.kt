@@ -7,7 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.chasm
 
 import at.released.weh.host.EmbedderHost
-import at.released.weh.host.base.memory.Memory
+import at.released.weh.wasm.core.memory.Memory
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.binary.reader.WasmSourceReader
 import ru.pixnews.wasm.sqlite.open.helper.chasm.exports.ChasmSqliteExports

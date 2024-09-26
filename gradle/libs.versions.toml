@@ -3,10 +3,10 @@ androidMinSdk = "26"
 androidCompileSdk = "34"
 
 agp = "8.5.2"
-androidx-collection = "1.4.3"
+androidx-collection = "1.4.4"
 androidx-core = "1.13.1"
-androidx-sqlite = "2.5.0-alpha07"
-androidx-room = "2.7.0-alpha07"
+androidx-sqlite = "2.5.0-alpha08"
+androidx-room = "2.7.0-alpha08"
 androidx-sqlite24 = "2.4.0"
 androidx-room26 = "2.6.1"
 androidx-test = "1.6.2"
@@ -85,6 +85,9 @@ wsoh-binary-reader = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "was
 wasi-emscripten-host-filesystem = { group = "at.released.weh", name = "filesystem", version.ref = "wasi-emscripten-host" }
 wasi-emscripten-host-filesystem-fixtures = { group = "at.released.weh", name = "filesystem-test-fixtures", version.ref = "wasi-emscripten-host" }
 wasi-emscripten-host = { group = "at.released.weh", name = "host", version.ref = "wasi-emscripten-host" }
+wasi-emscripten-host-common-util = { group = "at.released.weh", name = "common-util", version.ref = "wasi-emscripten-host" }
+wasi-emscripten-host-emscripten-runtime = { group = "at.released.weh", name = "emscripten-runtime", version.ref = "wasi-emscripten-host" }
+wasi-emscripten-host-wasm-core = { group = "at.released.weh", name = "wasm-core", version.ref = "wasi-emscripten-host" }
 wasi-emscripten-host-fixtures = { group = "at.released.weh", name = "host-test-fixtures", version.ref = "wasi-emscripten-host" }
 wasi-emscripten-host-test-logger = { group = "at.released.weh", name = "test-logger", version.ref = "wasi-emscripten-host" }
 wasi-emscripten-host-chasm = { group = "at.released.weh", name = "bindings-chasm", version.ref = "wasi-emscripten-host" }
