@@ -8,8 +8,8 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chicory.exports
 
-import at.released.weh.host.base.binding.WasmFunctionBinding
 import at.released.weh.wasm.core.IntWasmPtr
+import at.released.weh.wasm.core.WasmFunctionBinding
 import com.dylibso.chicory.runtime.ExportFunction
 import com.dylibso.chicory.wasm.types.Value
 

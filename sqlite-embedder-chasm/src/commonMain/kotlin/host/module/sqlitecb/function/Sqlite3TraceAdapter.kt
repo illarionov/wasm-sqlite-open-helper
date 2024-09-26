@@ -7,7 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.function
 
 import at.released.weh.host.EmbedderHost
-import at.released.weh.host.base.memory.ReadOnlyMemory
+import at.released.weh.wasm.core.memory.ReadOnlyMemory
 import io.github.charlietap.chasm.embedding.shapes.Value
 import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.asInt

@@ -7,8 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.sqlitecb
 
 import at.released.weh.host.EmbedderHost
-import at.released.weh.host.base.function.IndirectFunctionTableIndex
-import at.released.weh.host.base.memory.ReadOnlyMemory
+import at.released.weh.wasm.core.memory.ReadOnlyMemory
 import com.dylibso.chicory.runtime.HostFunction
 import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.runtime.WasmFunctionHandle
@@ -17,6 +16,7 @@ import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.sqlitecb.function.
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.sqlitecb.function.Sqlite3ProgressAdapter
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.sqlitecb.function.Sqlite3TraceAdapter
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
+import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.IndirectFunctionTableIndex
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.SqliteCallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SQLITE3_CALLBACK_MANAGER_MODULE_NAME
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction

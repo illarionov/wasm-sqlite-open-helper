@@ -7,7 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.chicory
 
 import at.released.weh.host.EmbedderHost
-import at.released.weh.host.base.memory.Memory
+import at.released.weh.wasm.core.memory.Memory
 import com.dylibso.chicory.log.Logger.Level
 import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.runtime.Machine

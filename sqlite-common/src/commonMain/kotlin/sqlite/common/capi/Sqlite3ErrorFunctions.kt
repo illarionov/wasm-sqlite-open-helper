@@ -6,8 +6,8 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi
 
-import at.released.weh.host.base.memory.ReadOnlyMemory
-import at.released.weh.host.base.memory.readNullableNullTerminatedString
+import at.released.weh.wasm.core.memory.ReadOnlyMemory
+import at.released.weh.wasm.core.memory.readNullableNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
 import ru.pixnews.wasm.sqlite.open.helper.isNull

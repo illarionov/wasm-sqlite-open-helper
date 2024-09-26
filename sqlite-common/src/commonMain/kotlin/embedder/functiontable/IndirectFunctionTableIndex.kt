@@ -6,8 +6,11 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable
 
-public interface SqliteCallbackFunctionIndexes {
-    public val traceFunction: IndirectFunctionTableIndex
-    public val progressFunction: IndirectFunctionTableIndex
-    public val loggingCallbackFunction: IndirectFunctionTableIndex
-}
+import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
+import kotlin.jvm.JvmInline
+
+@JvmInline
+@InternalWasmSqliteHelperApi
+public value class IndirectFunctionTableIndex(
+    public val funcId: Int,
+)

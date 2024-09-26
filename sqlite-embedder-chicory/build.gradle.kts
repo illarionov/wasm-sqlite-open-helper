@@ -24,6 +24,7 @@ kotlin {
             api(projects.sqliteCommon)
             api(libs.wsoh.binary.reader)
             implementation(libs.wasi.emscripten.host.chicory)
+            implementation(libs.wasi.emscripten.host.emscripten.runtime)
             implementation(libs.wsoh.sqlite.st)
         }
         commonTest.dependencies {

@@ -11,9 +11,9 @@ package ru.pixnews.wasm.sqlite.open.helper.chicory.host.module
 import at.released.weh.bindings.chicory.ChicoryHostFunctionInstaller
 import at.released.weh.bindings.chicory.host.memory.ChicoryMemoryAdapter
 import at.released.weh.host.EmbedderHost
-import at.released.weh.host.base.WasmModules.ENV_MODULE_NAME
-import at.released.weh.host.base.memory.WASM_MEMORY_DEFAULT_MAX_PAGES
-import at.released.weh.host.base.memory.WASM_MEMORY_PAGE_SIZE
+import at.released.weh.wasm.core.WasmModules.ENV_MODULE_NAME
+import at.released.weh.wasm.core.memory.WASM_MEMORY_DEFAULT_MAX_PAGES
+import at.released.weh.wasm.core.memory.WASM_MEMORY_PAGE_SIZE
 import com.dylibso.chicory.runtime.HostGlobal
 import com.dylibso.chicory.runtime.HostImports
 import com.dylibso.chicory.runtime.HostMemory

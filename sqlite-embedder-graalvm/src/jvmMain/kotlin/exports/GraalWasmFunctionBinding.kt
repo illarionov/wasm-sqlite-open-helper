@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.exports
 
-import at.released.weh.host.base.binding.WasmFunctionBinding
+import at.released.weh.wasm.core.WasmFunctionBinding
 import org.graalvm.polyglot.Value
 
 internal class GraalWasmFunctionBinding(

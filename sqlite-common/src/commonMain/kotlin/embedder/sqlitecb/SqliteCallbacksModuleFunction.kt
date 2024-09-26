@@ -6,10 +6,9 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb
 
-import at.released.weh.host.base.POINTER
-import at.released.weh.wasi.preview1.type.WasiValueTypes.U32
 import at.released.weh.wasm.core.HostFunction
 import at.released.weh.wasm.core.HostFunction.HostFunctionType
+import at.released.weh.wasm.core.POINTER
 import at.released.weh.wasm.core.WasmValueType
 import at.released.weh.wasm.core.WasmValueTypes.I32
 
@@ -23,7 +22,7 @@ public enum class SqliteCallbacksModuleFunction(
 ) : HostFunction {
     SQLITE3_TRACE_CALLBACK(
         wasmName = "ext_sqlite3_trace_cb",
-        paramTypes = listOf(U32, POINTER, POINTER, I32),
+        paramTypes = listOf(I32, POINTER, POINTER, I32),
         retType = I32,
     ),
     SQLITE3_PROGRESS_CALLBACK(
@@ -39,8 +38,8 @@ public enum class SqliteCallbacksModuleFunction(
 
     constructor(
         wasmName: String,
-        paramTypes: List<@WasmValueType Int>,
-        retType: @WasmValueType Int? = null,
+        @WasmValueType paramTypes: List<Int>,
+        @WasmValueType retType: Int? = null,
     ) : this(
         wasmName = wasmName,
         type = HostFunctionType(

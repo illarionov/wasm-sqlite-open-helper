@@ -7,9 +7,8 @@
 package ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.function
 
 import at.released.weh.host.EmbedderHost
-import at.released.weh.host.base.function.HostFunctionHandle
-import at.released.weh.host.base.memory.ReadOnlyMemory
-import at.released.weh.host.base.memory.readNullTerminatedString
+import at.released.weh.wasm.core.memory.ReadOnlyMemory
+import at.released.weh.wasm.core.memory.readNullTerminatedString
 import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.contains
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
@@ -27,7 +26,7 @@ import kotlin.time.Duration.Companion.nanoseconds
 public class Sqlite3TraceFunctionHandle(
     host: EmbedderHost,
     private val traceCallbackStore: (WasmPtr<SqliteDb>) -> SqliteTraceCallback?,
-) : HostFunctionHandle(SqliteCallbacksModuleFunction.SQLITE3_LOGGING_CALLBACK, host) {
+) : SqliteHostFunctionHandle(SqliteCallbacksModuleFunction.SQLITE3_LOGGING_CALLBACK, host) {
     public fun execute(
         memory: ReadOnlyMemory,
         flags: SqliteTraceEventCode,

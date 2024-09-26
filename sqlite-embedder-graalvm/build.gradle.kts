@@ -26,6 +26,7 @@ kotlin {
             api(libs.wsoh.binary.reader)
             implementation(libs.wsoh.sqlite.mt)
             implementation(libs.wasi.emscripten.host)
+            implementation(libs.wasi.emscripten.host.emscripten.runtime)
         }
         jvmMain.dependencies {
             implementation(libs.wasi.emscripten.host.graalvm241)

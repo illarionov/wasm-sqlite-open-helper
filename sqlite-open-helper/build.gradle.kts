@@ -91,6 +91,7 @@ kotlin {
             implementation(projects.commonCleaner)
             implementation(projects.commonLock)
             implementation(libs.wasi.emscripten.host)
+            implementation(libs.wasi.emscripten.host.common.util)
             api(libs.androidx.collection)
         }
         commonTest.dependencies {

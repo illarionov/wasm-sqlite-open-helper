@@ -12,10 +12,11 @@ import at.released.weh.bindings.graalvm241.MemorySource.ExportedMemory
 import at.released.weh.bindings.graalvm241.MemorySource.ImportedMemory
 import at.released.weh.bindings.graalvm241.MemorySpec
 import at.released.weh.bindings.graalvm241.host.pthread.ManagedThreadInitializer
+import at.released.weh.emcripten.runtime.export.IndirectFunctionTableIndex
 import at.released.weh.host.EmbedderHost
-import at.released.weh.host.base.WasmModules.WASI_SNAPSHOT_PREVIEW1_MODULE_NAME
-import at.released.weh.host.base.memory.Pages
-import at.released.weh.host.base.memory.WASM_MEMORY_PAGE_SIZE
+import at.released.weh.wasm.core.WasmModules.WASI_SNAPSHOT_PREVIEW1_MODULE_NAME
+import at.released.weh.wasm.core.memory.Pages
+import at.released.weh.wasm.core.memory.WASM_MEMORY_PAGE_SIZE
 import org.graalvm.polyglot.Context
 import org.graalvm.polyglot.Engine
 import org.graalvm.polyglot.Source
@@ -85,7 +86,9 @@ internal class GraalvmEmbedderBuilder(
         val graalInternalEnvironment: GraalvmEmscriptenEnvironment = envInstaller.finalize(
             mainModuleName = SQLITE3_SOURCE_NAME,
         ).apply {
-            externalManagedThreadStartRoutine = indirectFunctionIndexes.externalManagedThreadStartRoutine
+            externalManagedThreadStartRoutine = IndirectFunctionTableIndex(
+                indirectFunctionIndexes.externalManagedThreadStartRoutine.funcId,
+            )
             managedThreadInitializer = object : ManagedThreadInitializer {
                 override fun destroyThreadLocalGraalvmAgent() {
                     logger.v { "destroyThreadLocalGraalvmAgent()" }

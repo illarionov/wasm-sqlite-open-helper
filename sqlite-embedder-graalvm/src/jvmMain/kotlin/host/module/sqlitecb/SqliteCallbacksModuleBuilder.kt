@@ -7,13 +7,13 @@
 package ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb
 
 import at.released.weh.host.EmbedderHost
-import at.released.weh.host.base.function.IndirectFunctionTableIndex
 import at.released.weh.wasm.core.HostFunction
 import org.graalvm.polyglot.Context
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
+import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.IndirectFunctionTableIndex
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SQLITE3_CALLBACK_MANAGER_MODULE_NAME
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.functionTable

@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.embedder
 
-import at.released.weh.host.base.memory.Memory
+import at.released.weh.wasm.core.memory.Memory
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports

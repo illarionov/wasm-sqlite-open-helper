@@ -7,7 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.internal
 
 import at.released.weh.common.api.Logger
-import at.released.weh.host.ext.encodedNullTerminatedStringLength
+import at.released.weh.common.ext.encodedNullTerminatedStringLength
 import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.contains
 import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteErrorLogger

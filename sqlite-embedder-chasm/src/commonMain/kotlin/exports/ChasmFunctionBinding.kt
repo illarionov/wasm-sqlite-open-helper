@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chasm.exports
 
-import at.released.weh.host.base.binding.WasmFunctionBinding
+import at.released.weh.wasm.core.WasmFunctionBinding
 import io.github.charlietap.chasm.embedding.error.ChasmError
 import io.github.charlietap.chasm.embedding.invoke
 import io.github.charlietap.chasm.embedding.shapes.Instance
