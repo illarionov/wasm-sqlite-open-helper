@@ -16,7 +16,7 @@ buildscript {
         classpath("androidx.room:androidx.room.gradle.plugin:2.7.0-alpha08")
         classpath("com.android.tools.build:gradle:8.5.2")
         classpath("com.diffplug.spotless:spotless-plugin-gradle:7.0.0.BETA2")
-        classpath("com.google.devtools.ksp:symbol-processing-gradle-plugin:2.0.20-1.0.25")
+        classpath("com.google.devtools.ksp:symbol-processing-gradle-plugin:2.0.21-1.0.26")
         classpath("com.saveourtool.diktat:diktat-gradle-plugin:2.0.0")
         classpath("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.7")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.1.0-Beta1")
