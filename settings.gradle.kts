@@ -20,7 +20,7 @@ buildscript {
         classpath("com.saveourtool.diktat:diktat-gradle-plugin:2.0.0")
         classpath("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.7")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.1.0-Beta1")
-        classpath("org.jetbrains.kotlinx:atomicfu-gradle-plugin:0.25.0")
+        classpath("org.jetbrains.kotlinx:atomicfu-gradle-plugin:0.26.1")
     }
 }
 
