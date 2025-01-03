@@ -48,5 +48,10 @@ public class ChicorySqliteEmbedderConfig internal constructor(
     /**
      * Implementation of a host object that provides access from the WebAssembly to external host resources.
      */
-    public var host: EmbedderHost = EmbedderHost.Builder().apply { this.rootLogger = rootLogger }.build()
+    public var host: EmbedderHost = EmbedderHost.Builder().apply {
+        this.rootLogger = rootLogger
+        this.directories()
+            .setAllowRootAccess(true)
+            .setCurrentWorkingDirectory(".")
+    }.build()
 }
