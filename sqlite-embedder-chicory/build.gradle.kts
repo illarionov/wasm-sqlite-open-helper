@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, the wasm-sqlite-open-helper project authors and contributors. Please see the AUTHORS file
+ * Copyright 2024-2025, the wasm-sqlite-open-helper project authors and contributors. Please see the AUTHORS file
  * for details. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -23,7 +23,8 @@ kotlin {
         commonMain.dependencies {
             api(projects.sqliteCommon)
             api(libs.wsoh.binary.reader)
-            implementation(libs.wasi.emscripten.host.chicory)
+            implementation(libs.wasi.emscripten.host.chicory.emscripten)
+            implementation(libs.wasi.emscripten.host.chicory.wasip1)
             implementation(libs.wasi.emscripten.host.emscripten.runtime)
             implementation(libs.wsoh.sqlite.st)
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, the wasm-sqlite-open-helper project authors and contributors. Please see the AUTHORS file
+ * Copyright 2024-2025, the wasm-sqlite-open-helper project authors and contributors. Please see the AUTHORS file
  * for details. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -9,6 +9,7 @@ package ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.sqlitecb
 import at.released.weh.host.EmbedderHost
 import at.released.weh.wasm.core.memory.ReadOnlyMemory
 import com.dylibso.chicory.runtime.HostFunction
+import com.dylibso.chicory.runtime.ImportFunction
 import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.runtime.WasmFunctionHandle
 import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.opcodeToChicory
@@ -31,16 +32,14 @@ internal class SqliteCallbacksFunctionsBuilder(
 ) {
     fun asChicoryHostFunctions(
         moduleName: String = SQLITE3_CALLBACK_MANAGER_MODULE_NAME,
-    ): List<HostFunction> {
-        return SqliteCallbacksModuleFunction.entries.map { sqliteCallbackFunction ->
-            HostFunction(
-                sqliteCallbackFunction.createFunctionHandle(host, memory, callbackStore),
-                moduleName,
-                sqliteCallbackFunction.wasmName,
-                sqliteCallbackFunction.type.paramTypes.map(::opcodeToChicory),
-                sqliteCallbackFunction.type.returnTypes.map(::opcodeToChicory),
-            )
-        }
+    ): List<HostFunction> = SqliteCallbacksModuleFunction.entries.map { sqliteCallbackFunction ->
+        HostFunction(
+            moduleName,
+            sqliteCallbackFunction.wasmName,
+            sqliteCallbackFunction.type.paramTypes.map(::opcodeToChicory),
+            sqliteCallbackFunction.type.returnTypes.map(::opcodeToChicory),
+            sqliteCallbackFunction.createFunctionHandle(host, memory, callbackStore),
+        )
     }
 
     private class ChicorySqliteCallbackFunctionIndexes(
@@ -95,10 +94,10 @@ internal class SqliteCallbacksFunctionsBuilder(
         }
 
         private fun sqliteCallbacksFunctionIndexes(
-            hostFunctions: Array<HostFunction>,
+            hostFunctions: Array<ImportFunction>,
         ): List<Pair<SqliteCallbacksModuleFunction, Int>> {
             return hostFunctions.mapIndexedNotNull { index, hostFunction ->
-                val func = SqliteCallbacksModuleFunction.byWasmName[hostFunction.fieldName()]
+                val func = SqliteCallbacksModuleFunction.byWasmName[hostFunction.name()]
                 if (func != null) {
                     func to index
                 } else {

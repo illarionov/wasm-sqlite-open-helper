@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, the wasm-sqlite-open-helper project authors and contributors. Please see the AUTHORS file
+ * Copyright 2024-2025, the wasm-sqlite-open-helper project authors and contributors. Please see the AUTHORS file
  * for details. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -8,7 +8,6 @@ package ru.pixnews.wasm.sqlite.open.helper.chicory
 
 import at.released.weh.common.api.Logger
 import at.released.weh.host.EmbedderHost
-import com.dylibso.chicory.log.Logger.Level
 import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.runtime.Machine
 import ru.pixnews.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcu346
@@ -50,9 +49,4 @@ public class ChicorySqliteEmbedderConfig internal constructor(
      * Implementation of a host object that provides access from the WebAssembly to external host resources.
      */
     public var host: EmbedderHost = EmbedderHost.Builder().apply { this.rootLogger = rootLogger }.build()
-
-    /**
-     * Logging severity for Chicory
-     */
-    public var logSeverity: Level = Level.INFO
 }

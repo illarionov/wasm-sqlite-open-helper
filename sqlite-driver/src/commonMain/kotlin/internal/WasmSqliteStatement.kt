@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, the wasm-sqlite-open-helper project authors and contributors. Please see the AUTHORS file
+ * Copyright 2024-2025, the wasm-sqlite-open-helper project authors and contributors. Please see the AUTHORS file
  * for details. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -86,6 +86,10 @@ internal class WasmSqliteStatement(
             "Can not get column name",
             SqliteResultCode.SQLITE_NOMEM,
         )
+    }
+
+    override fun getColumnType(index: Int): Int {
+        return statementApi.sqlite3ColumnType(rawStatementPtr, index).id
     }
 
     override fun getDouble(index: Int): Double {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, the wasm-sqlite-open-helper project authors and contributors. Please see the AUTHORS file
+ * Copyright 2024-2025, the wasm-sqlite-open-helper project authors and contributors. Please see the AUTHORS file
  * for details. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -8,20 +8,22 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chicory.host.module
 
-import at.released.weh.bindings.chicory.ChicoryHostFunctionInstaller
-import at.released.weh.bindings.chicory.host.memory.ChicoryMemoryAdapter
+import at.released.weh.bindings.chicory.ChicoryEmscriptenHostInstaller
+import at.released.weh.bindings.chicory.memory.ChicoryMemoryAdapter
+import at.released.weh.bindings.chicory.memory.ChicoryMemoryProvider
 import at.released.weh.host.EmbedderHost
 import at.released.weh.wasm.core.WasmModules.ENV_MODULE_NAME
 import at.released.weh.wasm.core.memory.WASM_MEMORY_DEFAULT_MAX_PAGES
 import at.released.weh.wasm.core.memory.WASM_MEMORY_PAGE_SIZE
-import com.dylibso.chicory.runtime.HostGlobal
-import com.dylibso.chicory.runtime.HostImports
-import com.dylibso.chicory.runtime.HostMemory
-import com.dylibso.chicory.runtime.HostTable
+import com.dylibso.chicory.runtime.ByteBufferMemory
+import com.dylibso.chicory.runtime.HostFunction
+import com.dylibso.chicory.runtime.ImportMemory
+import com.dylibso.chicory.runtime.ImportValues
 import com.dylibso.chicory.runtime.Instance
+import com.dylibso.chicory.runtime.Instance.START_FUNCTION_NAME
 import com.dylibso.chicory.runtime.Machine
-import com.dylibso.chicory.runtime.Module
-import com.dylibso.chicory.runtime.Module.START_FUNCTION_NAME
+import com.dylibso.chicory.wasm.Parser
+import com.dylibso.chicory.wasm.WasmModule
 import com.dylibso.chicory.wasm.types.MemoryLimits
 import kotlinx.io.asInputStream
 import kotlinx.io.buffered
@@ -33,22 +35,23 @@ import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.sqlitecb.SqliteCal
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.SqliteCallbackFunctionIndexes
 import java.io.InputStream
-import com.dylibso.chicory.log.Logger as ChicoryLogger
-import com.dylibso.chicory.runtime.Memory as ChicoryMemory
 
-@Suppress("COMMENTED_OUT_CODE")
 internal class MainInstanceBuilder(
     private val host: EmbedderHost,
-    private val chicoryLogger: ChicoryLogger,
     private val callbackStore: SqliteCallbackStore,
     private val sqlite3Binary: WasmSqliteConfiguration,
     private val wasmSourceReader: WasmSourceReader,
     private val machineFactory: ((Instance) -> Machine)?,
 ) {
     fun setupModule(): ChicoryInstance {
-        val memory = setupMemory(sqlite3Binary.wasmMinMemorySize)
+        val memoryLimits = MemoryLimits(
+            (sqlite3Binary.wasmMinMemorySize / WASM_MEMORY_PAGE_SIZE).toInt(),
+            WASM_MEMORY_DEFAULT_MAX_PAGES.count.toInt(),
+        )
+        // XXX: should not be used directly
+        val chicoryMemory = ByteBufferMemory(memoryLimits)
 
-        val memoryAdapter = ChicoryMemoryAdapter(memory.memory())
+        val memoryAdapter = ChicoryMemoryAdapter(chicoryMemory)
 
         val sqliteCallbackFunctionsBuilder = SqliteCallbacksFunctionsBuilder(
             memoryAdapter,
@@ -56,45 +59,42 @@ internal class MainInstanceBuilder(
             callbackStore,
         )
 
-        val installer = ChicoryHostFunctionInstaller(
-            memory = memory.memory(),
-        ) {
+        val installer = ChicoryEmscriptenHostInstaller {
             this.host = this@MainInstanceBuilder.host
+            this.memoryProvider = ChicoryMemoryProvider { memoryAdapter }
         }
 
-        val wasiFunctions = installer.setupWasiPreview1HostFunctions()
+        val wasiFunctions: List<HostFunction> = installer.setupWasiPreview1HostFunctions()
         val emscriptenInstaller = installer.setupEmscriptenFunctions()
         val sqliteCallbackFunctions = sqliteCallbackFunctionsBuilder.asChicoryHostFunctions()
 
-        val hostImports = HostImports(
-            (emscriptenInstaller.emscriptenFunctions + wasiFunctions + sqliteCallbackFunctions).toTypedArray(),
-            arrayOf<HostGlobal>(),
-            memory,
-            arrayOf<HostTable>(),
-        )
+        val hostImports = ImportValues.builder()
+            .withFunctions(emscriptenInstaller.emscriptenFunctions + wasiFunctions + sqliteCallbackFunctions)
+            .addMemory(ImportMemory(ENV_MODULE_NAME, "memory", chicoryMemory))
+            .build()
 
-        val sqlite3Module: Module = wasmSourceReader.readOrThrow(sqlite3Binary.sqliteUrl) { source, _ ->
+        val sqlite3Module: WasmModule = wasmSourceReader.readOrThrow(sqlite3Binary.sqliteUrl) { source, _ ->
             runCatching {
                 source.buffered().asInputStream().use { sourceStream: InputStream ->
-                    Module
-                        .builder(sourceStream)
-                        .withLogger(chicoryLogger)
-                        .withHostImports(hostImports)
-                        .withInitialize(true)
-                        .withStart(false)
-                        .run {
-                            if (machineFactory != null) {
-                                withMachineFactory(machineFactory)
-                            } else {
-                                this
-                            }
-                        }
-                        .build()
+                    Parser.parse(sourceStream)
                 }
             }
         }
 
-        val instance = sqlite3Module.instantiate()
+        val instance = Instance
+            .builder(sqlite3Module)
+            .withImportValues(hostImports)
+            .withInitialize(true)
+            .withStart(false)
+            .run {
+                if (machineFactory != null) {
+                    withMachineFactory(machineFactory)
+                } else {
+                    this
+                }
+            }
+            .build()
+
         val indirectFunctionTableIndexes = setupIndirectFunctionIndexes(instance)
         val emscriptenRuntime = emscriptenInstaller.finalize(instance)
 
@@ -107,20 +107,6 @@ internal class MainInstanceBuilder(
             indirectFunctionIndexes = indirectFunctionTableIndexes,
         )
     }
-
-    private fun setupMemory(
-        minMemorySize: Long,
-    ): HostMemory = HostMemory(
-        /* moduleName = */ ENV_MODULE_NAME,
-        /* fieldName = */ "memory",
-        /* memory = */
-        ChicoryMemory(
-            MemoryLimits(
-                (minMemorySize / WASM_MEMORY_PAGE_SIZE).toInt(),
-                WASM_MEMORY_DEFAULT_MAX_PAGES.count.toInt(),
-            ),
-        ),
-    )
 
     internal class ChicoryInstance(
         val instance: Instance,

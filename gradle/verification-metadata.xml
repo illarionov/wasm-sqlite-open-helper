@@ -323,6 +323,11 @@
             <pgp value="34441E504A937F43EB0DAEF96A65176A0FB1CD0B"/>
          </artifact>
       </component>
+      <component group="org.codehaus.groovy" name="groovy" version="3.0.21">
+         <artifact name="groovy-3.0.21.jar">
+            <pgp value="34441E504A937F43EB0DAEF96A65176A0FB1CD0B"/>
+         </artifact>
+      </component>
       <component group="org.codehaus.mojo" name="animal-sniffer-annotations" version="1.23">
          <artifact name="animal-sniffer-annotations-1.23.jar">
             <pgp value="84789D24DF77A32433CE1F079EB80E92EB2135B1"/>

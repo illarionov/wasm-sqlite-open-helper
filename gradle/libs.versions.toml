@@ -1,37 +1,37 @@
 [versions]
 androidMinSdk = "26"
-androidCompileSdk = "34"
+androidCompileSdk = "35"
 
-agp = "8.5.2"
-androidx-collection = "1.4.4"
-androidx-core = "1.13.1"
-androidx-sqlite = "2.5.0-alpha08"
-androidx-room = "2.7.0-alpha08"
+agp = "8.7.3"
+androidx-collection = "1.4.5"
+androidx-core = "1.15.0"
+androidx-sqlite = "2.5.0-alpha12"
+androidx-room = "2.7.0-alpha12"
 androidx-sqlite24 = "2.4.0"
 androidx-room26 = "2.6.1"
 androidx-test = "1.6.2"
 androidx-test-core = "1.6.1"
 androidx-test-rules = "1.6.1"
 atomicfu = "0.26.1"
-arrow = "2.0.0-alpha.3"
+arrow = "2.0.0"
 assertk = "0.28.1"
-chasm = "0.9.1"
-chicory = "0.0.12"
-desugar_jdk_libs = "2.1.2"
+chasm = "0.9.2"
+chicory = "1.0.0"
+desugar_jdk_libs = "2.1.4"
 detekt = "1.23.7"
 diktat = "2.0.0"
 dokka = "1.9.20"
-graalvm = "24.1.0"
-gradle-maven-publish-plugin = "0.29.0"
-kotlin = "2.1.0-Beta1"
-kotlinx-coroutines = "1.9.0"
-kotlinx-binary-compatibility-validator = "0.16.3"
+graalvm = "24.1.1"
+gradle-maven-publish-plugin = "0.30.0"
+kotlin = "2.1.0"
+kotlinx-coroutines = "1.10.1"
+kotlinx-binary-compatibility-validator = "0.17.0"
 kotlinx-datetime = "0.6.1"
-kotlinx-io ="0.5.4"
-kermit = "2.0.4"
-ksp = "2.0.20-1.0.25"
+kotlinx-io ="0.6.0"
+kermit = "2.0.5"
+ksp = "2.1.0-1.0.29"
 mockk = "1.13.14"
-spotless = "7.0.0.BETA2"
+spotless = "7.0.0.BETA4"
 sqlite-wasm-binary = "0.3"
 wasi-emscripten-host = "0.1-alpha02-SNAPSHOT"
 
@@ -57,7 +57,8 @@ assertk = { group = "com.willowtreeapps.assertk", name = "assertk", version.ref 
 chasm = { group = "io.github.charlietap.chasm", name = "chasm", version.ref = "chasm" }
 chasm-runtime = { group = "io.github.charlietap.chasm", name = "runtime", version.ref = "chasm" }
 chicory-runtime = { group = "com.dylibso.chicory", name = "runtime", version.ref = "chicory" }
-chicory-aot = { group = "com.dylibso.chicory", name = "aot", version.ref = "chicory" }
+chicory-aot = { group = "com.dylibso.chicory", name = "aot-experimental", version.ref = "chicory" }
+chicory-log = { group = "com.dylibso.chicory", name = "log", version.ref = "chicory" }
 desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
 graalvm-polyglot-js = { group = "org.graalvm.polyglot", name = "js-community", version.ref = "graalvm" }
 graalvm-polyglot-polyglot = { group = "org.graalvm.polyglot", name = "polyglot", version.ref = "graalvm" }
@@ -82,17 +83,18 @@ wsoh-sqlite-mt-plain = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "s
 wsoh-sqlite-st-plain = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-wasm-emscripten-346", version.ref = "sqlite-wasm-binary" }
 wsoh-binary-base = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-binary-api", version.ref = "sqlite-wasm-binary" }
 wsoh-binary-reader = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "wasm-binary-reader", version.ref = "sqlite-wasm-binary" }
-wasi-emscripten-host-filesystem = { group = "at.released.weh", name = "filesystem", version.ref = "wasi-emscripten-host" }
-wasi-emscripten-host-filesystem-fixtures = { group = "at.released.weh", name = "filesystem-test-fixtures", version.ref = "wasi-emscripten-host" }
 wasi-emscripten-host = { group = "at.released.weh", name = "host", version.ref = "wasi-emscripten-host" }
 wasi-emscripten-host-common-util = { group = "at.released.weh", name = "common-util", version.ref = "wasi-emscripten-host" }
 wasi-emscripten-host-emscripten-runtime = { group = "at.released.weh", name = "emscripten-runtime", version.ref = "wasi-emscripten-host" }
 wasi-emscripten-host-wasm-core = { group = "at.released.weh", name = "wasm-core", version.ref = "wasi-emscripten-host" }
 wasi-emscripten-host-fixtures = { group = "at.released.weh", name = "host-test-fixtures", version.ref = "wasi-emscripten-host" }
 wasi-emscripten-host-test-logger = { group = "at.released.weh", name = "test-logger", version.ref = "wasi-emscripten-host" }
-wasi-emscripten-host-chasm = { group = "at.released.weh", name = "bindings-chasm", version.ref = "wasi-emscripten-host" }
-wasi-emscripten-host-chicory = { group = "at.released.weh", name = "bindings-chicory", version.ref = "wasi-emscripten-host" }
-wasi-emscripten-host-graalvm241 = { group = "at.released.weh", name = "bindings-graalvm241", version.ref = "wasi-emscripten-host" }
+wasi-emscripten-host-chasm-emscripten = { group = "at.released.weh", name = "bindings-chasm-emscripten", version.ref = "wasi-emscripten-host" }
+wasi-emscripten-host-chasm-wasip1 = { group = "at.released.weh", name = "bindings-chasm-wasip1", version.ref = "wasi-emscripten-host" }
+wasi-emscripten-host-chicory-emscripten = { group = "at.released.weh", name = "bindings-chicory-emscripten", version.ref = "wasi-emscripten-host" }
+wasi-emscripten-host-chicory-wasip1 = { group = "at.released.weh", name = "bindings-chicory-wasip1", version.ref = "wasi-emscripten-host" }
+wasi-emscripten-host-graalvm241-emscripten = { group = "at.released.weh", name = "bindings-graalvm241-emscripten", version.ref = "wasi-emscripten-host" }
+wasi-emscripten-host-graalvm241-wasip1 = { group = "at.released.weh", name = "bindings-graalvm241-wasip1", version.ref = "wasi-emscripten-host" }
 
 # Dependencies of the included build-logic
 agp-plugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }

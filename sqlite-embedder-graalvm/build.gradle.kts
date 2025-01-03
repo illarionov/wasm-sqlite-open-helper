@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, the wasm-sqlite-open-helper project authors and contributors. Please see the AUTHORS file
+ * Copyright 2024-2025, the wasm-sqlite-open-helper project authors and contributors. Please see the AUTHORS file
  * for details. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -29,7 +29,8 @@ kotlin {
             implementation(libs.wasi.emscripten.host.emscripten.runtime)
         }
         jvmMain.dependencies {
-            implementation(libs.wasi.emscripten.host.graalvm241)
+            implementation(libs.wasi.emscripten.host.graalvm241.emscripten)
+            implementation(libs.wasi.emscripten.host.graalvm241.wasip1)
             api(libs.graalvm.polyglot.polyglot)
             compileOnly(libs.graalvm.wasm.language)
             implementation(libs.graalvm.polyglot.wasm)
