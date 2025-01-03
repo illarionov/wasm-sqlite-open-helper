@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, the wasm-sqlite-open-helper project authors and contributors. Please see the AUTHORS file
+ * Copyright 2024-2025, the wasm-sqlite-open-helper project authors and contributors. Please see the AUTHORS file
  * for details. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -8,10 +8,10 @@ package ru.pixnews.wasm.sqlite.open.helper.graalvm
 
 import at.released.weh.bindings.graalvm241.GraalvmEmscriptenEnvironment
 import at.released.weh.bindings.graalvm241.GraalvmHostFunctionInstaller
-import at.released.weh.bindings.graalvm241.MemorySource.ExportedMemory
-import at.released.weh.bindings.graalvm241.MemorySource.ImportedMemory
-import at.released.weh.bindings.graalvm241.MemorySpec
 import at.released.weh.bindings.graalvm241.host.pthread.ManagedThreadInitializer
+import at.released.weh.bindings.graalvm241.memory.MemorySource.ExportedMemory
+import at.released.weh.bindings.graalvm241.memory.MemorySource.ImportedMemory
+import at.released.weh.bindings.graalvm241.memory.MemorySpec
 import at.released.weh.emcripten.runtime.export.IndirectFunctionTableIndex
 import at.released.weh.host.EmbedderHost
 import at.released.weh.wasm.core.WasmModules.WASI_SNAPSHOT_PREVIEW1_MODULE_NAME

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, the wasm-sqlite-open-helper project authors and contributors. Please see the AUTHORS file
+ * Copyright 2024-2025, the wasm-sqlite-open-helper project authors and contributors. Please see the AUTHORS file
  * for details. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -8,13 +8,11 @@ package ru.pixnews.wasm.sqlite.open.helper.chicory
 
 import at.released.weh.host.EmbedderHost
 import at.released.weh.wasm.core.memory.Memory
-import com.dylibso.chicory.log.Logger.Level
 import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.runtime.Machine
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.binary.reader.WasmSourceReader
 import ru.pixnews.wasm.sqlite.open.helper.chicory.exports.ChicorySqliteExports
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.ChicoryLogger
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.MainInstanceBuilder
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.MainInstanceBuilder.ChicoryInstance
 import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
@@ -38,7 +36,6 @@ public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig
             config.sqlite3Binary,
             config.wasmSourceReader,
             config.machineFactory,
-            config.logSeverity,
         )
     }
 
@@ -56,23 +53,16 @@ public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig
         sqlite3Binary: WasmSqliteConfiguration,
         wasmSourceReader: WasmSourceReader,
         machineFactory: ((Instance) -> Machine)?,
-        logSeverity: Level,
     ): SqliteRuntimeInternal<ChicoryRuntime> {
         require(!sqlite3Binary.requireThreads) {
             "The specified SQLite binary is compiled with threading support, which is not compatible with the " +
                     "Chicory WebAssembly runtime. Use a version of SQLite compiled without thread support."
         }
-
-        val chicoryLogger = ChicoryLogger(
-            logger = host.rootLogger,
-            severity = logSeverity,
-        )
         val callbackStore = SqliteCallbackStore()
 
         val chicoryInstance: ChicoryInstance = MainInstanceBuilder(
             host = host,
             callbackStore = callbackStore,
-            chicoryLogger = chicoryLogger,
             sqlite3Binary = sqlite3Binary,
             machineFactory = machineFactory,
             wasmSourceReader = wasmSourceReader,

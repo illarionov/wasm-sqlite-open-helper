@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, the wasm-sqlite-open-helper project authors and contributors. Please see the AUTHORS file
+ * Copyright 2024-2025, the wasm-sqlite-open-helper project authors and contributors. Please see the AUTHORS file
  * for details. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -82,6 +82,10 @@ private fun Array<out Any?>.argsToValues(): List<Value> {
 }
 
 private fun throwOnError(error: ChasmError.ExecutionError): Nothing =
-    throw at.released.weh.bindings.chasm.exception.ChasmErrorException(
-        error,
-    )
+    throw ChasmErrorException(error)
+
+private class ChasmErrorException(
+    public val error: ChasmError,
+    message: String? = null,
+    cause: Throwable? = null,
+) : RuntimeException(message, cause)
