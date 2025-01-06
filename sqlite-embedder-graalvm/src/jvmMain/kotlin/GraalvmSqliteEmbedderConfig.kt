@@ -49,11 +49,10 @@ public class GraalvmSqliteEmbedderConfig internal constructor(
     /**
      * Implementation of a host object that provides access from the WebAssembly to external host resources.
      */
-    public var host: EmbedderHost = EmbedderHost.Builder().apply {
-        this.rootLogger = embedderRootLogger
-        this.directories().apply {
-            setAllowRootAccess(true)
-            setCurrentWorkingDirectory(".")
+    public var host: EmbedderHost = EmbedderHost {
+        logger = embedderRootLogger
+        fileSystem {
+            unrestricted = true
         }
-    }.build()
+    }
 }
