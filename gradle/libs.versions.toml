@@ -15,12 +15,12 @@ androidx-test-rules = "1.6.1"
 atomicfu = "0.26.1"
 arrow = "2.0.0"
 assertk = "0.28.1"
-chasm = "0.9.2"
+chasm = "0.9.4"
 chicory = "1.0.0"
 desugar_jdk_libs = "2.1.4"
 detekt = "1.23.7"
 diktat = "2.0.0"
-dokka = "1.9.20"
+dokka = "2.0.0"
 graalvm = "24.1.1"
 gradle-maven-publish-plugin = "0.30.0"
 kotlin = "2.1.0"
@@ -33,7 +33,7 @@ ksp = "2.1.0-1.0.29"
 mockk = "1.13.14"
 spotless = "7.0.0"
 sqlite-wasm-binary = "0.3"
-wasi-emscripten-host = "0.1"
+wasi-emscripten-host = "0.2"
 
 [libraries]
 androidx-collection = { group = "androidx.collection", name = "collection", version.ref = "androidx-collection" }
@@ -55,7 +55,7 @@ androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "
 arrow-core = { group = "io.arrow-kt", name = "arrow-core", version.ref = "arrow" }
 assertk = { group = "com.willowtreeapps.assertk", name = "assertk", version.ref = "assertk" }
 chasm = { group = "io.github.charlietap.chasm", name = "chasm", version.ref = "chasm" }
-chasm-runtime = { group = "io.github.charlietap.chasm", name = "runtime", version.ref = "chasm" }
+chasm-runtime-internal = { group = "io.github.charlietap.chasm", name = "runtime-internal", version.ref = "chasm" }
 chicory-runtime = { group = "com.dylibso.chicory", name = "runtime", version.ref = "chicory" }
 chicory-aot = { group = "com.dylibso.chicory", name = "aot-experimental", version.ref = "chicory" }
 chicory-log = { group = "com.dylibso.chicory", name = "log", version.ref = "chicory" }

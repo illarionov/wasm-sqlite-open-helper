@@ -8,7 +8,7 @@ package ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.function
 
 import at.released.weh.host.EmbedderHost
 import at.released.weh.wasm.core.memory.ReadOnlyMemory
-import io.github.charlietap.chasm.embedding.shapes.Value
+import io.github.charlietap.chasm.executor.runtime.value.NumberValue
 import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.asInt
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.asUInt
@@ -33,6 +33,6 @@ internal class Sqlite3TraceAdapter(
             args[2].asWasmAddr(),
             args[3].asInt().toLong(),
         )
-        listOf(Value.Number.I32(result))
+        listOf(NumberValue.I32(result))
     }
 }
