@@ -26,17 +26,13 @@ kotlin {
     linuxX64()
     macosArm64()
     macosX64()
-    mingwX64 {
-        binaries.all {
-            linkerOpts("-lntdll", "-lole32")
-        }
-    }
 
     sourceSets {
         commonMain.dependencies {
             api(projects.sqliteCommon)
             api(libs.wsoh.binary.reader)
-            implementation(libs.chasm.runtime)
+            implementation(libs.chasm)
+            compileOnly(libs.chasm.runtime.internal)
             implementation(libs.wasi.emscripten.host.chasm.emscripten)
             implementation(libs.wasi.emscripten.host.chasm.wasip1)
             implementation(libs.wasi.emscripten.host.emscripten.runtime)

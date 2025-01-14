@@ -11,8 +11,9 @@ import io.github.charlietap.chasm.embedding.error.ChasmError
 import io.github.charlietap.chasm.embedding.invoke
 import io.github.charlietap.chasm.embedding.shapes.Instance
 import io.github.charlietap.chasm.embedding.shapes.Store
-import io.github.charlietap.chasm.embedding.shapes.Value
 import io.github.charlietap.chasm.embedding.shapes.fold
+import io.github.charlietap.chasm.executor.runtime.value.ExecutionValue
+import io.github.charlietap.chasm.executor.runtime.value.NumberValue
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.asInt
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.asLong
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.orThrow
@@ -41,8 +42,7 @@ internal class ChasmFunctionBinding(
     override fun executeForFloat(vararg args: Any?): Float = invoke(store, instance, name, args.argsToValues())
         .fold(
             {
-                @Suppress("UNCHECKED_CAST")
-                (it[0] as Value.Number<Float>).value
+                (it[0] as NumberValue.F32).value
             },
             ::throwOnError,
         )
@@ -50,8 +50,7 @@ internal class ChasmFunctionBinding(
     override fun executeForDouble(vararg args: Any?): Double = invoke(store, instance, name, args.argsToValues())
         .fold(
             {
-                @Suppress("UNCHECKED_CAST")
-                (it[0] as Value.Number<Double>).value
+                (it[0] as NumberValue.F64).value
             },
             ::throwOnError,
         )
@@ -63,18 +62,18 @@ internal class ChasmFunctionBinding(
         )
 }
 
-private fun Array<out Any?>.argsToValues(): List<Value> {
+private fun Array<out Any?>.argsToValues(): List<ExecutionValue> {
     return if (this.isEmpty()) {
         emptyList()
     } else {
         List(this.size) { idx ->
             when (val arg = this[idx]) {
-                is Int -> Value.Number.I32(arg)
-                is UInt -> Value.Number.I32(arg.toInt())
-                is Long -> Value.Number.I64(arg.toLong())
-                is ULong -> Value.Number.I64(arg.toLong())
-                is Float -> Value.Number.F32(arg.toFloat())
-                is Double -> Value.Number.F64(arg.toDouble())
+                is Int -> NumberValue.I32(arg)
+                is UInt -> NumberValue.I32(arg.toInt())
+                is Long -> NumberValue.I64(arg.toLong())
+                is ULong -> NumberValue.I64(arg.toLong())
+                is Float -> NumberValue.F32(arg.toFloat())
+                is Double -> NumberValue.F64(arg.toDouble())
                 else -> error("Unsupported argument type $arg")
             }
         }

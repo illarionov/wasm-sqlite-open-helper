@@ -7,7 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.function
 
 import at.released.weh.host.EmbedderHost
-import io.github.charlietap.chasm.embedding.shapes.Value
+import io.github.charlietap.chasm.executor.runtime.value.NumberValue
 import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.asWasmAddr
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.function.Sqlite3ProgressFunctionHandle
@@ -22,6 +22,6 @@ internal class Sqlite3ProgressAdapter(
     private val handle = Sqlite3ProgressFunctionHandle(host, progressCallbackStore)
     val function: ChasmHostFunction = { args ->
         val result = handle.execute(args[0].asWasmAddr())
-        listOf(Value.Number.I32(result))
+        listOf(NumberValue.I32(result))
     }
 }

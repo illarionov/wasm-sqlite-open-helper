@@ -13,6 +13,8 @@ import at.released.weh.wasm.core.WasmModules.ENV_MODULE_NAME
 import at.released.weh.wasm.core.memory.WASM_MEMORY_DEFAULT_MAX_PAGES
 import at.released.weh.wasm.core.memory.WASM_MEMORY_PAGE_SIZE
 import com.github.michaelbull.result.getOrThrow
+import io.github.charlietap.chasm.ast.type.Limits
+import io.github.charlietap.chasm.ast.type.SharedStatus.Unshared
 import io.github.charlietap.chasm.embedding.error.ChasmError.DecodeError
 import io.github.charlietap.chasm.embedding.instance
 import io.github.charlietap.chasm.embedding.memory
@@ -20,7 +22,6 @@ import io.github.charlietap.chasm.embedding.module
 import io.github.charlietap.chasm.embedding.shapes.Function
 import io.github.charlietap.chasm.embedding.shapes.Import
 import io.github.charlietap.chasm.embedding.shapes.Instance
-import io.github.charlietap.chasm.embedding.shapes.Limits
 import io.github.charlietap.chasm.embedding.shapes.Module
 import io.github.charlietap.chasm.embedding.shapes.Store
 import io.github.charlietap.chasm.embedding.shapes.fold
@@ -29,6 +30,7 @@ import io.github.charlietap.chasm.executor.runtime.ext.asRange
 import io.github.charlietap.chasm.executor.runtime.ext.table
 import io.github.charlietap.chasm.executor.runtime.instance.TableInstance
 import io.github.charlietap.chasm.executor.runtime.store.Address
+import io.github.charlietap.chasm.executor.runtime.store.Address.Table
 import io.github.charlietap.chasm.executor.runtime.value.ReferenceValue
 import io.github.charlietap.chasm.stream.SourceReader
 import kotlinx.io.RawSource
@@ -45,9 +47,9 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.IndirectFunctionTableIndex
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.SqliteCallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
+import io.github.charlietap.chasm.ast.type.MemoryType as ChasmMemoryType
 import io.github.charlietap.chasm.embedding.shapes.Import as ChasmImport
 import io.github.charlietap.chasm.embedding.shapes.Memory as ChasmMemoryImportable
-import io.github.charlietap.chasm.embedding.shapes.MemoryType as ChasmMemoryType
 
 internal class ChasmInstanceBuilder(
     private val host: EmbedderHost,
@@ -113,6 +115,7 @@ internal class ChasmInstanceBuilder(
                 min = (minMemorySize / WASM_MEMORY_PAGE_SIZE).toUInt(),
                 max = WASM_MEMORY_DEFAULT_MAX_PAGES.count.toUInt(),
             ),
+            shared = Unshared,
         )
         val memory: ChasmMemoryImportable = memory(store, memoryType)
         val import = ChasmImport(ENV_MODULE_NAME, "memory", memory)
@@ -125,8 +128,8 @@ internal class ChasmInstanceBuilder(
         instance: Instance,
         callbackHostFunctions: List<ChasmImport>,
     ): SqliteCallbackFunctionIndexes {
-        val tableAddress = instance.instance.tableAddresses[0]
-        val table = store.store.table(tableAddress).getOrThrow {
+        val tableAddress: Table = instance.instance.tableAddresses[0]
+        val table: TableInstance = store.store.table(tableAddress).getOrThrow {
             ChasmException("Can not get table $tableAddress")
         }
         val oldSize = table.elements.size
