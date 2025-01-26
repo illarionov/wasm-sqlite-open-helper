@@ -9,4 +9,5 @@
 /captures
 .externalNativeBuild
 .cxx
+.konan
 local.properties

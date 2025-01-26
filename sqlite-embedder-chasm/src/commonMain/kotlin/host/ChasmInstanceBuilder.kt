@@ -12,7 +12,6 @@ import at.released.weh.host.EmbedderHost
 import at.released.weh.wasm.core.WasmModules.ENV_MODULE_NAME
 import at.released.weh.wasm.core.memory.WASM_MEMORY_DEFAULT_MAX_PAGES
 import at.released.weh.wasm.core.memory.WASM_MEMORY_PAGE_SIZE
-import com.github.michaelbull.result.getOrThrow
 import io.github.charlietap.chasm.ast.type.Limits
 import io.github.charlietap.chasm.ast.type.SharedStatus.Unshared
 import io.github.charlietap.chasm.embedding.error.ChasmError.DecodeError
@@ -129,9 +128,7 @@ internal class ChasmInstanceBuilder(
         callbackHostFunctions: List<ChasmImport>,
     ): SqliteCallbackFunctionIndexes {
         val tableAddress: Table = instance.instance.tableAddresses[0]
-        val table: TableInstance = store.store.table(tableAddress).getOrThrow {
-            ChasmException("Can not get table $tableAddress")
-        }
+        val table: TableInstance = store.store.table(tableAddress)
         val oldSize = table.elements.size
         table.grow(
             callbackHostFunctions.size,
