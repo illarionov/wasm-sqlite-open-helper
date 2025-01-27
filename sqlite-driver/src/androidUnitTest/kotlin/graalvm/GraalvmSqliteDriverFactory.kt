@@ -8,7 +8,7 @@ package ru.pixnews.wasm.sqlite.driver.graalvm
 
 import at.released.weh.common.api.Logger
 import org.graalvm.polyglot.Engine
-import ru.pixnews.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcuMtPthread346
+import ru.pixnews.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcuMtPthread348
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
 import ru.pixnews.wasm.sqlite.driver.base.defaultTestSqliteDriverConfig
@@ -18,7 +18,7 @@ import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmSqliteEmbedder
 
 class GraalvmSqliteDriverFactory(
     private val initialGraalvmEngine: Engine? = WASM_GRAALVM_ENGINE,
-    override val defaultSqliteBinary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcuMtPthread346,
+    override val defaultSqliteBinary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcuMtPthread348,
 ) : TestSqliteDriverFactory<WasmSQLiteDriver<GraalvmRuntime>> {
     override fun create(
         dbLogger: Logger,

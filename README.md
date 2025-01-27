@@ -55,7 +55,7 @@ dependencies {
     testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-chasm:0.1-alpha04")
 
     // Sqlite WebAssembly binary
-    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-346:0.1-alpha05")
+    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-348:0.4")
 }
 ```
 
@@ -236,7 +236,7 @@ dependencies {
     testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-chicory:0.1-alpha04")
 
 	// Sqlite WebAssembly binary
-    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-346:0.1-alpha05")
+    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-348:0.4")
 }
 ```
 
@@ -281,7 +281,7 @@ dependencies {
     testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-chasm:0.1-alpha04")
 
     // Sqlite WebAssembly binary
-    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-346:0.1-alpha05")
+    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-348:0.4")
 }
 ```
 
@@ -431,7 +431,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 
 dependencies {
     constraints {
-        testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-346:*") {
+        testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-348:*") {
             attributes {
                 attribute(KotlinPlatformType.attribute, KotlinPlatformType.jvm)
             }
