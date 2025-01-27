@@ -10,8 +10,8 @@ import org.junit.Rule
 import org.junit.experimental.runners.Enclosed
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
-import ru.pixnews.wasm.sqlite.binary.SqliteWasmEmscripten346
-import ru.pixnews.wasm.sqlite.binary.SqliteWasmEmscriptenMtPthread346
+import ru.pixnews.wasm.sqlite.binary.SqliteWasmEmscripten348
+import ru.pixnews.wasm.sqlite.binary.SqliteWasmEmscriptenMtPthread348
 import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractBasicSqliteDriverTest
 
@@ -22,7 +22,7 @@ import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractBasicSqliteDriverTe
 class GraalvmBaseSqliteDriverPlainTest {
     class MultiThreadedSqlitePlainTest : AbstractBasicSqliteDriverTest<WasmSQLiteDriver<*>>(
         driverCreator = GraalvmSqliteDriverFactory(
-            defaultSqliteBinary = SqliteWasmEmscriptenMtPthread346,
+            defaultSqliteBinary = SqliteWasmEmscriptenMtPthread348,
             additionalConfig = {
                 openParams {
                     openFlags = setOf()
@@ -39,7 +39,7 @@ class GraalvmBaseSqliteDriverPlainTest {
 
     class SingleThreadedSqlitePlainTest : AbstractBasicSqliteDriverTest<WasmSQLiteDriver<*>>(
         driverCreator = GraalvmSqliteDriverFactory(
-            defaultSqliteBinary = SqliteWasmEmscripten346,
+            defaultSqliteBinary = SqliteWasmEmscripten348,
             additionalConfig = {
                 openParams {
                     openFlags = setOf()

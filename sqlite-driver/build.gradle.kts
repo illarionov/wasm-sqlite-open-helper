@@ -171,8 +171,8 @@ dependencies {
     coreLibraryDesugaring(libs.desugar.jdk.libs)
     constraints {
         listOf(
-            "ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-346:*",
-            "ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-mt-pthread-346:*",
+            "ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-348:*",
+            "ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-mt-pthread-348:*",
         ).forEach { dependency ->
             testImplementation(dependency) {
                 attributes {
