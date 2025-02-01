@@ -19,7 +19,7 @@ buildscript {
         classpath("com.google.devtools.ksp:symbol-processing-gradle-plugin:2.1.0-1.0.29")
         classpath("com.saveourtool.diktat:diktat-gradle-plugin:2.0.0")
         classpath("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.7")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.1.0")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.1.10")
         classpath("org.jetbrains.kotlinx:atomicfu-gradle-plugin:0.27.0")
     }
 }
