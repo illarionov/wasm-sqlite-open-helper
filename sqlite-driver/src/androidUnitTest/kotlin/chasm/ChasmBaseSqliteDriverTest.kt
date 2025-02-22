@@ -20,9 +20,4 @@ class ChasmBaseSqliteDriverTest : AbstractBasicSqliteDriverTest<WasmSQLiteDriver
     val tempFolder: TemporaryFolder = TemporaryFolder()
 
     override fun fileInTempDir(databaseName: String): String = tempFolder.root.resolve(databaseName).path
-
-    @Test
-    override fun Driver_initialization_should_work() {
-        super.Driver_initialization_should_work()
-    }
 }

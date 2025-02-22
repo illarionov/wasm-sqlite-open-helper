@@ -28,11 +28,6 @@ class GraalvmBasicRoomTest {
         val tempFolder: TemporaryFolder = TemporaryFolder()
 
         override fun fileInTempDir(databaseName: String): String = tempFolder.root.resolve(databaseName).path
-
-        @Test
-        override fun Test_Room(): TestResult {
-            return super.Test_Room()
-        }
     }
 
     class SingleThreadedSqliteTest : AbstractBasicRoomTest<WasmSQLiteDriver<*>>(
