@@ -7,14 +7,12 @@
 package ru.pixnews.wasm.sqlite.driver.chasm
 
 import androidx.test.platform.app.InstrumentationRegistry
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
 import ru.pixnews.wasm.sqlite.driver.base.AndroidUserDatabaseSuspendFactory
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.room.AbstractBasicRoomTest
 
-@Ignore("TODO: Fix Stackoverflow error")
 class ChasmBasicRoomTest : AbstractBasicRoomTest<WasmSQLiteDriver<*>>(
     driverFactory = ChasmSqliteDriverFactory,
     databaseFactory = AndroidUserDatabaseSuspendFactory,

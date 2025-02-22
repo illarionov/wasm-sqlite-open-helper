@@ -27,6 +27,10 @@
          <trusted-key id="0785B3EFF60B1B1BEA94E0BB7C25280EAE63EBE5" group="org.apache.httpcomponents"/>
          <trusted-key id="08F0AAB4D0C1A4BDDE340765B341DDB020FCB6AB" group="org.bouncycastle"/>
          <trusted-key id="0D35D3F60078655126908E8AF3D1600878E85A3D" group="io.netty"/>
+         <trusted-key id="0F06FF86BEEAF4E71866EE5232EE5355A6BC6E42">
+            <trusting group="androidx.room"/>
+            <trusting group="androidx.sqlite"/>
+         </trusted-key>
          <trusted-key id="19BEAB2D799C020F17C69126B16698A4ADF4D638" group="org.checkerframework" name="checker-qual"/>
          <trusted-key id="1D2C7EF8ADA0F794B58C7C63436902AF59EDF60E" group="dev.equo.ide" name="solstice"/>
          <trusted-key id="1D63A77F7270FE07D46B3EB514D68971286170CB" group="io.github.charlietap.chasm"/>
@@ -239,6 +243,11 @@
             <pgp value="09939C73246B4BA7444CAA453D002DBC5EA9615F"/>
          </artifact>
       </component>
+      <component group="dev.drewhamilton.poko" name="poko-annotations-jvm" version="0.17.1">
+         <artifact name="poko-annotations-jvm-0.17.1.jar">
+            <pgp value="09939C73246B4BA7444CAA453D002DBC5EA9615F"/>
+         </artifact>
+      </component>
       <component group="io.github.davidburstrom.contester" name="contester-breakpoint" version="0.2.0">
          <artifact name="contester-breakpoint-0.2.0.jar">
             <pgp value="C0612048F3393B80B22639B4F067A2FD751AE3E4"/>
@@ -409,6 +418,11 @@
             <pgp value="CFBE6E7934FB211224EE1C2B0C0A9468268C79AE"/>
          </artifact>
       </component>
+      <component group="org.jetbrains" name="markdown-jvm" version="0.7.3">
+         <artifact name="markdown-jvm-0.7.3.jar">
+            <pgp value="CFBE6E7934FB211224EE1C2B0C0A9468268C79AE"/>
+         </artifact>
+      </component>
       <component group="org.jetbrains.intellij.deps" name="trove4j" version="1.0.20200330">
          <artifact name="trove4j-1.0.20200330.jar">
             <pgp value="8756C4F765C9AC3CB6B85D62379CE192D401AB61"/>
@@ -417,6 +431,11 @@
       <component group="org.jsoup" name="jsoup" version="1.16.1">
          <artifact name="jsoup-1.16.1.jar">
             <pgp value="F3184BCD55F4D016E30D4C9BF42E87F9665015C9"/>
+         </artifact>
+      </component>
+      <component group="org.jspecify" name="jspecify" version="1.0.0">
+         <artifact name="jspecify-1.0.0.jar">
+            <pgp value="41CD49B4EF5876F9E9F691DABAC30622339994C4"/>
          </artifact>
       </component>
       <component group="org.jvnet.staxex" name="stax-ex" version="1.8.1">

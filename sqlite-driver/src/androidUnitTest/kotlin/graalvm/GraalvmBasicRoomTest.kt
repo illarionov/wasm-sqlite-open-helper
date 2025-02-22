@@ -6,7 +6,9 @@
 
 package ru.pixnews.wasm.sqlite.driver.graalvm
 
+import kotlinx.coroutines.test.TestResult
 import org.junit.Rule
+import org.junit.Test
 import org.junit.experimental.runners.Enclosed
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
@@ -26,6 +28,11 @@ class GraalvmBasicRoomTest {
         val tempFolder: TemporaryFolder = TemporaryFolder()
 
         override fun fileInTempDir(databaseName: String): String = tempFolder.root.resolve(databaseName).path
+
+        @Test
+        override fun Test_Room(): TestResult {
+            return super.Test_Room()
+        }
     }
 
     class SingleThreadedSqliteTest : AbstractBasicRoomTest<WasmSQLiteDriver<*>>(

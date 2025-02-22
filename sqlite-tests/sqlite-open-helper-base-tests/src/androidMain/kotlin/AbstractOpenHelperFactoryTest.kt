@@ -14,6 +14,7 @@ import co.touchlab.kermit.Severity
 import co.touchlab.kermit.Severity.Info
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
+import java.io.File
 
 abstract class AbstractOpenHelperFactoryTest<E : SqliteEmbedderConfig>(
     private val factoryCreator: TestOpenHelperFactoryCreator,
@@ -33,7 +34,9 @@ abstract class AbstractOpenHelperFactoryTest<E : SqliteEmbedderConfig>(
         openHelperCallback: SupportSQLiteOpenHelper.Callback = LoggingOpenHelperCallback(dbLogger),
     ): SupportSQLiteOpenHelper {
         val factory = factoryCreator.create(tempDir, dbLogger, sqlite3Binary)
-        val mockContext = ContextWrapper(null)
+        val mockContext = object : ContextWrapper(null) {
+            override fun getDatabasePath(name: String?): File = File(name!!)
+        }
         val config = Configuration(mockContext, "test.db", LoggingOpenHelperCallback(dbLogger))
         return factory.create(config)
     }

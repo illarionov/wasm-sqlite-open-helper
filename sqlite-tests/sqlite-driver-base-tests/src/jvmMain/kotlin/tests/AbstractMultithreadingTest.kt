@@ -7,7 +7,6 @@
 package ru.pixnews.wasm.sqlite.driver.test.base.tests
 
 import androidx.sqlite.SQLiteDriver
-import androidx.sqlite.use
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isTrue

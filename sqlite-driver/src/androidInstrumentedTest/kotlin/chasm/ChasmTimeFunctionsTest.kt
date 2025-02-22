@@ -7,13 +7,11 @@
 package ru.pixnews.wasm.sqlite.driver.chasm
 
 import androidx.test.platform.app.InstrumentationRegistry
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractTimeFunctionsTest
 
-@Ignore("TODO: Fix Stackoverflow error")
 class ChasmTimeFunctionsTest : AbstractTimeFunctionsTest<WasmSQLiteDriver<*>>(
     driverCreator = ChasmSqliteDriverFactory,
 ) {

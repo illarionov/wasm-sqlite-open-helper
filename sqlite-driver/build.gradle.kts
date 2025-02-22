@@ -140,13 +140,18 @@ kotlin {
                 implementation(projects.commonLock)
             }
         }
-        androidMain.get().dependsOn(jvmAndAndroidMain)
+        androidMain {
+            dependsOn(jvmAndAndroidMain)
+            dependencies {
+                implementation(libs.atomicfu)
+            }
+        }
         jvmMain.get().dependsOn(jvmAndAndroidMain)
 
         val jvmAndAndroidTest by creating {
             dependsOn(commonTest.get())
             dependencies {
-                kotlin(("test-junit"))
+                kotlin("test-junit")
                 implementation(libs.wsoh.sqlite.mt)
                 implementation(libs.wsoh.sqlite.mt.plain)
                 implementation(libs.androidx.sqlite.bundled)

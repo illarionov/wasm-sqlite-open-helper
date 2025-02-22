@@ -7,6 +7,7 @@
 package ru.pixnews.wasm.sqlite.driver.chasm
 
 import org.junit.Rule
+import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractBasicSqliteDriverTest
@@ -19,4 +20,9 @@ class ChasmBaseSqliteDriverTest : AbstractBasicSqliteDriverTest<WasmSQLiteDriver
     val tempFolder: TemporaryFolder = TemporaryFolder()
 
     override fun fileInTempDir(databaseName: String): String = tempFolder.root.resolve(databaseName).path
+
+    @Test
+    override fun Driver_initialization_should_work() {
+        super.Driver_initialization_should_work()
+    }
 }

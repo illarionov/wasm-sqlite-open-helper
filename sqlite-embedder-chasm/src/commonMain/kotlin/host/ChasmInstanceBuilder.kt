@@ -27,9 +27,9 @@ import io.github.charlietap.chasm.embedding.shapes.fold
 import io.github.charlietap.chasm.embedding.store
 import io.github.charlietap.chasm.executor.runtime.ext.asRange
 import io.github.charlietap.chasm.executor.runtime.ext.table
+import io.github.charlietap.chasm.executor.runtime.ext.toLong
 import io.github.charlietap.chasm.executor.runtime.instance.TableInstance
 import io.github.charlietap.chasm.executor.runtime.store.Address
-import io.github.charlietap.chasm.executor.runtime.store.Address.Table
 import io.github.charlietap.chasm.executor.runtime.value.ReferenceValue
 import io.github.charlietap.chasm.stream.SourceReader
 import kotlinx.io.RawSource
@@ -127,19 +127,14 @@ internal class ChasmInstanceBuilder(
         instance: Instance,
         callbackHostFunctions: List<ChasmImport>,
     ): SqliteCallbackFunctionIndexes {
-        val tableAddress: Table = instance.instance.tableAddresses[0]
-        val table: TableInstance = store.store.table(tableAddress)
+        val table: TableInstance = store.store.table(instance.instance.tableAddresses[0])
         val oldSize = table.elements.size
-        table.grow(
-            callbackHostFunctions.size,
-            ReferenceValue.Function(Address.Function(0)),
-        )
-        val indirectIndexes: Map<SqliteCallbacksModuleFunction, IndirectFunctionTableIndex> =
-            callbackHostFunctions.mapIndexed { index: Int, import: ChasmImport ->
+        table.grow(callbackHostFunctions.size, ReferenceValue.Function(Address.Function(0)))
+        val indirectIndexes = callbackHostFunctions.mapIndexed { index: Int, import: ChasmImport ->
                 val hostFunction = SqliteCallbacksModuleFunction.byWasmName.getValue(import.entityName)
                 val indirectIndex = oldSize + index
                 val functionAddress = (import.value as Function).reference.address
-                table.elements[indirectIndex] = ReferenceValue.Function(functionAddress)
+                table.elements[indirectIndex] = ReferenceValue.Function(functionAddress).toLong()
                 hostFunction to IndirectFunctionTableIndex(indirectIndex)
             }.toMap()
 
@@ -148,7 +143,7 @@ internal class ChasmInstanceBuilder(
 
     private fun TableInstance.grow(
         elementsToAdd: Int,
-        referenceValue: ReferenceValue,
+        referenceValue: ReferenceValue.Function,
     ) {
         val proposedLength = (elements.size + elementsToAdd).toUInt()
         if (proposedLength !in type.limits.asRange()) {
@@ -159,7 +154,7 @@ internal class ChasmInstanceBuilder(
                 min = proposedLength,
             ),
         )
-        elements += Array(elementsToAdd) { referenceValue }
+        elements += LongArray(elementsToAdd) { referenceValue.toLong() }
     }
 
     private class ChasmMemoryImport(
