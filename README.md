@@ -77,7 +77,11 @@ val wasmSqliteDriver = WasmSQLiteDriver(GraalvmSqliteEmbedder) {
 This driver can be used either standalone or with Android Room (2.7+):
 
 ```kotlin
-val mockContext = ContextWrapper(null)
+import android.content.ContextWrapper
+
+val mockContext = object : ContextWrapper(null) {
+    override fun getDatabasePath(name: String?): File = File(name!!)
+}
 
 val db = Room.databaseBuilder(
     name = dbFile.absolutePath,
@@ -221,11 +225,9 @@ The embedder implemented on it allows us to execute SQLite WebAssembly with mini
 
 Key Features:
 
-- Compatible with Android API 33+ and JVM JDK 17+.
+- Compatible with Android API 28+ and JVM JDK 17+.
 - Simple JVM-only runtime with minimal dependencies.
 - Single-threaded only.
-
-It can be used on Android API 33+.
 
 When using this embedder, you must use SQLite compiled without multithreading support.
 
@@ -374,9 +376,10 @@ The intended purpose of the library is to be used in unit tests on the host. An 
 
 ```kotlin
 class DatabaseTest {
-    // Android Сontext is not used in the wrapper, but is defined in the public interface of
-    // the SupportSQLiteOpenHelper. So we use a mock context
-    val mockContext = ContextWrapper(null)
+    // Android Сontext is used only to resolve database path so we use a mock context
+    val mockContext = object : ContextWrapper(null) {
+        override fun getDatabasePath(name: String?): File = File(name!!)
+    }
 
     @TempDir
     lateinit var tempDir: File

@@ -16,6 +16,7 @@ import ru.pixnews.wasm.sqlite.open.helper.test.base.AbstractOpenHelperFactoryTes
 import ru.pixnews.wasm.sqlite.open.helper.test.base.TestOpenHelperFactoryCreator
 import ru.pixnews.wasm.sqlite.open.helper.test.base.room.User
 import ru.pixnews.wasm.sqlite.open.helper.test.base.room.UserDatabaseBlocking
+import java.io.File
 import kotlin.test.Test
 
 abstract class AbstractCommonFactoryTest<E : SqliteEmbedderConfig>(
@@ -49,7 +50,9 @@ abstract class AbstractCommonFactoryTest<E : SqliteEmbedderConfig>(
     @Suppress("MagicNumber")
     open fun Test_Room() {
         val helperFactory = createWasmSQLiteOpenHelperFactory()
-        val mockContext = ContextWrapper(null)
+        val mockContext = object : ContextWrapper(null) {
+            override fun getDatabasePath(name: String?): File = File(name!!)
+        }
         val db: UserDatabaseBlocking = Room.databaseBuilder(
             mockContext,
             UserDatabaseBlocking::class.java,

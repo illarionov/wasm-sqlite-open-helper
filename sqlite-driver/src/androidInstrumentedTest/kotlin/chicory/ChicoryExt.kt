@@ -11,7 +11,7 @@ import org.junit.Assume.assumeTrue
 
 internal fun checkChicorySdk() {
     assumeTrue(
-        "Chicory requires API Level 33",
-        Build.VERSION.SDK_INT >= 33,
+        "Chicory requires API Level 28",
+        Build.VERSION.SDK_INT >= 28,
     )
 }

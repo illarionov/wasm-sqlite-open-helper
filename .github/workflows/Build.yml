@@ -79,14 +79,14 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-34
+          key: avd-28
 
       - name: create AVD and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
         with:
           arch: x86_64
-          api-level: 34
+          api-level: 28
           target: default
           force-avd-creation: false
           disk-size: 2G
@@ -97,7 +97,7 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           arch: x86_64
-          api-level: 34
+          api-level: 28
           target: default
           force-avd-creation: false
           disk-size: 2G

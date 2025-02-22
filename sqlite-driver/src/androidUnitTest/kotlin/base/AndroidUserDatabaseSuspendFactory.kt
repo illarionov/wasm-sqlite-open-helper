@@ -12,6 +12,7 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.SQLiteDriver
 import ru.pixnews.wasm.sqlite.driver.test.base.room.UserDatabaseSuspend
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.room.UserDatabaseTests.UserDatabaseFactory
+import java.io.File
 import kotlin.coroutines.CoroutineContext
 
 internal object AndroidUserDatabaseSuspendFactory : UserDatabaseFactory {
@@ -20,7 +21,9 @@ internal object AndroidUserDatabaseSuspendFactory : UserDatabaseFactory {
         databaseName: String?,
         queryCoroutineContext: CoroutineContext,
     ): UserDatabaseSuspend {
-        val mockContext = ContextWrapper(null)
+        val mockContext = object : ContextWrapper(null) {
+            override fun getDatabasePath(name: String?): File = File(name!!)
+        }
         val builder = if (databaseName != null) {
             Room.databaseBuilder(
                 mockContext,
