@@ -6,9 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.driver.graalvm
 
-import kotlinx.coroutines.test.TestResult
 import org.junit.Rule
-import org.junit.Test
 import org.junit.experimental.runners.Enclosed
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
