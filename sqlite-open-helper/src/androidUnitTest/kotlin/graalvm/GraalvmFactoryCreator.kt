@@ -9,7 +9,7 @@ package ru.pixnews.wasm.sqlite.open.helper.graalvm
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import at.released.weh.common.api.Logger
 import org.graalvm.polyglot.Engine
-import ru.pixnews.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcu348
+import ru.pixnews.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcu349
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperFactory
 import ru.pixnews.wasm.sqlite.open.helper.base.util.defaultTestHelperConfig
@@ -17,7 +17,7 @@ import ru.pixnews.wasm.sqlite.open.helper.test.base.TestOpenHelperFactoryCreator
 
 internal class GraalvmFactoryCreator(
     private val initialGraalvmEngine: Engine? = WASM_GRAALVM_ENGINE,
-    override val defaultSqliteBinary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcu348,
+    override val defaultSqliteBinary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcu349,
 ) : TestOpenHelperFactoryCreator {
     override fun create(
         dstDir: String,

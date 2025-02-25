@@ -9,7 +9,7 @@ package ru.pixnews.wasm.sqlite.open.helper.graalvm
 import at.released.weh.common.api.Logger
 import at.released.weh.host.EmbedderHost
 import org.graalvm.polyglot.Engine
-import ru.pixnews.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcuMtPthread348
+import ru.pixnews.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcuMtPthread349
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.binary.reader.WasmSourceReader
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
@@ -36,7 +36,7 @@ public class GraalvmSqliteEmbedderConfig internal constructor(
     /**
      * Sets used Sqlite WebAssembly binary file
      */
-    public var sqlite3Binary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcuMtPthread348
+    public var sqlite3Binary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcuMtPthread349
 
     /**
      * Sets the Wasm source reader responsible for reading a WebAssembly binary.

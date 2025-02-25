@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+@file:Suppress("UnstableApiUsage")
+
+import com.android.build.api.variant.LibraryVariantBuilder
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.TestExecutable
 
@@ -39,6 +42,13 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            testProguardFiles += listOf(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                file("proguard-test-rules.pro"),
+            )
+            androidTest {
+                enableMinification = true
+            }
         }
     }
     testOptions {
@@ -55,6 +65,14 @@ android {
     }
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
+    }
+
+    testBuildType = "release"
+
+    androidComponents {
+        beforeVariants(selector().withBuildType("release")) { variantBuilder: LibraryVariantBuilder ->
+            variantBuilder.hostTests.forEach { (_, builder) -> builder.enable = false }
+        }
     }
 }
 
@@ -91,6 +109,7 @@ kotlin {
             implementation(libs.wsoh.sqlite.mt)
             implementation(libs.wsoh.sqlite.mt.plain)
             implementation(libs.wsoh.sqlite.st)
+            implementation(libs.wsoh.sqlite.st.aot)
             implementation(libs.wsoh.sqlite.st.plain)
             implementation(projects.sqliteEmbedderChasm)
             implementation(projects.sqliteEmbedderChicory)
@@ -154,6 +173,7 @@ kotlin {
                 kotlin("test-junit")
                 implementation(libs.wsoh.sqlite.mt)
                 implementation(libs.wsoh.sqlite.mt.plain)
+                implementation(libs.wsoh.sqlite.st.aot)
                 implementation(libs.androidx.sqlite.bundled)
                 implementation(projects.sqliteEmbedderChicory)
                 implementation(projects.sqliteEmbedderGraalvm)
@@ -176,8 +196,9 @@ dependencies {
     coreLibraryDesugaring(libs.desugar.jdk.libs)
     constraints {
         listOf(
-            "ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-348:*",
-            "ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-mt-pthread-348:*",
+            "ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-349:*",
+            "ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-aot-349:*",
+            "ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-mt-pthread-349:*",
         ).forEach { dependency ->
             testImplementation(dependency) {
                 attributes {

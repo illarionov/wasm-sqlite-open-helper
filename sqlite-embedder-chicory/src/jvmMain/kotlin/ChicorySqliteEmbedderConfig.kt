@@ -10,7 +10,7 @@ import at.released.weh.common.api.Logger
 import at.released.weh.host.EmbedderHost
 import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.runtime.Machine
-import ru.pixnews.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcu348
+import ru.pixnews.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcu349
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.binary.reader.WasmSourceReader
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
@@ -27,7 +27,7 @@ public class ChicorySqliteEmbedderConfig internal constructor(
     /**
      * Sets used Sqlite WebAssembly binary file
      */
-    public var sqlite3Binary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcu348
+    public var sqlite3Binary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcu349
 
     /**
      * Sets the Wasm source reader responsible for reading a WebAssembly binary.
