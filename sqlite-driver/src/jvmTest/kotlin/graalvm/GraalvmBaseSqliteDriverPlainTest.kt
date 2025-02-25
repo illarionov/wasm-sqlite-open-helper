@@ -42,7 +42,7 @@ class GraalvmBaseSqliteDriverPlainTest {
             defaultSqliteBinary = SqliteWasmEmscripten348,
             additionalConfig = {
                 openParams {
-                    openFlags = setOf()
+                    openFlags = setOf() // Disable LOCALIZED_COLLATORS and ANDROID_FUNCTIONS
                 }
             },
         ),

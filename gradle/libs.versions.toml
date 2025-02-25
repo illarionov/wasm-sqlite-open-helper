@@ -80,8 +80,10 @@ kotlinx-io = { group = "org.jetbrains.kotlinx", name = "kotlinx-io-core", versio
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 wsoh-sqlite-mt = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-android-wasm-emscripten-icu-mt-pthread-348", version.ref = "sqlite-wasm-binary" }
 wsoh-sqlite-st = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-android-wasm-emscripten-icu-348", version.ref = "sqlite-wasm-binary" }
+wsoh-sqlite-st-aot = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-android-wasm-emscripten-icu-aot-348-jvm", version = "0.5-SNAPSHOT" }
 wsoh-sqlite-mt-plain = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-wasm-emscripten-mt-pthread-348", version.ref = "sqlite-wasm-binary" }
 wsoh-sqlite-st-plain = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-wasm-emscripten-348", version.ref = "sqlite-wasm-binary" }
+wsoh-sqlite-st-plain-aot = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-wasm-emscripten-aot-348-jvm", version = "0.5-SNAPSHOT" }
 wsoh-binary-base = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-binary-api", version.ref = "sqlite-wasm-binary" }
 wsoh-binary-reader = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "wasm-binary-reader", version.ref = "sqlite-wasm-binary" }
 wasi-emscripten-host = { group = "at.released.weh", name = "host", version.ref = "wasi-emscripten-host" }
