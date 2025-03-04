@@ -7,8 +7,8 @@
 package ru.pixnews.wasm.sqlite.driver.chicory
 
 import at.released.weh.common.api.Logger
-import ru.pixnews.wasm.sqlite.binary.aot.SqliteAndroidEmscriptenIcuAot349Module
-import ru.pixnews.wasm.sqlite.binary.aot.SqliteAndroidWasmEmscriptenIcuAot348
+import ru.pixnews.wasm.sqlite.binary.aot.AndroidWasmEmscriptenIcuAot349Module
+import ru.pixnews.wasm.sqlite.binary.aot.SqliteAndroidWasmEmscriptenIcuAot349
 import ru.pixnews.wasm.sqlite.binary.base.WasmSourceUrl
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
@@ -22,12 +22,12 @@ import ru.pixnews.wasm.sqlite.open.helper.chicory.ChicorySqliteEmbedder
  */
 object ChicoryPrecompiledSqliteDriverFactory : TestSqliteDriverFactory<WasmSQLiteDriver<ChicoryRuntime>> {
     override val defaultSqliteBinary: WasmSqliteConfiguration =
-        object : WasmSqliteConfiguration by SqliteAndroidWasmEmscriptenIcuAot348 {
+        object : WasmSqliteConfiguration by SqliteAndroidWasmEmscriptenIcuAot349 {
             override val sqliteUrl: WasmSourceUrl
                 get() = WasmSourceUrl(
                     requireNotNull(
-                        SqliteAndroidWasmEmscriptenIcuAot348::class.java
-                            .getResource("sqliteandroidemscriptenicuaot348.meta"),
+                        SqliteAndroidWasmEmscriptenIcuAot349::class.java
+                            .getResource("AndroidWasmEmscriptenIcuAot349.meta"),
                     ).toString(),
                 )
         }
@@ -40,7 +40,7 @@ object ChicoryPrecompiledSqliteDriverFactory : TestSqliteDriverFactory<WasmSQLit
             defaultTestSqliteDriverConfig(dbLogger)
             embedder {
                 this.sqlite3Binary = sqlite3Binary
-                this.machineFactory = SqliteAndroidEmscriptenIcuAot349Module::create
+                this.machineFactory = AndroidWasmEmscriptenIcuAot349Module::create
             }
         }
     }
