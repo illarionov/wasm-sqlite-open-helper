@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   submit-snapshots:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     steps:
       - name: Retrieve dependency graph artifact and submit
         uses: gradle/actions/setup-gradle@v4
