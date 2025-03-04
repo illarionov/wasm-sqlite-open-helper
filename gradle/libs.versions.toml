@@ -17,7 +17,7 @@ arrow = "2.0.1"
 assertk = "0.28.1"
 chasm = "0.9.53"
 chicory = "1.1.0"
-desugar_jdk_libs = "2.1.4"
+desugar_jdk_libs = "2.1.5"
 detekt = "1.23.8"
 diktat = "2.0.0"
 dokka = "2.0.0"
@@ -32,7 +32,7 @@ kermit = "2.0.5"
 ksp = "2.1.10-1.0.31"
 mockk = "1.13.17"
 spotless = "7.0.2"
-sqlite-wasm-binary = "0.4"
+sqlite-wasm-binary = "0.5.1"
 wasi-emscripten-host = "0.3"
 
 [libraries]
@@ -78,10 +78,12 @@ kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-cor
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinx-datetime" }
 kotlinx-io = { group = "org.jetbrains.kotlinx", name = "kotlinx-io-core", version.ref = "kotlinx-io" }
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
-wsoh-sqlite-mt = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-android-wasm-emscripten-icu-mt-pthread-348", version.ref = "sqlite-wasm-binary" }
-wsoh-sqlite-st = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-android-wasm-emscripten-icu-348", version.ref = "sqlite-wasm-binary" }
-wsoh-sqlite-mt-plain = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-wasm-emscripten-mt-pthread-348", version.ref = "sqlite-wasm-binary" }
-wsoh-sqlite-st-plain = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-wasm-emscripten-348", version.ref = "sqlite-wasm-binary" }
+wsoh-sqlite-mt = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-android-wasm-emscripten-icu-mt-pthread-349", version.ref = "sqlite-wasm-binary" }
+wsoh-sqlite-st = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-android-wasm-emscripten-icu-349", version.ref = "sqlite-wasm-binary" }
+wsoh-sqlite-st-aot = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-android-wasm-emscripten-icu-aot-349-jvm", version.ref = "sqlite-wasm-binary" }
+wsoh-sqlite-mt-plain = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-wasm-emscripten-mt-pthread-349", version.ref = "sqlite-wasm-binary" }
+wsoh-sqlite-st-plain = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-wasm-emscripten-349", version.ref = "sqlite-wasm-binary" }
+wsoh-sqlite-st-plain-aot = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-wasm-emscripten-aot-349-jvm", version.ref = "sqlite-wasm-binary" }
 wsoh-binary-base = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-binary-api", version.ref = "sqlite-wasm-binary" }
 wsoh-binary-reader = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "wasm-binary-reader", version.ref = "sqlite-wasm-binary" }
 wasi-emscripten-host = { group = "at.released.weh", name = "host", version.ref = "wasi-emscripten-host" }

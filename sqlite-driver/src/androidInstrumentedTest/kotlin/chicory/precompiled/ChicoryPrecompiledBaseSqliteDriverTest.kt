@@ -4,20 +4,24 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.chicory.aot
+package ru.pixnews.wasm.sqlite.driver.chicory.precompiled
 
+import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
-import ru.pixnews.wasm.sqlite.driver.chicory.ChicorySqliteDriverFactory
+import ru.pixnews.wasm.sqlite.driver.chicory.ChicoryPrecompiledSqliteDriverFactory
+import ru.pixnews.wasm.sqlite.driver.chicory.checkChicorySdk
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractBasicSqliteDriverTest
 
-class ChicoryAotBaseSqliteDriverTest : AbstractBasicSqliteDriverTest<WasmSQLiteDriver<*>>(
-    driverCreator = ChicorySqliteDriverFactory(useAot = true),
+class ChicoryPrecompiledBaseSqliteDriverTest : AbstractBasicSqliteDriverTest<WasmSQLiteDriver<*>>(
+    driverCreator = ChicoryPrecompiledSqliteDriverFactory,
 ) {
     @JvmField
     @Rule
-    val tempFolder: TemporaryFolder = TemporaryFolder()
+    val tempFolder = TemporaryFolder(InstrumentationRegistry.getInstrumentation().targetContext.cacheDir)
 
     override fun fileInTempDir(databaseName: String): String = tempFolder.root.resolve(databaseName).path
+
+    override fun beforeSetup() = checkChicorySdk()
 }

@@ -11,7 +11,7 @@ import org.junit.Rule
 import org.junit.experimental.runners.Enclosed
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
-import ru.pixnews.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcu348
+import ru.pixnews.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcu349
 import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
 import ru.pixnews.wasm.sqlite.driver.base.JvmDatabaseFactory
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.room.AbstractBasicRoomTest
@@ -34,7 +34,7 @@ class GraalvmBasicRoomTest {
 
     class SingleThreadedSqliteTest : AbstractBasicRoomTest<WasmSQLiteDriver<*>>(
         driverFactory = GraalvmSqliteDriverFactory(
-            defaultSqliteBinary = SqliteAndroidWasmEmscriptenIcu348,
+            defaultSqliteBinary = SqliteAndroidWasmEmscriptenIcu349,
         ),
         databaseFactory = JvmDatabaseFactory,
     ) {
