@@ -22,7 +22,7 @@ env:
     -Dorg.gradle.jvmargs="-Xmx3G -XX:MaxMetaspaceSize=1g -XX:SoftRefLRUPolicyMSPerMB=10 -XX:+UseParallelGC -XX:NewRatio=1"
     -Dorg.gradle.dependency.verification.console=verbose
   KOTLIN_DAEMON_JVMARGS: >-
-    -Xmx2G -XX:MaxMetaspaceSize=320M -XX:SoftRefLRUPolicyMSPerMB=10 -XX:+UseParallelGC -XX:NewRatio=1
+    -Xmx3G -XX:MaxMetaspaceSize=320M -XX:SoftRefLRUPolicyMSPerMB=10 -XX:+UseParallelGC -XX:NewRatio=1
 
 jobs:
   publish:
@@ -42,7 +42,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '22'
+          java-version: '23'
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
