@@ -9,7 +9,7 @@
 package ru.pixnews.wasm.sqlite.driver
 
 import android.content.Context
-import ru.pixnews.wasm.sqlite.binary.reader.AndroidAssetsWasmSourceReader
+import at.released.cassettes.playhead.AndroidAssetsAssetManager
 import ru.pixnews.wasm.sqlite.driver.dsl.WasmSqliteDriverConfigBlock
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedder
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
@@ -28,6 +28,6 @@ public fun <E : SqliteEmbedderConfig, R : SqliteRuntime> WasmSQLiteDriver(
     block: WasmSqliteDriverConfigBlock<E>.() -> Unit = {},
 ): WasmSQLiteDriver<R> = WasmSQLiteDriver(
     embedder = embedder,
-    defaultWasmSourceReader = AndroidAssetsWasmSourceReader(context.assets),
+    defaultWasmSourceReader = AndroidAssetsAssetManager(context.assets),
     block = block,
 )

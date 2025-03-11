@@ -6,13 +6,13 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chicory
 
+import at.released.cassettes.playhead.AssetManager
 import at.released.weh.common.api.Logger
 import at.released.weh.host.EmbedderHost
 import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.runtime.Machine
 import ru.pixnews.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcu349
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
-import ru.pixnews.wasm.sqlite.binary.reader.WasmSourceReader
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 
@@ -22,7 +22,7 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 @WasmSqliteOpenHelperDsl
 public class ChicorySqliteEmbedderConfig internal constructor(
     rootLogger: Logger,
-    defaultWasmSourceReader: WasmSourceReader,
+    defaultWasmSourceReader: AssetManager,
 ) : SqliteEmbedderConfig {
     /**
      * Sets used Sqlite WebAssembly binary file
@@ -32,11 +32,11 @@ public class ChicorySqliteEmbedderConfig internal constructor(
     /**
      * Sets the Wasm source reader responsible for reading a WebAssembly binary.
      * This can be overridden to read Wasm files from non-standard locations.
-     * See [JvmResourcesWasmBinaryReader][ru.pixnews.wasm.sqlite.binary.reader.JvmResourcesWasmBinaryReader]
-     * or [LinuxWasmSourceReader][ru.pixnews.wasm.sqlite.binary.reader.LinuxWasmSourceReader] for examples of custom
+     * See [JvmResourcesAssetManager][at.released.cassettes.playhead.JvmResourcesAssetManager]
+     * or [LinuxAssetManager][at.released.cassettes.playhead.LinuxAssetManager] for examples of custom
      * implementations.
      */
-    public var wasmSourceReader: WasmSourceReader = defaultWasmSourceReader
+    public var wasmSourceReader: AssetManager = defaultWasmSourceReader
 
     /**
      * Overrides Chicory machine factory. It can be used to install the Experimental Wasm-to-JVM bytecode AOT engine.

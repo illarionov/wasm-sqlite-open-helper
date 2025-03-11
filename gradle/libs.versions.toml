@@ -16,23 +16,24 @@ atomicfu = "0.27.0"
 arrow = "2.0.1"
 assertk = "0.28.1"
 chasm = "0.9.53"
-chicory = "1.1.0"
+cassettes = "0.1-alpha01"
+chicory = "1.1.1"
 desugar_jdk_libs = "2.1.5"
 detekt = "1.23.8"
 diktat = "2.0.0"
 dokka = "2.0.0"
 graalvm = "24.1.2"
-gradle-maven-publish-plugin = "0.30.0"
+gradle-maven-publish-plugin = "0.31.0"
 kotlin = "2.1.10"
 kotlinx-coroutines = "1.10.1"
 kotlinx-binary-compatibility-validator = "0.17.0"
 kotlinx-datetime = "0.6.2"
-kotlinx-io ="0.7.0"
+kotlinx-io = "0.7.0"
 kermit = "2.0.5"
 ksp = "2.1.10-1.0.31"
 mockk = "1.13.17"
 spotless = "7.0.2"
-sqlite-wasm-binary = "0.5.1"
+sqlite-wasm-binary = "0.6"
 wasi-emscripten-host = "0.3"
 
 [libraries]
@@ -55,6 +56,7 @@ androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "
 arrow-core = { group = "io.arrow-kt", name = "arrow-core", version.ref = "arrow" }
 atomicfu = { group = "org.jetbrains.kotlinx", name = "atomicfu", version.ref = "atomicfu" }
 assertk = { group = "com.willowtreeapps.assertk", name = "assertk", version.ref = "assertk" }
+cassettes-playhead = { group = "at.released.cassettes", name = "cassettes-playhead", version.ref = "cassettes" }
 chasm = { group = "io.github.charlietap.chasm", name = "chasm", version.ref = "chasm" }
 chasm-runtime-internal = { group = "io.github.charlietap.chasm", name = "runtime-internal", version.ref = "chasm" }
 chicory-runtime = { group = "com.dylibso.chicory", name = "runtime", version.ref = "chicory" }
@@ -85,7 +87,6 @@ wsoh-sqlite-mt-plain = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "s
 wsoh-sqlite-st-plain = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-wasm-emscripten-349", version.ref = "sqlite-wasm-binary" }
 wsoh-sqlite-st-plain-aot = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-wasm-emscripten-aot-349-jvm", version.ref = "sqlite-wasm-binary" }
 wsoh-binary-base = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-binary-api", version.ref = "sqlite-wasm-binary" }
-wsoh-binary-reader = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "wasm-binary-reader", version.ref = "sqlite-wasm-binary" }
 wasi-emscripten-host = { group = "at.released.weh", name = "host", version.ref = "wasi-emscripten-host" }
 wasi-emscripten-host-common-util = { group = "at.released.weh", name = "common-util", version.ref = "wasi-emscripten-host" }
 wasi-emscripten-host-emscripten-runtime = { group = "at.released.weh", name = "emscripten-runtime", version.ref = "wasi-emscripten-host" }
@@ -104,6 +105,7 @@ agp-plugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 agp-plugin-api = { module = "com.android.tools.build:gradle-api", version.ref = "agp" }
 androidx-room-plugin = { group = "androidx.room", name = "androidx.room.gradle.plugin", version.ref = "androidx-room" }
 atomicfu-plugin = { group = "org.jetbrains.kotlinx", name = "atomicfu-gradle-plugin", version.ref = "atomicfu" }
+cassettes-plugin = { module = "at.released.cassettes:cassettes-plugin", version.ref = "cassettes" }
 detekt-formatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "detekt" }
 detekt-plugin = { group = "io.gitlab.arturbosch.detekt", name = "detekt-gradle-plugin", version.ref = "detekt" }
 diktat-plugin = { group = "com.saveourtool.diktat", name = "diktat-gradle-plugin", version.ref = "diktat" }

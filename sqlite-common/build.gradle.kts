@@ -30,12 +30,12 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(libs.kotlinx.io)
+            implementation(libs.cassettes.playhead)
             api(projects.commonApi)
             implementation(projects.commonLock)
             api(libs.wasi.emscripten.host)
             api(libs.wasi.emscripten.host.wasm.core)
             implementation(libs.wasi.emscripten.host.common.util)
-            api(libs.wsoh.binary.reader)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))

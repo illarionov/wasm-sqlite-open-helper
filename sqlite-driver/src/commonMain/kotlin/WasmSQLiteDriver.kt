@@ -9,8 +9,8 @@
 package ru.pixnews.wasm.sqlite.driver
 
 import androidx.sqlite.SQLiteDriver
+import at.released.cassettes.playhead.AssetManager
 import at.released.weh.common.api.Logger
-import ru.pixnews.wasm.sqlite.binary.reader.WasmSourceReader
 import ru.pixnews.wasm.sqlite.driver.dsl.OpenParamsBlock
 import ru.pixnews.wasm.sqlite.driver.dsl.WasmSqliteDriverConfigBlock
 import ru.pixnews.wasm.sqlite.driver.internal.WasmSqliteDriverImpl
@@ -34,19 +34,19 @@ public fun <E : SqliteEmbedderConfig, R : SqliteRuntime> WasmSQLiteDriver(
     block: WasmSqliteDriverConfigBlock<E>.() -> Unit = {},
 ): WasmSQLiteDriver<R> = WasmSQLiteDriver(
     embedder = embedder,
-    defaultWasmSourceReader = WasmSourceReader,
+    defaultWasmSourceReader = AssetManager,
     block = block,
 )
 
 internal fun <E : SqliteEmbedderConfig, R : SqliteRuntime> WasmSQLiteDriver(
     embedder: SqliteEmbedder<E, R>,
-    defaultWasmSourceReader: WasmSourceReader,
+    defaultWasmSourceReader: AssetManager,
     block: WasmSqliteDriverConfigBlock<E>.() -> Unit = {},
 ): WasmSQLiteDriver<R> {
     val config = WasmSqliteDriverConfigBlock<E>().apply(block)
     val rootCommonConfig = object : WasmSqliteCommonConfig {
         override val logger: Logger = config.logger
-        override val wasmReader: WasmSourceReader = defaultWasmSourceReader
+        override val wasmReader: AssetManager = defaultWasmSourceReader
     }
     val debugConfig = WasmSqliteDebugConfigBlock().apply { config.debugConfigBlock(this) }.build(rootCommonConfig)
     val embedderLogger = debugConfig.getOrCreateDefault(EmbedderHostLogger)
@@ -74,7 +74,7 @@ internal fun <E : SqliteEmbedderConfig, R : SqliteRuntime> WasmSQLiteDriver(
 private fun <E : SqliteEmbedderConfig, R : SqliteRuntime> createEmbedder(
     embedder: SqliteEmbedder<E, R>,
     embedderLogger: EmbedderHostLogger,
-    embedderReader: WasmSourceReader,
+    embedderReader: AssetManager,
     embedderConfig: E.() -> Unit,
 ): SqliteRuntimeInternal<R> {
     val embedderCommonConfig = object : WasmSqliteCommonConfig {
@@ -83,7 +83,7 @@ private fun <E : SqliteEmbedderConfig, R : SqliteRuntime> createEmbedder(
         } else {
             Logger
         }
-        override val wasmReader: WasmSourceReader = embedderReader
+        override val wasmReader: AssetManager = embedderReader
     }
 
     return embedder.createRuntime(

@@ -69,6 +69,7 @@
          <trusted-key id="8756C4F765C9AC3CB6B85D62379CE192D401AB61" group="com.diffplug.durian"/>
          <trusted-key id="8A10792983023D5D14C93B488D7F1BEC1E2ECAE7" group="^com[.]fasterxml($|([.].*))" regex="true"/>
          <trusted-key id="8AB4B1AB3F0067ED73E00F0062C98BA8FCF62075">
+            <trusting group="at.released.cassettes"/>
             <trusting group="at.released.weh"/>
             <trusting group="ru.pixnews.wasm-sqlite-open-helper"/>
          </trusted-key>
@@ -110,6 +111,11 @@
       </trusted-keys>
    </configuration>
    <components>
+      <component group="at.released.cassettes" name="cassettes-plugin" version="0.1-alpha01">
+         <artifact name="cassettes-plugin-0.1-alpha01.jar">
+            <pgp value="8AB4B1AB3F0067ED73E00F0062C98BA8FCF62075"/>
+         </artifact>
+      </component>
       <component group="com.beust" name="jcommander" version="1.82">
          <artifact name="jcommander-1.82.jar">
             <pgp value="C70B844F002F21F6D2B9C87522E44AC0622B91C3"/>

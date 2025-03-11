@@ -15,6 +15,5 @@ fun RepositoryHandler.chicoryMavenLocal() = mavenLocal {
     name = "ChicoryMavenLocal"
     mavenContent {
         includeGroup("com.dylibso.chicory")
-        snapshotsOnly()
     }
 }

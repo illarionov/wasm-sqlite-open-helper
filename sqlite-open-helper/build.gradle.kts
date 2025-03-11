@@ -86,7 +86,7 @@ kotlin {
 
         commonMain.dependencies {
             api(projects.commonApi)
-            implementation(libs.wsoh.binary.reader)
+            api(libs.cassettes.playhead)
             api(projects.sqliteCommon)
             implementation(projects.commonCleaner)
             implementation(projects.commonLock)

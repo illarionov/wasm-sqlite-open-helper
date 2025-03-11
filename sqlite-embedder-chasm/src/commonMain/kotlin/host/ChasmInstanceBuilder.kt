@@ -6,6 +6,9 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chasm.host
 
+import at.released.cassettes.base.AssetUrl
+import at.released.cassettes.playhead.AssetManager
+import at.released.cassettes.playhead.readOrThrow
 import at.released.weh.bindings.chasm.ChasmEmscriptenHostBuilder
 import at.released.weh.bindings.chasm.memory.ChasmMemoryAdapter
 import at.released.weh.host.EmbedderHost
@@ -35,8 +38,6 @@ import io.github.charlietap.chasm.stream.SourceReader
 import kotlinx.io.RawSource
 import kotlinx.io.buffered
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
-import ru.pixnews.wasm.sqlite.binary.reader.WasmSourceReader
-import ru.pixnews.wasm.sqlite.binary.reader.readOrThrow
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.orThrow
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.exception.ChasmErrorException
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.exception.ChasmException
@@ -54,7 +55,7 @@ internal class ChasmInstanceBuilder(
     private val host: EmbedderHost,
     private val callbackStore: SqliteCallbackStore,
     private val sqlite3Binary: WasmSqliteConfiguration,
-    private val sourceReader: WasmSourceReader,
+    private val sourceReader: AssetManager,
 ) {
     fun setupChasmInstance(): ChasmInstance {
         val store: Store = store()
@@ -80,16 +81,17 @@ internal class ChasmInstanceBuilder(
             addAll(sqliteCallbacksHostFunctions)
         }
 
-        val sqliteModule: Module = sourceReader.readOrThrow(sqlite3Binary.sqliteUrl) { source: RawSource, _ ->
-            val sourceReader: SourceReader = source.buffered().toChasmSourceReader()
-            module(sourceReader = sourceReader)
-                .fold(
-                    onSuccess = { Result.success(it) },
-                    onError = { error: DecodeError ->
-                        Result.failure(ChasmErrorException(error, "Can not decode $sqlite3Binary; $error"))
-                    },
-                )
-        }
+        val sqliteModule: Module =
+            sourceReader.readOrThrow(AssetUrl(sqlite3Binary.sqliteUrl.url)) { source: RawSource, _ ->
+                val sourceReader: SourceReader = source.buffered().toChasmSourceReader()
+                module(sourceReader = sourceReader)
+                    .fold(
+                        onSuccess = { Result.success(it) },
+                        onError = { error: DecodeError ->
+                            Result.failure(ChasmErrorException(error, "Can not decode $sqlite3Binary; $error"))
+                        },
+                    )
+            }
 
         val instance: Instance = instance(
             store = store,
@@ -131,12 +133,12 @@ internal class ChasmInstanceBuilder(
         val oldSize = table.elements.size
         table.grow(callbackHostFunctions.size, ReferenceValue.Function(Address.Function(0)))
         val indirectIndexes = callbackHostFunctions.mapIndexed { index: Int, import: ChasmImport ->
-                val hostFunction = SqliteCallbacksModuleFunction.byWasmName.getValue(import.entityName)
-                val indirectIndex = oldSize + index
-                val functionAddress = (import.value as Function).reference.address
-                table.elements[indirectIndex] = ReferenceValue.Function(functionAddress).toLong()
-                hostFunction to IndirectFunctionTableIndex(indirectIndex)
-            }.toMap()
+            val hostFunction = SqliteCallbacksModuleFunction.byWasmName.getValue(import.entityName)
+            val indirectIndex = oldSize + index
+            val functionAddress = (import.value as Function).reference.address
+            table.elements[indirectIndex] = ReferenceValue.Function(functionAddress).toLong()
+            hostFunction to IndirectFunctionTableIndex(indirectIndex)
+        }.toMap()
 
         return ChasmSqliteCallbackFunctionIndexes(indirectIndexes)
     }
