@@ -6,6 +6,9 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm
 
+import at.released.cassettes.base.AssetUrl
+import at.released.cassettes.playhead.AssetManager
+import at.released.cassettes.playhead.readBytesOrThrow
 import at.released.weh.bindings.graalvm241.GraalvmEmscriptenEnvironment
 import at.released.weh.bindings.graalvm241.GraalvmHostFunctionInstaller
 import at.released.weh.bindings.graalvm241.host.pthread.ManagedThreadInitializer
@@ -22,8 +25,6 @@ import org.graalvm.polyglot.Engine
 import org.graalvm.polyglot.Source
 import org.graalvm.polyglot.io.ByteSequence
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
-import ru.pixnews.wasm.sqlite.binary.reader.WasmSourceReader
-import ru.pixnews.wasm.sqlite.binary.reader.readBytesOrThrow
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderRuntimeInfo
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.GraalvmSqliteCallbackFunctionIndexes
@@ -34,7 +35,7 @@ internal class GraalvmEmbedderBuilder(
     private val graalvmEngine: Engine,
     private val host: EmbedderHost,
     private val sqlite3Binary: WasmSqliteConfiguration,
-    private val wasmSourceReader: WasmSourceReader,
+    private val wasmSourceReader: AssetManager,
 ) {
     val logger = host.rootLogger
     private val sqliteSource: Source by lazy(LazyThreadSafetyMode.NONE) {
@@ -42,7 +43,7 @@ internal class GraalvmEmbedderBuilder(
         val builder = if (rawUrl.startsWith("jar:")) {
             Source.newBuilder("wasm", URI(rawUrl).toURL())
         } else {
-            val bytes = wasmSourceReader.readBytesOrThrow(sqlite3Binary.sqliteUrl)
+            val bytes = wasmSourceReader.readBytesOrThrow(AssetUrl(sqlite3Binary.sqliteUrl.url))
             Source.newBuilder("wasm", ByteSequence.create(bytes), SQLITE3_SOURCE_NAME)
         }
         builder

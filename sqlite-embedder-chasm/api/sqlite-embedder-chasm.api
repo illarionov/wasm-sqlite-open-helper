@@ -8,10 +8,10 @@ public final class ru/pixnews/wasm/sqlite/open/helper/chasm/ChasmSqliteEmbedder 
 public final class ru/pixnews/wasm/sqlite/open/helper/chasm/ChasmSqliteEmbedderConfig : ru/pixnews/wasm/sqlite/open/helper/embedder/SqliteEmbedderConfig {
 	public final fun getHost ()Lat/released/weh/host/EmbedderHost;
 	public final fun getSqlite3Binary ()Lru/pixnews/wasm/sqlite/binary/base/WasmSqliteConfiguration;
-	public final fun getWasmSourceReader ()Lru/pixnews/wasm/sqlite/binary/reader/WasmSourceReader;
+	public final fun getWasmSourceReader ()Lat/released/cassettes/playhead/AssetManager;
 	public final fun setHost (Lat/released/weh/host/EmbedderHost;)V
 	public final fun setSqlite3Binary (Lru/pixnews/wasm/sqlite/binary/base/WasmSqliteConfiguration;)V
-	public final fun setWasmSourceReader (Lru/pixnews/wasm/sqlite/binary/reader/WasmSourceReader;)V
+	public final fun setWasmSourceReader (Lat/released/cassettes/playhead/AssetManager;)V
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/chasm/host/exception/ChasmErrorException : ru/pixnews/wasm/sqlite/open/helper/chasm/host/exception/ChasmException {

@@ -6,10 +6,10 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chasm
 
+import at.released.cassettes.playhead.AssetManager
 import at.released.weh.host.EmbedderHost
 import at.released.weh.wasm.core.memory.Memory
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
-import ru.pixnews.wasm.sqlite.binary.reader.WasmSourceReader
 import ru.pixnews.wasm.sqlite.open.helper.chasm.exports.ChasmSqliteExports
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.ChasmInstanceBuilder
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.ChasmInstanceBuilder.ChasmInstance
@@ -49,7 +49,7 @@ public object ChasmSqliteEmbedder : SqliteEmbedder<ChasmSqliteEmbedderConfig, Ch
     private fun createChasmSqliteWasmEnvironment(
         host: EmbedderHost,
         sqlite3Binary: WasmSqliteConfiguration,
-        sourceReader: WasmSourceReader,
+        sourceReader: AssetManager,
     ): SqliteRuntimeInternal<ChasmRuntime> {
         require(!sqlite3Binary.requireThreads) {
             "The specified SQLite binary is compiled with threading support, which is not compatible with the " +

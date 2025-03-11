@@ -6,11 +6,11 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chasm
 
+import at.released.cassettes.playhead.AssetManager
 import at.released.weh.common.api.Logger
 import at.released.weh.host.EmbedderHost
 import ru.pixnews.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcu349
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
-import ru.pixnews.wasm.sqlite.binary.reader.WasmSourceReader
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 
@@ -20,7 +20,7 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 @WasmSqliteOpenHelperDsl
 public class ChasmSqliteEmbedderConfig internal constructor(
     rootLogger: Logger,
-    defaultWasmSourceReader: WasmSourceReader,
+    defaultWasmSourceReader: AssetManager,
 ) : SqliteEmbedderConfig {
     /**
      * Used Sqlite WebAssembly binary file
@@ -34,7 +34,7 @@ public class ChasmSqliteEmbedderConfig internal constructor(
      * or [LinuxWasmSourceReader][ru.pixnews.wasm.sqlite.binary.reader.LinuxWasmSourceReader] for examples of custom
      * implementations.
      */
-    public var wasmSourceReader: WasmSourceReader = defaultWasmSourceReader
+    public var wasmSourceReader: AssetManager = defaultWasmSourceReader
 
     /**
      * Implementation of a host object that provides access from the WebAssembly to external host resources.

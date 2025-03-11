@@ -30,7 +30,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(projects.sqliteCommon)
-            api(libs.wsoh.binary.reader)
+            api(libs.cassettes.playhead)
             implementation(libs.chasm)
             compileOnly(libs.chasm.runtime.internal)
             implementation(libs.wasi.emscripten.host.chasm.emscripten)

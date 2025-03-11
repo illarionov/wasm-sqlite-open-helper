@@ -22,7 +22,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(projects.sqliteCommon)
-            api(libs.wsoh.binary.reader)
+            api(libs.cassettes.playhead)
             implementation(libs.wasi.emscripten.host.chicory.emscripten)
             implementation(libs.wasi.emscripten.host.chicory.wasip1)
             implementation(libs.wasi.emscripten.host.emscripten.runtime)

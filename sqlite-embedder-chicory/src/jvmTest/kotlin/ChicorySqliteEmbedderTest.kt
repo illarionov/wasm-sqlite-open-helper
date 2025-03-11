@@ -8,8 +8,8 @@ package ru.pixnews.wasm.sqlite.open.helper.chicory
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import at.released.cassettes.playhead.AssetManager
 import at.released.weh.common.api.Logger
-import ru.pixnews.wasm.sqlite.binary.reader.WasmSourceReader
 import ru.pixnews.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
 import kotlin.test.Test
 
@@ -18,9 +18,9 @@ class ChicorySqliteEmbedderTest {
     fun wasmSourceReader_should_Be_possible_to_override() {
         val commonConfig = object : WasmSqliteCommonConfig {
             override val logger: Logger = Logger
-            override val wasmReader: WasmSourceReader = WasmSourceReader
+            override val wasmReader: AssetManager = AssetManager
         }
-        val newReader = WasmSourceReader { emptyList() }
+        val newReader = AssetManager { emptyList() }
 
         val configBuilder: ChicorySqliteEmbedderConfig.() -> Unit = {
             wasmSourceReader = newReader

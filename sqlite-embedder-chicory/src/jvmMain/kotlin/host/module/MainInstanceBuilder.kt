@@ -8,6 +8,9 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chicory.host.module
 
+import at.released.cassettes.base.AssetUrl
+import at.released.cassettes.playhead.AssetManager
+import at.released.cassettes.playhead.readOrThrow
 import at.released.weh.bindings.chicory.ChicoryEmscriptenHostInstaller
 import at.released.weh.bindings.chicory.memory.ChicoryMemoryAdapter
 import at.released.weh.bindings.chicory.memory.ChicoryMemoryProvider
@@ -28,8 +31,6 @@ import com.dylibso.chicory.wasm.types.MemoryLimits
 import kotlinx.io.asInputStream
 import kotlinx.io.buffered
 import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
-import ru.pixnews.wasm.sqlite.binary.reader.WasmSourceReader
-import ru.pixnews.wasm.sqlite.binary.reader.readOrThrow
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.sqlitecb.SqliteCallbacksFunctionsBuilder
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.sqlitecb.SqliteCallbacksFunctionsBuilder.Companion.setupIndirectFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
@@ -40,7 +41,7 @@ internal class MainInstanceBuilder(
     private val host: EmbedderHost,
     private val callbackStore: SqliteCallbackStore,
     private val sqlite3Binary: WasmSqliteConfiguration,
-    private val wasmSourceReader: WasmSourceReader,
+    private val wasmSourceReader: AssetManager,
     private val machineFactory: ((Instance) -> Machine)?,
 ) {
     fun setupModule(): ChicoryInstance {
@@ -73,13 +74,14 @@ internal class MainInstanceBuilder(
             .addMemory(ImportMemory(ENV_MODULE_NAME, "memory", chicoryMemory))
             .build()
 
-        val sqlite3Module: WasmModule = wasmSourceReader.readOrThrow(sqlite3Binary.sqliteUrl) { source, _ ->
-            runCatching {
-                source.buffered().asInputStream().use { sourceStream: InputStream ->
-                    Parser.parse(sourceStream)
+        val sqlite3Module: WasmModule =
+            wasmSourceReader.readOrThrow(AssetUrl(sqlite3Binary.sqliteUrl.url)) { source, _ ->
+                runCatching {
+                    source.buffered().asInputStream().use { sourceStream: InputStream ->
+                        Parser.parse(sourceStream)
+                    }
                 }
             }
-        }
 
         val instance = Instance
             .builder(sqlite3Module)
