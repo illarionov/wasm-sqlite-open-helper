@@ -26,7 +26,7 @@ object ChasmAppleSqliteDriverFactory : TestSqliteDriverFactory<WasmSQLiteDriver<
             defaultNativeTestSqliteDriverConfig(dbLogger)
             embedder {
                 this.sqlite3Binary = sqlite3Binary
-                this.wasmSourceReader = AppleNsBundleAssetManager()
+                this.wasmSourceReader = AppleNsBundleAssetManager(wshohResourcesRoot = "cassettes")
             }
         }
     }
