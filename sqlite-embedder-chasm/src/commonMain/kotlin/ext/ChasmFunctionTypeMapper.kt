@@ -12,10 +12,10 @@ import at.released.weh.wasm.core.WasmValueTypes.F32
 import at.released.weh.wasm.core.WasmValueTypes.F64
 import at.released.weh.wasm.core.WasmValueTypes.I32
 import at.released.weh.wasm.core.WasmValueTypes.I64
-import io.github.charlietap.chasm.ast.type.NumberType
-import io.github.charlietap.chasm.ast.type.ResultType
-import io.github.charlietap.chasm.ast.type.ValueType
-import io.github.charlietap.chasm.ast.type.FunctionType as ChasmFunctionType
+import io.github.charlietap.chasm.type.NumberType
+import io.github.charlietap.chasm.type.ResultType
+import io.github.charlietap.chasm.type.ValueType
+import io.github.charlietap.chasm.type.FunctionType as ChasmFunctionType
 
 internal fun List<HostFunctionType>.toChasmFunctionTypes(): Map<HostFunctionType, ChasmFunctionType> = associateWith(
     HostFunctionType::toChasmFunctionType,

@@ -15,7 +15,7 @@ androidx-test-rules = "1.6.1"
 atomicfu = "0.27.0"
 arrow = "2.0.1"
 assertk = "0.28.1"
-chasm = "0.9.53"
+chasm = "0.9.61"
 cassettes = "0.1-alpha01"
 chicory = "1.1.1"
 desugar_jdk_libs = "2.1.5"
@@ -33,8 +33,8 @@ kermit = "2.0.5"
 ksp = "2.1.10-1.0.31"
 mockk = "1.13.17"
 spotless = "7.0.2"
-sqlite-wasm-binary = "0.6"
-wasi-emscripten-host = "0.3"
+sqlite-wasm-binary = "0.7"
+wasi-emscripten-host = "0.4"
 
 [libraries]
 androidx-collection = { group = "androidx.collection", name = "collection", version.ref = "androidx-collection" }
@@ -58,7 +58,7 @@ atomicfu = { group = "org.jetbrains.kotlinx", name = "atomicfu", version.ref = "
 assertk = { group = "com.willowtreeapps.assertk", name = "assertk", version.ref = "assertk" }
 cassettes-playhead = { group = "at.released.cassettes", name = "cassettes-playhead", version.ref = "cassettes" }
 chasm = { group = "io.github.charlietap.chasm", name = "chasm", version.ref = "chasm" }
-chasm-runtime-internal = { group = "io.github.charlietap.chasm", name = "runtime-internal", version.ref = "chasm" }
+chasm-runtime-core = { group = "io.github.charlietap.chasm", name = "core", version.ref = "chasm" }
 chicory-runtime = { group = "com.dylibso.chicory", name = "runtime", version.ref = "chicory" }
 chicory-aot = { group = "com.dylibso.chicory", name = "aot-experimental", version.ref = "chicory" }
 chicory-log = { group = "com.dylibso.chicory", name = "log", version.ref = "chicory" }
@@ -80,13 +80,13 @@ kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-cor
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinx-datetime" }
 kotlinx-io = { group = "org.jetbrains.kotlinx", name = "kotlinx-io-core", version.ref = "kotlinx-io" }
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
-wsoh-sqlite-mt = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-android-wasm-emscripten-icu-mt-pthread-349", version.ref = "sqlite-wasm-binary" }
-wsoh-sqlite-st = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-android-wasm-emscripten-icu-349", version.ref = "sqlite-wasm-binary" }
-wsoh-sqlite-st-aot = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-android-wasm-emscripten-icu-aot-349-jvm", version.ref = "sqlite-wasm-binary" }
-wsoh-sqlite-mt-plain = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-wasm-emscripten-mt-pthread-349", version.ref = "sqlite-wasm-binary" }
-wsoh-sqlite-st-plain = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-wasm-emscripten-349", version.ref = "sqlite-wasm-binary" }
-wsoh-sqlite-st-plain-aot = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-wasm-emscripten-aot-349-jvm", version.ref = "sqlite-wasm-binary" }
-wsoh-binary-base = { group = "ru.pixnews.wasm-sqlite-open-helper", name = "sqlite-binary-api", version.ref = "sqlite-wasm-binary" }
+wsoh-sqlite-mt = { group = "at.released.wasm-sqlite-driver", name = "sqlite-android-wasm-emscripten-icu-mt-pthread-349", version.ref = "sqlite-wasm-binary" }
+wsoh-sqlite-st = { group = "at.released.wasm-sqlite-driver", name = "sqlite-android-wasm-emscripten-icu-349", version.ref = "sqlite-wasm-binary" }
+wsoh-sqlite-st-aot = { group = "at.released.wasm-sqlite-driver", name = "sqlite-android-wasm-emscripten-icu-aot-349-jvm", version.ref = "sqlite-wasm-binary" }
+wsoh-sqlite-mt-plain = { group = "at.released.wasm-sqlite-driver", name = "sqlite-wasm-emscripten-mt-pthread-349", version.ref = "sqlite-wasm-binary" }
+wsoh-sqlite-st-plain = { group = "at.released.wasm-sqlite-driver", name = "sqlite-wasm-emscripten-349", version.ref = "sqlite-wasm-binary" }
+wsoh-sqlite-st-plain-aot = { group = "at.released.wasm-sqlite-driver", name = "sqlite-wasm-emscripten-aot-349-jvm", version.ref = "sqlite-wasm-binary" }
+wsoh-binary-base = { group = "at.released.wasm-sqlite-driver", name = "sqlite-binary-api", version.ref = "sqlite-wasm-binary" }
 wasi-emscripten-host = { group = "at.released.weh", name = "host", version.ref = "wasi-emscripten-host" }
 wasi-emscripten-host-common-util = { group = "at.released.weh", name = "common-util", version.ref = "wasi-emscripten-host" }
 wasi-emscripten-host-emscripten-runtime = { group = "at.released.weh", name = "emscripten-runtime", version.ref = "wasi-emscripten-host" }

@@ -9,10 +9,10 @@ package ru.pixnews.wasm.sqlite.open.helper.test.base
 import android.content.ContextWrapper
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import androidx.sqlite.db.SupportSQLiteOpenHelper.Configuration
+import at.released.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import at.released.weh.test.logger.TestLogger
 import co.touchlab.kermit.Severity
 import co.touchlab.kermit.Severity.Info
-import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import java.io.File
 

@@ -11,6 +11,7 @@ package ru.pixnews.wasm.sqlite.open.helper.chicory.host.module
 import at.released.cassettes.base.AssetUrl
 import at.released.cassettes.playhead.AssetManager
 import at.released.cassettes.playhead.readOrThrow
+import at.released.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import at.released.weh.bindings.chicory.ChicoryEmscriptenHostInstaller
 import at.released.weh.bindings.chicory.memory.ChicoryMemoryAdapter
 import at.released.weh.bindings.chicory.memory.ChicoryMemoryProvider
@@ -30,7 +31,6 @@ import com.dylibso.chicory.wasm.WasmModule
 import com.dylibso.chicory.wasm.types.MemoryLimits
 import kotlinx.io.asInputStream
 import kotlinx.io.buffered
-import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.sqlitecb.SqliteCallbacksFunctionsBuilder
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.sqlitecb.SqliteCallbacksFunctionsBuilder.Companion.setupIndirectFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore

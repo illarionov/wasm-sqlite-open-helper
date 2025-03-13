@@ -7,8 +7,8 @@
 package ru.pixnews.wasm.sqlite.driver.test.base.tests
 
 import androidx.sqlite.SQLiteDriver
+import at.released.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import at.released.weh.common.api.Logger
-import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 
 public interface TestSqliteDriverFactory<out S : SQLiteDriver> {
     public val defaultSqliteBinary: WasmSqliteConfiguration

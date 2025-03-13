@@ -6,7 +6,6 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.gradle.settings
 
-import ru.pixnews.wasm.sqlite.open.helper.gradle.settings.repository.chicoryMavenLocal
 import ru.pixnews.wasm.sqlite.open.helper.gradle.settings.repository.googleFiltered
 import ru.pixnews.wasm.sqlite.open.helper.gradle.settings.repository.pixnewsMaven
 import ru.pixnews.wasm.sqlite.open.helper.gradle.settings.repository.pixnewsMavenLocal
@@ -42,7 +41,6 @@ pluginManagement {
 dependencyResolutionManagement {
     repositories {
         pixnewsMavenLocal()
-        chicoryMavenLocal()
         mavenCentral()
         googleFiltered()
         pixnewsMaven()

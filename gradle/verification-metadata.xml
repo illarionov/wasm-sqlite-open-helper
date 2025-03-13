@@ -70,6 +70,7 @@
          <trusted-key id="8A10792983023D5D14C93B488D7F1BEC1E2ECAE7" group="^com[.]fasterxml($|([.].*))" regex="true"/>
          <trusted-key id="8AB4B1AB3F0067ED73E00F0062C98BA8FCF62075">
             <trusting group="at.released.cassettes"/>
+            <trusting group="at.released.wasm-sqlite-driver"/>
             <trusting group="at.released.weh"/>
             <trusting group="ru.pixnews.wasm-sqlite-open-helper"/>
          </trusted-key>
