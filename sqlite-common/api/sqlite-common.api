@@ -34,7 +34,6 @@ public final class ru/pixnews/wasm/sqlite/open/helper/UintBitMaskKt {
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/WasmPtr {
-	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/WasmPtr$Companion;
 	public static final field WASM_SIZEOF_PTR I
 	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/WasmPtr;
 	public static fun constructor-impl (I)I
@@ -49,16 +48,6 @@ public final class ru/pixnews/wasm/sqlite/open/helper/WasmPtr {
 	public final synthetic fun unbox-impl ()I
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/WasmPtr$Companion {
-	public final fun cNull-7DTMQRQ ()I
-	public final fun getC_NULL-7DTMQRQ ()I
-}
-
-public final class ru/pixnews/wasm/sqlite/open/helper/WasmPtrKt {
-	public static final fun isNull-MkiKMww (I)Z
-	public static final fun plus-zXPCc-s (II)I
-}
-
 public abstract interface annotation class ru/pixnews/wasm/sqlite/open/helper/WasmSqliteOpenHelperDsl : java/lang/annotation/Annotation {
 }
 
@@ -66,7 +55,6 @@ public final class ru/pixnews/wasm/sqlite/open/helper/debug/EmbedderHostLogger :
 	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/debug/EmbedderHostLogger$Companion;
 	public synthetic fun <init> (Lat/released/weh/common/api/Logger;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getEnabled ()Z
-	public fun getKey ()Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Key;
 	public final fun getLogger ()Lat/released/weh/common/api/Logger;
 	public final fun setEnabled (Z)V
 	public final fun setLogger (Lat/released/weh/common/api/Logger;)V
@@ -81,7 +69,6 @@ public final class ru/pixnews/wasm/sqlite/open/helper/debug/SqliteErrorLogger : 
 	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/debug/SqliteErrorLogger$Companion;
 	public synthetic fun <init> (Lkotlin/jvm/functions/Function2;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getEnabled ()Z
-	public fun getKey ()Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Key;
 	public final fun getLogger ()Lkotlin/jvm/functions/Function2;
 	public final fun setEnabled (Z)V
 	public final fun setLogger (Lkotlin/jvm/functions/Function2;)V
@@ -97,7 +84,6 @@ public final class ru/pixnews/wasm/sqlite/open/helper/debug/SqliteStatementLogge
 	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/debug/SqliteStatementLogger$Companion;
 	public synthetic fun <init> (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getEnabled ()Z
-	public fun getKey ()Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Key;
 	public final fun getLogger ()Lkotlin/jvm/functions/Function1;
 	public final fun setEnabled (Z)V
 	public final fun setLogger (Lkotlin/jvm/functions/Function1;)V
@@ -136,7 +122,6 @@ public final class ru/pixnews/wasm/sqlite/open/helper/debug/SqliteStatementProfi
 	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/debug/SqliteStatementProfileLogger$Companion;
 	public synthetic fun <init> (Lkotlin/jvm/functions/Function3;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getEnabled ()Z
-	public fun getKey ()Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Key;
 	public final fun getLogger ()Lkotlin/jvm/functions/Function3;
 	public final fun setEnabled (Z)V
 	public final fun setLogger (Lkotlin/jvm/functions/Function3;)V
@@ -148,21 +133,9 @@ public final class ru/pixnews/wasm/sqlite/open/helper/debug/SqliteStatementProfi
 	public final fun createStatementLogger (Lat/released/weh/common/api/Logger;)Lkotlin/jvm/functions/Function3;
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfig {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/embedder/WasmSqliteCommonConfig;Ljava/util/Map;)V
-	public final fun getOrCreateDefault (Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Key;)Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugFeature;
-}
-
 public final class ru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock {
-	public fun <init> ()V
-	public final fun build (Lru/pixnews/wasm/sqlite/open/helper/embedder/WasmSqliteCommonConfig;)Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfig;
 	public final fun set (Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Key;Lkotlin/jvm/functions/Function1;)V
 	public static synthetic fun set$default (Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock;Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Key;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
-}
-
-public abstract interface class ru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Factory {
-	public abstract fun create (Lru/pixnews/wasm/sqlite/open/helper/embedder/WasmSqliteCommonConfig;Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Factory$Type;)Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugFeature;
-	public static synthetic fun create$default (Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Factory;Lru/pixnews/wasm/sqlite/open/helper/embedder/WasmSqliteCommonConfig;Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Factory$Type;ILjava/lang/Object;)Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugFeature;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Factory$Type : java/lang/Enum {
@@ -181,7 +154,6 @@ public abstract interface class ru/pixnews/wasm/sqlite/open/helper/debug/WasmSql
 }
 
 public abstract interface class ru/pixnews/wasm/sqlite/open/helper/embedder/SqliteEmbedder {
-	public abstract fun createRuntime (Lru/pixnews/wasm/sqlite/open/helper/embedder/WasmSqliteCommonConfig;Lkotlin/jvm/functions/Function1;)Lru/pixnews/wasm/sqlite/open/helper/embedder/SqliteRuntimeInternal;
 }
 
 public abstract interface class ru/pixnews/wasm/sqlite/open/helper/embedder/SqliteEmbedderConfig {
@@ -193,29 +165,6 @@ public abstract interface class ru/pixnews/wasm/sqlite/open/helper/embedder/Sqli
 
 public abstract interface class ru/pixnews/wasm/sqlite/open/helper/embedder/SqliteRuntime {
 	public abstract fun getEmbedderInfo ()Lru/pixnews/wasm/sqlite/open/helper/embedder/SqliteEmbedderRuntimeInfo;
-}
-
-public abstract interface class ru/pixnews/wasm/sqlite/open/helper/embedder/SqliteRuntimeInternal : java/lang/AutoCloseable {
-	public abstract fun getCallbackFunctionIndexes ()Lru/pixnews/wasm/sqlite/open/helper/embedder/functiontable/SqliteCallbackFunctionIndexes;
-	public abstract fun getCallbackStore ()Lru/pixnews/wasm/sqlite/open/helper/embedder/callback/SqliteCallbackStore;
-	public abstract fun getMemory ()Lat/released/weh/wasm/core/memory/Memory;
-	public abstract fun getRuntimeInstance ()Lru/pixnews/wasm/sqlite/open/helper/embedder/SqliteRuntime;
-	public abstract fun getSqliteExports ()Lru/pixnews/wasm/sqlite/open/helper/embedder/exports/SqliteExports;
-}
-
-public abstract interface class ru/pixnews/wasm/sqlite/open/helper/embedder/WasmSqliteCommonConfig {
-	public abstract fun getLogger ()Lat/released/weh/common/api/Logger;
-	public abstract fun getWasmReader ()Lat/released/cassettes/playhead/AssetManager;
-}
-
-public abstract interface class ru/pixnews/wasm/sqlite/open/helper/embedder/callback/SqliteCallbackStore {
-	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/embedder/callback/SqliteCallbackStore$Companion;
-	public abstract fun getSqlite3Comparators ()Lru/pixnews/wasm/sqlite/open/helper/embedder/callback/SqliteCallbackStore$SqliteCallbackIdMap;
-	public abstract fun getSqlite3ExecCallbacks ()Lru/pixnews/wasm/sqlite/open/helper/embedder/callback/SqliteCallbackStore$SqliteCallbackIdMap;
-	public abstract fun getSqlite3LogCallback ()Lkotlin/jvm/functions/Function2;
-	public abstract fun getSqlite3ProgressCallbacks ()Lru/pixnews/wasm/sqlite/open/helper/embedder/callback/SqliteCallbackStore$SqliteCallbackMap;
-	public abstract fun getSqlite3TraceCallbacks ()Lru/pixnews/wasm/sqlite/open/helper/embedder/callback/SqliteCallbackStore$SqliteCallbackMap;
-	public abstract fun setSqlite3LogCallback (Lkotlin/jvm/functions/Function2;)V
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/embedder/callback/SqliteCallbackStore$Companion {
@@ -266,97 +215,10 @@ public final class ru/pixnews/wasm/sqlite/open/helper/embedder/callback/SqliteCa
 	public final synthetic fun unbox-impl ()I
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/embedder/exports/SinglePropertyLazyValue {
-	public fun <init> (Lkotlin/jvm/functions/Function1;)V
-	public final fun get (Lkotlin/reflect/KProperty;)Ljava/lang/Object;
-}
-
-public abstract interface class ru/pixnews/wasm/sqlite/open/helper/embedder/exports/SqliteDynamicMemoryExports {
-	public abstract fun sqliteAllocOrThrow-Co-x1YQ (I)I
-	public abstract fun sqliteFree-MkiKMww (I)V
-}
-
-public final class ru/pixnews/wasm/sqlite/open/helper/embedder/exports/SqliteDynamicMemoryExportsKt {
-	public static final fun sqliteFreeSilent-yL9-y2A (Lru/pixnews/wasm/sqlite/open/helper/embedder/exports/SqliteDynamicMemoryExports;I)Ljava/lang/Object;
-}
-
-public abstract interface class ru/pixnews/wasm/sqlite/open/helper/embedder/exports/SqliteExports {
-	public abstract fun getMemoryExports ()Lru/pixnews/wasm/sqlite/open/helper/embedder/exports/SqliteDynamicMemoryExports;
-	public abstract fun getRegister_android_functions ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getRegister_localized_collators ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3__wasm_config_i ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3__wasm_config_ii ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3__wasm_config_j ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3__wasm_db_config_ip ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3__wasm_db_config_pii ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3__wasm_db_config_s ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3__wasm_enum_json ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3_bind_blob ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3_bind_double ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3_bind_int64 ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3_bind_null ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3_bind_parameter_count ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3_bind_text ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3_busy_timeout ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3_changes ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3_clear_bindings ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3_close_v2 ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3_column_bytes ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3_column_count ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3_column_double ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3_column_int64 ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3_column_name ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3_column_text ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3_column_type ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3_db_readonly ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3_db_status ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3_errcode ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3_errmsg ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3_expanded_sql ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3_extended_errcode ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3_finalize ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3_initialize ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3_last_insert_rowid ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3_libversion ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3_libversion_number ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3_open ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3_open_v2 ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3_prepare_v2 ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3_progress_handler ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3_reset ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3_soft_heap_limit64 ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3_sourceid ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3_step ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3_stmt_readonly ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-	public abstract fun getSqlite3_trace_v2 ()Lat/released/weh/wasm/core/WasmFunctionBinding;
-}
-
-public final class ru/pixnews/wasm/sqlite/open/helper/embedder/exports/SqliteMemoryExportsExtKt {
-	public static final fun allocNullTerminatedString (Lru/pixnews/wasm/sqlite/open/helper/embedder/exports/SqliteDynamicMemoryExports;Lat/released/weh/wasm/core/memory/Memory;Ljava/lang/String;)I
-}
-
-public final class ru/pixnews/wasm/sqlite/open/helper/embedder/functiontable/IndirectFunctionTableIndex {
-	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/embedder/functiontable/IndirectFunctionTableIndex;
-	public static fun constructor-impl (I)I
-	public fun equals (Ljava/lang/Object;)Z
-	public static fun equals-impl (ILjava/lang/Object;)Z
-	public static final fun equals-impl0 (II)Z
-	public final fun getFuncId ()I
-	public fun hashCode ()I
-	public static fun hashCode-impl (I)I
-	public fun toString ()Ljava/lang/String;
-	public static fun toString-impl (I)Ljava/lang/String;
-	public final synthetic fun unbox-impl ()I
-}
-
 public abstract interface class ru/pixnews/wasm/sqlite/open/helper/embedder/functiontable/SqliteCallbackFunctionIndexes {
 	public abstract fun getLoggingCallbackFunction-76yzr8E ()I
 	public abstract fun getProgressFunction-76yzr8E ()I
 	public abstract fun getTraceFunction-76yzr8E ()I
-}
-
-public final class ru/pixnews/wasm/sqlite/open/helper/embedder/sqlitecb/CallbackManagerModuleNameKt {
-	public static final field SQLITE3_CALLBACK_MANAGER_MODULE_NAME Ljava/lang/String;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/embedder/sqlitecb/SqliteCallbacksModuleFunction : java/lang/Enum, at/released/weh/wasm/core/HostFunction {
@@ -388,13 +250,6 @@ public final class ru/pixnews/wasm/sqlite/open/helper/embedder/sqlitecb/function
 public final class ru/pixnews/wasm/sqlite/open/helper/embedder/sqlitecb/function/Sqlite3TraceFunctionHandle : ru/pixnews/wasm/sqlite/open/helper/embedder/sqlitecb/function/SqliteHostFunctionHandle {
 	public fun <init> (Lat/released/weh/host/EmbedderHost;Lkotlin/jvm/functions/Function1;)V
 	public final fun execute-WNU7dnc (Lat/released/weh/wasm/core/memory/ReadOnlyMemory;IIIJ)I
-}
-
-public abstract class ru/pixnews/wasm/sqlite/open/helper/embedder/sqlitecb/function/SqliteHostFunctionHandle {
-	public fun <init> (Lat/released/weh/wasm/core/HostFunction;Lat/released/weh/host/EmbedderHost;)V
-	public final fun getFunction ()Lat/released/weh/wasm/core/HostFunction;
-	public final fun getHost ()Lat/released/weh/host/EmbedderHost;
-	protected final fun getLogger ()Lat/released/weh/common/api/Logger;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteColumnType {
@@ -595,10 +450,6 @@ public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteEr
 	public final fun getSqliteMsg ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
-}
-
-public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteErrorInfoKt {
-	public static final fun formatErrorMessage (Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteErrorInfo;Ljava/lang/String;)Ljava/lang/String;
 }
 
 public final class ru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteOpenFlags : ru/pixnews/wasm/sqlite/open/helper/UintBitMask {

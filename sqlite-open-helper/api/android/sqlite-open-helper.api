@@ -103,10 +103,3 @@ public final class ru/pixnews/wasm/sqlite/open/helper/dsl/path/JvmDatabasePathRe
 	public fun getDatabasePath (Ljava/lang/String;)Ljava/lang/String;
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/internal/ext/AndroidSqliteExceptionExtKt {
-	public static final fun throwAndroidSqliteException (Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteErrorInfo;Ljava/lang/String;Ljava/lang/Throwable;)Ljava/lang/Void;
-	public static synthetic fun throwAndroidSqliteException$default (Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteErrorInfo;Ljava/lang/String;Ljava/lang/Throwable;ILjava/lang/Object;)Ljava/lang/Void;
-	public static final fun throwAndroidSqliteException-NRhbk68 (Ljava/lang/String;I)Ljava/lang/Void;
-	public static synthetic fun throwAndroidSqliteException-NRhbk68$default (Ljava/lang/String;IILjava/lang/Object;)Ljava/lang/Void;
-}
-

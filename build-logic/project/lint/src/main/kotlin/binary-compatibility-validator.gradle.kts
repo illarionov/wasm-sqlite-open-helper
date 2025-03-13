@@ -14,5 +14,5 @@ plugins {
 }
 
 apiValidation {
-    nonPublicMarkers.add("ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi")
+    nonPublicMarkers.add("ru.pixnews.wasm.sqlite.open.helper.InternalWasmSqliteHelperApi")
 }
