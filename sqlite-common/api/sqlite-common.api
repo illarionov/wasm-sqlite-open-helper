@@ -1,3 +1,25 @@
+public abstract interface annotation class ru/pixnews/wasm/sqlite/open/helper/InternalWasmSqliteHelperApi : java/lang/annotation/Annotation {
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/Locale {
+	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/Locale$Companion;
+	public static final synthetic fun box-impl (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/open/helper/Locale;
+	public static fun constructor-impl (Ljava/lang/String;)Ljava/lang/String;
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (Ljava/lang/String;Ljava/lang/Object;)Z
+	public static final fun equals-impl0 (Ljava/lang/String;Ljava/lang/String;)Z
+	public final fun getIcuId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public static fun hashCode-impl (Ljava/lang/String;)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (Ljava/lang/String;)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()Ljava/lang/String;
+}
+
+public final class ru/pixnews/wasm/sqlite/open/helper/Locale$Companion {
+	public final fun getEN_US-5W4SLWA ()Ljava/lang/String;
+}
+
 public abstract interface class ru/pixnews/wasm/sqlite/open/helper/UintBitMask {
 	public abstract fun getMask-pVg5ArA ()I
 	public abstract fun getNewInstance ()Lkotlin/jvm/functions/Function1;

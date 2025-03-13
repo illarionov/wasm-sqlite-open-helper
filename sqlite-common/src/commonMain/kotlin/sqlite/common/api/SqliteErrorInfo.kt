@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api
 
-import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
+import ru.pixnews.wasm.sqlite.open.helper.InternalWasmSqliteHelperApi
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode.Companion.name
 
 public data class SqliteErrorInfo(

@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable
 
-import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
+import ru.pixnews.wasm.sqlite.open.helper.InternalWasmSqliteHelperApi
 import kotlin.jvm.JvmInline
 
 @JvmInline

@@ -8,8 +8,8 @@ package ru.pixnews.wasm.sqlite.driver.dsl
 
 import ru.pixnews.wasm.sqlite.driver.dsl.OpenFlags.ANDROID_FUNCTIONS
 import ru.pixnews.wasm.sqlite.driver.dsl.OpenFlags.LOCALIZED_COLLATORS
+import ru.pixnews.wasm.sqlite.open.helper.Locale
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale
 
 /**
  * Parameters used when opening the database

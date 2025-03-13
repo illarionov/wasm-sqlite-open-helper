@@ -7,7 +7,6 @@
 package ru.pixnews.wasm.sqlite.open.helper
 
 import ru.pixnews.wasm.sqlite.open.helper.WasmPtr.Companion.C_NULL
-import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
 import kotlin.jvm.JvmInline
 
 @JvmInline

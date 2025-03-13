@@ -32,7 +32,6 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.kotlinx.io)
             implementation(libs.cassettes.playhead)
-            api(projects.commonApi)
             api(libs.wasi.emscripten.host)
             api(libs.wasi.emscripten.host.wasm.core)
             implementation(libs.wasi.emscripten.host.common.util)
