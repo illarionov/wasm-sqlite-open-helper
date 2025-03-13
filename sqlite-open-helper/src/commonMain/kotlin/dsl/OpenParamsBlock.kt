@@ -4,15 +4,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.dsl
+package at.released.wasm.sqlite.open.helper.dsl
 
-import ru.pixnews.wasm.sqlite.open.helper.Locale
-import ru.pixnews.wasm.sqlite.open.helper.OpenFlags
-import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
-import ru.pixnews.wasm.sqlite.open.helper.clear
-import ru.pixnews.wasm.sqlite.open.helper.or
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDatabaseJournalMode
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDatabaseSyncMode
+import at.released.wasm.sqlite.open.helper.Locale
+import at.released.wasm.sqlite.open.helper.OpenFlags
+import at.released.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
+import at.released.wasm.sqlite.open.helper.clear
+import at.released.wasm.sqlite.open.helper.or
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteDatabaseJournalMode
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteDatabaseSyncMode
 
 /**
  * Parameters used when opening the database

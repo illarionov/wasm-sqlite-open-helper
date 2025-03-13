@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.chasm.ext
+package at.released.wasm.sqlite.open.helper.chasm.ext
 
 import at.released.weh.wasm.core.HostFunction.HostFunctionType
 import at.released.weh.wasm.core.WasmValueType

@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.chasm.ext
+package at.released.wasm.sqlite.open.helper.chasm.ext
 
+import at.released.wasm.sqlite.open.helper.WasmPtr
 import io.github.charlietap.chasm.runtime.value.ExecutionValue
 import io.github.charlietap.chasm.runtime.value.NumberValue
-import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
 
 internal fun ExecutionValue.asInt(): Int = (this as NumberValue.I32).value
 internal fun ExecutionValue.asUInt(): UInt = (this as NumberValue.I32).value.toUInt()

@@ -4,15 +4,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.chasm
+package at.released.wasm.sqlite.open.helper.chasm
 
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import at.released.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcu349
 import at.released.wasm.sqlite.binary.base.WasmSqliteConfiguration
+import at.released.wasm.sqlite.open.helper.WasmSqliteOpenHelperFactory
+import at.released.wasm.sqlite.open.helper.base.util.defaultTestHelperConfig
+import at.released.wasm.sqlite.open.helper.test.base.TestOpenHelperFactoryCreator
 import at.released.weh.common.api.Logger
-import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperFactory
-import ru.pixnews.wasm.sqlite.open.helper.base.util.defaultTestHelperConfig
-import ru.pixnews.wasm.sqlite.open.helper.test.base.TestOpenHelperFactoryCreator
 
 object ChasmFactoryCreator : TestOpenHelperFactoryCreator {
     override val defaultSqliteBinary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcu349

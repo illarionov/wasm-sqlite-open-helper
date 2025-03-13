@@ -6,14 +6,14 @@
 
 @file:JvmName("AndroidWasmSQLiteDriverBuilder")
 
-package ru.pixnews.wasm.sqlite.driver
+package at.released.wasm.sqlite.driver
 
 import android.content.Context
 import at.released.cassettes.playhead.AndroidAssetsAssetManager
-import ru.pixnews.wasm.sqlite.driver.dsl.WasmSqliteDriverConfigBlock
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedder
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntime
+import at.released.wasm.sqlite.driver.dsl.WasmSqliteDriverConfigBlock
+import at.released.wasm.sqlite.open.helper.embedder.SqliteEmbedder
+import at.released.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
+import at.released.wasm.sqlite.open.helper.embedder.SqliteRuntime
 
 /**
  * Creates a [SQLiteDriver] with the specified [block] configuration.

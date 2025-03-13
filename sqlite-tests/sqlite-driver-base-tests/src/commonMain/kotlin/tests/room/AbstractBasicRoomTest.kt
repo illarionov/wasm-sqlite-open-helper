@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.test.base.tests.room
+package at.released.wasm.sqlite.driver.test.base.tests.room
 
 import androidx.sqlite.SQLiteDriver
+import at.released.wasm.sqlite.driver.test.base.tests.AbstractSqliteDriverTest
+import at.released.wasm.sqlite.driver.test.base.tests.TestSqliteDriverFactory
+import at.released.wasm.sqlite.driver.test.base.tests.room.UserDatabaseTests.UserDatabaseFactory
 import co.touchlab.kermit.Severity
 import kotlinx.coroutines.test.runTest
-import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractSqliteDriverTest
-import ru.pixnews.wasm.sqlite.driver.test.base.tests.TestSqliteDriverFactory
-import ru.pixnews.wasm.sqlite.driver.test.base.tests.room.UserDatabaseTests.UserDatabaseFactory
 import kotlin.test.Test
 import kotlin.time.Duration.Companion.minutes
 

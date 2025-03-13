@@ -4,17 +4,17 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi
+package at.released.wasm.sqlite.open.helper.sqlite.common.capi
 
+import at.released.wasm.sqlite.open.helper.WasmPtr
+import at.released.wasm.sqlite.open.helper.embedder.exports.SqliteExports
+import at.released.wasm.sqlite.open.helper.isNull
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrorInfo
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode.Companion.SQLITE_OK
 import at.released.weh.wasm.core.memory.ReadOnlyMemory
 import at.released.weh.wasm.core.memory.readNullableNullTerminatedString
-import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
-import ru.pixnews.wasm.sqlite.open.helper.isNull
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrorInfo
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode.Companion.SQLITE_OK
 
 /**
  * Wrappers for SQLite3 C Api error functions: `sqlite3_errcode`, `sqlite3_extended_errcode`, `sqlite3_errmsg`

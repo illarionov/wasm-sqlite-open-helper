@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.chicory.exports
+package at.released.wasm.sqlite.open.helper.chicory.exports
 
+import at.released.wasm.sqlite.open.helper.chicory.ext.functionMember
+import at.released.wasm.sqlite.open.helper.embedder.exports.SqliteExports
 import com.dylibso.chicory.runtime.Instance
-import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.functionMember
-import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
 
 @Suppress("VariableNaming", "BLANK_LINE_BETWEEN_PROPERTIES")
 internal class ChicorySqliteExports(instance: Instance) : SqliteExports {

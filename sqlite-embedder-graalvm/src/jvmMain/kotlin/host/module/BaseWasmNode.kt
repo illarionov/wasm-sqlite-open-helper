@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module
+package at.released.wasm.sqlite.open.helper.graalvm.host.module
 
+import at.released.wasm.sqlite.open.helper.embedder.sqlitecb.function.SqliteHostFunctionHandle
 import at.released.weh.bindings.graalvm241.memory.GraalvmWasmHostMemoryAdapter
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.memory.WasmMemory
 import org.graalvm.wasm.nodes.WasmRootNode
-import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.function.SqliteHostFunctionHandle
 
 internal open class BaseWasmNode<H : SqliteHostFunctionHandle>(
     language: WasmLanguage,

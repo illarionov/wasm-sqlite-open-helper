@@ -4,17 +4,17 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.test.base.tests
+package at.released.wasm.sqlite.open.helper.test.base.tests
 
 import androidx.sqlite.db.SupportSQLiteDatabase
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isTrue
+import at.released.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
+import at.released.wasm.sqlite.open.helper.test.base.AbstractOpenHelperFactoryTest
+import at.released.wasm.sqlite.open.helper.test.base.TestOpenHelperFactoryCreator
 import co.touchlab.kermit.Severity
 import co.touchlab.kermit.Severity.Info
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
-import ru.pixnews.wasm.sqlite.open.helper.test.base.AbstractOpenHelperFactoryTest
-import ru.pixnews.wasm.sqlite.open.helper.test.base.TestOpenHelperFactoryCreator
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import kotlin.test.Test

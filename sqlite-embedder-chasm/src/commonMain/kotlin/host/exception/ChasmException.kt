@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.chasm.host.exception
+package at.released.wasm.sqlite.open.helper.chasm.host.exception
 
 public open class ChasmException : RuntimeException {
     public constructor() : super()

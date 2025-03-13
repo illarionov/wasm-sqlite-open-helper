@@ -12,15 +12,15 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.TestExecutable
 
 plugins {
     id("com.google.devtools.ksp")
-    id("ru.pixnews.wasm.sqlite.open.helper.gradle.lint.binary-compatibility-validator")
-    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.android")
-    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.android-instrumented-test")
-    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.test.jvm")
-    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.test.native")
-    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.atomicfu")
-    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.kotlin")
-    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.publish")
-    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.resources")
+    id("at.released.wasm.sqlite.open.helper.gradle.lint.binary-compatibility-validator")
+    id("at.released.wasm.sqlite.open.helper.gradle.multiplatform.android")
+    id("at.released.wasm.sqlite.open.helper.gradle.multiplatform.android-instrumented-test")
+    id("at.released.wasm.sqlite.open.helper.gradle.multiplatform.test.jvm")
+    id("at.released.wasm.sqlite.open.helper.gradle.multiplatform.test.native")
+    id("at.released.wasm.sqlite.open.helper.gradle.multiplatform.atomicfu")
+    id("at.released.wasm.sqlite.open.helper.gradle.multiplatform.kotlin")
+    id("at.released.wasm.sqlite.open.helper.gradle.multiplatform.publish")
+    id("at.released.wasm.sqlite.open.helper.gradle.multiplatform.resources")
 }
 
 group = "ru.pixnews.wasm-sqlite-open-helper"
@@ -30,7 +30,7 @@ version = wasmSqliteVersions.getSubmoduleVersionProvider(
 ).get()
 
 android {
-    namespace = "ru.pixnews.wasm.sqlite.driver"
+    namespace = "at.released.wasm.sqlite.driver"
     defaultConfig {
         consumerProguardFiles("consumer-rules.pro")
     }

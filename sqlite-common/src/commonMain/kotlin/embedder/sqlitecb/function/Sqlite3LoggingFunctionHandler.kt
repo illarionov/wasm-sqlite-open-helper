@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.function
+package at.released.wasm.sqlite.open.helper.embedder.sqlitecb.function
 
+import at.released.wasm.sqlite.open.helper.WasmPtr
+import at.released.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteLogCallback
 import at.released.weh.host.EmbedderHost
 import at.released.weh.wasm.core.memory.ReadOnlyMemory
 import at.released.weh.wasm.core.memory.readNullTerminatedString
-import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteLogCallback
 
 public class Sqlite3LoggingFunctionHandler(
     host: EmbedderHost,

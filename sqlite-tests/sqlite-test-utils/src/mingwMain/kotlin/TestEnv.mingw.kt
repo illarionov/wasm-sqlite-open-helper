@@ -6,7 +6,7 @@
 
 @file:OptIn(ExperimentalForeignApi::class)
 
-package ru.pixnews.wasm.sqlite.test.utils
+package at.released.wasm.sqlite.test.utils
 
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.posix._IONBF

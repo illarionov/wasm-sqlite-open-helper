@@ -4,17 +4,17 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.test.base.tests
+package at.released.wasm.sqlite.driver.test.base.tests
 
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.SQLiteDriver
 import assertk.assertThat
 import assertk.assertions.containsExactly
+import at.released.wasm.sqlite.driver.test.base.util.execSQL
+import at.released.wasm.sqlite.driver.test.base.util.queryForString
+import at.released.wasm.sqlite.driver.test.base.util.queryTable
+import at.released.wasm.sqlite.driver.test.base.util.use
 import co.touchlab.kermit.Severity
-import ru.pixnews.wasm.sqlite.driver.test.base.util.execSQL
-import ru.pixnews.wasm.sqlite.driver.test.base.util.queryForString
-import ru.pixnews.wasm.sqlite.driver.test.base.util.queryTable
-import ru.pixnews.wasm.sqlite.driver.test.base.util.use
 import kotlin.test.Test
 
 public abstract class AbstractBasicSqliteDriverTest<S>(

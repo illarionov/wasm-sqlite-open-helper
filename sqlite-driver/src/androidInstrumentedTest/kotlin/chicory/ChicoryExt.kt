@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.chicory
+package at.released.wasm.sqlite.driver.chicory
 
 import android.os.Build
 import org.junit.Assume.assumeTrue

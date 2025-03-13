@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.chicory.ext
+package at.released.wasm.sqlite.open.helper.chicory.ext
 
+import at.released.wasm.sqlite.open.helper.chicory.exports.ChicoryWasmFunctionBinding
+import at.released.wasm.sqlite.open.helper.embedder.exports.SinglePropertyLazyValue
 import at.released.weh.wasm.core.WasmFunctionBinding
 import com.dylibso.chicory.runtime.ExportFunction
 import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.wasm.ChicoryException
-import ru.pixnews.wasm.sqlite.open.helper.chicory.exports.ChicoryWasmFunctionBinding
-import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SinglePropertyLazyValue
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty

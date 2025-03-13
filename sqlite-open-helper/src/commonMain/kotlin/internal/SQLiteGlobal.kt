@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.internal
+package at.released.wasm.sqlite.open.helper.internal
 
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDatabaseJournalMode
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDatabaseSyncMode
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteDatabaseJournalMode
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteDatabaseSyncMode
 
 /**
  * Provides access to SQLite functions that affect all database connection,

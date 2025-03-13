@@ -4,40 +4,40 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.internal
+package at.released.wasm.sqlite.open.helper.internal
 
+import at.released.wasm.sqlite.open.helper.WasmPtr
+import at.released.wasm.sqlite.open.helper.contains
+import at.released.wasm.sqlite.open.helper.debug.SqliteErrorLogger
+import at.released.wasm.sqlite.open.helper.debug.SqliteStatementLogger
+import at.released.wasm.sqlite.open.helper.debug.SqliteStatementLogger.TraceEvent
+import at.released.wasm.sqlite.open.helper.debug.SqliteStatementProfileLogger
+import at.released.wasm.sqlite.open.helper.exception.AndroidSqliteCantOpenDatabaseException
+import at.released.wasm.sqlite.open.helper.internal.OpenHelperNativeBindings.CopyRowResult.CPR_FULL
+import at.released.wasm.sqlite.open.helper.internal.OpenHelperNativeBindings.CopyRowResult.CPR_OK
+import at.released.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow
+import at.released.wasm.sqlite.open.helper.internal.ext.throwAndroidSqliteException
+import at.released.wasm.sqlite.open.helper.internal.platform.yieldSleepAroundMSec
+import at.released.wasm.sqlite.open.helper.or
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteColumnType
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteConfigParameter
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteDbConfigParameter
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteOpenFlags
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode.Companion.name
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteStatement
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteTrace
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode.Companion.SQLITE_TRACE_CLOSE
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode.Companion.SQLITE_TRACE_ROW
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode.Companion.SQLITE_TRACE_STMT
+import at.released.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3CApi
+import at.released.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3DbFunctions
+import at.released.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3ErrorFunctions.Companion.readSqliteErrorInfo
+import at.released.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3Result
 import at.released.weh.common.api.Logger
 import at.released.weh.common.ext.encodedNullTerminatedStringLength
-import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.contains
-import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteErrorLogger
-import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementLogger
-import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementLogger.TraceEvent
-import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementProfileLogger
-import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteCantOpenDatabaseException
-import ru.pixnews.wasm.sqlite.open.helper.internal.OpenHelperNativeBindings.CopyRowResult.CPR_FULL
-import ru.pixnews.wasm.sqlite.open.helper.internal.OpenHelperNativeBindings.CopyRowResult.CPR_OK
-import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow
-import ru.pixnews.wasm.sqlite.open.helper.internal.ext.throwAndroidSqliteException
-import ru.pixnews.wasm.sqlite.open.helper.internal.platform.yieldSleepAroundMSec
-import ru.pixnews.wasm.sqlite.open.helper.or
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteColumnType
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteConfigParameter
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDbConfigParameter
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteOpenFlags
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode.Companion.name
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteStatement
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTrace
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode.Companion.SQLITE_TRACE_CLOSE
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode.Companion.SQLITE_TRACE_ROW
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode.Companion.SQLITE_TRACE_STMT
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3CApi
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3DbFunctions
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3ErrorFunctions.Companion.readSqliteErrorInfo
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3Result
 
 internal class OpenHelperNativeBindings(
     private val cApi: Sqlite3CApi,

@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.chasm
+package at.released.wasm.sqlite.open.helper.chasm
 
-import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntime
+import at.released.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
+import at.released.wasm.sqlite.open.helper.embedder.SqliteRuntime
 
 @WasmSqliteOpenHelperDsl
 public interface ChasmRuntime : SqliteRuntime

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.test.base
+package at.released.wasm.sqlite.open.helper.test.base
 
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import at.released.wasm.sqlite.binary.base.WasmSqliteConfiguration

@@ -6,22 +6,22 @@
 
 @file:kotlin.jvm.JvmName("WasmSQLiteDriverBuilder")
 
-package ru.pixnews.wasm.sqlite.driver
+package at.released.wasm.sqlite.driver
 
 import androidx.sqlite.SQLiteDriver
 import at.released.cassettes.playhead.AssetManager
+import at.released.wasm.sqlite.driver.dsl.OpenParamsBlock
+import at.released.wasm.sqlite.driver.dsl.WasmSqliteDriverConfigBlock
+import at.released.wasm.sqlite.driver.internal.WasmSqliteDriverImpl
+import at.released.wasm.sqlite.open.helper.debug.EmbedderHostLogger
+import at.released.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfigBlock
+import at.released.wasm.sqlite.open.helper.embedder.SqliteEmbedder
+import at.released.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
+import at.released.wasm.sqlite.open.helper.embedder.SqliteRuntime
+import at.released.wasm.sqlite.open.helper.embedder.SqliteRuntimeInternal
+import at.released.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
+import at.released.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3CApi
 import at.released.weh.common.api.Logger
-import ru.pixnews.wasm.sqlite.driver.dsl.OpenParamsBlock
-import ru.pixnews.wasm.sqlite.driver.dsl.WasmSqliteDriverConfigBlock
-import ru.pixnews.wasm.sqlite.driver.internal.WasmSqliteDriverImpl
-import ru.pixnews.wasm.sqlite.open.helper.debug.EmbedderHostLogger
-import ru.pixnews.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfigBlock
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedder
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntime
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntimeInternal
-import ru.pixnews.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3CApi
 
 /**
  * Creates a [SQLiteDriver] with the specified [block] configuration.

@@ -4,15 +4,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.function
+package at.released.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.function
 
+import at.released.wasm.sqlite.open.helper.WasmPtr
+import at.released.wasm.sqlite.open.helper.chasm.ext.asWasmAddr
+import at.released.wasm.sqlite.open.helper.embedder.sqlitecb.function.Sqlite3ProgressFunctionHandle
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteProgressCallback
 import at.released.weh.host.EmbedderHost
 import io.github.charlietap.chasm.runtime.value.NumberValue
-import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.asWasmAddr
-import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.function.Sqlite3ProgressFunctionHandle
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteProgressCallback
 import io.github.charlietap.chasm.embedding.shapes.HostFunction as ChasmHostFunction
 
 internal class Sqlite3ProgressAdapter(

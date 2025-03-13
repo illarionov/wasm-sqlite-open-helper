@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.base
+package at.released.wasm.sqlite.driver.base
 
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.SQLiteDriver
-import ru.pixnews.wasm.sqlite.driver.test.base.room.UserDatabaseSuspend
-import ru.pixnews.wasm.sqlite.driver.test.base.tests.room.UserDatabaseTests.UserDatabaseFactory
+import at.released.wasm.sqlite.driver.test.base.room.UserDatabaseSuspend
+import at.released.wasm.sqlite.driver.test.base.tests.room.UserDatabaseTests.UserDatabaseFactory
 import kotlin.coroutines.CoroutineContext
 
 class LinuxDatabaseFactory : UserDatabaseFactory {

@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.dsl
+package at.released.wasm.sqlite.driver.dsl
 
-import ru.pixnews.wasm.sqlite.driver.dsl.OpenFlags.ANDROID_FUNCTIONS
-import ru.pixnews.wasm.sqlite.driver.dsl.OpenFlags.LOCALIZED_COLLATORS
-import ru.pixnews.wasm.sqlite.open.helper.Locale
-import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
+import at.released.wasm.sqlite.driver.dsl.OpenFlags.ANDROID_FUNCTIONS
+import at.released.wasm.sqlite.driver.dsl.OpenFlags.LOCALIZED_COLLATORS
+import at.released.wasm.sqlite.open.helper.Locale
+import at.released.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
 
 /**
  * Parameters used when opening the database

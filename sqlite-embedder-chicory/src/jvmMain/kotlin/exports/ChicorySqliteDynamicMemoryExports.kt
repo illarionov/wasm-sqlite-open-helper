@@ -6,13 +6,13 @@
 
 @file:Suppress("VariableNaming", "UnusedPrivateProperty", "BLANK_LINE_BETWEEN_PROPERTIES")
 
-package ru.pixnews.wasm.sqlite.open.helper.chicory.exports
+package at.released.wasm.sqlite.open.helper.chicory.exports
 
+import at.released.wasm.sqlite.open.helper.WasmPtr
+import at.released.wasm.sqlite.open.helper.chicory.ext.functionMember
+import at.released.wasm.sqlite.open.helper.embedder.exports.SqliteDynamicMemoryExports
+import at.released.wasm.sqlite.open.helper.isNull
 import com.dylibso.chicory.runtime.Instance
-import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.functionMember
-import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteDynamicMemoryExports
-import ru.pixnews.wasm.sqlite.open.helper.isNull
 
 internal class ChicorySqliteDynamicMemoryExports(
     mainBindings: Instance,

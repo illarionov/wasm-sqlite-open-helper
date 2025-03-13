@@ -4,19 +4,19 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.internal
+package at.released.wasm.sqlite.driver.internal
 
+import at.released.wasm.sqlite.driver.dsl.OpenParamsBlock
+import at.released.wasm.sqlite.open.helper.WasmPtr
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
+import at.released.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3CApi
 import at.released.weh.test.logger.TestLogger
 import co.touchlab.kermit.Severity.Assert
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Test
-import ru.pixnews.wasm.sqlite.driver.dsl.OpenParamsBlock
-import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3CApi
 
 class WasmSqliteConnectionTest {
     val logger = TestLogger(minSeverity = Assert)

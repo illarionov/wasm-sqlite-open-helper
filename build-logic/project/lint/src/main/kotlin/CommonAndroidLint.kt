@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.gradle.lint
+package at.released.wasm.sqlite.open.helper.gradle.lint
 
 import com.android.build.api.dsl.Lint
 

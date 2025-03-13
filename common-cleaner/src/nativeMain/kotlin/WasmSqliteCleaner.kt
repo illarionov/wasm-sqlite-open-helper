@@ -4,6 +4,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.internal
+package at.released.wasm.sqlite.open.helper.internal
 
 public actual val wasmSqliteCleaner: WasmSqliteCleaner = NoOpWasmSqliteCleaner

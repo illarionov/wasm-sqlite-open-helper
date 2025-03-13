@@ -8,15 +8,15 @@ import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 
 plugins {
     id("com.google.devtools.ksp")
-    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.kotlin")
-    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.android")
-    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.room26.ksp")
+    id("at.released.wasm.sqlite.open.helper.gradle.multiplatform.kotlin")
+    id("at.released.wasm.sqlite.open.helper.gradle.multiplatform.android")
+    id("at.released.wasm.sqlite.open.helper.gradle.multiplatform.room26.ksp")
 }
 
 group = "ru.pixnews.wasm-sqlite-open-helper"
 
 android {
-    namespace = "ru.pixnews.wasm.sqlite.open.helper.test.base"
+    namespace = "at.released.wasm.sqlite.open.helper.test.base"
 }
 
 kotlin {

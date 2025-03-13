@@ -7,7 +7,7 @@
 @file:Suppress("OPT_IN_USAGE")
 
 plugins {
-    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.kotlin")
+    id("at.released.wasm.sqlite.open.helper.gradle.multiplatform.kotlin")
 }
 
 group = "ru.pixnews.wasm-sqlite-open-helper"

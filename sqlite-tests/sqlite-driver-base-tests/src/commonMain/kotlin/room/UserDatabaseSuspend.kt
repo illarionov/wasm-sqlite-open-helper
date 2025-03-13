@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.test.base.room
+package at.released.wasm.sqlite.driver.test.base.room
 
 import androidx.room.ColumnInfo
 import androidx.room.ConstructedBy

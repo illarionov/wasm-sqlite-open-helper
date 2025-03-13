@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper
+package at.released.wasm.sqlite.open.helper
 
 /*
  * Original Copyrights:
@@ -14,23 +14,23 @@ package ru.pixnews.wasm.sqlite.open.helper
  */
 
 import androidx.sqlite.db.SupportSQLiteOpenHelper
+import at.released.wasm.sqlite.open.helper.debug.SqliteErrorLogger
+import at.released.wasm.sqlite.open.helper.debug.SqliteStatementLogger
+import at.released.wasm.sqlite.open.helper.debug.SqliteStatementProfileLogger
+import at.released.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfig
+import at.released.wasm.sqlite.open.helper.dsl.OpenParamsBlock
+import at.released.wasm.sqlite.open.helper.dsl.path.DatabasePathResolver
+import at.released.wasm.sqlite.open.helper.embedder.SqliteRuntime
+import at.released.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
+import at.released.wasm.sqlite.open.helper.embedder.exports.SqliteExports
+import at.released.wasm.sqlite.open.helper.embedder.functiontable.SqliteCallbackFunctionIndexes
+import at.released.wasm.sqlite.open.helper.internal.DatabaseErrorHandler
+import at.released.wasm.sqlite.open.helper.internal.OpenHelperNativeBindings
+import at.released.wasm.sqlite.open.helper.internal.SQLiteDatabaseOpenParams
+import at.released.wasm.sqlite.open.helper.internal.WasmSqliteOpenHelper
+import at.released.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3CApi
 import at.released.weh.common.api.Logger
 import at.released.weh.wasm.core.memory.Memory
-import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteErrorLogger
-import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementLogger
-import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementProfileLogger
-import ru.pixnews.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfig
-import ru.pixnews.wasm.sqlite.open.helper.dsl.OpenParamsBlock
-import ru.pixnews.wasm.sqlite.open.helper.dsl.path.DatabasePathResolver
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntime
-import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
-import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
-import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.SqliteCallbackFunctionIndexes
-import ru.pixnews.wasm.sqlite.open.helper.internal.DatabaseErrorHandler
-import ru.pixnews.wasm.sqlite.open.helper.internal.OpenHelperNativeBindings
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDatabaseOpenParams
-import ru.pixnews.wasm.sqlite.open.helper.internal.WasmSqliteOpenHelper
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3CApi
 
 /**
  * Implements [SupportSQLiteOpenHelper.Factory] using the SQLite implementation shipped in

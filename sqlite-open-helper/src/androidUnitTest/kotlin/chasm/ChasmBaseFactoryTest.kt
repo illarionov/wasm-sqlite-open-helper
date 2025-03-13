@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.chasm
+package at.released.wasm.sqlite.open.helper.chasm
 
+import at.released.wasm.sqlite.open.helper.test.base.tests.AbstractCommonFactoryTest
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
-import ru.pixnews.wasm.sqlite.open.helper.test.base.tests.AbstractCommonFactoryTest
 
 class ChasmBaseFactoryTest : AbstractCommonFactoryTest<ChasmSqliteEmbedderConfig>(
     factoryCreator = ChasmFactoryCreator,

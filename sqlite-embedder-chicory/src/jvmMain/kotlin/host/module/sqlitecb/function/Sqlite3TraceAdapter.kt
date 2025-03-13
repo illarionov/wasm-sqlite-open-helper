@@ -4,18 +4,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.sqlitecb.function
+package at.released.wasm.sqlite.open.helper.chicory.host.module.sqlitecb.function
 
+import at.released.wasm.sqlite.open.helper.WasmPtr
+import at.released.wasm.sqlite.open.helper.chicory.ext.asWasmAddr
+import at.released.wasm.sqlite.open.helper.embedder.sqlitecb.function.Sqlite3TraceFunctionHandle
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceCallback
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode
 import at.released.weh.host.EmbedderHost
 import at.released.weh.wasm.core.memory.ReadOnlyMemory
 import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.runtime.WasmFunctionHandle
-import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.chicory.ext.asWasmAddr
-import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.function.Sqlite3TraceFunctionHandle
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceCallback
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode
 
 internal class Sqlite3TraceAdapter(
     host: EmbedderHost,

@@ -4,37 +4,37 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.internal
+package at.released.wasm.sqlite.driver.internal
 
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.SQLiteException
+import at.released.wasm.sqlite.driver.WasmSQLiteDriver
+import at.released.wasm.sqlite.driver.dsl.OpenFlags
+import at.released.wasm.sqlite.driver.dsl.OpenParamsBlock
+import at.released.wasm.sqlite.open.helper.WasmPtr
+import at.released.wasm.sqlite.open.helper.debug.SqliteErrorLogger
+import at.released.wasm.sqlite.open.helper.debug.SqliteStatementLogger
+import at.released.wasm.sqlite.open.helper.debug.SqliteStatementLogger.TraceEvent
+import at.released.wasm.sqlite.open.helper.debug.SqliteStatementProfileLogger
+import at.released.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfig
+import at.released.wasm.sqlite.open.helper.embedder.SqliteRuntime
+import at.released.wasm.sqlite.open.helper.or
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteConfigParameter
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteDbConfigParameter
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteOpenFlags
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode.Companion.name
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteTrace
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode.Companion.SQLITE_TRACE_CLOSE
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode.Companion.SQLITE_TRACE_PROFILE
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode.Companion.SQLITE_TRACE_ROW
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode.Companion.SQLITE_TRACE_STMT
+import at.released.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3CApi
 import at.released.weh.common.api.Logger
 import kotlinx.atomicfu.locks.SynchronizedObject
 import kotlinx.atomicfu.locks.synchronized
-import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
-import ru.pixnews.wasm.sqlite.driver.dsl.OpenFlags
-import ru.pixnews.wasm.sqlite.driver.dsl.OpenParamsBlock
-import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteErrorLogger
-import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementLogger
-import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementLogger.TraceEvent
-import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementProfileLogger
-import ru.pixnews.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfig
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntime
-import ru.pixnews.wasm.sqlite.open.helper.or
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteConfigParameter
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDbConfigParameter
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteOpenFlags
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode.Companion.name
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTrace
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode.Companion.SQLITE_TRACE_CLOSE
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode.Companion.SQLITE_TRACE_PROFILE
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode.Companion.SQLITE_TRACE_ROW
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode.Companion.SQLITE_TRACE_STMT
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3CApi
 
 internal class WasmSqliteDriverImpl<R : SqliteRuntime>(
     debugConfig: WasmSqliteDebugConfig,

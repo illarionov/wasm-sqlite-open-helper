@@ -4,8 +4,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.function
+package at.released.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.function
 
+import at.released.wasm.sqlite.open.helper.WasmPtr
+import at.released.wasm.sqlite.open.helper.embedder.sqlitecb.function.Sqlite3ProgressFunctionHandle
+import at.released.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
+import at.released.wasm.sqlite.open.helper.graalvm.host.module.BaseWasmNode
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteProgressCallback
 import at.released.weh.host.EmbedderHost
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary
 import com.oracle.truffle.api.frame.VirtualFrame
@@ -13,12 +19,6 @@ import org.graalvm.wasm.WasmContext
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
-import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.function.Sqlite3ProgressFunctionHandle
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteProgressCallback
 
 internal class Sqlite3ProgressAdapter(
     language: WasmLanguage,

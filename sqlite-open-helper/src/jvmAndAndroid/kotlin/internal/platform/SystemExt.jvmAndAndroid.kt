@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.internal.platform
+package at.released.wasm.sqlite.open.helper.internal.platform
 
 internal actual fun getSystemProp(name: String, defaultValue: String): String {
     return System.getProperty(name, defaultValue)!!

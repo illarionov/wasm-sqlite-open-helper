@@ -4,8 +4,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.function
+package at.released.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.function
 
+import at.released.wasm.sqlite.open.helper.WasmPtr
+import at.released.wasm.sqlite.open.helper.embedder.sqlitecb.function.Sqlite3LoggingFunctionHandler
+import at.released.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
+import at.released.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
+import at.released.wasm.sqlite.open.helper.graalvm.host.module.BaseWasmNode
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteLogCallback
 import at.released.weh.host.EmbedderHost
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary
 import com.oracle.truffle.api.frame.VirtualFrame
@@ -14,12 +20,6 @@ import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.memory.WasmMemory
-import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.function.Sqlite3LoggingFunctionHandler
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsInt
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.getArgAsWasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.BaseWasmNode
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteLogCallback
 
 internal class Sqlite3LoggingAdapter(
     language: WasmLanguage,

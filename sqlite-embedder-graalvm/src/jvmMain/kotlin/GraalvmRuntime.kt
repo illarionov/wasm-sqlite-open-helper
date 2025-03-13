@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.graalvm
+package at.released.wasm.sqlite.open.helper.graalvm
 
-import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntime
+import at.released.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
+import at.released.wasm.sqlite.open.helper.embedder.SqliteRuntime
 import java.util.concurrent.ThreadFactory
 
 @WasmSqliteOpenHelperDsl

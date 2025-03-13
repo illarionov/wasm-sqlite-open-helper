@@ -6,7 +6,7 @@
 
 @file:Suppress("SpreadOperator")
 
-package ru.pixnews.wasm.sqlite.open.helper.chicory.exports
+package at.released.wasm.sqlite.open.helper.chicory.exports
 
 import at.released.weh.wasm.core.IntWasmPtr
 import at.released.weh.wasm.core.WasmFunctionBinding

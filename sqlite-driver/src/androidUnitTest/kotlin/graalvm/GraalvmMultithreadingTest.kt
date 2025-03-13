@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.graalvm
+package at.released.wasm.sqlite.driver.graalvm
 
+import at.released.wasm.sqlite.driver.WasmSQLiteDriver
+import at.released.wasm.sqlite.driver.test.base.tests.AbstractMultithreadingTest
+import at.released.wasm.sqlite.open.helper.graalvm.GraalvmRuntime
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
-import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
-import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractMultithreadingTest
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmRuntime
 
 class GraalvmMultithreadingTest : AbstractMultithreadingTest<WasmSQLiteDriver<GraalvmRuntime>>(
     driverCreator = GraalvmSqliteDriverFactory(),

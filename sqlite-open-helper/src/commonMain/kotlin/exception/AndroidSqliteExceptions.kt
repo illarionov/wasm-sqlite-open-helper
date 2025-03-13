@@ -6,7 +6,7 @@
 
 @file:Suppress("UnusedPrivateProperty")
 
-package ru.pixnews.wasm.sqlite.open.helper.exception
+package at.released.wasm.sqlite.open.helper.exception
 
 public expect open class AndroidSqlException : RuntimeException {
     public constructor()

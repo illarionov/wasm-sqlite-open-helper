@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.function
+package at.released.wasm.sqlite.open.helper.embedder.sqlitecb.function
 
+import at.released.wasm.sqlite.open.helper.InternalWasmSqliteHelperApi
 import at.released.weh.common.api.Logger
 import at.released.weh.host.EmbedderHost
 import at.released.weh.wasm.core.HostFunction
-import ru.pixnews.wasm.sqlite.open.helper.InternalWasmSqliteHelperApi
 
 @InternalWasmSqliteHelperApi
 public abstract class SqliteHostFunctionHandle(

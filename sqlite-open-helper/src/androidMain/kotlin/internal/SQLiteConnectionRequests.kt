@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.internal
+package at.released.wasm.sqlite.open.helper.internal
 
 import android.database.sqlite.SQLiteDatabaseLockedException
 import android.database.sqlite.SQLiteException
-import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteException
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDatabaseJournalMode
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDatabaseSyncMode
+import at.released.wasm.sqlite.open.helper.exception.AndroidSqliteException
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteDatabaseJournalMode
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteDatabaseSyncMode
 
 internal fun SQLiteConnection.setPageSize(
     newSize: Long = SQLiteGlobal.DEFAULT_PAGE_SIZE.toLong(),

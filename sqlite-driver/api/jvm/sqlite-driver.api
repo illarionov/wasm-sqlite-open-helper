@@ -1,33 +1,33 @@
-public abstract interface class ru/pixnews/wasm/sqlite/driver/WasmSQLiteDriver : androidx/sqlite/SQLiteDriver, java/lang/AutoCloseable {
+public abstract interface class at/released/wasm/sqlite/driver/WasmSQLiteDriver : androidx/sqlite/SQLiteDriver, java/lang/AutoCloseable {
 	public abstract fun close ()V
-	public abstract fun getRuntime ()Lru/pixnews/wasm/sqlite/open/helper/embedder/SqliteRuntime;
+	public abstract fun getRuntime ()Lat/released/wasm/sqlite/open/helper/embedder/SqliteRuntime;
 }
 
-public final class ru/pixnews/wasm/sqlite/driver/WasmSQLiteDriverBuilder {
-	public static final fun WasmSQLiteDriver (Lru/pixnews/wasm/sqlite/open/helper/embedder/SqliteEmbedder;Lkotlin/jvm/functions/Function1;)Lru/pixnews/wasm/sqlite/driver/WasmSQLiteDriver;
-	public static synthetic fun WasmSQLiteDriver$default (Lru/pixnews/wasm/sqlite/open/helper/embedder/SqliteEmbedder;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lru/pixnews/wasm/sqlite/driver/WasmSQLiteDriver;
+public final class at/released/wasm/sqlite/driver/WasmSQLiteDriverBuilder {
+	public static final fun WasmSQLiteDriver (Lat/released/wasm/sqlite/open/helper/embedder/SqliteEmbedder;Lkotlin/jvm/functions/Function1;)Lat/released/wasm/sqlite/driver/WasmSQLiteDriver;
+	public static synthetic fun WasmSQLiteDriver$default (Lat/released/wasm/sqlite/open/helper/embedder/SqliteEmbedder;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lat/released/wasm/sqlite/driver/WasmSQLiteDriver;
 }
 
-public final class ru/pixnews/wasm/sqlite/driver/dsl/OpenFlags : java/lang/Enum {
-	public static final field ANDROID_FUNCTIONS Lru/pixnews/wasm/sqlite/driver/dsl/OpenFlags;
-	public static final field LOCALIZED_COLLATORS Lru/pixnews/wasm/sqlite/driver/dsl/OpenFlags;
+public final class at/released/wasm/sqlite/driver/dsl/OpenFlags : java/lang/Enum {
+	public static final field ANDROID_FUNCTIONS Lat/released/wasm/sqlite/driver/dsl/OpenFlags;
+	public static final field LOCALIZED_COLLATORS Lat/released/wasm/sqlite/driver/dsl/OpenFlags;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
-	public static fun valueOf (Ljava/lang/String;)Lru/pixnews/wasm/sqlite/driver/dsl/OpenFlags;
-	public static fun values ()[Lru/pixnews/wasm/sqlite/driver/dsl/OpenFlags;
+	public static fun valueOf (Ljava/lang/String;)Lat/released/wasm/sqlite/driver/dsl/OpenFlags;
+	public static fun values ()[Lat/released/wasm/sqlite/driver/dsl/OpenFlags;
 }
 
-public final class ru/pixnews/wasm/sqlite/driver/dsl/OpenParamsBlock {
+public final class at/released/wasm/sqlite/driver/dsl/OpenParamsBlock {
 	public fun <init> ()V
-	public final fun getLocale-5W4SLWA ()Ljava/lang/String;
+	public final fun getLocale-A71JT70 ()Ljava/lang/String;
 	public final fun getLookasideSlotCount ()I
 	public final fun getLookasideSlotSize ()I
 	public final fun getOpenFlags ()Ljava/util/Set;
-	public final fun setLocale-_ysz-Gs (Ljava/lang/String;)V
-	public final fun setLookasideConfig (II)Lru/pixnews/wasm/sqlite/driver/dsl/OpenParamsBlock;
+	public final fun setLocale-N1MPgMg (Ljava/lang/String;)V
+	public final fun setLookasideConfig (II)Lat/released/wasm/sqlite/driver/dsl/OpenParamsBlock;
 	public final fun setOpenFlags (Ljava/util/Set;)V
 }
 
-public final class ru/pixnews/wasm/sqlite/driver/dsl/WasmSqliteDriverConfigBlock {
+public final class at/released/wasm/sqlite/driver/dsl/WasmSqliteDriverConfigBlock {
 	public fun <init> ()V
 	public final fun debug (Lkotlin/jvm/functions/Function1;)V
 	public final fun embedder (Lkotlin/jvm/functions/Function1;)V

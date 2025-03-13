@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module
+package at.released.wasm.sqlite.open.helper.graalvm.host.module
 
 import at.released.weh.host.EmbedderHost
 import org.graalvm.wasm.WasmLanguage

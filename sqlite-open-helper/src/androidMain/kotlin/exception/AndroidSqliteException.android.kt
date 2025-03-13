@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.exception
+package at.released.wasm.sqlite.open.helper.exception
 
 import android.database.CursorWindowAllocationException
 import android.database.SQLException

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper
+package at.released.wasm.sqlite.open.helper
 
 public interface UintBitMask<T : UintBitMask<T>> {
     public val newInstance: (UInt) -> T

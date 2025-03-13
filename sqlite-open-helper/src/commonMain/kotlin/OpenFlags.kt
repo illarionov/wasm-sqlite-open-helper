@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper
+package at.released.wasm.sqlite.open.helper
 
-import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteOpenFlags
+import at.released.wasm.sqlite.open.helper.OpenFlags.Companion
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteOpenFlags
 
 @JvmInline
 public value class OpenFlags(

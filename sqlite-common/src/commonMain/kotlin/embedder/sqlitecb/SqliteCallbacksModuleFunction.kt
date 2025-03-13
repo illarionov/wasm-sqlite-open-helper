@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb
+package at.released.wasm.sqlite.open.helper.embedder.sqlitecb
 
 import at.released.weh.wasm.core.HostFunction
 import at.released.weh.wasm.core.HostFunction.HostFunctionType

@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.graalvm
+package at.released.wasm.sqlite.open.helper.graalvm
 
-import ru.pixnews.wasm.sqlite.open.helper.InternalWasmSqliteHelperApi
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedder
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntimeInternal
-import ru.pixnews.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
+import at.released.wasm.sqlite.open.helper.InternalWasmSqliteHelperApi
+import at.released.wasm.sqlite.open.helper.embedder.SqliteEmbedder
+import at.released.wasm.sqlite.open.helper.embedder.SqliteRuntimeInternal
+import at.released.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
 
 public object GraalvmSqliteEmbedder : SqliteEmbedder<GraalvmSqliteEmbedderConfig, GraalvmRuntime> {
     @InternalWasmSqliteHelperApi

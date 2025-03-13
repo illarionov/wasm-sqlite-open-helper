@@ -4,17 +4,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.test
+package at.released.wasm.sqlite.open.helper.gradle.multiplatform.test
 
-import org.gradle.api.tasks.Sync
-import org.gradle.kotlin.dsl.configure
-import org.gradle.kotlin.dsl.get
-import org.gradle.kotlin.dsl.register
+import at.released.wasm.sqlite.open.helper.gradle.multiplatform.ext.capitalizeAscii
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.ExecutionTaskHolder
 import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeHostTestRun
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
-import ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.ext.capitalizeAscii
 
 /*
  * Convention plugin that configures tests for native targets in projects with the Kotlin Multiplatform plugin

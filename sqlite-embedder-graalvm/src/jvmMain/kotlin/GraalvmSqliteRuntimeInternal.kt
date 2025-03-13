@@ -4,18 +4,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.graalvm
+package at.released.wasm.sqlite.open.helper.graalvm
 
+import at.released.wasm.sqlite.open.helper.embedder.SqliteEmbedderRuntimeInfo
+import at.released.wasm.sqlite.open.helper.embedder.SqliteRuntimeInternal
+import at.released.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
+import at.released.wasm.sqlite.open.helper.embedder.exports.SqliteExports
+import at.released.wasm.sqlite.open.helper.graalvm.exports.GraalvmSqliteExports
+import at.released.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.GraalvmSqliteCallbackFunctionIndexes
 import at.released.weh.bindings.graalvm241.GraalvmEmscriptenEnvironment
 import at.released.weh.wasm.core.memory.Memory
 import org.graalvm.polyglot.Context
 import org.graalvm.polyglot.Value
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderRuntimeInfo
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntimeInternal
-import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
-import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.exports.GraalvmSqliteExports
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.GraalvmSqliteCallbackFunctionIndexes
 import java.util.concurrent.ThreadFactory
 
 internal class GraalvmSqliteRuntimeInternal internal constructor(

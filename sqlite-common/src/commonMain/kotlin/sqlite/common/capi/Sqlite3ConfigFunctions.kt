@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi
+package at.released.wasm.sqlite.open.helper.sqlite.common.capi
 
-import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
-import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
-import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.SqliteCallbackFunctionIndexes
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteConfigParameter
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteLogCallback
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
+import at.released.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
+import at.released.wasm.sqlite.open.helper.embedder.exports.SqliteExports
+import at.released.wasm.sqlite.open.helper.embedder.functiontable.SqliteCallbackFunctionIndexes
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteConfigParameter
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteLogCallback
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
 
 /**
  * Wrappers for SQLite3 C Api configuration functions: `sqlite3_config`, `sqlite3_initialize`, …

@@ -4,22 +4,22 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.internal
+package at.released.wasm.sqlite.driver.internal
 
 import androidx.sqlite.SQLiteStatement
+import at.released.wasm.sqlite.driver.internal.WasmSqliteConnection.ConnectionPtrClosable
+import at.released.wasm.sqlite.open.helper.WasmPtr
+import at.released.wasm.sqlite.open.helper.internal.wasmSqliteCleaner
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteColumnType
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteStatement
+import at.released.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3CApi
+import at.released.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3Result
+import at.released.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3StatementFunctions
 import at.released.weh.common.api.Logger
 import kotlinx.atomicfu.AtomicBoolean
 import kotlinx.atomicfu.atomic
-import ru.pixnews.wasm.sqlite.driver.internal.WasmSqliteConnection.ConnectionPtrClosable
-import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.internal.wasmSqliteCleaner
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteColumnType
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteStatement
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3CApi
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3Result
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3StatementFunctions
 
 internal class WasmSqliteStatement(
     private val databaseLabel: String,

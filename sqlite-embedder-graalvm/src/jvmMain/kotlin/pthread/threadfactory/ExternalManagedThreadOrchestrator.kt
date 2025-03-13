@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.threadfactory
+package at.released.wasm.sqlite.open.helper.graalvm.pthread.threadfactory
 
 import at.released.weh.wasm.core.HostFunction
 import at.released.weh.wasm.core.POINTER

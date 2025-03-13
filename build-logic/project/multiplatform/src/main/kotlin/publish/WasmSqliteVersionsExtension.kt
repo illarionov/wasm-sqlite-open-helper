@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.publish
+package at.released.wasm.sqlite.open.helper.gradle.multiplatform.publish
 
+import at.released.wasm.sqlite.open.helper.gradle.multiplatform.publish.PropertiesValueSource.Parameters
 import org.gradle.api.Project
 import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
@@ -14,7 +15,6 @@ import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.provider.ValueSource
 import org.gradle.api.provider.ValueSourceParameters
 import org.gradle.kotlin.dsl.create
-import ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.publish.PropertiesValueSource.Parameters
 import java.util.Properties
 import javax.inject.Inject
 

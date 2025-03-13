@@ -14,11 +14,11 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_OUT
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 
 plugins {
-    id("ru.pixnews.wasm.sqlite.open.helper.gradle.lint.binary-compatibility-validator")
-    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.android")
-    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.android-instrumented-test")
-    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.kotlin")
-    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.publish")
+    id("at.released.wasm.sqlite.open.helper.gradle.lint.binary-compatibility-validator")
+    id("at.released.wasm.sqlite.open.helper.gradle.multiplatform.android")
+    id("at.released.wasm.sqlite.open.helper.gradle.multiplatform.android-instrumented-test")
+    id("at.released.wasm.sqlite.open.helper.gradle.multiplatform.kotlin")
+    id("at.released.wasm.sqlite.open.helper.gradle.multiplatform.publish")
 }
 
 group = "ru.pixnews.wasm-sqlite-open-helper"
@@ -28,7 +28,7 @@ version = wasmSqliteVersions.getSubmoduleVersionProvider(
 ).get()
 
 android {
-    namespace = "ru.pixnews.wasm.sqlite.open.helper"
+    namespace = "at.released.wasm.sqlite.open.helper"
     defaultConfig {
         consumerProguardFiles("consumer-rules.pro")
     }

@@ -4,15 +4,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi
+package at.released.wasm.sqlite.open.helper.sqlite.common.capi
 
+import at.released.wasm.sqlite.open.helper.embedder.SqliteEmbedderRuntimeInfo
+import at.released.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
+import at.released.wasm.sqlite.open.helper.embedder.exports.SqliteExports
+import at.released.wasm.sqlite.open.helper.embedder.functiontable.SqliteCallbackFunctionIndexes
+import at.released.wasm.sqlite.open.helper.sqlite.common.capi.databaseresources.SqliteDatabaseResourcesRegistry
 import at.released.weh.common.api.Logger
 import at.released.weh.wasm.core.memory.Memory
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderRuntimeInfo
-import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
-import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
-import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.SqliteCallbackFunctionIndexes
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.databaseresources.SqliteDatabaseResourcesRegistry
 
 public class Sqlite3CApi(
     sqliteExports: SqliteExports,

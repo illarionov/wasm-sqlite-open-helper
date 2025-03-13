@@ -6,7 +6,7 @@
 
 @file:Suppress("WRONG_ORDER_IN_CLASS_LIKE_STRUCTURES")
 
-package ru.pixnews.wasm.sqlite.open.helper.internal
+package at.released.wasm.sqlite.open.helper.internal
 
 /*
  * Original Copyrights:
@@ -17,11 +17,11 @@ package ru.pixnews.wasm.sqlite.open.helper.internal
 
 import android.database.sqlite.SQLiteException
 import androidx.sqlite.db.SupportSQLiteOpenHelper
+import at.released.wasm.sqlite.open.helper.Locale
+import at.released.wasm.sqlite.open.helper.OpenFlags.Companion.OPEN_READONLY
+import at.released.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfig
+import at.released.wasm.sqlite.open.helper.dsl.path.DatabasePathResolver
 import at.released.weh.common.api.Logger
-import ru.pixnews.wasm.sqlite.open.helper.Locale
-import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.OPEN_READONLY
-import ru.pixnews.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfig
-import ru.pixnews.wasm.sqlite.open.helper.dsl.path.DatabasePathResolver
 import java.nio.file.FileSystems
 import java.nio.file.attribute.PosixFilePermissions
 import kotlin.io.path.setPosixFilePermissions

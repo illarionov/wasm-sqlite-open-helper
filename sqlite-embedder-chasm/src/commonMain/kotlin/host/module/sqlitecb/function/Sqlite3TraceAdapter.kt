@@ -4,19 +4,19 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.function
+package at.released.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.function
 
+import at.released.wasm.sqlite.open.helper.WasmPtr
+import at.released.wasm.sqlite.open.helper.chasm.ext.asInt
+import at.released.wasm.sqlite.open.helper.chasm.ext.asUInt
+import at.released.wasm.sqlite.open.helper.chasm.ext.asWasmAddr
+import at.released.wasm.sqlite.open.helper.embedder.sqlitecb.function.Sqlite3TraceFunctionHandle
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceCallback
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode
 import at.released.weh.host.EmbedderHost
 import at.released.weh.wasm.core.memory.ReadOnlyMemory
 import io.github.charlietap.chasm.runtime.value.NumberValue
-import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.asInt
-import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.asUInt
-import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.asWasmAddr
-import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.function.Sqlite3TraceFunctionHandle
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceCallback
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode
 import io.github.charlietap.chasm.embedding.shapes.HostFunction as ChasmHostFunction
 
 internal class Sqlite3TraceAdapter(

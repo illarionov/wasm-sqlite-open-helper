@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.debug
+package at.released.wasm.sqlite.open.helper.debug
 
+import at.released.wasm.sqlite.open.helper.InternalWasmSqliteHelperApi
+import at.released.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfigBlock.Factory.Type
+import at.released.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfigBlock.Factory.Type.KEY_DEFINED
+import at.released.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
 import at.released.weh.common.api.Logger
-import ru.pixnews.wasm.sqlite.open.helper.InternalWasmSqliteHelperApi
-import ru.pixnews.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfigBlock.Factory.Type
-import ru.pixnews.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfigBlock.Factory.Type.KEY_DEFINED
-import ru.pixnews.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
 
 /**
  * Enables logging of SQL statement at the moment before it starts executing

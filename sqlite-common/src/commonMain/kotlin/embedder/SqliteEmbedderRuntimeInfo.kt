@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.embedder
+package at.released.wasm.sqlite.open.helper.embedder
 
 public interface SqliteEmbedderRuntimeInfo {
     public val supportMultithreading: Boolean

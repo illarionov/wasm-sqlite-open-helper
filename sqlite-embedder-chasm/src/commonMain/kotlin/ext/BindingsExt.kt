@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.chasm.ext
+package at.released.wasm.sqlite.open.helper.chasm.ext
 
+import at.released.wasm.sqlite.open.helper.chasm.exports.ChasmFunctionBinding
+import at.released.wasm.sqlite.open.helper.chasm.host.ChasmInstanceBuilder.ChasmInstance
+import at.released.wasm.sqlite.open.helper.embedder.exports.SinglePropertyLazyValue
 import at.released.weh.wasm.core.WasmFunctionBinding
 import io.github.charlietap.chasm.embedding.exports
-import ru.pixnews.wasm.sqlite.open.helper.chasm.exports.ChasmFunctionBinding
-import ru.pixnews.wasm.sqlite.open.helper.chasm.host.ChasmInstanceBuilder.ChasmInstance
-import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SinglePropertyLazyValue
 import kotlin.concurrent.Volatile
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty

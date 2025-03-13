@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.chasm.ext
+package at.released.wasm.sqlite.open.helper.chasm.ext
 
+import at.released.wasm.sqlite.open.helper.chasm.host.exception.ChasmErrorException
 import io.github.charlietap.chasm.embedding.error.ChasmError
 import io.github.charlietap.chasm.embedding.shapes.ChasmResult
 import io.github.charlietap.chasm.embedding.shapes.fold
-import ru.pixnews.wasm.sqlite.open.helper.chasm.host.exception.ChasmErrorException
 
 internal fun <S, E : ChasmError> ChasmResult<S, E>.orThrow(
     message: (() -> String?)? = null,

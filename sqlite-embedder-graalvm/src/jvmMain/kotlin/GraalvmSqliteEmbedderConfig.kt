@@ -4,16 +4,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.graalvm
+package at.released.wasm.sqlite.open.helper.graalvm
 
 import at.released.cassettes.playhead.AssetManager
 import at.released.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcuMtPthread349
 import at.released.wasm.sqlite.binary.base.WasmSqliteConfiguration
+import at.released.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
+import at.released.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import at.released.weh.common.api.Logger
 import at.released.weh.host.EmbedderHost
 import org.graalvm.polyglot.Engine
-import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 
 /**
  * Configuration of the GraalVM engine
@@ -41,7 +41,7 @@ public class GraalvmSqliteEmbedderConfig internal constructor(
     /**
      * Sets the Wasm source reader responsible for reading a WebAssembly binary.
      * This can be overridden to read Wasm files from non-standard locations.
-     * See [JvmResourcesWasmBinaryReader][ru.pixnews.wasm.sqlite.binary.reader.JvmResourcesWasmBinaryReader] for
+     * See [JvmResourcesWasmBinaryReader][at.released.wasm.sqlite.binary.reader.JvmResourcesWasmBinaryReader] for
      * example of custom implementations.
      */
     public var wasmSourceReader: AssetManager = defaultWasmSourceReader

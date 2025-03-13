@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.chasm
+package at.released.wasm.sqlite.driver.chasm
 
 import androidx.test.platform.app.InstrumentationRegistry
+import at.released.wasm.sqlite.driver.WasmSQLiteDriver
+import at.released.wasm.sqlite.driver.test.base.tests.AbstractBasicSqliteDriverTest
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
-import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
-import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractBasicSqliteDriverTest
 
 class ChasmBaseSqliteDriverTest : AbstractBasicSqliteDriverTest<WasmSQLiteDriver<*>>(
     driverCreator = ChasmSqliteDriverFactory,

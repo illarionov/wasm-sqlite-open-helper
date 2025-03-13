@@ -6,7 +6,7 @@
 
 @file:Suppress("FILE_IS_TOO_LONG", "WRONG_OVERLOADING_FUNCTION_ARGUMENTS")
 
-package ru.pixnews.wasm.sqlite.open.helper.internal
+package at.released.wasm.sqlite.open.helper.internal
 
 /*
  * Original Copyrights:
@@ -26,32 +26,32 @@ import androidx.core.os.CancellationSignal
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteStatement
+import at.released.wasm.sqlite.open.helper.Locale
+import at.released.wasm.sqlite.open.helper.OpenFlags
+import at.released.wasm.sqlite.open.helper.OpenFlags.Companion.CREATE_IF_NECESSARY
+import at.released.wasm.sqlite.open.helper.OpenFlags.Companion.ENABLE_WRITE_AHEAD_LOGGING
+import at.released.wasm.sqlite.open.helper.OpenFlags.Companion.OPEN_CREATE
+import at.released.wasm.sqlite.open.helper.OpenFlags.Companion.OPEN_READONLY
+import at.released.wasm.sqlite.open.helper.clear
+import at.released.wasm.sqlite.open.helper.contains
+import at.released.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfig
+import at.released.wasm.sqlite.open.helper.exception.AndroidSqliteDatabaseCorruptException
+import at.released.wasm.sqlite.open.helper.internal.CloseGuard.CloseGuardFinalizeAction
+import at.released.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.Companion.CONNECTION_FLAG_PRIMARY_CONNECTION_AFFINITY
+import at.released.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.Companion.CONNECTION_FLAG_READ_ONLY
+import at.released.wasm.sqlite.open.helper.internal.SQLiteDatabaseConfiguration.Companion.isInMemoryDb
+import at.released.wasm.sqlite.open.helper.internal.SQLiteDatabaseConfiguration.Companion.resolveJournalMode
+import at.released.wasm.sqlite.open.helper.internal.SQLiteProgram.Companion.bindAllArgsAsStrings
+import at.released.wasm.sqlite.open.helper.internal.SQLiteSession.Companion.TRANSACTION_MODE_EXCLUSIVE
+import at.released.wasm.sqlite.open.helper.internal.SQLiteSession.Companion.TRANSACTION_MODE_IMMEDIATE
+import at.released.wasm.sqlite.open.helper.internal.SQLiteStatementType.Companion.getSqlStatementType
+import at.released.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_DDL
+import at.released.wasm.sqlite.open.helper.internal.ext.DatabaseUtils
+import at.released.wasm.sqlite.open.helper.or
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteDatabaseJournalMode
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteDatabaseJournalMode.WAL
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteDatabaseSyncMode
 import at.released.weh.common.api.Logger
-import ru.pixnews.wasm.sqlite.open.helper.Locale
-import ru.pixnews.wasm.sqlite.open.helper.OpenFlags
-import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.CREATE_IF_NECESSARY
-import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.ENABLE_WRITE_AHEAD_LOGGING
-import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.OPEN_CREATE
-import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.OPEN_READONLY
-import ru.pixnews.wasm.sqlite.open.helper.clear
-import ru.pixnews.wasm.sqlite.open.helper.contains
-import ru.pixnews.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfig
-import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteDatabaseCorruptException
-import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard.CloseGuardFinalizeAction
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.Companion.CONNECTION_FLAG_PRIMARY_CONNECTION_AFFINITY
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteConnectionPool.Companion.CONNECTION_FLAG_READ_ONLY
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDatabaseConfiguration.Companion.isInMemoryDb
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDatabaseConfiguration.Companion.resolveJournalMode
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteProgram.Companion.bindAllArgsAsStrings
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteSession.Companion.TRANSACTION_MODE_EXCLUSIVE
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteSession.Companion.TRANSACTION_MODE_IMMEDIATE
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.Companion.getSqlStatementType
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_DDL
-import ru.pixnews.wasm.sqlite.open.helper.internal.ext.DatabaseUtils
-import ru.pixnews.wasm.sqlite.open.helper.or
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDatabaseJournalMode
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDatabaseJournalMode.WAL
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDatabaseSyncMode
 import java.io.File
 import java.io.IOException
 import kotlin.collections.Map.Entry

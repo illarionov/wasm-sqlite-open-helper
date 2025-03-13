@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.chicory.interpreter
+package at.released.wasm.sqlite.driver.chicory.interpreter
 
+import at.released.wasm.sqlite.driver.WasmSQLiteDriver
+import at.released.wasm.sqlite.driver.chicory.ChicorySqliteDriverFactory
+import at.released.wasm.sqlite.driver.test.base.tests.AbstractIcuCollationTest
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
-import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
-import ru.pixnews.wasm.sqlite.driver.chicory.ChicorySqliteDriverFactory
-import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractIcuCollationTest
 
 class ChicoryIcuCollationTest : AbstractIcuCollationTest<WasmSQLiteDriver<*>>(
     driverCreator = ChicorySqliteDriverFactory(),

@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi
+package at.released.wasm.sqlite.open.helper.sqlite.common.capi
 
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
 import at.released.weh.wasm.core.WasmFunctionBinding
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
 
 internal fun WasmFunctionBinding.executeForSqliteResultCode(vararg args: Any?): SqliteResultCode = SqliteResultCode(
     executeForInt(*args),

@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.chasm
+package at.released.wasm.sqlite.driver.chasm
 
-import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
-import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractBasicSqliteDriverTest
-import ru.pixnews.wasm.sqlite.open.helper.chasm.ChasmRuntime
-import ru.pixnews.wasm.sqlite.test.utils.TempFolder
+import at.released.wasm.sqlite.driver.WasmSQLiteDriver
+import at.released.wasm.sqlite.driver.test.base.tests.AbstractBasicSqliteDriverTest
+import at.released.wasm.sqlite.open.helper.chasm.ChasmRuntime
+import at.released.wasm.sqlite.test.utils.TempFolder
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Ignore
