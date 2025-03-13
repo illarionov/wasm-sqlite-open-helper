@@ -13,7 +13,7 @@ internal fun RepositoryHandler.pixnewsMaven() = maven {
     name = "PixnewsMaven"
     url = URI("https://maven.pixnews.ru")
     mavenContent {
-        includeGroup("ru.pixnews.wasm-sqlite-open-helper")
+        includeGroup("at.released.wasm-sqlite-driver")
         includeGroup("at.released.weh")
     }
 }

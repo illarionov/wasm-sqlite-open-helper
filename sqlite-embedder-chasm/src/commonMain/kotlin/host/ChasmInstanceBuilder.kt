@@ -9,14 +9,14 @@ package ru.pixnews.wasm.sqlite.open.helper.chasm.host
 import at.released.cassettes.base.AssetUrl
 import at.released.cassettes.playhead.AssetManager
 import at.released.cassettes.playhead.readOrThrow
+import at.released.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import at.released.weh.bindings.chasm.ChasmEmscriptenHostBuilder
 import at.released.weh.bindings.chasm.memory.ChasmMemoryAdapter
 import at.released.weh.host.EmbedderHost
 import at.released.weh.wasm.core.WasmModules.ENV_MODULE_NAME
 import at.released.weh.wasm.core.memory.WASM_MEMORY_DEFAULT_MAX_PAGES
 import at.released.weh.wasm.core.memory.WASM_MEMORY_PAGE_SIZE
-import io.github.charlietap.chasm.ast.type.Limits
-import io.github.charlietap.chasm.ast.type.SharedStatus.Unshared
+import io.github.charlietap.chasm.config.RuntimeConfig
 import io.github.charlietap.chasm.embedding.error.ChasmError.DecodeError
 import io.github.charlietap.chasm.embedding.instance
 import io.github.charlietap.chasm.embedding.memory
@@ -28,16 +28,17 @@ import io.github.charlietap.chasm.embedding.shapes.Module
 import io.github.charlietap.chasm.embedding.shapes.Store
 import io.github.charlietap.chasm.embedding.shapes.fold
 import io.github.charlietap.chasm.embedding.store
-import io.github.charlietap.chasm.executor.runtime.ext.asRange
-import io.github.charlietap.chasm.executor.runtime.ext.table
-import io.github.charlietap.chasm.executor.runtime.ext.toLong
-import io.github.charlietap.chasm.executor.runtime.instance.TableInstance
-import io.github.charlietap.chasm.executor.runtime.store.Address
-import io.github.charlietap.chasm.executor.runtime.value.ReferenceValue
+import io.github.charlietap.chasm.runtime.address.Address
+import io.github.charlietap.chasm.runtime.ext.asRange
+import io.github.charlietap.chasm.runtime.ext.table
+import io.github.charlietap.chasm.runtime.ext.toLong
+import io.github.charlietap.chasm.runtime.instance.TableInstance
+import io.github.charlietap.chasm.runtime.value.ReferenceValue
 import io.github.charlietap.chasm.stream.SourceReader
+import io.github.charlietap.chasm.type.Limits
+import io.github.charlietap.chasm.type.SharedStatus.Unshared
 import kotlinx.io.RawSource
 import kotlinx.io.buffered
-import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.orThrow
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.exception.ChasmErrorException
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.exception.ChasmException
@@ -47,15 +48,16 @@ import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.IndirectFunctionTableIndex
 import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.SqliteCallbackFunctionIndexes
 import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
-import io.github.charlietap.chasm.ast.type.MemoryType as ChasmMemoryType
 import io.github.charlietap.chasm.embedding.shapes.Import as ChasmImport
 import io.github.charlietap.chasm.embedding.shapes.Memory as ChasmMemoryImportable
+import io.github.charlietap.chasm.type.MemoryType as ChasmMemoryType
 
 internal class ChasmInstanceBuilder(
     private val host: EmbedderHost,
     private val callbackStore: SqliteCallbackStore,
     private val sqlite3Binary: WasmSqliteConfiguration,
     private val sourceReader: AssetManager,
+    private val runtimeConfig: RuntimeConfig,
 ) {
     fun setupChasmInstance(): ChasmInstance {
         val store: Store = store()
@@ -97,6 +99,7 @@ internal class ChasmInstanceBuilder(
             store = store,
             module = sqliteModule,
             imports = hostImports,
+            config = runtimeConfig,
         ).orThrow { "Can not instantiate $sqlite3Binary" }
 
         val indirectFunctionTableIndexes = setupIndirectFunctionIndexes(store, instance, sqliteCallbacksHostFunctions)

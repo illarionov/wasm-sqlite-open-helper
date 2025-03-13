@@ -7,9 +7,9 @@
 package ru.pixnews.wasm.sqlite.driver.chasm
 
 import at.released.cassettes.playhead.AppleNsBundleAssetManager
+import at.released.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcu349
+import at.released.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import at.released.weh.common.api.Logger
-import ru.pixnews.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcu349
-import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
 import ru.pixnews.wasm.sqlite.driver.base.defaultNativeTestSqliteDriverConfig
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.TestSqliteDriverFactory

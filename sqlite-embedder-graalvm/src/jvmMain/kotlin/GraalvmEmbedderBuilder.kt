@@ -9,6 +9,7 @@ package ru.pixnews.wasm.sqlite.open.helper.graalvm
 import at.released.cassettes.base.AssetUrl
 import at.released.cassettes.playhead.AssetManager
 import at.released.cassettes.playhead.readBytesOrThrow
+import at.released.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import at.released.weh.bindings.graalvm241.GraalvmEmscriptenEnvironment
 import at.released.weh.bindings.graalvm241.GraalvmHostFunctionInstaller
 import at.released.weh.bindings.graalvm241.host.pthread.ManagedThreadInitializer
@@ -24,7 +25,6 @@ import org.graalvm.polyglot.Context
 import org.graalvm.polyglot.Engine
 import org.graalvm.polyglot.Source
 import org.graalvm.polyglot.io.ByteSequence
-import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderRuntimeInfo
 import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
 import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.GraalvmSqliteCallbackFunctionIndexes

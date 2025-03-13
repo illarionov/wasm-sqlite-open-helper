@@ -7,11 +7,11 @@
 package ru.pixnews.wasm.sqlite.open.helper.graalvm
 
 import at.released.cassettes.playhead.AssetManager
+import at.released.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcuMtPthread349
+import at.released.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import at.released.weh.common.api.Logger
 import at.released.weh.host.EmbedderHost
 import org.graalvm.polyglot.Engine
-import ru.pixnews.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcuMtPthread349
-import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 

@@ -7,9 +7,9 @@
 package ru.pixnews.wasm.sqlite.open.helper.chicory
 
 import androidx.sqlite.db.SupportSQLiteOpenHelper
+import at.released.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcu349
+import at.released.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import at.released.weh.common.api.Logger
-import ru.pixnews.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcu349
-import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperFactory
 import ru.pixnews.wasm.sqlite.open.helper.base.util.defaultTestHelperConfig
 import ru.pixnews.wasm.sqlite.open.helper.test.base.TestOpenHelperFactoryCreator

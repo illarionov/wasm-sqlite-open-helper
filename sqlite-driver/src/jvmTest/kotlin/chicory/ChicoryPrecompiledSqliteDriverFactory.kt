@@ -6,11 +6,10 @@
 
 package ru.pixnews.wasm.sqlite.driver.chicory
 
+import at.released.wasm.sqlite.binary.aot.SqliteAndroidWasmEmscriptenIcuAot349
+import at.released.wasm.sqlite.binary.aot.SqliteAndroidWasmEmscriptenIcuAot349Module
+import at.released.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import at.released.weh.common.api.Logger
-import ru.pixnews.wasm.sqlite.binary.aot.AndroidWasmEmscriptenIcuAot349Module
-import ru.pixnews.wasm.sqlite.binary.aot.SqliteAndroidWasmEmscriptenIcuAot349
-import ru.pixnews.wasm.sqlite.binary.base.WasmSourceUrl
-import ru.pixnews.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
 import ru.pixnews.wasm.sqlite.driver.base.defaultTestSqliteDriverConfig
 import ru.pixnews.wasm.sqlite.driver.test.base.tests.TestSqliteDriverFactory
@@ -21,16 +20,7 @@ import ru.pixnews.wasm.sqlite.open.helper.chicory.ChicorySqliteEmbedder
  * WasmSQLiteDriver factory to run tests with Chicory Runtime and SQLite precompiled to .class files
  */
 object ChicoryPrecompiledSqliteDriverFactory : TestSqliteDriverFactory<WasmSQLiteDriver<ChicoryRuntime>> {
-    override val defaultSqliteBinary: WasmSqliteConfiguration =
-        object : WasmSqliteConfiguration by SqliteAndroidWasmEmscriptenIcuAot349 {
-            override val sqliteUrl: WasmSourceUrl
-                get() = WasmSourceUrl(
-                    requireNotNull(
-                        SqliteAndroidWasmEmscriptenIcuAot349::class.java
-                            .getResource("AndroidWasmEmscriptenIcuAot349.meta"),
-                    ).toString(),
-                )
-        }
+    override val defaultSqliteBinary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcuAot349
 
     override fun create(
         dbLogger: Logger,
@@ -40,7 +30,7 @@ object ChicoryPrecompiledSqliteDriverFactory : TestSqliteDriverFactory<WasmSQLit
             defaultTestSqliteDriverConfig(dbLogger)
             embedder {
                 this.sqlite3Binary = sqlite3Binary
-                this.machineFactory = AndroidWasmEmscriptenIcuAot349Module::create
+                this.machineFactory = SqliteAndroidWasmEmscriptenIcuAot349Module::create
             }
         }
     }

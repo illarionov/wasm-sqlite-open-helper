@@ -6,15 +6,15 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.chasm.exports
 
+import at.released.weh.bindings.chasm.ext.asInt
 import at.released.weh.wasm.core.WasmFunctionBinding
 import io.github.charlietap.chasm.embedding.error.ChasmError
 import io.github.charlietap.chasm.embedding.invoke
 import io.github.charlietap.chasm.embedding.shapes.Instance
 import io.github.charlietap.chasm.embedding.shapes.Store
 import io.github.charlietap.chasm.embedding.shapes.fold
-import io.github.charlietap.chasm.executor.runtime.value.ExecutionValue
-import io.github.charlietap.chasm.executor.runtime.value.NumberValue
-import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.asInt
+import io.github.charlietap.chasm.runtime.value.ExecutionValue
+import io.github.charlietap.chasm.runtime.value.NumberValue
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.asLong
 import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.orThrow
 
