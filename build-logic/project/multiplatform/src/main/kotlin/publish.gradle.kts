@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform
+package at.released.wasm.sqlite.open.helper.gradle.multiplatform
 
+import at.released.wasm.sqlite.open.helper.gradle.multiplatform.publish.createWasmSqliteVersionsExtension
 import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.KotlinMultiplatform
 import org.jetbrains.dokka.gradle.DokkaTask
-import ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.publish.createWasmSqliteVersionsExtension
 
 /*
  * Convention plugin with publishing defaults

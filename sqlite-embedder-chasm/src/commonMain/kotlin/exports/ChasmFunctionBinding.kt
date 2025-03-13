@@ -4,8 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.chasm.exports
+package at.released.wasm.sqlite.open.helper.chasm.exports
 
+import at.released.wasm.sqlite.open.helper.chasm.ext.asLong
+import at.released.wasm.sqlite.open.helper.chasm.ext.orThrow
 import at.released.weh.bindings.chasm.ext.asInt
 import at.released.weh.wasm.core.WasmFunctionBinding
 import io.github.charlietap.chasm.embedding.error.ChasmError
@@ -15,8 +17,6 @@ import io.github.charlietap.chasm.embedding.shapes.Store
 import io.github.charlietap.chasm.embedding.shapes.fold
 import io.github.charlietap.chasm.runtime.value.ExecutionValue
 import io.github.charlietap.chasm.runtime.value.NumberValue
-import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.asLong
-import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.orThrow
 
 internal class ChasmFunctionBinding(
     private val store: Store,

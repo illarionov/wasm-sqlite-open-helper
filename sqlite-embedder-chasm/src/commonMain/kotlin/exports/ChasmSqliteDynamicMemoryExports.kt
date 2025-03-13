@@ -6,14 +6,14 @@
 
 @file:Suppress("VariableNaming", "UnusedPrivateProperty", "BLANK_LINE_BETWEEN_PROPERTIES")
 
-package ru.pixnews.wasm.sqlite.open.helper.chasm.exports
+package at.released.wasm.sqlite.open.helper.chasm.exports
 
-import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.functionMember
-import ru.pixnews.wasm.sqlite.open.helper.chasm.host.ChasmInstanceBuilder.ChasmInstance
-import ru.pixnews.wasm.sqlite.open.helper.chasm.platform.throwOutOfMemoryError
-import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteDynamicMemoryExports
-import ru.pixnews.wasm.sqlite.open.helper.isNull
+import at.released.wasm.sqlite.open.helper.WasmPtr
+import at.released.wasm.sqlite.open.helper.chasm.ext.functionMember
+import at.released.wasm.sqlite.open.helper.chasm.host.ChasmInstanceBuilder.ChasmInstance
+import at.released.wasm.sqlite.open.helper.chasm.platform.throwOutOfMemoryError
+import at.released.wasm.sqlite.open.helper.embedder.exports.SqliteDynamicMemoryExports
+import at.released.wasm.sqlite.open.helper.isNull
 
 internal class ChasmSqliteDynamicMemoryExports(
     instance: ChasmInstance,

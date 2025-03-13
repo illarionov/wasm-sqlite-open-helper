@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform
+package at.released.wasm.sqlite.open.helper.gradle.multiplatform
 
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 

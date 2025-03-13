@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.graalvm
+package at.released.wasm.sqlite.open.helper.graalvm
 
+import at.released.wasm.sqlite.open.helper.test.base.tests.AbstractCommonFactoryTest
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
-import ru.pixnews.wasm.sqlite.open.helper.test.base.tests.AbstractCommonFactoryTest
 
 class GraalvmBaseFactoryTest : AbstractCommonFactoryTest<GraalvmSqliteEmbedderConfig>(
     factoryCreator = GraalvmFactoryCreator(),

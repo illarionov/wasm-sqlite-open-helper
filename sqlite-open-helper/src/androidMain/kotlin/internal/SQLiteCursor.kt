@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.internal
+package at.released.wasm.sqlite.open.helper.internal
 
 /*
  * Original Copyrights:
@@ -22,10 +22,10 @@ import android.database.DataSetObserver
 import android.database.StaleDataException
 import android.net.Uri
 import android.os.Bundle
+import at.released.wasm.sqlite.open.helper.internal.CloseGuard.CloseGuardFinalizeAction
+import at.released.wasm.sqlite.open.helper.internal.cursor.CursorWindow
+import at.released.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow
 import at.released.weh.common.api.Logger
-import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard.CloseGuardFinalizeAction
-import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.CursorWindow
-import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow
 import kotlin.math.max
 
 /**

@@ -4,17 +4,17 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.internal
+package at.released.wasm.sqlite.driver.internal
 
 import androidx.sqlite.throwSQLiteException
-import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrorInfo
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode.Companion.SQLITE_OK
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3CApi
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3ErrorFunctions.Companion.readSqliteErrorInfo
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3Result
+import at.released.wasm.sqlite.open.helper.WasmPtr
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrorInfo
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode.Companion.SQLITE_OK
+import at.released.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3CApi
+import at.released.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3ErrorFunctions.Companion.readSqliteErrorInfo
+import at.released.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3Result
 
 internal fun <R : Any> Sqlite3Result<R>.getOrThrow(
     msgPrefix: String?,

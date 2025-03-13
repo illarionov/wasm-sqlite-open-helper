@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.chicory.ext
+package at.released.wasm.sqlite.open.helper.chicory.ext
 
 import com.dylibso.chicory.wasm.types.ValueType
 

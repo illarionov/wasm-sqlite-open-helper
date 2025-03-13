@@ -4,8 +4,19 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi
+package at.released.wasm.sqlite.open.helper.sqlite.common.capi
 
+import at.released.wasm.sqlite.open.helper.WasmPtr
+import at.released.wasm.sqlite.open.helper.embedder.exports.SqliteExports
+import at.released.wasm.sqlite.open.helper.embedder.exports.sqliteFreeSilent
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteColumnType
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteDestructorType
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteStatement
+import at.released.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3ErrorFunctions.Companion.createSqlite3Result
+import at.released.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3Result.Success
+import at.released.wasm.sqlite.open.helper.sqlite.common.capi.databaseresources.SqliteDatabaseResourcesRegistry
 import at.released.weh.common.ext.encodeToNullTerminatedBuffer
 import at.released.weh.wasm.core.memory.Memory
 import at.released.weh.wasm.core.memory.readNullableNullTerminatedString
@@ -16,17 +27,6 @@ import kotlinx.io.Buffer
 import kotlinx.io.buffered
 import kotlinx.io.readByteArray
 import kotlinx.io.writeString
-import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
-import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.sqliteFreeSilent
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteColumnType
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDestructorType
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteStatement
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3ErrorFunctions.Companion.createSqlite3Result
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3Result.Success
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.databaseresources.SqliteDatabaseResourcesRegistry
 
 public class Sqlite3StatementFunctions internal constructor(
     private val sqliteExports: SqliteExports,

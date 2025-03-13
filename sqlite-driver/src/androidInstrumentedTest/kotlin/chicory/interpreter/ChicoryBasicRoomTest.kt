@@ -4,16 +4,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.chicory.interpreter
+package at.released.wasm.sqlite.driver.chicory.interpreter
 
 import androidx.test.platform.app.InstrumentationRegistry
+import at.released.wasm.sqlite.driver.WasmSQLiteDriver
+import at.released.wasm.sqlite.driver.base.AndroidUserDatabaseSuspendFactory
+import at.released.wasm.sqlite.driver.chicory.ChicoryAndroidInstrumentedSqliteDriverFactory
+import at.released.wasm.sqlite.driver.chicory.checkChicorySdk
+import at.released.wasm.sqlite.driver.test.base.tests.room.AbstractBasicRoomTest
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
-import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
-import ru.pixnews.wasm.sqlite.driver.base.AndroidUserDatabaseSuspendFactory
-import ru.pixnews.wasm.sqlite.driver.chicory.ChicoryAndroidInstrumentedSqliteDriverFactory
-import ru.pixnews.wasm.sqlite.driver.chicory.checkChicorySdk
-import ru.pixnews.wasm.sqlite.driver.test.base.tests.room.AbstractBasicRoomTest
 
 class ChicoryBasicRoomTest : AbstractBasicRoomTest<WasmSQLiteDriver<*>>(
     driverFactory = ChicoryAndroidInstrumentedSqliteDriverFactory,

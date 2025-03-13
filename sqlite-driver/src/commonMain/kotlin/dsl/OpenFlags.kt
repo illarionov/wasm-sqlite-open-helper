@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.dsl
+package at.released.wasm.sqlite.driver.dsl
 
 public enum class OpenFlags {
     /**

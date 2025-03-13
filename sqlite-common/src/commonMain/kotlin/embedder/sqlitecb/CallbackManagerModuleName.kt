@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb
+package at.released.wasm.sqlite.open.helper.embedder.sqlitecb
 
-import ru.pixnews.wasm.sqlite.open.helper.InternalWasmSqliteHelperApi
+import at.released.wasm.sqlite.open.helper.InternalWasmSqliteHelperApi
 
 @InternalWasmSqliteHelperApi
 public const val SQLITE3_CALLBACK_MANAGER_MODULE_NAME: String = "sqlite3-callback-manager"

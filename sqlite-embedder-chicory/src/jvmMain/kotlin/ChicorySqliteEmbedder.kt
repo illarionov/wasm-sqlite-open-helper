@@ -4,25 +4,25 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.chicory
+package at.released.wasm.sqlite.open.helper.chicory
 
 import at.released.cassettes.playhead.AssetManager
 import at.released.wasm.sqlite.binary.base.WasmSqliteConfiguration
+import at.released.wasm.sqlite.open.helper.InternalWasmSqliteHelperApi
+import at.released.wasm.sqlite.open.helper.chicory.exports.ChicorySqliteExports
+import at.released.wasm.sqlite.open.helper.chicory.host.module.MainInstanceBuilder
+import at.released.wasm.sqlite.open.helper.chicory.host.module.MainInstanceBuilder.ChicoryInstance
+import at.released.wasm.sqlite.open.helper.embedder.SqliteEmbedder
+import at.released.wasm.sqlite.open.helper.embedder.SqliteEmbedderRuntimeInfo
+import at.released.wasm.sqlite.open.helper.embedder.SqliteRuntimeInternal
+import at.released.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
+import at.released.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
+import at.released.wasm.sqlite.open.helper.embedder.exports.SqliteExports
+import at.released.wasm.sqlite.open.helper.embedder.functiontable.SqliteCallbackFunctionIndexes
 import at.released.weh.host.EmbedderHost
 import at.released.weh.wasm.core.memory.Memory
 import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.runtime.Machine
-import ru.pixnews.wasm.sqlite.open.helper.InternalWasmSqliteHelperApi
-import ru.pixnews.wasm.sqlite.open.helper.chicory.exports.ChicorySqliteExports
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.MainInstanceBuilder
-import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.MainInstanceBuilder.ChicoryInstance
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedder
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderRuntimeInfo
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntimeInternal
-import ru.pixnews.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
-import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
-import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
-import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.SqliteCallbackFunctionIndexes
 
 public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig, ChicoryRuntime> {
     @InternalWasmSqliteHelperApi

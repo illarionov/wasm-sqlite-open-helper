@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api
+package at.released.wasm.sqlite.open.helper.sqlite.common.api
 
-import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
+import at.released.wasm.sqlite.open.helper.WasmPtr
 import kotlin.time.Duration
 
 public class SqliteDb private constructor()

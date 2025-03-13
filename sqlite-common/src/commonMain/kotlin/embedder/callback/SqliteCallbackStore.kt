@@ -4,16 +4,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.embedder.callback
+package at.released.wasm.sqlite.open.helper.embedder.callback
 
-import ru.pixnews.wasm.sqlite.open.helper.InternalWasmSqliteHelperApi
-import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteComparatorCallback
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteExecCallback
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteLogCallback
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteProgressCallback
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceCallback
+import at.released.wasm.sqlite.open.helper.InternalWasmSqliteHelperApi
+import at.released.wasm.sqlite.open.helper.WasmPtr
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteComparatorCallback
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteExecCallback
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteLogCallback
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteProgressCallback
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceCallback
 import kotlin.jvm.JvmInline
 
 @InternalWasmSqliteHelperApi

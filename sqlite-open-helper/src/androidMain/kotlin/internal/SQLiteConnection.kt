@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.internal
+package at.released.wasm.sqlite.open.helper.internal
 
 /*
  * Original Copyrights:
@@ -18,35 +18,35 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteBindOrColumnIndexOutOfRangeException
 import android.database.sqlite.SQLiteException
 import androidx.core.os.CancellationSignal
+import at.released.wasm.sqlite.open.helper.OpenFlags
+import at.released.wasm.sqlite.open.helper.OpenFlags.Companion.CREATE_IF_NECESSARY
+import at.released.wasm.sqlite.open.helper.OpenFlags.Companion.NO_LOCALIZED_COLLATORS
+import at.released.wasm.sqlite.open.helper.WasmPtr
+import at.released.wasm.sqlite.open.helper.contains
+import at.released.wasm.sqlite.open.helper.debug.SqliteSlowQueryLogger
+import at.released.wasm.sqlite.open.helper.debug.SqliteStatementLogger
+import at.released.wasm.sqlite.open.helper.debug.SqliteStatementProfileLogger
+import at.released.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfig
+import at.released.wasm.sqlite.open.helper.exception.AndroidSqliteCantOpenDatabaseException
+import at.released.wasm.sqlite.open.helper.internal.CloseGuard.CloseGuardFinalizeAction
+import at.released.wasm.sqlite.open.helper.internal.SQLiteDatabaseConfiguration.Companion.isInMemoryDb
+import at.released.wasm.sqlite.open.helper.internal.SQLiteDatabaseConfiguration.Companion.isReadOnlyDatabase
+import at.released.wasm.sqlite.open.helper.internal.SQLiteDatabaseConfiguration.Companion.resolveJournalMode
+import at.released.wasm.sqlite.open.helper.internal.SQLiteDatabaseConfiguration.Companion.resolveSyncMode
+import at.released.wasm.sqlite.open.helper.internal.SQLiteStatementType.Companion.getSqlStatementType
+import at.released.wasm.sqlite.open.helper.internal.SQLiteStatementType.Companion.getSqlStatementTypeExtended
+import at.released.wasm.sqlite.open.helper.internal.SQLiteStatementType.Companion.isCacheable
+import at.released.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_PRAGMA
+import at.released.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_SELECT
+import at.released.wasm.sqlite.open.helper.internal.WasmSqliteCleaner.WasmSqliteCleanable
+import at.released.wasm.sqlite.open.helper.internal.connection.OperationLog
+import at.released.wasm.sqlite.open.helper.internal.connection.OperationLog.Companion.trimSqlForDisplay
+import at.released.wasm.sqlite.open.helper.internal.connection.PreparedStatement
+import at.released.wasm.sqlite.open.helper.internal.connection.PreparedStatementCache
+import at.released.wasm.sqlite.open.helper.internal.cursor.CursorWindow
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
+import at.released.wasm.sqlite.open.helper.toSqliteOpenFlags
 import at.released.weh.common.api.Logger
-import ru.pixnews.wasm.sqlite.open.helper.OpenFlags
-import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.CREATE_IF_NECESSARY
-import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.NO_LOCALIZED_COLLATORS
-import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.contains
-import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteSlowQueryLogger
-import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementLogger
-import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementProfileLogger
-import ru.pixnews.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfig
-import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteCantOpenDatabaseException
-import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard.CloseGuardFinalizeAction
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDatabaseConfiguration.Companion.isInMemoryDb
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDatabaseConfiguration.Companion.isReadOnlyDatabase
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDatabaseConfiguration.Companion.resolveJournalMode
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDatabaseConfiguration.Companion.resolveSyncMode
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.Companion.getSqlStatementType
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.Companion.getSqlStatementTypeExtended
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.Companion.isCacheable
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_PRAGMA
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_SELECT
-import ru.pixnews.wasm.sqlite.open.helper.internal.WasmSqliteCleaner.WasmSqliteCleanable
-import ru.pixnews.wasm.sqlite.open.helper.internal.connection.OperationLog
-import ru.pixnews.wasm.sqlite.open.helper.internal.connection.OperationLog.Companion.trimSqlForDisplay
-import ru.pixnews.wasm.sqlite.open.helper.internal.connection.PreparedStatement
-import ru.pixnews.wasm.sqlite.open.helper.internal.connection.PreparedStatementCache
-import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.CursorWindow
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
-import ru.pixnews.wasm.sqlite.open.helper.toSqliteOpenFlags
 import java.io.File
 import java.nio.file.FileSystems
 import java.nio.file.Path

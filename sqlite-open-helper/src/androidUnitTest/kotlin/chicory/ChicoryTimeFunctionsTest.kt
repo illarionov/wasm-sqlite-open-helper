@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.chicory
+package at.released.wasm.sqlite.open.helper.chicory
 
+import at.released.wasm.sqlite.open.helper.test.base.tests.AbstractTimeFunctionsTest
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
-import ru.pixnews.wasm.sqlite.open.helper.test.base.tests.AbstractTimeFunctionsTest
 
 class ChicoryTimeFunctionsTest : AbstractTimeFunctionsTest<ChicorySqliteEmbedderConfig>(
     factoryCreator = ChicoryFactoryCreator,

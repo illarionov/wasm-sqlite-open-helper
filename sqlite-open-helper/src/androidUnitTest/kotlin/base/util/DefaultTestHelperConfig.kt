@@ -4,16 +4,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.base.util
+package at.released.wasm.sqlite.open.helper.base.util
 
+import at.released.wasm.sqlite.open.helper.Locale
+import at.released.wasm.sqlite.open.helper.debug.SqliteSlowQueryLogger
+import at.released.wasm.sqlite.open.helper.debug.SqliteStatementLogger
+import at.released.wasm.sqlite.open.helper.debug.SqliteStatementProfileLogger
+import at.released.wasm.sqlite.open.helper.dsl.WasmSqliteOpenHelperFactoryConfigBlock
+import at.released.wasm.sqlite.open.helper.dsl.path.DatabasePathResolver
+import at.released.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import at.released.weh.common.api.Logger
-import ru.pixnews.wasm.sqlite.open.helper.Locale
-import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteSlowQueryLogger
-import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementLogger
-import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementProfileLogger
-import ru.pixnews.wasm.sqlite.open.helper.dsl.WasmSqliteOpenHelperFactoryConfigBlock
-import ru.pixnews.wasm.sqlite.open.helper.dsl.path.DatabasePathResolver
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import java.io.File
 
 fun <E : SqliteEmbedderConfig> WasmSqliteOpenHelperFactoryConfigBlock<E>.defaultTestHelperConfig(

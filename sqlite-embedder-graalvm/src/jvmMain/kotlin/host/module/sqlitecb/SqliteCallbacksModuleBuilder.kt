@@ -4,28 +4,28 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb
+package at.released.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb
 
+import at.released.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
+import at.released.wasm.sqlite.open.helper.embedder.functiontable.IndirectFunctionTableIndex
+import at.released.wasm.sqlite.open.helper.embedder.sqlitecb.SQLITE3_CALLBACK_MANAGER_MODULE_NAME
+import at.released.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
+import at.released.wasm.sqlite.open.helper.graalvm.ext.functionTable
+import at.released.wasm.sqlite.open.helper.graalvm.ext.setupImportedEnvMemory
+import at.released.wasm.sqlite.open.helper.graalvm.ext.setupWasmModuleFunctions
+import at.released.wasm.sqlite.open.helper.graalvm.ext.withWasmContext
+import at.released.wasm.sqlite.open.helper.graalvm.host.module.NodeFactory
+import at.released.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.function.Sqlite3LoggingAdapter
+import at.released.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.function.Sqlite3ProgressAdapter
+import at.released.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.function.Sqlite3TraceAdapter
+import at.released.wasm.sqlite.open.helper.graalvm.pthread.threadfactory.EXTERNAL_MANAGED_THREAD_START_ROUTINE
+import at.released.wasm.sqlite.open.helper.graalvm.pthread.threadfactory.UseManagedThreadPthreadRoutineAdapter
 import at.released.weh.host.EmbedderHost
 import at.released.weh.wasm.core.HostFunction
 import org.graalvm.polyglot.Context
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmLanguage
 import org.graalvm.wasm.WasmModule
-import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
-import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.IndirectFunctionTableIndex
-import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SQLITE3_CALLBACK_MANAGER_MODULE_NAME
-import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.functionTable
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.setupImportedEnvMemory
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.setupWasmModuleFunctions
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.withWasmContext
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.NodeFactory
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.function.Sqlite3LoggingAdapter
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.function.Sqlite3ProgressAdapter
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.sqlitecb.function.Sqlite3TraceAdapter
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.threadfactory.EXTERNAL_MANAGED_THREAD_START_ROUTINE
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.pthread.threadfactory.UseManagedThreadPthreadRoutineAdapter
 
 internal class SqliteCallbacksModuleBuilder(
     private val graalContext: Context,

@@ -4,16 +4,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.graalvm
+package at.released.wasm.sqlite.open.helper.graalvm
 
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import at.released.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcu349
 import at.released.wasm.sqlite.binary.base.WasmSqliteConfiguration
+import at.released.wasm.sqlite.open.helper.WasmSqliteOpenHelperFactory
+import at.released.wasm.sqlite.open.helper.base.util.defaultTestHelperConfig
+import at.released.wasm.sqlite.open.helper.test.base.TestOpenHelperFactoryCreator
 import at.released.weh.common.api.Logger
 import org.graalvm.polyglot.Engine
-import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperFactory
-import ru.pixnews.wasm.sqlite.open.helper.base.util.defaultTestHelperConfig
-import ru.pixnews.wasm.sqlite.open.helper.test.base.TestOpenHelperFactoryCreator
 
 internal class GraalvmFactoryCreator(
     private val initialGraalvmEngine: Engine? = WASM_GRAALVM_ENGINE,

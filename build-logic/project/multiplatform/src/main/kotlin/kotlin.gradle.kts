@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform
+package at.released.wasm.sqlite.open.helper.gradle.multiplatform
 
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
@@ -38,7 +38,7 @@ kotlin {
                     "kotlin.ExperimentalStdlibApi",
                     "kotlinx.cinterop.ExperimentalForeignApi",
                     "at.released.weh.common.api.InternalWasiEmscriptenHostApi",
-                    "ru.pixnews.wasm.sqlite.open.helper.InternalWasmSqliteHelperApi",
+                    "at.released.wasm.sqlite.open.helper.InternalWasmSqliteHelperApi",
                 ).forEach(::optIn)
             }
         }

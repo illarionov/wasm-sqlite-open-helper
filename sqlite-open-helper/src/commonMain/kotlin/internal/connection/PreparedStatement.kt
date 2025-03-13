@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.internal.connection
+package at.released.wasm.sqlite.open.helper.internal.connection
 
-import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.Companion.ExtendedStatementType
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_SELECT
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteStatement
+import at.released.wasm.sqlite.open.helper.WasmPtr
+import at.released.wasm.sqlite.open.helper.internal.SQLiteStatementType.Companion.ExtendedStatementType
+import at.released.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_SELECT
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteStatement
 
 /**
  * Holder type for a prepared statement.

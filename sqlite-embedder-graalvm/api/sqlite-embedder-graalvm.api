@@ -1,12 +1,12 @@
-public abstract interface class ru/pixnews/wasm/sqlite/open/helper/graalvm/GraalvmRuntime : ru/pixnews/wasm/sqlite/open/helper/embedder/SqliteRuntime {
+public abstract interface class at/released/wasm/sqlite/open/helper/graalvm/GraalvmRuntime : at/released/wasm/sqlite/open/helper/embedder/SqliteRuntime {
 	public abstract fun getManagedThreadFactory ()Ljava/util/concurrent/ThreadFactory;
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/graalvm/GraalvmSqliteEmbedder : ru/pixnews/wasm/sqlite/open/helper/embedder/SqliteEmbedder {
-	public static final field INSTANCE Lru/pixnews/wasm/sqlite/open/helper/graalvm/GraalvmSqliteEmbedder;
+public final class at/released/wasm/sqlite/open/helper/graalvm/GraalvmSqliteEmbedder : at/released/wasm/sqlite/open/helper/embedder/SqliteEmbedder {
+	public static final field INSTANCE Lat/released/wasm/sqlite/open/helper/graalvm/GraalvmSqliteEmbedder;
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/graalvm/GraalvmSqliteEmbedderConfig : ru/pixnews/wasm/sqlite/open/helper/embedder/SqliteEmbedderConfig {
+public final class at/released/wasm/sqlite/open/helper/graalvm/GraalvmSqliteEmbedderConfig : at/released/wasm/sqlite/open/helper/embedder/SqliteEmbedderConfig {
 	public final fun getGraalvmEngine ()Lorg/graalvm/polyglot/Engine;
 	public final fun getHost ()Lat/released/weh/host/EmbedderHost;
 	public final fun getSqlite3Binary ()Lat/released/wasm/sqlite/binary/base/WasmSqliteConfiguration;

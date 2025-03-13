@@ -4,17 +4,17 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.test.base.tests
+package at.released.wasm.sqlite.driver.test.base.tests
 
 import androidx.sqlite.SQLiteDriver
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isTrue
+import at.released.wasm.sqlite.driver.test.base.util.execSQL
+import at.released.wasm.sqlite.driver.test.base.util.queryForString
+import at.released.wasm.sqlite.driver.test.base.util.readResult
+import at.released.wasm.sqlite.driver.test.base.util.use
 import co.touchlab.kermit.Severity
-import ru.pixnews.wasm.sqlite.driver.test.base.util.execSQL
-import ru.pixnews.wasm.sqlite.driver.test.base.util.queryForString
-import ru.pixnews.wasm.sqlite.driver.test.base.util.readResult
-import ru.pixnews.wasm.sqlite.driver.test.base.util.use
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import kotlin.test.Test

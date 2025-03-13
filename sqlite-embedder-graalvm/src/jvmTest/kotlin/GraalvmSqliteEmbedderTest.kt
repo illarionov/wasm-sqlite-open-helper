@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.graalvm
+package at.released.wasm.sqlite.open.helper.graalvm
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import at.released.cassettes.playhead.AssetManager
+import at.released.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
 import at.released.weh.common.api.Logger
-import ru.pixnews.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
 import kotlin.test.Test
 
 class GraalvmSqliteEmbedderTest {

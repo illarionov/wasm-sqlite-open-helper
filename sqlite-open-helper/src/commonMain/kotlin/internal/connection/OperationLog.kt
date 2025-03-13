@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.internal.connection
+package at.released.wasm.sqlite.open.helper.internal.connection
 
-import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteSlowQueryLogger
+import at.released.wasm.sqlite.open.helper.debug.SqliteSlowQueryLogger
 
 internal class OperationLog(
     private val slowQueryLogger: SqliteSlowQueryLogger,

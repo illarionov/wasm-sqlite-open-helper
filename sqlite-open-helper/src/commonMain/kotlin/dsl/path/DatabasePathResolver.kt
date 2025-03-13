@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.dsl.path
+package at.released.wasm.sqlite.open.helper.dsl.path
 
 public fun interface DatabasePathResolver {
     /**

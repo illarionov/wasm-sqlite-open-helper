@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi
+package at.released.wasm.sqlite.open.helper.sqlite.common.capi
 
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrorInfo
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrorInfo
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
 import kotlin.jvm.JvmInline
 
 @Suppress("WRONG_ORDER_IN_CLASS_LIKE_STRUCTURES")

@@ -4,16 +4,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.internal.cursor
+package at.released.wasm.sqlite.open.helper.internal.cursor
 
+import at.released.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.CursorFieldType.BLOB
+import at.released.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.CursorFieldType.FLOAT
+import at.released.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.CursorFieldType.INTEGER
+import at.released.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.CursorFieldType.NULL
+import at.released.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.CursorFieldType.STRING
+import at.released.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.Field.Null
 import at.released.weh.common.api.Logger
 import at.released.weh.common.ext.encodedNullTerminatedStringLength
-import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.CursorFieldType.BLOB
-import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.CursorFieldType.FLOAT
-import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.CursorFieldType.INTEGER
-import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.CursorFieldType.NULL
-import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.CursorFieldType.STRING
-import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.Field.Null
 import kotlin.LazyThreadSafetyMode.NONE
 
 internal class NativeCursorWindow(

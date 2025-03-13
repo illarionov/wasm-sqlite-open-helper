@@ -4,30 +4,30 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.internal.ext
+package at.released.wasm.sqlite.open.helper.internal.ext
 
-import ru.pixnews.wasm.sqlite.open.helper.InternalWasmSqliteHelperApi
-import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidOperationCanceledException
-import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteAbortException
-import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteAccessPermException
-import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteBindOrColumnIndexOutOfRangeException
-import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteBlobTooBigException
-import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteCantOpenDatabaseException
-import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteConstraintException
-import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteDatabaseCorruptException
-import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteDatabaseLockedException
-import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteDatatypeMismatchException
-import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteDiskIoException
-import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteDoneException
-import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteException
-import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteFullException
-import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteMisuseException
-import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteOutOfMemoryException
-import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteReadOnlyDatabaseException
-import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteTableLockedException
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrorInfo
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode.Companion.SQLITE_OK
+import at.released.wasm.sqlite.open.helper.InternalWasmSqliteHelperApi
+import at.released.wasm.sqlite.open.helper.exception.AndroidOperationCanceledException
+import at.released.wasm.sqlite.open.helper.exception.AndroidSqliteAbortException
+import at.released.wasm.sqlite.open.helper.exception.AndroidSqliteAccessPermException
+import at.released.wasm.sqlite.open.helper.exception.AndroidSqliteBindOrColumnIndexOutOfRangeException
+import at.released.wasm.sqlite.open.helper.exception.AndroidSqliteBlobTooBigException
+import at.released.wasm.sqlite.open.helper.exception.AndroidSqliteCantOpenDatabaseException
+import at.released.wasm.sqlite.open.helper.exception.AndroidSqliteConstraintException
+import at.released.wasm.sqlite.open.helper.exception.AndroidSqliteDatabaseCorruptException
+import at.released.wasm.sqlite.open.helper.exception.AndroidSqliteDatabaseLockedException
+import at.released.wasm.sqlite.open.helper.exception.AndroidSqliteDatatypeMismatchException
+import at.released.wasm.sqlite.open.helper.exception.AndroidSqliteDiskIoException
+import at.released.wasm.sqlite.open.helper.exception.AndroidSqliteDoneException
+import at.released.wasm.sqlite.open.helper.exception.AndroidSqliteException
+import at.released.wasm.sqlite.open.helper.exception.AndroidSqliteFullException
+import at.released.wasm.sqlite.open.helper.exception.AndroidSqliteMisuseException
+import at.released.wasm.sqlite.open.helper.exception.AndroidSqliteOutOfMemoryException
+import at.released.wasm.sqlite.open.helper.exception.AndroidSqliteReadOnlyDatabaseException
+import at.released.wasm.sqlite.open.helper.exception.AndroidSqliteTableLockedException
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteErrorInfo
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode.Companion.SQLITE_OK
 
 @InternalWasmSqliteHelperApi
 public fun throwAndroidSqliteException(

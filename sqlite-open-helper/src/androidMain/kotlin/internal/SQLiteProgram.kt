@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.internal
+package at.released.wasm.sqlite.open.helper.internal
 
 /*
  * Original Copyrights:
@@ -15,10 +15,10 @@ package ru.pixnews.wasm.sqlite.open.helper.internal
 
 import androidx.core.os.CancellationSignal
 import androidx.sqlite.db.SupportSQLiteProgram
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteDatabase.Companion.getThreadDefaultConnectionFlags
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_ABORT
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_BEGIN
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_COMMIT
+import at.released.wasm.sqlite.open.helper.internal.SQLiteDatabase.Companion.getThreadDefaultConnectionFlags
+import at.released.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_ABORT
+import at.released.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_BEGIN
+import at.released.wasm.sqlite.open.helper.internal.SQLiteStatementType.STATEMENT_COMMIT
 
 /**
  * A base class for compiled SQLite programs.

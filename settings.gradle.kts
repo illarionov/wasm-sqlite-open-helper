@@ -4,7 +4,7 @@ pluginManagement {
 
 plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.9.0"
-    id("ru.pixnews.wasm.sqlite.open.helper.gradle.settings.root")
+    id("at.released.wasm.sqlite.open.helper.gradle.settings.root")
 }
 
 // Workaround for https://github.com/gradle/gradle/issues/26020

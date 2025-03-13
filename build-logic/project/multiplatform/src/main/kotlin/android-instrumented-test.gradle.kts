@@ -6,7 +6,7 @@
 
 @file:Suppress("UnstableApiUsage")
 
-package ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform
+package at.released.wasm.sqlite.open.helper.gradle.multiplatform
 
 import com.android.build.api.dsl.CommonExtension
 import com.android.build.api.dsl.ManagedVirtualDevice

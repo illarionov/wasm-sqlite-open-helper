@@ -4,24 +4,24 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.chasm
+package at.released.wasm.sqlite.open.helper.chasm
 
 import at.released.cassettes.playhead.AssetManager
 import at.released.wasm.sqlite.binary.base.WasmSqliteConfiguration
+import at.released.wasm.sqlite.open.helper.InternalWasmSqliteHelperApi
+import at.released.wasm.sqlite.open.helper.chasm.exports.ChasmSqliteExports
+import at.released.wasm.sqlite.open.helper.chasm.host.ChasmInstanceBuilder
+import at.released.wasm.sqlite.open.helper.chasm.host.ChasmInstanceBuilder.ChasmInstance
+import at.released.wasm.sqlite.open.helper.embedder.SqliteEmbedder
+import at.released.wasm.sqlite.open.helper.embedder.SqliteEmbedderRuntimeInfo
+import at.released.wasm.sqlite.open.helper.embedder.SqliteRuntimeInternal
+import at.released.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
+import at.released.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
+import at.released.wasm.sqlite.open.helper.embedder.exports.SqliteExports
+import at.released.wasm.sqlite.open.helper.embedder.functiontable.SqliteCallbackFunctionIndexes
 import at.released.weh.host.EmbedderHost
 import at.released.weh.wasm.core.memory.Memory
 import io.github.charlietap.chasm.config.RuntimeConfig
-import ru.pixnews.wasm.sqlite.open.helper.InternalWasmSqliteHelperApi
-import ru.pixnews.wasm.sqlite.open.helper.chasm.exports.ChasmSqliteExports
-import ru.pixnews.wasm.sqlite.open.helper.chasm.host.ChasmInstanceBuilder
-import ru.pixnews.wasm.sqlite.open.helper.chasm.host.ChasmInstanceBuilder.ChasmInstance
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedder
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderRuntimeInfo
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntimeInternal
-import ru.pixnews.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
-import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
-import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
-import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.SqliteCallbackFunctionIndexes
 
 public object ChasmSqliteEmbedder : SqliteEmbedder<ChasmSqliteEmbedderConfig, ChasmRuntime> {
     @InternalWasmSqliteHelperApi

@@ -4,31 +4,31 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi
+package at.released.wasm.sqlite.open.helper.sqlite.common.capi
 
+import at.released.wasm.sqlite.open.helper.WasmPtr
+import at.released.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
+import at.released.wasm.sqlite.open.helper.embedder.exports.SqliteExports
+import at.released.wasm.sqlite.open.helper.embedder.exports.allocNullTerminatedString
+import at.released.wasm.sqlite.open.helper.embedder.exports.sqliteFreeSilent
+import at.released.wasm.sqlite.open.helper.embedder.functiontable.SqliteCallbackFunctionIndexes
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteDbConfigParameter
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteDbStatusParameter
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteOpenFlags
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteProgressCallback
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode.Companion.SQLITE_OK
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode.Companion.name
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceCallback
+import at.released.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode
+import at.released.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3ErrorFunctions.Companion.createSqlite3Result
+import at.released.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3Result.Error
+import at.released.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3Result.Success
+import at.released.wasm.sqlite.open.helper.sqlite.common.capi.databaseresources.SqliteDatabaseResourcesRegistry
 import at.released.weh.common.api.Logger
 import at.released.weh.wasm.core.memory.Memory
 import at.released.weh.wasm.core.memory.readPtr
-import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
-import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
-import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.allocNullTerminatedString
-import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.sqliteFreeSilent
-import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.SqliteCallbackFunctionIndexes
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDbConfigParameter
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDbStatusParameter
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteOpenFlags
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteProgressCallback
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode.Companion.SQLITE_OK
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteResultCode.Companion.name
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceCallback
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteTraceEventCode
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3ErrorFunctions.Companion.createSqlite3Result
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3Result.Error
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.Sqlite3Result.Success
-import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.capi.databaseresources.SqliteDatabaseResourcesRegistry
 
 public class Sqlite3DbFunctions internal constructor(
     private val sqliteExports: SqliteExports,

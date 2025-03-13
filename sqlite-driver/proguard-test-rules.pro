@@ -12,7 +12,7 @@
     @org.junit.Rule <fields>;
 }
 
--keep class * extends ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractSqliteDriverTest {
+-keep class * extends at.released.wasm.sqlite.driver.test.base.tests.AbstractSqliteDriverTest {
     *;
 }
 

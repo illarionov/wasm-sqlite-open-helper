@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.chasm
+package at.released.wasm.sqlite.open.helper.chasm
 
+import at.released.wasm.sqlite.open.helper.test.base.tests.AbstractMultithreadingTest
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
-import ru.pixnews.wasm.sqlite.open.helper.test.base.tests.AbstractMultithreadingTest
 
 @Ignore("not applicable")
 class ChasmMultithreadingTest : AbstractMultithreadingTest<ChasmSqliteEmbedderConfig>(

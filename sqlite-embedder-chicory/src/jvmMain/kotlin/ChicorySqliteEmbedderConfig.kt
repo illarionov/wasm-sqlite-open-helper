@@ -4,17 +4,17 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.chicory
+package at.released.wasm.sqlite.open.helper.chicory
 
 import at.released.cassettes.playhead.AssetManager
 import at.released.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcu349
 import at.released.wasm.sqlite.binary.base.WasmSqliteConfiguration
+import at.released.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
+import at.released.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import at.released.weh.common.api.Logger
 import at.released.weh.host.EmbedderHost
 import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.runtime.Machine
-import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 
 /**
  * Configuration of the Chicory engine

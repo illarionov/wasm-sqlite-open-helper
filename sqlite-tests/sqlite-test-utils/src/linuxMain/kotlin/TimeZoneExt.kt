@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.test.utils
+package at.released.wasm.sqlite.test.utils
 
 import kotlinx.cinterop.toKStringFromUtf8
 import platform.posix.errno

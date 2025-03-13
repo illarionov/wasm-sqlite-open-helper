@@ -6,12 +6,12 @@
 
 @file:Suppress("VariableNaming", "BLANK_LINE_BETWEEN_PROPERTIES")
 
-package ru.pixnews.wasm.sqlite.open.helper.chasm.exports
+package at.released.wasm.sqlite.open.helper.chasm.exports
 
+import at.released.wasm.sqlite.open.helper.chasm.ext.functionMember
+import at.released.wasm.sqlite.open.helper.chasm.host.ChasmInstanceBuilder.ChasmInstance
+import at.released.wasm.sqlite.open.helper.embedder.exports.SqliteExports
 import at.released.weh.wasm.core.WasmFunctionBinding
-import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.functionMember
-import ru.pixnews.wasm.sqlite.open.helper.chasm.host.ChasmInstanceBuilder.ChasmInstance
-import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
 
 internal class ChasmSqliteExports(instance: ChasmInstance) : SqliteExports {
     override val sqlite3_db_status: WasmFunctionBinding by instance.functionMember()

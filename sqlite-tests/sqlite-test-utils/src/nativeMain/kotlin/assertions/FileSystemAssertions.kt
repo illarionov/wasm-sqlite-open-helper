@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.test.utils.assertions
+package at.released.wasm.sqlite.test.utils.assertions
 
 import assertk.Assert
 import assertk.assertions.support.appendName

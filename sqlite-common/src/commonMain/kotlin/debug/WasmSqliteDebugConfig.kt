@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.debug
+package at.released.wasm.sqlite.open.helper.debug
 
-import ru.pixnews.wasm.sqlite.open.helper.InternalWasmSqliteHelperApi
-import ru.pixnews.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfigBlock.Factory.Type.KEY_UNDEFINED
-import ru.pixnews.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
+import at.released.wasm.sqlite.open.helper.InternalWasmSqliteHelperApi
+import at.released.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfigBlock.Factory.Type.KEY_UNDEFINED
+import at.released.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
 
 @InternalWasmSqliteHelperApi
 public class WasmSqliteDebugConfig(

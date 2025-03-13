@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.chicory.precompiled
+package at.released.wasm.sqlite.driver.chicory.precompiled
 
+import at.released.wasm.sqlite.driver.WasmSQLiteDriver
+import at.released.wasm.sqlite.driver.base.JvmDatabaseFactory
+import at.released.wasm.sqlite.driver.chicory.ChicoryPrecompiledSqliteDriverFactory
+import at.released.wasm.sqlite.driver.test.base.tests.room.AbstractBasicRoomTest
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
-import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
-import ru.pixnews.wasm.sqlite.driver.base.JvmDatabaseFactory
-import ru.pixnews.wasm.sqlite.driver.chicory.ChicoryPrecompiledSqliteDriverFactory
-import ru.pixnews.wasm.sqlite.driver.test.base.tests.room.AbstractBasicRoomTest
 
 class ChicoryPrecompiledBasicRoomTest : AbstractBasicRoomTest<WasmSQLiteDriver<*>>(
     driverFactory = ChicoryPrecompiledSqliteDriverFactory,

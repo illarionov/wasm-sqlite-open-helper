@@ -4,23 +4,23 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb
+package at.released.wasm.sqlite.open.helper.chasm.host.module.sqlitecb
 
+import at.released.wasm.sqlite.open.helper.chasm.ext.toChasmFunctionTypes
+import at.released.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.function.Sqlite3LoggingAdapter
+import at.released.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.function.Sqlite3ProgressAdapter
+import at.released.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.function.Sqlite3TraceAdapter
+import at.released.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
+import at.released.wasm.sqlite.open.helper.embedder.sqlitecb.SQLITE3_CALLBACK_MANAGER_MODULE_NAME
+import at.released.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
+import at.released.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction.SQLITE3_LOGGING_CALLBACK
+import at.released.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction.SQLITE3_PROGRESS_CALLBACK
+import at.released.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction.SQLITE3_TRACE_CALLBACK
 import at.released.weh.host.EmbedderHost
 import at.released.weh.wasm.core.memory.ReadOnlyMemory
 import io.github.charlietap.chasm.embedding.function
 import io.github.charlietap.chasm.embedding.shapes.Import
 import io.github.charlietap.chasm.embedding.shapes.Store
-import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.toChasmFunctionTypes
-import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.function.Sqlite3LoggingAdapter
-import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.function.Sqlite3ProgressAdapter
-import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.function.Sqlite3TraceAdapter
-import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
-import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SQLITE3_CALLBACK_MANAGER_MODULE_NAME
-import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
-import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction.SQLITE3_LOGGING_CALLBACK
-import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction.SQLITE3_PROGRESS_CALLBACK
-import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction.SQLITE3_TRACE_CALLBACK
 import io.github.charlietap.chasm.embedding.shapes.HostFunction as ChasmHostFunction
 
 internal fun setupSqliteCallbacksHostFunctions(

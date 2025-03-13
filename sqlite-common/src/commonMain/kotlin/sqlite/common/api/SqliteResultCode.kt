@@ -6,7 +6,7 @@
 
 @file:Suppress("BLANK_LINE_BETWEEN_PROPERTIES", "PropertyWrapping", "ArgumentListWrapping", "MaxLineLength")
 
-package ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api
+package at.released.wasm.sqlite.open.helper.sqlite.common.api
 
 import kotlin.jvm.JvmInline
 

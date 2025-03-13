@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.internal
+package at.released.wasm.sqlite.open.helper.internal
 
 /*
  * Original Copyrights:
@@ -15,7 +15,7 @@ package ru.pixnews.wasm.sqlite.open.helper.internal
 
 import android.database.sqlite.SQLiteTransactionListener
 import androidx.core.os.CancellationSignal
-import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.CursorWindow
+import at.released.wasm.sqlite.open.helper.internal.cursor.CursorWindow
 
 /**
  * Provides a single client the ability to use a database.

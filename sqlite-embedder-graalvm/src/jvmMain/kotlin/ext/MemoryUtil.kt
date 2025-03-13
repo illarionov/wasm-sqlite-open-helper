@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.graalvm.ext
+package at.released.wasm.sqlite.open.helper.graalvm.ext
 
+import at.released.wasm.sqlite.open.helper.WasmPtr
 import org.graalvm.polyglot.Value
 import org.graalvm.wasm.WasmArguments
-import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
 
 internal fun <P : Any?> Value.asWasmAddr(): WasmPtr<P> = WasmPtr(asInt())
 

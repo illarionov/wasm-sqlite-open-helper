@@ -4,16 +4,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.chasm
+package at.released.wasm.sqlite.driver.chasm
 
 import at.released.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcu349
 import at.released.wasm.sqlite.binary.base.WasmSqliteConfiguration
+import at.released.wasm.sqlite.driver.WasmSQLiteDriver
+import at.released.wasm.sqlite.driver.base.defaultTestSqliteDriverConfig
+import at.released.wasm.sqlite.driver.test.base.tests.TestSqliteDriverFactory
+import at.released.wasm.sqlite.open.helper.chasm.ChasmRuntime
+import at.released.wasm.sqlite.open.helper.chasm.ChasmSqliteEmbedder
 import at.released.weh.common.api.Logger
-import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
-import ru.pixnews.wasm.sqlite.driver.base.defaultTestSqliteDriverConfig
-import ru.pixnews.wasm.sqlite.driver.test.base.tests.TestSqliteDriverFactory
-import ru.pixnews.wasm.sqlite.open.helper.chasm.ChasmRuntime
-import ru.pixnews.wasm.sqlite.open.helper.chasm.ChasmSqliteEmbedder
 
 object ChasmSqliteDriverFactory : TestSqliteDriverFactory<WasmSQLiteDriver<ChasmRuntime>> {
     override val defaultSqliteBinary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcu349

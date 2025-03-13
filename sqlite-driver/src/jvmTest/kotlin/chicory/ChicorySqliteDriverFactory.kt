@@ -4,17 +4,17 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.chicory
+package at.released.wasm.sqlite.driver.chicory
 
 import at.released.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcu349
 import at.released.wasm.sqlite.binary.base.WasmSqliteConfiguration
+import at.released.wasm.sqlite.driver.WasmSQLiteDriver
+import at.released.wasm.sqlite.driver.base.defaultTestSqliteDriverConfig
+import at.released.wasm.sqlite.driver.test.base.tests.TestSqliteDriverFactory
+import at.released.wasm.sqlite.open.helper.chicory.ChicoryRuntime
+import at.released.wasm.sqlite.open.helper.chicory.ChicorySqliteEmbedder
 import at.released.weh.common.api.Logger
 import com.dylibso.chicory.experimental.aot.AotMachine
-import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
-import ru.pixnews.wasm.sqlite.driver.base.defaultTestSqliteDriverConfig
-import ru.pixnews.wasm.sqlite.driver.test.base.tests.TestSqliteDriverFactory
-import ru.pixnews.wasm.sqlite.open.helper.chicory.ChicoryRuntime
-import ru.pixnews.wasm.sqlite.open.helper.chicory.ChicorySqliteEmbedder
 
 class ChicorySqliteDriverFactory(
     private val useAot: Boolean = false,

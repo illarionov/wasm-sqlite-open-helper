@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.internal.cursor
+package at.released.wasm.sqlite.open.helper.internal.cursor
 
+import at.released.wasm.sqlite.open.helper.exception.AndroidSqliteException
+import at.released.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.CursorFieldType
+import at.released.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.Field
 import at.released.weh.common.api.Logger
-import ru.pixnews.wasm.sqlite.open.helper.exception.AndroidSqliteException
-import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.CursorFieldType
-import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.NativeCursorWindow.Field
 
 /**
  *

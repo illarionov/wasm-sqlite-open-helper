@@ -4,12 +4,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.gradle.settings
+package at.released.wasm.sqlite.open.helper.gradle.settings
 
 /*
  * Base settings convention plugin for the use in library modules
  */
 plugins {
-    id("ru.pixnews.wasm.sqlite.open.helper.gradle.settings.common")
-    id("ru.pixnews.wasm.sqlite.open.helper.gradle.settings.repositories")
+    id("at.released.wasm.sqlite.open.helper.gradle.settings.common")
+    id("at.released.wasm.sqlite.open.helper.gradle.settings.repositories")
 }

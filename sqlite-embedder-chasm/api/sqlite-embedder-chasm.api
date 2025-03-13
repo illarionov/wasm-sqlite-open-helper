@@ -1,11 +1,11 @@
-public abstract interface class ru/pixnews/wasm/sqlite/open/helper/chasm/ChasmRuntime : ru/pixnews/wasm/sqlite/open/helper/embedder/SqliteRuntime {
+public abstract interface class at/released/wasm/sqlite/open/helper/chasm/ChasmRuntime : at/released/wasm/sqlite/open/helper/embedder/SqliteRuntime {
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/chasm/ChasmSqliteEmbedder : ru/pixnews/wasm/sqlite/open/helper/embedder/SqliteEmbedder {
-	public static final field INSTANCE Lru/pixnews/wasm/sqlite/open/helper/chasm/ChasmSqliteEmbedder;
+public final class at/released/wasm/sqlite/open/helper/chasm/ChasmSqliteEmbedder : at/released/wasm/sqlite/open/helper/embedder/SqliteEmbedder {
+	public static final field INSTANCE Lat/released/wasm/sqlite/open/helper/chasm/ChasmSqliteEmbedder;
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/chasm/ChasmSqliteEmbedderConfig : ru/pixnews/wasm/sqlite/open/helper/embedder/SqliteEmbedderConfig {
+public final class at/released/wasm/sqlite/open/helper/chasm/ChasmSqliteEmbedderConfig : at/released/wasm/sqlite/open/helper/embedder/SqliteEmbedderConfig {
 	public final fun getHost ()Lat/released/weh/host/EmbedderHost;
 	public final fun getRuntimeConfig ()Lio/github/charlietap/chasm/config/RuntimeConfig;
 	public final fun getSqlite3Binary ()Lat/released/wasm/sqlite/binary/base/WasmSqliteConfiguration;
@@ -16,20 +16,20 @@ public final class ru/pixnews/wasm/sqlite/open/helper/chasm/ChasmSqliteEmbedderC
 	public final fun setWasmSourceReader (Lat/released/cassettes/playhead/AssetManager;)V
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/chasm/host/exception/ChasmErrorException : ru/pixnews/wasm/sqlite/open/helper/chasm/host/exception/ChasmException {
+public final class at/released/wasm/sqlite/open/helper/chasm/host/exception/ChasmErrorException : at/released/wasm/sqlite/open/helper/chasm/host/exception/ChasmException {
 	public fun <init> (Lio/github/charlietap/chasm/embedding/error/ChasmError;Ljava/lang/String;Ljava/lang/Throwable;)V
 	public synthetic fun <init> (Lio/github/charlietap/chasm/embedding/error/ChasmError;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getError ()Lio/github/charlietap/chasm/embedding/error/ChasmError;
 }
 
-public class ru/pixnews/wasm/sqlite/open/helper/chasm/host/exception/ChasmException : java/lang/RuntimeException {
+public class at/released/wasm/sqlite/open/helper/chasm/host/exception/ChasmException : java/lang/RuntimeException {
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;)V
 	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
 	public fun <init> (Ljava/lang/Throwable;)V
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/chasm/host/exception/ChasmModuleRuntimeErrorException : ru/pixnews/wasm/sqlite/open/helper/chasm/host/exception/ChasmException {
+public final class at/released/wasm/sqlite/open/helper/chasm/host/exception/ChasmModuleRuntimeErrorException : at/released/wasm/sqlite/open/helper/chasm/host/exception/ChasmException {
 	public fun <init> (Lio/github/charlietap/chasm/embedding/error/ChasmError;Ljava/lang/String;Ljava/lang/Throwable;)V
 	public synthetic fun <init> (Lio/github/charlietap/chasm/embedding/error/ChasmError;Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getError ()Lio/github/charlietap/chasm/embedding/error/ChasmError;

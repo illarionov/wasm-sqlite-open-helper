@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.dsl
+package at.released.wasm.sqlite.driver.dsl
 
+import at.released.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
+import at.released.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfigBlock
+import at.released.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import at.released.weh.common.api.Logger
-import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
-import ru.pixnews.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfigBlock
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 
 @WasmSqliteOpenHelperDsl
 public class WasmSqliteDriverConfigBlock<E : SqliteEmbedderConfig> {

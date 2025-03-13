@@ -6,29 +6,29 @@
 
 @file:Suppress("FunctionName")
 
-package ru.pixnews.wasm.sqlite.open.helper
+package at.released.wasm.sqlite.open.helper
 
 import android.content.Context
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import at.released.cassettes.playhead.AndroidAssetsAssetManager
 import at.released.cassettes.playhead.AssetManager
 import at.released.cassettes.playhead.JvmResourcesAssetManager
+import at.released.wasm.sqlite.open.helper.debug.EmbedderHostLogger
+import at.released.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfigBlock
+import at.released.wasm.sqlite.open.helper.dsl.OpenParamsBlock
+import at.released.wasm.sqlite.open.helper.dsl.WasmSqliteOpenHelperFactoryConfigBlock
+import at.released.wasm.sqlite.open.helper.dsl.path.AndroidDatabasePathResolver
+import at.released.wasm.sqlite.open.helper.dsl.path.DatabasePathResolver
+import at.released.wasm.sqlite.open.helper.dsl.path.JvmDatabasePathResolver
+import at.released.wasm.sqlite.open.helper.embedder.SqliteEmbedder
+import at.released.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
+import at.released.wasm.sqlite.open.helper.embedder.SqliteRuntime
+import at.released.wasm.sqlite.open.helper.embedder.SqliteRuntimeInternal
+import at.released.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
+import at.released.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
+import at.released.wasm.sqlite.open.helper.internal.CloseGuard
+import at.released.wasm.sqlite.open.helper.internal.CloseGuard.Reporter
 import at.released.weh.common.api.Logger
-import ru.pixnews.wasm.sqlite.open.helper.debug.EmbedderHostLogger
-import ru.pixnews.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfigBlock
-import ru.pixnews.wasm.sqlite.open.helper.dsl.OpenParamsBlock
-import ru.pixnews.wasm.sqlite.open.helper.dsl.WasmSqliteOpenHelperFactoryConfigBlock
-import ru.pixnews.wasm.sqlite.open.helper.dsl.path.AndroidDatabasePathResolver
-import ru.pixnews.wasm.sqlite.open.helper.dsl.path.DatabasePathResolver
-import ru.pixnews.wasm.sqlite.open.helper.dsl.path.JvmDatabasePathResolver
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedder
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntime
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntimeInternal
-import ru.pixnews.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
-import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
-import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard
-import ru.pixnews.wasm.sqlite.open.helper.internal.CloseGuard.Reporter
 
 /**
  * Creates a [SupportSQLiteOpenHelper.Factory] with the specified [block] configuration.

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.test.base.util
+package at.released.wasm.sqlite.open.helper.test.base.util
 
 import android.database.Cursor
 

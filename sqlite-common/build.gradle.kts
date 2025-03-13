@@ -5,10 +5,10 @@
  */
 
 plugins {
-    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.atomicfu")
-    id("ru.pixnews.wasm.sqlite.open.helper.gradle.lint.binary-compatibility-validator")
-    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.kotlin")
-    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.publish")
+    id("at.released.wasm.sqlite.open.helper.gradle.multiplatform.atomicfu")
+    id("at.released.wasm.sqlite.open.helper.gradle.lint.binary-compatibility-validator")
+    id("at.released.wasm.sqlite.open.helper.gradle.multiplatform.kotlin")
+    id("at.released.wasm.sqlite.open.helper.gradle.multiplatform.publish")
 }
 
 group = "ru.pixnews.wasm-sqlite-open-helper"

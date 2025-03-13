@@ -6,10 +6,10 @@
 
 @file:Suppress("VariableNaming")
 
-package ru.pixnews.wasm.sqlite.open.helper.embedder.exports
+package at.released.wasm.sqlite.open.helper.embedder.exports
 
+import at.released.wasm.sqlite.open.helper.InternalWasmSqliteHelperApi
 import at.released.weh.wasm.core.WasmFunctionBinding
-import ru.pixnews.wasm.sqlite.open.helper.InternalWasmSqliteHelperApi
 
 @InternalWasmSqliteHelperApi
 public interface SqliteExports {

@@ -4,8 +4,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.graalvm
+package at.released.wasm.sqlite.driver.graalvm
 
+import at.released.wasm.sqlite.driver.WasmSQLiteDriver
+import at.released.wasm.sqlite.driver.base.JvmDatabaseFactory
+import at.released.wasm.sqlite.driver.test.base.tests.AbstractSqliteDriverTest
+import at.released.wasm.sqlite.driver.test.base.tests.room.UserDatabaseTests
+import at.released.wasm.sqlite.open.helper.graalvm.GraalvmRuntime
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.debug.junit4.CoroutinesTimeout
 import kotlinx.coroutines.test.runTest
@@ -13,11 +18,6 @@ import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
-import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
-import ru.pixnews.wasm.sqlite.driver.base.JvmDatabaseFactory
-import ru.pixnews.wasm.sqlite.driver.test.base.tests.AbstractSqliteDriverTest
-import ru.pixnews.wasm.sqlite.driver.test.base.tests.room.UserDatabaseTests
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmRuntime
 import java.util.concurrent.Executors
 
 class GraalvmBasicMultithreadingRoomTest : AbstractSqliteDriverTest<WasmSQLiteDriver<GraalvmRuntime>>(

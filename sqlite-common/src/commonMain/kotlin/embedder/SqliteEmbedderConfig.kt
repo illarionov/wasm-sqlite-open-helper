@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.embedder
+package at.released.wasm.sqlite.open.helper.embedder
 
-import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
+import at.released.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
 
 @WasmSqliteOpenHelperDsl
 public interface SqliteEmbedderConfig

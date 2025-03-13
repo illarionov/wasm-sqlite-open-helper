@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.graalvm.ext
+package at.released.wasm.sqlite.open.helper.graalvm.ext
 
+import at.released.wasm.sqlite.open.helper.graalvm.host.module.NodeFactory
 import at.released.weh.host.EmbedderHost
 import at.released.weh.wasm.core.HostFunction
 import at.released.weh.wasm.core.HostFunction.HostFunctionType
@@ -15,7 +16,6 @@ import org.graalvm.wasm.WasmFunction
 import org.graalvm.wasm.WasmInstance
 import org.graalvm.wasm.WasmModule
 import org.graalvm.wasm.constants.Sizes
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.host.module.NodeFactory
 
 internal fun setupWasmModuleFunctions(
     context: WasmContext,

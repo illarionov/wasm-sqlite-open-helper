@@ -4,16 +4,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.test.base.tests.room
+package at.released.wasm.sqlite.driver.test.base.tests.room
 
 import androidx.sqlite.SQLiteDriver
+import at.released.wasm.sqlite.driver.test.base.room.User
+import at.released.wasm.sqlite.driver.test.base.room.UserDatabaseSuspend
+import at.released.wasm.sqlite.driver.test.base.tests.TestSqliteDriverFactory
 import at.released.weh.common.api.Logger
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
-import ru.pixnews.wasm.sqlite.driver.test.base.room.User
-import ru.pixnews.wasm.sqlite.driver.test.base.room.UserDatabaseSuspend
-import ru.pixnews.wasm.sqlite.driver.test.base.tests.TestSqliteDriverFactory
 import kotlin.coroutines.CoroutineContext
 
 class UserDatabaseTests<S>(

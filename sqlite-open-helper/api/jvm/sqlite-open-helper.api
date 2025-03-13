@@ -1,6 +1,6 @@
-public final class ru/pixnews/wasm/sqlite/open/helper/OpenFlags : ru/pixnews/wasm/sqlite/open/helper/UintBitMask {
-	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/OpenFlags$Companion;
-	public static final synthetic fun box-impl (I)Lru/pixnews/wasm/sqlite/open/helper/OpenFlags;
+public final class at/released/wasm/sqlite/open/helper/OpenFlags : at/released/wasm/sqlite/open/helper/UintBitMask {
+	public static final field Companion Lat/released/wasm/sqlite/open/helper/OpenFlags$Companion;
+	public static final synthetic fun box-impl (I)Lat/released/wasm/sqlite/open/helper/OpenFlags;
 	public static fun constructor-impl (I)I
 	public fun equals (Ljava/lang/Object;)Z
 	public static fun equals-impl (ILjava/lang/Object;)Z
@@ -15,26 +15,26 @@ public final class ru/pixnews/wasm/sqlite/open/helper/OpenFlags : ru/pixnews/was
 	public final synthetic fun unbox-impl ()I
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/OpenFlags$Companion {
-	public final fun getCREATE_IF_NECESSARY-8W8yzzI ()I
-	public final fun getEMPTY-8W8yzzI ()I
-	public final fun getENABLE_WRITE_AHEAD_LOGGING-8W8yzzI ()I
-	public final fun getNO_LOCALIZED_COLLATORS-8W8yzzI ()I
-	public final fun getOPEN_CREATE-8W8yzzI ()I
-	public final fun getOPEN_FULLMUTEX-8W8yzzI ()I
-	public final fun getOPEN_NOMUTEX-8W8yzzI ()I
-	public final fun getOPEN_PRIVATECACHE-8W8yzzI ()I
-	public final fun getOPEN_READONLY-8W8yzzI ()I
-	public final fun getOPEN_READWRITE-8W8yzzI ()I
-	public final fun getOPEN_SHAREDCACHE-8W8yzzI ()I
-	public final fun getOPEN_URI-8W8yzzI ()I
+public final class at/released/wasm/sqlite/open/helper/OpenFlags$Companion {
+	public final fun getCREATE_IF_NECESSARY-xMhl6zQ ()I
+	public final fun getEMPTY-xMhl6zQ ()I
+	public final fun getENABLE_WRITE_AHEAD_LOGGING-xMhl6zQ ()I
+	public final fun getNO_LOCALIZED_COLLATORS-xMhl6zQ ()I
+	public final fun getOPEN_CREATE-xMhl6zQ ()I
+	public final fun getOPEN_FULLMUTEX-xMhl6zQ ()I
+	public final fun getOPEN_NOMUTEX-xMhl6zQ ()I
+	public final fun getOPEN_PRIVATECACHE-xMhl6zQ ()I
+	public final fun getOPEN_READONLY-xMhl6zQ ()I
+	public final fun getOPEN_READWRITE-xMhl6zQ ()I
+	public final fun getOPEN_SHAREDCACHE-xMhl6zQ ()I
+	public final fun getOPEN_URI-xMhl6zQ ()I
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/debug/SqliteSlowQueryLogger : ru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugFeature {
-	public static final field Companion Lru/pixnews/wasm/sqlite/open/helper/debug/SqliteSlowQueryLogger$Companion;
+public final class at/released/wasm/sqlite/open/helper/debug/SqliteSlowQueryLogger : at/released/wasm/sqlite/open/helper/debug/WasmSqliteDebugFeature {
+	public static final field Companion Lat/released/wasm/sqlite/open/helper/debug/SqliteSlowQueryLogger$Companion;
 	public synthetic fun <init> (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getEnabled ()Z
-	public fun getKey ()Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Key;
+	public fun getKey ()Lat/released/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Key;
 	public final fun getLogger ()Lkotlin/jvm/functions/Function1;
 	public final fun getSlowQueryThresholdProvider ()Lkotlin/jvm/functions/Function0;
 	public final fun setEnabled (Z)V
@@ -42,148 +42,148 @@ public final class ru/pixnews/wasm/sqlite/open/helper/debug/SqliteSlowQueryLogge
 	public final fun setSlowQueryThresholdProvider (Lkotlin/jvm/functions/Function0;)V
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/debug/SqliteSlowQueryLogger$Companion : ru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Key {
-	public fun create (Lru/pixnews/wasm/sqlite/open/helper/embedder/WasmSqliteCommonConfig;Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Factory$Type;)Lru/pixnews/wasm/sqlite/open/helper/debug/SqliteSlowQueryLogger;
-	public synthetic fun create (Lru/pixnews/wasm/sqlite/open/helper/embedder/WasmSqliteCommonConfig;Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Factory$Type;)Lru/pixnews/wasm/sqlite/open/helper/debug/WasmSqliteDebugFeature;
+public final class at/released/wasm/sqlite/open/helper/debug/SqliteSlowQueryLogger$Companion : at/released/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Key {
+	public fun create (Lat/released/wasm/sqlite/open/helper/embedder/WasmSqliteCommonConfig;Lat/released/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Factory$Type;)Lat/released/wasm/sqlite/open/helper/debug/SqliteSlowQueryLogger;
+	public synthetic fun create (Lat/released/wasm/sqlite/open/helper/embedder/WasmSqliteCommonConfig;Lat/released/wasm/sqlite/open/helper/debug/WasmSqliteDebugConfigBlock$Factory$Type;)Lat/released/wasm/sqlite/open/helper/debug/WasmSqliteDebugFeature;
 	public final fun createStatementLogger (Lat/released/weh/common/api/Logger;)Lkotlin/jvm/functions/Function1;
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/dsl/OpenParamsBlock {
+public final class at/released/wasm/sqlite/open/helper/dsl/OpenParamsBlock {
 	public fun <init> ()V
-	public final fun addOpenFlags-lz_6m0g (I)Lru/pixnews/wasm/sqlite/open/helper/dsl/OpenParamsBlock;
-	public final fun getJournalMode ()Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteDatabaseJournalMode;
-	public final fun getLocale-5W4SLWA ()Ljava/lang/String;
+	public final fun addOpenFlags-6W-7RaY (I)Lat/released/wasm/sqlite/open/helper/dsl/OpenParamsBlock;
+	public final fun getJournalMode ()Lat/released/wasm/sqlite/open/helper/sqlite/common/api/SqliteDatabaseJournalMode;
+	public final fun getLocale-A71JT70 ()Ljava/lang/String;
 	public final fun getLookasideSlotCount ()I
 	public final fun getLookasideSlotSize ()I
-	public final fun getOpenFlags-8W8yzzI ()I
-	public final fun getSyncMode ()Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteDatabaseSyncMode;
-	public final fun removeOpenFlags-lz_6m0g (I)Lru/pixnews/wasm/sqlite/open/helper/dsl/OpenParamsBlock;
-	public final fun setJournalMode (Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteDatabaseJournalMode;)V
-	public final fun setLocale-_ysz-Gs (Ljava/lang/String;)V
-	public final fun setLookasideConfig (II)Lru/pixnews/wasm/sqlite/open/helper/dsl/OpenParamsBlock;
-	public final fun setOpenFlags-lz_6m0g (I)V
-	public final fun setSyncMode (Lru/pixnews/wasm/sqlite/open/helper/sqlite/common/api/SqliteDatabaseSyncMode;)V
+	public final fun getOpenFlags-xMhl6zQ ()I
+	public final fun getSyncMode ()Lat/released/wasm/sqlite/open/helper/sqlite/common/api/SqliteDatabaseSyncMode;
+	public final fun removeOpenFlags-6W-7RaY (I)Lat/released/wasm/sqlite/open/helper/dsl/OpenParamsBlock;
+	public final fun setJournalMode (Lat/released/wasm/sqlite/open/helper/sqlite/common/api/SqliteDatabaseJournalMode;)V
+	public final fun setLocale-N1MPgMg (Ljava/lang/String;)V
+	public final fun setLookasideConfig (II)Lat/released/wasm/sqlite/open/helper/dsl/OpenParamsBlock;
+	public final fun setOpenFlags-6W-7RaY (I)V
+	public final fun setSyncMode (Lat/released/wasm/sqlite/open/helper/sqlite/common/api/SqliteDatabaseSyncMode;)V
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/dsl/WasmSqliteOpenHelperFactoryConfigBlock {
-	public fun <init> (Lru/pixnews/wasm/sqlite/open/helper/dsl/path/DatabasePathResolver;)V
+public final class at/released/wasm/sqlite/open/helper/dsl/WasmSqliteOpenHelperFactoryConfigBlock {
+	public fun <init> (Lat/released/wasm/sqlite/open/helper/dsl/path/DatabasePathResolver;)V
 	public final fun debug (Lkotlin/jvm/functions/Function1;)V
 	public final fun embedder (Lkotlin/jvm/functions/Function1;)V
 	public final fun getLogger ()Lat/released/weh/common/api/Logger;
-	public final fun getPathResolver ()Lru/pixnews/wasm/sqlite/open/helper/dsl/path/DatabasePathResolver;
+	public final fun getPathResolver ()Lat/released/wasm/sqlite/open/helper/dsl/path/DatabasePathResolver;
 	public final fun openParams (Lkotlin/jvm/functions/Function1;)V
 	public final fun setLogger (Lat/released/weh/common/api/Logger;)V
-	public final fun setPathResolver (Lru/pixnews/wasm/sqlite/open/helper/dsl/path/DatabasePathResolver;)V
+	public final fun setPathResolver (Lat/released/wasm/sqlite/open/helper/dsl/path/DatabasePathResolver;)V
 }
 
-public abstract interface class ru/pixnews/wasm/sqlite/open/helper/dsl/path/DatabasePathResolver {
+public abstract interface class at/released/wasm/sqlite/open/helper/dsl/path/DatabasePathResolver {
 	public abstract fun getDatabasePath (Ljava/lang/String;)Ljava/lang/String;
 }
 
-public final class ru/pixnews/wasm/sqlite/open/helper/dsl/path/JvmDatabasePathResolver : ru/pixnews/wasm/sqlite/open/helper/dsl/path/DatabasePathResolver {
+public final class at/released/wasm/sqlite/open/helper/dsl/path/JvmDatabasePathResolver : at/released/wasm/sqlite/open/helper/dsl/path/DatabasePathResolver {
 	public fun <init> ()V
 	public fun <init> (Ljava/io/File;)V
 	public synthetic fun <init> (Ljava/io/File;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun getDatabasePath (Ljava/lang/String;)Ljava/lang/String;
 }
 
-public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidCursorWindowAllocationException : java/lang/RuntimeException {
+public class at/released/wasm/sqlite/open/helper/exception/AndroidCursorWindowAllocationException : java/lang/RuntimeException {
 	public fun <init> (Ljava/lang/String;)V
 }
 
-public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidOperationCanceledException : java/lang/RuntimeException {
+public class at/released/wasm/sqlite/open/helper/exception/AndroidOperationCanceledException : java/lang/RuntimeException {
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;)V
 }
 
-public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqlException : java/lang/RuntimeException {
-	public fun <init> ()V
-	public fun <init> (Ljava/lang/String;)V
-	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
-}
-
-public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteAbortException : ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteException {
-	public fun <init> ()V
-	public fun <init> (Ljava/lang/String;)V
-}
-
-public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteAccessPermException : ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteException {
-	public fun <init> ()V
-	public fun <init> (Ljava/lang/String;)V
-}
-
-public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteBindOrColumnIndexOutOfRangeException : ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteException {
-	public fun <init> ()V
-	public fun <init> (Ljava/lang/String;)V
-}
-
-public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteBlobTooBigException : ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteException {
-	public fun <init> ()V
-	public fun <init> (Ljava/lang/String;)V
-}
-
-public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteCantOpenDatabaseException : ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteException {
-	public fun <init> ()V
-	public fun <init> (Ljava/lang/String;)V
-}
-
-public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteConstraintException : ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteException {
-	public fun <init> ()V
-	public fun <init> (Ljava/lang/String;)V
-}
-
-public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteDatabaseCorruptException : ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteException {
-	public fun <init> ()V
-	public fun <init> (Ljava/lang/String;)V
-}
-
-public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteDatabaseLockedException : ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteException {
-	public fun <init> ()V
-	public fun <init> (Ljava/lang/String;)V
-}
-
-public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteDatatypeMismatchException : ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteException {
-	public fun <init> ()V
-	public fun <init> (Ljava/lang/String;)V
-}
-
-public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteDiskIoException : ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteException {
-	public fun <init> ()V
-	public fun <init> (Ljava/lang/String;)V
-}
-
-public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteDoneException : ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteException {
-	public fun <init> ()V
-	public fun <init> (Ljava/lang/String;)V
-}
-
-public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteException : ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqlException {
+public class at/released/wasm/sqlite/open/helper/exception/AndroidSqlException : java/lang/RuntimeException {
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;)V
 	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
 }
 
-public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteFullException : ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteException {
+public class at/released/wasm/sqlite/open/helper/exception/AndroidSqliteAbortException : at/released/wasm/sqlite/open/helper/exception/AndroidSqliteException {
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;)V
 }
 
-public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteMisuseException : ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteException {
+public class at/released/wasm/sqlite/open/helper/exception/AndroidSqliteAccessPermException : at/released/wasm/sqlite/open/helper/exception/AndroidSqliteException {
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;)V
 }
 
-public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteOutOfMemoryException : ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteException {
+public class at/released/wasm/sqlite/open/helper/exception/AndroidSqliteBindOrColumnIndexOutOfRangeException : at/released/wasm/sqlite/open/helper/exception/AndroidSqliteException {
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;)V
 }
 
-public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteReadOnlyDatabaseException : ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteException {
+public class at/released/wasm/sqlite/open/helper/exception/AndroidSqliteBlobTooBigException : at/released/wasm/sqlite/open/helper/exception/AndroidSqliteException {
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;)V
 }
 
-public class ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteTableLockedException : ru/pixnews/wasm/sqlite/open/helper/exception/AndroidSqliteException {
+public class at/released/wasm/sqlite/open/helper/exception/AndroidSqliteCantOpenDatabaseException : at/released/wasm/sqlite/open/helper/exception/AndroidSqliteException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public class at/released/wasm/sqlite/open/helper/exception/AndroidSqliteConstraintException : at/released/wasm/sqlite/open/helper/exception/AndroidSqliteException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public class at/released/wasm/sqlite/open/helper/exception/AndroidSqliteDatabaseCorruptException : at/released/wasm/sqlite/open/helper/exception/AndroidSqliteException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public class at/released/wasm/sqlite/open/helper/exception/AndroidSqliteDatabaseLockedException : at/released/wasm/sqlite/open/helper/exception/AndroidSqliteException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public class at/released/wasm/sqlite/open/helper/exception/AndroidSqliteDatatypeMismatchException : at/released/wasm/sqlite/open/helper/exception/AndroidSqliteException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public class at/released/wasm/sqlite/open/helper/exception/AndroidSqliteDiskIoException : at/released/wasm/sqlite/open/helper/exception/AndroidSqliteException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public class at/released/wasm/sqlite/open/helper/exception/AndroidSqliteDoneException : at/released/wasm/sqlite/open/helper/exception/AndroidSqliteException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public class at/released/wasm/sqlite/open/helper/exception/AndroidSqliteException : at/released/wasm/sqlite/open/helper/exception/AndroidSqlException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+}
+
+public class at/released/wasm/sqlite/open/helper/exception/AndroidSqliteFullException : at/released/wasm/sqlite/open/helper/exception/AndroidSqliteException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public class at/released/wasm/sqlite/open/helper/exception/AndroidSqliteMisuseException : at/released/wasm/sqlite/open/helper/exception/AndroidSqliteException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public class at/released/wasm/sqlite/open/helper/exception/AndroidSqliteOutOfMemoryException : at/released/wasm/sqlite/open/helper/exception/AndroidSqliteException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public class at/released/wasm/sqlite/open/helper/exception/AndroidSqliteReadOnlyDatabaseException : at/released/wasm/sqlite/open/helper/exception/AndroidSqliteException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public class at/released/wasm/sqlite/open/helper/exception/AndroidSqliteTableLockedException : at/released/wasm/sqlite/open/helper/exception/AndroidSqliteException {
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;)V
 }

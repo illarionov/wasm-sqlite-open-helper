@@ -4,12 +4,21 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.chasm.host
+package at.released.wasm.sqlite.open.helper.chasm.host
 
 import at.released.cassettes.base.AssetUrl
 import at.released.cassettes.playhead.AssetManager
 import at.released.cassettes.playhead.readOrThrow
 import at.released.wasm.sqlite.binary.base.WasmSqliteConfiguration
+import at.released.wasm.sqlite.open.helper.chasm.ext.orThrow
+import at.released.wasm.sqlite.open.helper.chasm.host.exception.ChasmErrorException
+import at.released.wasm.sqlite.open.helper.chasm.host.exception.ChasmException
+import at.released.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.ChasmSqliteCallbackFunctionIndexes
+import at.released.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.setupSqliteCallbacksHostFunctions
+import at.released.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
+import at.released.wasm.sqlite.open.helper.embedder.functiontable.IndirectFunctionTableIndex
+import at.released.wasm.sqlite.open.helper.embedder.functiontable.SqliteCallbackFunctionIndexes
+import at.released.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
 import at.released.weh.bindings.chasm.ChasmEmscriptenHostBuilder
 import at.released.weh.bindings.chasm.memory.ChasmMemoryAdapter
 import at.released.weh.host.EmbedderHost
@@ -39,15 +48,6 @@ import io.github.charlietap.chasm.type.Limits
 import io.github.charlietap.chasm.type.SharedStatus.Unshared
 import kotlinx.io.RawSource
 import kotlinx.io.buffered
-import ru.pixnews.wasm.sqlite.open.helper.chasm.ext.orThrow
-import ru.pixnews.wasm.sqlite.open.helper.chasm.host.exception.ChasmErrorException
-import ru.pixnews.wasm.sqlite.open.helper.chasm.host.exception.ChasmException
-import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.ChasmSqliteCallbackFunctionIndexes
-import ru.pixnews.wasm.sqlite.open.helper.chasm.host.module.sqlitecb.setupSqliteCallbacksHostFunctions
-import ru.pixnews.wasm.sqlite.open.helper.embedder.callback.SqliteCallbackStore
-import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.IndirectFunctionTableIndex
-import ru.pixnews.wasm.sqlite.open.helper.embedder.functiontable.SqliteCallbackFunctionIndexes
-import ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb.SqliteCallbacksModuleFunction
 import io.github.charlietap.chasm.embedding.shapes.Import as ChasmImport
 import io.github.charlietap.chasm.embedding.shapes.Memory as ChasmMemoryImportable
 import io.github.charlietap.chasm.type.MemoryType as ChasmMemoryType

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.internal
+package at.released.wasm.sqlite.open.helper.internal
 
 /*
  * Original Copyrights:
@@ -16,8 +16,8 @@ package ru.pixnews.wasm.sqlite.open.helper.internal
 import android.database.sqlite.SQLiteDatabaseCorruptException
 import android.database.sqlite.SQLiteException
 import androidx.core.os.CancellationSignal
+import at.released.wasm.sqlite.open.helper.internal.cursor.CursorWindow
 import at.released.weh.common.api.Logger
-import ru.pixnews.wasm.sqlite.open.helper.internal.cursor.CursorWindow
 
 /**
  * Represents a query that reads the resulting rows into a [SQLiteQuery].

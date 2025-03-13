@@ -66,8 +66,8 @@ dependencies {
 Create SQLite Driver using `WasmSQLiteDriver`:
 
 ```kotlin
-import ru.pixnews.wasm.sqlite.driver.WasmSQLiteDriver
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmSqliteEmbedder
+import at.released.wasm.sqlite.driver.WasmSQLiteDriver
+import at.released.wasm.sqlite.open.helper.graalvm.GraalvmSqliteEmbedder
 
 val wasmSqliteDriver = WasmSQLiteDriver(GraalvmSqliteEmbedder) {
 }
@@ -102,8 +102,8 @@ Create Factory using `WasmSqliteOpenHelperFactory`:
 ```kotlin
 import android.content.Context
 import androidx.sqlite.db.SupportSQLiteOpenHelper
-import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperFactory
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.GraalvmSqliteEmbedder
+import at.released.wasm.sqlite.open.helper.WasmSqliteOpenHelperFactory
+import at.released.wasm.sqlite.open.helper.graalvm.GraalvmSqliteEmbedder
 
 val factory : SupportSQLiteOpenHelper.Factory = WasmSqliteOpenHelperFactory(context, GraalvmSqliteEmbedder) {
 }

@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.driver.base
+package at.released.wasm.sqlite.driver.base
 
+import at.released.wasm.sqlite.driver.dsl.WasmSqliteDriverConfigBlock
+import at.released.wasm.sqlite.open.helper.Locale
+import at.released.wasm.sqlite.open.helper.debug.SqliteStatementLogger
+import at.released.wasm.sqlite.open.helper.debug.SqliteStatementProfileLogger
+import at.released.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 import at.released.weh.common.api.Logger
-import ru.pixnews.wasm.sqlite.driver.dsl.WasmSqliteDriverConfigBlock
-import ru.pixnews.wasm.sqlite.open.helper.Locale
-import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementLogger
-import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementProfileLogger
-import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 
 internal fun <E : SqliteEmbedderConfig> WasmSqliteDriverConfigBlock<E>.defaultNativeTestSqliteDriverConfig(
     dbLogger: Logger,

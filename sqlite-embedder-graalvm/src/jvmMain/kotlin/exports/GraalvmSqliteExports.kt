@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.graalvm.exports
+package at.released.wasm.sqlite.open.helper.graalvm.exports
 
+import at.released.wasm.sqlite.open.helper.embedder.exports.SqliteExports
+import at.released.wasm.sqlite.open.helper.graalvm.ext.functionMember
 import org.graalvm.polyglot.Value
-import ru.pixnews.wasm.sqlite.open.helper.embedder.exports.SqliteExports
-import ru.pixnews.wasm.sqlite.open.helper.graalvm.ext.functionMember
 
 @Suppress("VariableNaming", "BLANK_LINE_BETWEEN_PROPERTIES")
 internal class GraalvmSqliteExports(

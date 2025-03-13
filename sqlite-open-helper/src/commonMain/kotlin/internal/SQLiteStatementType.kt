@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.internal
+package at.released.wasm.sqlite.open.helper.internal
 
-import ru.pixnews.wasm.sqlite.open.helper.internal.SQLiteStatementType.Companion.ExtendedStatementType.PublicType
+import at.released.wasm.sqlite.open.helper.internal.SQLiteStatementType.Companion.ExtendedStatementType.PublicType
 
 internal enum class SQLiteStatementType {
     STATEMENT_SELECT,

@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.chicory.ext
+package at.released.wasm.sqlite.open.helper.chicory.ext
 
-import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
+import at.released.wasm.sqlite.open.helper.WasmPtr
 
 internal fun <P : Any?> Long.asWasmAddr(): WasmPtr<P> = WasmPtr(toInt())
