@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, the wasm-sqlite-open-helper project authors and contributors. Please see the AUTHORS file
+ * Copyright 2024-2025, the wasm-sqlite-open-helper project authors and contributors. Please see the AUTHORS file
  * for details. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -13,8 +13,6 @@ package ru.pixnews.wasm.sqlite.open.helper.internal
  * Licensed under the Apache License, Version 2.0 (the "License")
  */
 
-import ru.pixnews.wasm.sqlite.open.helper.io.lock.SynchronizedObject
-import ru.pixnews.wasm.sqlite.open.helper.io.lock.synchronized
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -25,7 +23,7 @@ import kotlin.contracts.contract
  * This class implements a primitive reference counting scheme for database objects.
  */
 internal abstract class SQLiteClosable internal constructor() {
-    private val lock = SynchronizedObject()
+    private val lock = Any()
     private var referenceCount = 1
 
     /**
@@ -52,7 +50,7 @@ internal abstract class SQLiteClosable internal constructor() {
      * @see .onAllReferencesReleased
      */
     fun releaseReference() {
-        var refCountIsZero = false
+        var refCountIsZero: Boolean
         synchronized(lock) {
             refCountIsZero = --referenceCount == 0
         }

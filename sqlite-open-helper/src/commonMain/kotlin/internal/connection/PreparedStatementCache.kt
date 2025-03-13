@@ -9,8 +9,6 @@ package ru.pixnews.wasm.sqlite.open.helper.internal.connection
 import androidx.collection.LruCache
 import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
 import ru.pixnews.wasm.sqlite.open.helper.internal.OpenHelperNativeBindings
-import ru.pixnews.wasm.sqlite.open.helper.io.lock.SynchronizedObject
-import ru.pixnews.wasm.sqlite.open.helper.io.lock.synchronized
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDb
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteStatement
 
@@ -19,7 +17,7 @@ internal class PreparedStatementCache(
     private val bindings: OpenHelperNativeBindings,
     size: Int,
 ) : LruCache<String, PreparedStatement>(size) {
-    private val lock = SynchronizedObject()
+    private val lock = Any()
 
     // The database sequence number.  This changes every time the database schema changes.
     var databaseSeqNum: Long = 0

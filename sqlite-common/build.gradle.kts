@@ -5,6 +5,7 @@
  */
 
 plugins {
+    id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.atomicfu")
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.lint.binary-compatibility-validator")
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.kotlin")
     id("ru.pixnews.wasm.sqlite.open.helper.gradle.multiplatform.publish")
@@ -32,7 +33,6 @@ kotlin {
             implementation(libs.kotlinx.io)
             implementation(libs.cassettes.playhead)
             api(projects.commonApi)
-            implementation(projects.commonLock)
             api(libs.wasi.emscripten.host)
             api(libs.wasi.emscripten.host.wasm.core)
             implementation(libs.wasi.emscripten.host.common.util)
