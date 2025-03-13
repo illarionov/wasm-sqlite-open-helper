@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.graalvm
 
-import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
+import ru.pixnews.wasm.sqlite.open.helper.InternalWasmSqliteHelperApi
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedder
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntimeInternal
 import ru.pixnews.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig

@@ -11,10 +11,10 @@ import at.released.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import at.released.weh.host.EmbedderHost
 import at.released.weh.wasm.core.memory.Memory
 import io.github.charlietap.chasm.config.RuntimeConfig
+import ru.pixnews.wasm.sqlite.open.helper.InternalWasmSqliteHelperApi
 import ru.pixnews.wasm.sqlite.open.helper.chasm.exports.ChasmSqliteExports
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.ChasmInstanceBuilder
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.ChasmInstanceBuilder.ChasmInstance
-import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedder
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderRuntimeInfo
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntimeInternal

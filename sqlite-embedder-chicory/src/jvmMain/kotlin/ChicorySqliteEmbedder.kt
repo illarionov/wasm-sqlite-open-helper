@@ -12,10 +12,10 @@ import at.released.weh.host.EmbedderHost
 import at.released.weh.wasm.core.memory.Memory
 import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.runtime.Machine
+import ru.pixnews.wasm.sqlite.open.helper.InternalWasmSqliteHelperApi
 import ru.pixnews.wasm.sqlite.open.helper.chicory.exports.ChicorySqliteExports
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.MainInstanceBuilder
 import ru.pixnews.wasm.sqlite.open.helper.chicory.host.module.MainInstanceBuilder.ChicoryInstance
-import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedder
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderRuntimeInfo
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteRuntimeInternal

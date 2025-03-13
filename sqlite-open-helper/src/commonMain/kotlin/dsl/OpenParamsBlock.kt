@@ -6,10 +6,10 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.dsl
 
+import ru.pixnews.wasm.sqlite.open.helper.Locale
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
 import ru.pixnews.wasm.sqlite.open.helper.clear
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale
 import ru.pixnews.wasm.sqlite.open.helper.or
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDatabaseJournalMode
 import ru.pixnews.wasm.sqlite.open.helper.sqlite.common.api.SqliteDatabaseSyncMode

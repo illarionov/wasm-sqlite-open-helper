@@ -85,7 +85,6 @@ kotlin {
         }
 
         commonMain.dependencies {
-            api(projects.commonApi)
             api(libs.cassettes.playhead)
             api(projects.sqliteCommon)
             implementation(projects.commonCleaner)

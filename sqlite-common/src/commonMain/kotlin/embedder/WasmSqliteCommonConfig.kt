@@ -8,7 +8,7 @@ package ru.pixnews.wasm.sqlite.open.helper.embedder
 
 import at.released.cassettes.playhead.AssetManager
 import at.released.weh.common.api.Logger
-import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
+import ru.pixnews.wasm.sqlite.open.helper.InternalWasmSqliteHelperApi
 
 @InternalWasmSqliteHelperApi
 public interface WasmSqliteCommonConfig {

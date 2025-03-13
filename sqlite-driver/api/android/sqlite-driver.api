@@ -23,11 +23,11 @@ public final class ru/pixnews/wasm/sqlite/driver/dsl/OpenFlags : java/lang/Enum 
 
 public final class ru/pixnews/wasm/sqlite/driver/dsl/OpenParamsBlock {
 	public fun <init> ()V
-	public final fun getLocale-i7jP64M ()Ljava/lang/String;
+	public final fun getLocale-5W4SLWA ()Ljava/lang/String;
 	public final fun getLookasideSlotCount ()I
 	public final fun getLookasideSlotSize ()I
 	public final fun getOpenFlags ()Ljava/util/Set;
-	public final fun setLocale-CdkJ4j0 (Ljava/lang/String;)V
+	public final fun setLocale-_ysz-Gs (Ljava/lang/String;)V
 	public final fun setLookasideConfig (II)Lru/pixnews/wasm/sqlite/driver/dsl/OpenParamsBlock;
 	public final fun setOpenFlags (Ljava/util/Set;)V
 }

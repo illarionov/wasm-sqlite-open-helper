@@ -119,7 +119,6 @@ kotlin {
         }
 
         commonMain.dependencies {
-            api(projects.commonApi)
             api(projects.sqliteCommon)
             api(libs.cassettes.playhead)
             api(libs.androidx.sqlite.sqlite)

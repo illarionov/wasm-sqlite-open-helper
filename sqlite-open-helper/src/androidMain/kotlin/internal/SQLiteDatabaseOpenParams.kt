@@ -6,10 +6,10 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.internal
 
+import ru.pixnews.wasm.sqlite.open.helper.Locale
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags
 import ru.pixnews.wasm.sqlite.open.helper.OpenFlags.Companion.ENABLE_WRITE_AHEAD_LOGGING
 import ru.pixnews.wasm.sqlite.open.helper.clear
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale
 import ru.pixnews.wasm.sqlite.open.helper.contains
 import ru.pixnews.wasm.sqlite.open.helper.dsl.OpenParamsBlock
 import ru.pixnews.wasm.sqlite.open.helper.or

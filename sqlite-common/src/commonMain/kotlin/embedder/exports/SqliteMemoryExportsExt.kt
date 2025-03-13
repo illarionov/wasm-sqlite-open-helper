@@ -8,8 +8,8 @@ package ru.pixnews.wasm.sqlite.open.helper.embedder.exports
 
 import at.released.weh.wasm.core.memory.Memory
 import at.released.weh.wasm.core.memory.writeNullTerminatedString
+import ru.pixnews.wasm.sqlite.open.helper.InternalWasmSqliteHelperApi
 import ru.pixnews.wasm.sqlite.open.helper.WasmPtr
-import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
 
 @InternalWasmSqliteHelperApi
 public fun SqliteDynamicMemoryExports.allocNullTerminatedString(

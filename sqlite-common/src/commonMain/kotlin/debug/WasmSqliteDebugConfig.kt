@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.debug
 
-import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
+import ru.pixnews.wasm.sqlite.open.helper.InternalWasmSqliteHelperApi
 import ru.pixnews.wasm.sqlite.open.helper.debug.WasmSqliteDebugConfigBlock.Factory.Type.KEY_UNDEFINED
 import ru.pixnews.wasm.sqlite.open.helper.embedder.WasmSqliteCommonConfig
 

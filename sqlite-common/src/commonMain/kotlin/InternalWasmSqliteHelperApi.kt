@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package ru.pixnews.wasm.sqlite.open.helper.common.api
+package ru.pixnews.wasm.sqlite.open.helper
 
 @RequiresOptIn(
     level = RequiresOptIn.Level.ERROR,

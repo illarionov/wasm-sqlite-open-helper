@@ -7,7 +7,7 @@
 package ru.pixnews.wasm.sqlite.open.helper.base.util
 
 import at.released.weh.common.api.Logger
-import ru.pixnews.wasm.sqlite.open.helper.common.api.Locale
+import ru.pixnews.wasm.sqlite.open.helper.Locale
 import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteSlowQueryLogger
 import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementLogger
 import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteStatementProfileLogger

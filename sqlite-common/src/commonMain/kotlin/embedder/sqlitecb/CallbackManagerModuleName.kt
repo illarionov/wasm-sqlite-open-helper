@@ -6,7 +6,7 @@
 
 package ru.pixnews.wasm.sqlite.open.helper.embedder.sqlitecb
 
-import ru.pixnews.wasm.sqlite.open.helper.common.api.InternalWasmSqliteHelperApi
+import ru.pixnews.wasm.sqlite.open.helper.InternalWasmSqliteHelperApi
 
 @InternalWasmSqliteHelperApi
 public const val SQLITE3_CALLBACK_MANAGER_MODULE_NAME: String = "sqlite3-callback-manager"
