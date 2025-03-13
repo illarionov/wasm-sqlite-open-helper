@@ -11,6 +11,7 @@ import at.released.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcu349
 import at.released.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import at.released.weh.common.api.Logger
 import at.released.weh.host.EmbedderHost
+import io.github.charlietap.chasm.config.RuntimeConfig
 import ru.pixnews.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
 import ru.pixnews.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
 
@@ -35,6 +36,11 @@ public class ChasmSqliteEmbedderConfig internal constructor(
      * implementations.
      */
     public var wasmSourceReader: AssetManager = defaultWasmSourceReader
+
+    /**
+     * Sets Chasm Runtime Config
+     */
+    public var runtimeConfig: RuntimeConfig = RuntimeConfig(bytecodeFusion = false)
 
     /**
      * Implementation of a host object that provides access from the WebAssembly to external host resources.

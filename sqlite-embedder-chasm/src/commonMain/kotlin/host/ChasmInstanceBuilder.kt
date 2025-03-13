@@ -16,6 +16,7 @@ import at.released.weh.host.EmbedderHost
 import at.released.weh.wasm.core.WasmModules.ENV_MODULE_NAME
 import at.released.weh.wasm.core.memory.WASM_MEMORY_DEFAULT_MAX_PAGES
 import at.released.weh.wasm.core.memory.WASM_MEMORY_PAGE_SIZE
+import io.github.charlietap.chasm.config.RuntimeConfig
 import io.github.charlietap.chasm.embedding.error.ChasmError.DecodeError
 import io.github.charlietap.chasm.embedding.instance
 import io.github.charlietap.chasm.embedding.memory
@@ -56,6 +57,7 @@ internal class ChasmInstanceBuilder(
     private val callbackStore: SqliteCallbackStore,
     private val sqlite3Binary: WasmSqliteConfiguration,
     private val sourceReader: AssetManager,
+    private val runtimeConfig: RuntimeConfig,
 ) {
     fun setupChasmInstance(): ChasmInstance {
         val store: Store = store()
@@ -97,6 +99,7 @@ internal class ChasmInstanceBuilder(
             store = store,
             module = sqliteModule,
             imports = hostImports,
+            config = runtimeConfig,
         ).orThrow { "Can not instantiate $sqlite3Binary" }
 
         val indirectFunctionTableIndexes = setupIndirectFunctionIndexes(store, instance, sqliteCallbacksHostFunctions)

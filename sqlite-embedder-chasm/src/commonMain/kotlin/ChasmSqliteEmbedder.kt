@@ -10,6 +10,7 @@ import at.released.cassettes.playhead.AssetManager
 import at.released.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import at.released.weh.host.EmbedderHost
 import at.released.weh.wasm.core.memory.Memory
+import io.github.charlietap.chasm.config.RuntimeConfig
 import ru.pixnews.wasm.sqlite.open.helper.chasm.exports.ChasmSqliteExports
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.ChasmInstanceBuilder
 import ru.pixnews.wasm.sqlite.open.helper.chasm.host.ChasmInstanceBuilder.ChasmInstance
@@ -33,6 +34,7 @@ public object ChasmSqliteEmbedder : SqliteEmbedder<ChasmSqliteEmbedderConfig, Ch
             config.host,
             config.sqlite3Binary,
             config.wasmSourceReader,
+            config.runtimeConfig,
         )
     }
 
@@ -50,6 +52,7 @@ public object ChasmSqliteEmbedder : SqliteEmbedder<ChasmSqliteEmbedderConfig, Ch
         host: EmbedderHost,
         sqlite3Binary: WasmSqliteConfiguration,
         sourceReader: AssetManager,
+        runtimeConfig: RuntimeConfig,
     ): SqliteRuntimeInternal<ChasmRuntime> {
         require(!sqlite3Binary.requireThreads) {
             "The specified SQLite binary is compiled with threading support, which is not compatible with the " +
@@ -62,6 +65,7 @@ public object ChasmSqliteEmbedder : SqliteEmbedder<ChasmSqliteEmbedderConfig, Ch
             callbackStore = callbackStore,
             sqlite3Binary = sqlite3Binary,
             sourceReader = sourceReader,
+            runtimeConfig = runtimeConfig,
         ).setupChasmInstance()
 
         val runtimeInstance = object : ChasmRuntime {
