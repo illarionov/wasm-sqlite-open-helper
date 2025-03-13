@@ -89,7 +89,6 @@ kotlin {
             api(libs.cassettes.playhead)
             api(projects.sqliteCommon)
             implementation(projects.commonCleaner)
-            implementation(projects.commonLock)
             implementation(libs.wasi.emscripten.host)
             implementation(libs.wasi.emscripten.host.common.util)
             api(libs.androidx.collection)

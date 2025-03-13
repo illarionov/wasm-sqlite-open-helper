@@ -7,8 +7,6 @@
 package ru.pixnews.wasm.sqlite.open.helper.internal.connection
 
 import ru.pixnews.wasm.sqlite.open.helper.debug.SqliteSlowQueryLogger
-import ru.pixnews.wasm.sqlite.open.helper.io.lock.SynchronizedObject
-import ru.pixnews.wasm.sqlite.open.helper.io.lock.synchronized
 
 internal class OperationLog(
     private val slowQueryLogger: SqliteSlowQueryLogger,
@@ -18,7 +16,7 @@ internal class OperationLog(
     private val timestampFormatter: (Long) -> String,
     private val onStatementExecuted: (elapsedTime: Long) -> Unit,
 ) {
-    private val operationsLock = SynchronizedObject()
+    private val operationsLock = Any()
     private val operations: Array<Operation?> = arrayOfNulls(MAX_RECENT_OPERATIONS)
     private var index: Int = 0
     private var generation: Int = 0
