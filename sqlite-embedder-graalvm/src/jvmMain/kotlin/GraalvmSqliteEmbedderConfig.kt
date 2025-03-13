@@ -7,7 +7,6 @@
 package at.released.wasm.sqlite.open.helper.graalvm
 
 import at.released.cassettes.playhead.AssetManager
-import at.released.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcuMtPthread349
 import at.released.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import at.released.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
 import at.released.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
@@ -33,10 +32,16 @@ public class GraalvmSqliteEmbedderConfig internal constructor(
      */
     public var graalvmEngine: Engine = Engine.create("wasm")
 
+    private var _sqlite3Binary: WasmSqliteConfiguration? = null
+
     /**
      * Sets used Sqlite WebAssembly binary file
      */
-    public var sqlite3Binary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcuMtPthread349
+    public var sqlite3Binary: WasmSqliteConfiguration
+        get() = _sqlite3Binary ?: error("GraalvmSqliteEmbedderConfig.sqlite3Binary must be set")
+        set(value) {
+            _sqlite3Binary = value
+        }
 
     /**
      * Sets the Wasm source reader responsible for reading a WebAssembly binary.

@@ -23,10 +23,11 @@ kotlin {
         commonMain.dependencies {
             api(projects.sqliteCommon)
             api(libs.cassettes.playhead)
+            api(libs.wsoh.binary.base)
             implementation(libs.wasi.emscripten.host.chicory.emscripten)
             implementation(libs.wasi.emscripten.host.chicory.wasip1)
             implementation(libs.wasi.emscripten.host.emscripten.runtime)
-            implementation(libs.wsoh.sqlite.st)
+            implementation(libs.wsoh.sqlite.st.aot)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))

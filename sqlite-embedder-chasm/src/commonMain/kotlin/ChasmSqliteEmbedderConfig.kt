@@ -7,7 +7,6 @@
 package at.released.wasm.sqlite.open.helper.chasm
 
 import at.released.cassettes.playhead.AssetManager
-import at.released.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcu349
 import at.released.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import at.released.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
 import at.released.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
@@ -23,10 +22,16 @@ public class ChasmSqliteEmbedderConfig internal constructor(
     rootLogger: Logger,
     defaultWasmSourceReader: AssetManager,
 ) : SqliteEmbedderConfig {
+    private var _sqlite3Binary: WasmSqliteConfiguration? = null
+
     /**
      * Used Sqlite WebAssembly binary file
      */
-    public var sqlite3Binary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcu349
+    public var sqlite3Binary: WasmSqliteConfiguration
+        get() = _sqlite3Binary ?: error("ChasmSqliteEmbedderConfig.sqlite3Binary must be set")
+        set(value) {
+            _sqlite3Binary = value
+        }
 
     /**
      * Sets the Wasm source reader responsible for reading a WebAssembly binary.

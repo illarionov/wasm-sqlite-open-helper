@@ -7,7 +7,7 @@
 package at.released.wasm.sqlite.open.helper.chicory
 
 import at.released.cassettes.playhead.AssetManager
-import at.released.wasm.sqlite.binary.SqliteAndroidWasmEmscriptenIcu349
+import at.released.wasm.sqlite.binary.aot.SqliteAndroidWasmEmscriptenIcuAot349
 import at.released.wasm.sqlite.binary.base.WasmSqliteConfiguration
 import at.released.wasm.sqlite.open.helper.WasmSqliteOpenHelperDsl
 import at.released.wasm.sqlite.open.helper.embedder.SqliteEmbedderConfig
@@ -27,7 +27,7 @@ public class ChicorySqliteEmbedderConfig internal constructor(
     /**
      * Sets used Sqlite WebAssembly binary file
      */
-    public var sqlite3Binary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcu349
+    public var sqlite3Binary: WasmSqliteConfiguration = SqliteAndroidWasmEmscriptenIcuAot349
 
     /**
      * Sets the Wasm source reader responsible for reading a WebAssembly binary.
