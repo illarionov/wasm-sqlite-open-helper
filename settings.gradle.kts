@@ -14,7 +14,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath("androidx.room:androidx.room.gradle.plugin:2.7.0-alpha13")
+        classpath("androidx.room:androidx.room.gradle.plugin:2.7.0-rc02")
         classpath("com.android.tools.build:gradle:8.7.3")
         classpath("com.diffplug.spotless:spotless-plugin-gradle:7.0.2")
         classpath("com.google.devtools.ksp:symbol-processing-gradle-plugin:2.1.10-1.0.31")
