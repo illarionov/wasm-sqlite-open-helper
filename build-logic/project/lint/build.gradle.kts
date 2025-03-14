@@ -8,7 +8,7 @@ plugins {
     `kotlin-dsl`
 }
 
-group = "ru.pixnews.wasm-sqlite-open-helper.gradle.lint"
+group = "at.released.wasm-sqlite-driver.gradle.lint"
 
 dependencies {
     implementation(libs.agp.plugin.api)

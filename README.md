@@ -25,7 +25,7 @@ pluginManagement {
         maven {
             url = uri("https://maven.pixnews.ru")
             mavenContent {
-                includeGroup("ru.pixnews.wasm-sqlite-open-helper")
+                includeGroup("at.released.wasm-sqlite-driver")
             }
         }
     }
@@ -39,23 +39,23 @@ Add the dependencies:
 ```kotlin
 dependencies {
     // Implementation of the SQLiteDriver (androidx.sqlite 2.5.0+)
-    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-driver:0.1-alpha04")
+    testImplementation("at.released.wasm-sqlite-driver:sqlite-driver:0.1-alpha04")
 
     // Implementation of the SupportSQLiteOpenHelper (androidx.sqlite 2.4.x)
-    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-open-helper:0.1-alpha04")
+    testImplementation("at.released.wasm-sqlite-driver:sqlite-open-helper:0.1-alpha04")
 
     // Runtime environment for executing SQLite Wasm code based on GraalVM (Sqlite Embedder)
-    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-graalvm:0.1-alpha04")
+    testImplementation("at.released.wasm-sqlite-driver:sqlite-embedder-graalvm:0.1-alpha04")
 
     // Optional: implementation of the runtime environment based on the Chicory library. 
     // It can be used to execute webassembly code instead of the GraalVM embedder
-    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-chicory:0.1-alpha04")
+    testImplementation("at.released.wasm-sqlite-driver:sqlite-embedder-chicory:0.1-alpha04")
 
     // Optional: implementation of the runtime environment based on the Chasm library. 
-    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-chasm:0.1-alpha04")
+    testImplementation("at.released.wasm-sqlite-driver:sqlite-embedder-chasm:0.1-alpha04")
 
     // Sqlite WebAssembly binary
-    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-348:0.4")
+    testImplementation("at.released.wasm-sqlite-driver:sqlite-android-wasm-emscripten-icu-348:0.4")
 }
 ```
 
@@ -144,10 +144,10 @@ Installation:
 
 ```kotlin
 dependencies {
-    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-graalvm:0.1-alpha04")
+    testImplementation("at.released.wasm-sqlite-driver:sqlite-embedder-graalvm:0.1-alpha04")
 
     // Sqlite WebAssembly binary compiled with multithreading enabled 
-    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-mt-pthread-345:0.1-alpha04")
+    testImplementation("at.released.wasm-sqlite-driver:sqlite-android-wasm-emscripten-icu-mt-pthread-345:0.1-alpha04")
 }
 ```
 
@@ -235,10 +235,10 @@ Installation:
 
 ```kotlin
 dependencies {
-    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-chicory:0.1-alpha04")
+    testImplementation("at.released.wasm-sqlite-driver:sqlite-embedder-chicory:0.1-alpha04")
 
 	// Sqlite WebAssembly binary
-    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-348:0.4")
+    testImplementation("at.released.wasm-sqlite-driver:sqlite-android-wasm-emscripten-icu-348:0.4")
 }
 ```
 
@@ -280,10 +280,10 @@ Installation:
 
 ```kotlin
 dependencies {
-    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-embedder-chasm:0.1-alpha04")
+    testImplementation("at.released.wasm-sqlite-driver:sqlite-embedder-chasm:0.1-alpha04")
 
     // Sqlite WebAssembly binary
-    testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-348:0.4")
+    testImplementation("at.released.wasm-sqlite-driver:sqlite-android-wasm-emscripten-icu-348:0.4")
 }
 ```
 
@@ -434,7 +434,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 
 dependencies {
     constraints {
-        testImplementation("ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-348:*") {
+        testImplementation("at.released.wasm-sqlite-driver:sqlite-android-wasm-emscripten-icu-348:*") {
             attributes {
                 attribute(KotlinPlatformType.attribute, KotlinPlatformType.jvm)
             }

@@ -11,7 +11,7 @@ plugins {
     id("at.released.wasm.sqlite.open.helper.gradle.multiplatform.kotlin")
 }
 
-group = "ru.pixnews.wasm-sqlite-open-helper"
+group = "at.released.wasm-sqlite-driver"
 
 kotlin {
     explicitApi = ExplicitApiMode.Disabled

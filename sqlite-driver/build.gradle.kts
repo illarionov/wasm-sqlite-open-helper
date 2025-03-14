@@ -23,7 +23,7 @@ plugins {
     id("at.released.wasm.sqlite.open.helper.gradle.multiplatform.resources")
 }
 
-group = "ru.pixnews.wasm-sqlite-open-helper"
+group = "at.released.wasm-sqlite-driver"
 version = wasmSqliteVersions.getSubmoduleVersionProvider(
     propertiesFileKey = "wsoh_sqlite_driver_version",
     envVariableName = "WSOH_SQLITE_DRIVER_VERSION",
