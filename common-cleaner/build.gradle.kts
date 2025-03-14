@@ -13,7 +13,7 @@ plugins {
     id("at.released.wasm.sqlite.open.helper.gradle.multiplatform.publish")
 }
 
-group = "ru.pixnews.wasm-sqlite-open-helper"
+group = "at.released.wasm-sqlite-driver"
 version = wasmSqliteVersions.getSubmoduleVersionProvider(
     propertiesFileKey = "wsoh_common_cleaner_version",
     envVariableName = "WSOH_COMMON_CLEANER_VERSION",

@@ -13,7 +13,7 @@ plugins {
     id("at.released.wasm.sqlite.open.helper.gradle.multiplatform.room26.ksp")
 }
 
-group = "ru.pixnews.wasm-sqlite-open-helper"
+group = "at.released.wasm-sqlite-driver"
 
 android {
     namespace = "at.released.wasm.sqlite.open.helper.test.base"

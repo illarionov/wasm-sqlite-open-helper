@@ -72,7 +72,7 @@
             <trusting group="at.released.cassettes"/>
             <trusting group="at.released.wasm-sqlite-driver"/>
             <trusting group="at.released.weh"/>
-            <trusting group="ru.pixnews.wasm-sqlite-open-helper"/>
+            <trusting group="at.released.wasm-sqlite-driver"/>
          </trusted-key>
          <trusted-key id="8E3A02905A1AE67E7B0F9ACD3967D4EDA591B991" group="org.jetbrains.kotlinx" name="kotlinx-html-jvm"/>
          <trusted-key id="90EE19787A7BCF6FD37A1E9180C08B1C29100955" group="^com[.]squareup($|([.].*))" regex="true"/>

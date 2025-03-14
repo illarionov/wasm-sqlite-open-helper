@@ -21,7 +21,7 @@ plugins {
     id("at.released.wasm.sqlite.open.helper.gradle.multiplatform.publish")
 }
 
-group = "ru.pixnews.wasm-sqlite-open-helper"
+group = "at.released.wasm-sqlite-driver"
 version = wasmSqliteVersions.getSubmoduleVersionProvider(
     propertiesFileKey = "wsoh_sqlite_main_version",
     envVariableName = "WSOH_SQLITE_MAIN_VERSION",
@@ -109,8 +109,8 @@ kotlin {
 dependencies {
     constraints {
         listOf(
-            "ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-348:*",
-            "ru.pixnews.wasm-sqlite-open-helper:sqlite-android-wasm-emscripten-icu-mt-pthread-348:*",
+            "at.released.wasm-sqlite-driver:sqlite-android-wasm-emscripten-icu-348:*",
+            "at.released.wasm-sqlite-driver:sqlite-android-wasm-emscripten-icu-mt-pthread-348:*",
         ).forEach { dependency ->
             testImplementation(dependency) {
                 attributes {
