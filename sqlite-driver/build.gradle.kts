@@ -134,8 +134,8 @@ kotlin {
             target.dependencies {
                 // TODO: Shouldn't be here, added for resources in tests
                 // https://github.com/JetBrains/compose-multiplatform/issues/4442
-                implementation(libs.wsoh.sqlite.st)
-                implementation(libs.wsoh.sqlite.st.plain)
+                compileOnly(libs.wsoh.sqlite.st)
+                compileOnly(libs.wsoh.sqlite.st.plain)
             }
         }
 

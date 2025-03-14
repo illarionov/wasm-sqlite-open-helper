@@ -31,12 +31,12 @@ kotlin {
         commonMain.dependencies {
             api(projects.sqliteCommon)
             api(libs.cassettes.playhead)
+            api(libs.wsoh.binary.base)
             implementation(libs.chasm)
             compileOnly(libs.chasm.runtime.core)
             implementation(libs.wasi.emscripten.host.chasm.emscripten)
             implementation(libs.wasi.emscripten.host.chasm.wasip1)
             implementation(libs.wasi.emscripten.host.emscripten.runtime)
-            implementation(libs.wsoh.sqlite.st)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
