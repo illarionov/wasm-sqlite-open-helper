@@ -14,10 +14,15 @@ an Android emulator or Robolectric framework.
 
 ## Installation
 
-Release and snapshot versions of the library are published to a temporary repository, since it is highly experimental.
-File a bug report if you think it could be useful on Maven Central.
+The latest release is available on [Maven Central].
 
-Add the following to your project's settings.gradle:
+```kotlin
+repositories {
+    mavenCentral()
+}
+```
+
+Snapshot versions of the library may be published to a self-hosted public repository.
 
 ```kotlin
 pluginManagement {
@@ -39,20 +44,20 @@ Add the dependencies:
 ```kotlin
 dependencies {
     // Implementation of the SQLiteDriver (androidx.sqlite 2.5.0+)
-    testImplementation("at.released.wasm-sqlite-driver:sqlite-driver:0.1-alpha04")
+    testImplementation("at.released.wasm-sqlite-driver:sqlite-driver:0.1-beta01")
 
     // Implementation of the SupportSQLiteOpenHelper (androidx.sqlite 2.4.x)
-    testImplementation("at.released.wasm-sqlite-driver:sqlite-open-helper:0.1-alpha04")
+    testImplementation("at.released.wasm-sqlite-driver:sqlite-open-helper:0.1-beta01")
 
     // Runtime environment for executing SQLite Wasm code based on GraalVM (Sqlite Embedder)
-    testImplementation("at.released.wasm-sqlite-driver:sqlite-embedder-graalvm:0.1-alpha04")
+    testImplementation("at.released.wasm-sqlite-driver:sqlite-embedder-graalvm:0.1-beta01")
 
     // Optional: implementation of the runtime environment based on the Chicory library. 
     // It can be used to execute webassembly code instead of the GraalVM embedder
-    testImplementation("at.released.wasm-sqlite-driver:sqlite-embedder-chicory:0.1-alpha04")
+    testImplementation("at.released.wasm-sqlite-driver:sqlite-embedder-chicory:0.1-beta01")
 
     // Optional: implementation of the runtime environment based on the Chasm library. 
-    testImplementation("at.released.wasm-sqlite-driver:sqlite-embedder-chasm:0.1-alpha04")
+    testImplementation("at.released.wasm-sqlite-driver:sqlite-embedder-chasm:0.1-beta01")
 
     // Sqlite WebAssembly binary
     testImplementation("at.released.wasm-sqlite-driver:sqlite-android-wasm-emscripten-icu-348:0.4")
@@ -144,10 +149,10 @@ Installation:
 
 ```kotlin
 dependencies {
-    testImplementation("at.released.wasm-sqlite-driver:sqlite-embedder-graalvm:0.1-alpha04")
+    testImplementation("at.released.wasm-sqlite-driver:sqlite-embedder-graalvm:0.1-beta01")
 
     // Sqlite WebAssembly binary compiled with multithreading enabled 
-    testImplementation("at.released.wasm-sqlite-driver:sqlite-android-wasm-emscripten-icu-mt-pthread-345:0.1-alpha04")
+    testImplementation("at.released.wasm-sqlite-driver:sqlite-android-wasm-emscripten-icu-mt-pthread-345:0.1-beta01")
 }
 ```
 
@@ -235,7 +240,7 @@ Installation:
 
 ```kotlin
 dependencies {
-    testImplementation("at.released.wasm-sqlite-driver:sqlite-embedder-chicory:0.1-alpha04")
+    testImplementation("at.released.wasm-sqlite-driver:sqlite-embedder-chicory:0.1-beta01")
 
 	// Sqlite WebAssembly binary
     testImplementation("at.released.wasm-sqlite-driver:sqlite-android-wasm-emscripten-icu-348:0.4")
@@ -280,7 +285,7 @@ Installation:
 
 ```kotlin
 dependencies {
-    testImplementation("at.released.wasm-sqlite-driver:sqlite-embedder-chasm:0.1-alpha04")
+    testImplementation("at.released.wasm-sqlite-driver:sqlite-embedder-chasm:0.1-beta01")
 
     // Sqlite WebAssembly binary
     testImplementation("at.released.wasm-sqlite-driver:sqlite-android-wasm-emscripten-icu-348:0.4")

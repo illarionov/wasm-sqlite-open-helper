@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.1-beta01] — 2025-03-14
+
+- Publish to MavenCentral
+
 ## [0.1-alpha04] — 2024-06-20
 
 ### Added
