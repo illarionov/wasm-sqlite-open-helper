@@ -9,6 +9,7 @@ package at.released.wasm.sqlite.open.helper.gradle.multiplatform
 import at.released.wasm.sqlite.open.helper.gradle.multiplatform.publish.createWasmSqliteVersionsExtension
 import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.KotlinMultiplatform
+import com.vanniktech.maven.publish.SonatypeHost
 import org.jetbrains.dokka.gradle.DokkaTask
 
 /*
@@ -36,6 +37,7 @@ private val downloadableReleaseRoot = downloadableReleaseDirName.map { published
 private val distributionDir = layout.settingsDirectory.dir("build/distribution")
 
 mavenPublishing {
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
     publishing {
         repositories {
             maven {
@@ -65,7 +67,9 @@ mavenPublishing {
 
     pom {
         name.set(project.name)
-        description.set("Implementation of SupportSQLiteOpenHelper based on SQLite compiled for WebAssembly")
+        description.set(
+            "Implementation of SQLiteDriver and SupportSQLiteOpenHelper based on SQLite compiled for WebAssembly",
+        )
         url.set("https://github.com/illarionov/wasm-sqlite-open-helper")
 
         licenses {
@@ -91,7 +95,6 @@ mavenPublishing {
 }
 
 tasks.withType<DokkaTask> {
-    notCompatibleWithConfigurationCache("https://github.com/Kotlin/dokka/issues/2231")
     dokkaSourceSets.configureEach {
         skipDeprecated.set(true)
     }
