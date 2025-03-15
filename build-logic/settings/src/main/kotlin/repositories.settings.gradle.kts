@@ -44,5 +44,6 @@ dependencyResolutionManagement {
         mavenCentral()
         googleFiltered()
         pixnewsMaven()
+        gradlePluginPortal()
     }
 }

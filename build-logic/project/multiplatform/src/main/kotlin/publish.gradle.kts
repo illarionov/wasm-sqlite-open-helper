@@ -10,7 +10,6 @@ import at.released.wasm.sqlite.open.helper.gradle.multiplatform.publish.createWa
 import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.KotlinMultiplatform
 import com.vanniktech.maven.publish.SonatypeHost
-import org.jetbrains.dokka.gradle.DokkaTask
 
 /*
  * Convention plugin with publishing defaults
@@ -18,7 +17,6 @@ import org.jetbrains.dokka.gradle.DokkaTask
 plugins {
     id("org.jetbrains.kotlin.multiplatform")
     id("com.vanniktech.maven.publish.base")
-    id("org.jetbrains.dokka")
 }
 
 private val wasmVersions = createWasmSqliteVersionsExtension()
@@ -62,7 +60,7 @@ mavenPublishing {
     signAllPublications()
 
     configure(
-        KotlinMultiplatform(javadocJar = JavadocJar.Dokka("dokkaGfm")),
+        KotlinMultiplatform(javadocJar = JavadocJar.Dokka("dokkaGenerateModuleHtml")),
     )
 
     pom {
@@ -91,12 +89,6 @@ mavenPublishing {
             developerConnection.set("scm:git:ssh://github.com:illarionov/wasm-sqlite-open-helper.git")
             url.set("https://github.com/illarionov/wasm-sqlite-open-helper")
         }
-    }
-}
-
-tasks.withType<DokkaTask> {
-    dokkaSourceSets.configureEach {
-        skipDeprecated.set(true)
     }
 }
 

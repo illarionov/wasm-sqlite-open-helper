@@ -28,6 +28,7 @@ buildscript {
 rootProject.name = "wasm-sqlite-open-helper"
 
 include("common-cleaner")
+include("doc:aggregate-documentation")
 include("sqlite-common")
 include("sqlite-driver")
 include("sqlite-embedder-graalvm")

@@ -41,3 +41,7 @@ pluginManagement {
 ```
 
 You can also download a snapshot of the repository from the [Releases section](https://github.com/illarionov/wasm-sqlite-open-helper/releases)
+
+[Maven Central]: https://central.sonatype.com/artifact/at.released.wasm-sqlite-driver/sqlite-driver
+[androidx.sqlite.SQLiteDriver]: https://developer.android.com/reference/androidx/sqlite/SQLiteDriver
+[androidx.sqlite.SupportSQLiteOpenHelper]: https://developer.android.com/reference/androidx/sqlite/db/SupportSQLiteOpenHelper

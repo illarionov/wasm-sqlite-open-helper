@@ -32,6 +32,7 @@ dependencyResolutionManagement {
     }
 }
 
+include("documentation")
 include("lint")
 include("multiplatform")
 
