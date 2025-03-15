@@ -7,6 +7,7 @@
 @file:Suppress("OPT_IN_USAGE")
 
 plugins {
+    id("at.released.wasm.sqlite.open.helper.gradle.documentation.dokka.subproject")
     id("at.released.wasm.sqlite.open.helper.gradle.lint.binary-compatibility-validator")
     id("at.released.wasm.sqlite.open.helper.gradle.multiplatform.android")
     id("at.released.wasm.sqlite.open.helper.gradle.multiplatform.kotlin")

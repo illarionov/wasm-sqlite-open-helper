@@ -5,6 +5,7 @@
  */
 
 plugins {
+    id("at.released.wasm.sqlite.open.helper.gradle.documentation.dokka.subproject")
     id("at.released.wasm.sqlite.open.helper.gradle.lint.binary-compatibility-validator")
     id("at.released.wasm.sqlite.open.helper.gradle.multiplatform.graalvm")
     id("at.released.wasm.sqlite.open.helper.gradle.multiplatform.kotlin")

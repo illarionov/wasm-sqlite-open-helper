@@ -16,7 +16,6 @@ dependencies {
     implementation(libs.atomicfu.plugin)
     implementation(libs.cassettes.plugin)
     implementation(libs.ksp.plugin)
-    implementation(libs.dokka.plugin)
     implementation(libs.gradle.maven.publish.plugin)
     implementation(libs.kotlin.gradle.plugin)
     runtimeOnly(libs.agp.plugin)
