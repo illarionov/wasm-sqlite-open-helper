@@ -62,7 +62,7 @@ Any type of contributions are welcome. Please see the [contribution guide](https
 ## License
 
 These services are licensed under Apache 2.0 License. Authors and contributors are listed in the
-[Authors](AUTHORS) file.
+[Authors](https://github.com/illarionov/wasm-sqlite-open-helper/blob/main/AUTHORS) file.
 
 ```
 Copyright 2024-2025 wasm-sqLite-open-helper project authors and contributors.
