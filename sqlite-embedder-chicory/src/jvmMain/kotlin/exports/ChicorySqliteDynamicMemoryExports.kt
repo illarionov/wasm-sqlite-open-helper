@@ -24,7 +24,6 @@ internal class ChicorySqliteDynamicMemoryExports(
     private val sqlite3_realloc64 by mainBindings.functionMember()
 
     override fun <P : Any?> sqliteAllocOrThrow(len: UInt): WasmPtr<P> {
-        check(len > 0U)
         val mem: WasmPtr<P> = WasmPtr(sqlite3_malloc.executeForPtr(len.toInt()))
 
         if (mem.isNull()) {
