@@ -8,10 +8,12 @@ public final class at/released/wasm/sqlite/open/helper/chicory/ChicorySqliteEmbe
 public final class at/released/wasm/sqlite/open/helper/chicory/ChicorySqliteEmbedderConfig : at/released/wasm/sqlite/open/helper/embedder/SqliteEmbedderConfig {
 	public final fun getHost ()Lat/released/weh/host/EmbedderHost;
 	public final fun getMachineFactory ()Lkotlin/jvm/functions/Function1;
+	public final fun getMemoryFactory ()Lkotlin/jvm/functions/Function1;
 	public final fun getSqlite3Binary ()Lat/released/wasm/sqlite/binary/base/WasmSqliteConfiguration;
 	public final fun getWasmSourceReader ()Lat/released/cassettes/playhead/AssetManager;
 	public final fun setHost (Lat/released/weh/host/EmbedderHost;)V
 	public final fun setMachineFactory (Lkotlin/jvm/functions/Function1;)V
+	public final fun setMemoryFactory (Lkotlin/jvm/functions/Function1;)V
 	public final fun setSqlite3Binary (Lat/released/wasm/sqlite/binary/base/WasmSqliteConfiguration;)V
 	public final fun setWasmSourceReader (Lat/released/cassettes/playhead/AssetManager;)V
 }

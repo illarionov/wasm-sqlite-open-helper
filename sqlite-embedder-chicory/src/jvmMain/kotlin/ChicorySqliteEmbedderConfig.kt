@@ -15,6 +15,8 @@ import at.released.weh.common.api.Logger
 import at.released.weh.host.EmbedderHost
 import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.runtime.Machine
+import com.dylibso.chicory.runtime.Memory
+import com.dylibso.chicory.wasm.types.MemoryLimits
 
 /**
  * Configuration of the Chicory engine
@@ -44,6 +46,16 @@ public class ChicorySqliteEmbedderConfig internal constructor(
      * See: [https://github.com/dylibso/chicory/tree/main/aot](https://github.com/dylibso/chicory/tree/main/aot)
      */
     public var machineFactory: ((Instance) -> Machine)? = null
+
+    /**
+     * Overrides Chicory memory factory.
+     *
+     * By default it will be used [ByteBufferMemory][com.dylibso.chicory.runtime.ByteBufferMemory]
+     * with [ExactMemAllocStrategy][com.dylibso.chicory.runtime.alloc.ExactMemAllocStrategy].
+     *
+     * See: [https://chicory.dev/docs/advanced/memory](https://chicory.dev/docs/advanced/memory)
+     */
+    public var memoryFactory: ((MemoryLimits) -> Memory)? = null
 
     /**
      * Implementation of a host object that provides access from the WebAssembly to external host resources.
