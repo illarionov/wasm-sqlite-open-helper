@@ -11,6 +11,11 @@ import at.released.wasm.sqlite.open.helper.WasmPtr
 
 @InternalWasmSqliteHelperApi
 public interface SqliteDynamicMemoryExports {
+    /**
+     * Calls sqlite3_malloc() to allocate [len] bytes of memory.
+     *
+     * If [len] is zero then sqliteAllocOrThrow() allocates at least 1 byte
+     */
     public fun <P : Any?> sqliteAllocOrThrow(len: UInt): WasmPtr<P>
     public fun sqliteFree(ptr: WasmPtr<*>)
 }
