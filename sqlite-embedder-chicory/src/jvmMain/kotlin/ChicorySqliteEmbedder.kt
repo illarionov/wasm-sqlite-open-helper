@@ -23,6 +23,8 @@ import at.released.weh.host.EmbedderHost
 import at.released.weh.wasm.core.memory.Memory
 import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.runtime.Machine
+import com.dylibso.chicory.wasm.types.MemoryLimits
+import com.dylibso.chicory.runtime.Memory as ChicoryMemory
 
 public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig, ChicoryRuntime> {
     @InternalWasmSqliteHelperApi
@@ -36,6 +38,7 @@ public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig
             config.sqlite3Binary,
             config.wasmSourceReader,
             config.machineFactory,
+            config.memoryFactory,
         )
     }
 
@@ -47,12 +50,12 @@ public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig
         defaultWasmSourceReader = commonConfig.wasmReader,
     ).apply(embedderConfigBuilder)
 
-    @Suppress("LAMBDA_IS_NOT_LAST_PARAMETER")
     private fun createChicorySqliteWasmEnvironment(
         host: EmbedderHost,
         sqlite3Binary: WasmSqliteConfiguration,
         wasmSourceReader: AssetManager,
         machineFactory: ((Instance) -> Machine)?,
+        memoryFactory: ((MemoryLimits) -> ChicoryMemory)?,
     ): SqliteRuntimeInternal<ChicoryRuntime> {
         require(!sqlite3Binary.requireThreads) {
             "The specified SQLite binary is compiled with threading support, which is not compatible with the " +
@@ -64,8 +67,9 @@ public object ChicorySqliteEmbedder : SqliteEmbedder<ChicorySqliteEmbedderConfig
             host = host,
             callbackStore = callbackStore,
             sqlite3Binary = sqlite3Binary,
-            machineFactory = machineFactory,
             wasmSourceReader = wasmSourceReader,
+            machineFactory = machineFactory,
+            memoryFactory = memoryFactory,
         ).setupModule()
 
         val runtimeInstance = object : ChicoryRuntime {

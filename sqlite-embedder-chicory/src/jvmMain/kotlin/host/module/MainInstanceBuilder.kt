@@ -30,6 +30,8 @@ import com.dylibso.chicory.runtime.ImportValues
 import com.dylibso.chicory.runtime.Instance
 import com.dylibso.chicory.runtime.Instance.START_FUNCTION_NAME
 import com.dylibso.chicory.runtime.Machine
+import com.dylibso.chicory.runtime.Memory
+import com.dylibso.chicory.runtime.alloc.ExactMemAllocStrategy
 import com.dylibso.chicory.wasm.Parser
 import com.dylibso.chicory.wasm.WasmModule
 import com.dylibso.chicory.wasm.types.MemoryLimits
@@ -43,14 +45,14 @@ internal class MainInstanceBuilder(
     private val sqlite3Binary: WasmSqliteConfiguration,
     private val wasmSourceReader: AssetManager,
     private val machineFactory: ((Instance) -> Machine)?,
+    private val memoryFactory: ((MemoryLimits) -> Memory)?,
 ) {
     fun setupModule(): ChicoryInstance {
         val memoryLimits = MemoryLimits(
             (sqlite3Binary.wasmMinMemorySize / WASM_MEMORY_PAGE_SIZE).toInt(),
             WASM_MEMORY_DEFAULT_MAX_PAGES.count.toInt(),
         )
-        // XXX: should not be used directly
-        val chicoryMemory = ByteBufferMemory(memoryLimits)
+        val chicoryMemory = (memoryFactory ?: ::defaultMemoryFactory).invoke(memoryLimits)
 
         val memoryAdapter = ChicoryMemoryAdapter(chicoryMemory)
 
@@ -115,4 +117,10 @@ internal class MainInstanceBuilder(
         val memory: ChicoryMemoryAdapter,
         val indirectFunctionIndexes: SqliteCallbackFunctionIndexes,
     )
+
+    private companion object {
+        private fun defaultMemoryFactory(limits: MemoryLimits): Memory {
+            return ByteBufferMemory(limits, ExactMemAllocStrategy())
+        }
+    }
 }
