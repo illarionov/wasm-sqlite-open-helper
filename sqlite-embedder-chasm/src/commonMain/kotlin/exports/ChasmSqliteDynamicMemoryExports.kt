@@ -42,6 +42,6 @@ internal class ChasmSqliteDynamicMemoryExports(
     }
 
     override fun sqliteFree(ptr: WasmPtr<*>) {
-        sqlite3_free.executeVoid(ptr)
+        sqlite3_free.executeVoid(ptr.addr)
     }
 }
