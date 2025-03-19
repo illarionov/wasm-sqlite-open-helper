@@ -23,7 +23,7 @@ Installation:
 ```kotlin
 dependencies {
     implementation("com.dylibso.chicory:runtime:1.1.1")
-    implementation("at.released.wasm-sqlite-driver:sqlite-embedder-chicory:0.1-beta01")
+    implementation("at.released.wasm-sqlite-driver:sqlite-embedder-chicory:0.1-beta02")
 }
 ```
 

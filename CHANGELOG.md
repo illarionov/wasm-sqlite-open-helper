@@ -1,5 +1,21 @@
 # Change Log
 
+## [0.1-beta02] — 2025-03-19
+
+### Added
+
+- Expose Chicory memory factory and use ExactMemAllocStrategy
+
+### 🐛 Bug Fix
+
+- Fix memory leak in `sqlite3_free()`
+- Fix `sqlite3_malloc()` with zero argument
+- Add Chicory runtime to sqlite-embedder-chicory api dependencies
+
+### 🤖 Dependencies
+
+- Bump Chasm to 0.9.62 
+
 ## [0.1-beta01] — 2025-03-14
 
 - Publish to MavenCentral

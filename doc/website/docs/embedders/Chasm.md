@@ -18,7 +18,7 @@ Installation:
 
 ```kotlin
 dependencies {
-    testImplementation("at.released.wasm-sqlite-driver:sqlite-embedder-chasm:0.1-beta01")
+    testImplementation("at.released.wasm-sqlite-driver:sqlite-embedder-chasm:0.1-beta02")
 
     // Sqlite WebAssembly binary
     testImplementation("at.released.wasm-sqlite-driver:sqlite-android-wasm-emscripten-icu-349:0.7")
