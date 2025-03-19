@@ -25,7 +25,14 @@ internal class ChasmSqliteDynamicMemoryExports(
     private val sqlite3_realloc64 by instance.functionMember()
 
     override fun <P : Any?> sqliteAllocOrThrow(len: UInt): WasmPtr<P> {
-        val mem: WasmPtr<P> = WasmPtr(sqlite3_malloc.executeForPtr(len.toInt()))
+        check(len >= 0U)
+        val allocLen: Int = if (len != 0U) {
+            len.toInt()
+        } else {
+            1
+        }
+
+        val mem: WasmPtr<P> = WasmPtr(sqlite3_malloc.executeForPtr(allocLen))
 
         if (mem.isNull()) {
             throwOutOfMemoryError()
