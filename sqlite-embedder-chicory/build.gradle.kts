@@ -24,6 +24,7 @@ kotlin {
         commonMain.dependencies {
             api(projects.sqliteCommon)
             api(libs.cassettes.playhead)
+            api(libs.chicory.runtime)
             api(libs.wsoh.binary.base)
             implementation(libs.wasi.emscripten.host.chicory.emscripten)
             implementation(libs.wasi.emscripten.host.chicory.wasip1)
