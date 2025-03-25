@@ -1,0 +1,1197 @@
+{
+    "context": {
+        "build": {
+            "brand": "samsung",
+            "device": "r5q",
+            "fingerprint": "samsung/r5qnaser/r5q:13/TP1A.220624.014/G770FXXS9HXA1:user/release-keys",
+            "id": "TP1A.220624.014",
+            "model": "SM-G770F",
+            "type": "user",
+            "version": {
+                "codename": "REL",
+                "sdk": 33
+            }
+        },
+        "cpuCoreCount": 8,
+        "cpuLocked": true,
+        "cpuMaxFreqHz": 2841600000,
+        "memTotalBytes": 5717049344,
+        "sustainedPerformanceModeEnabled": false,
+        "artMainlineVersion": 351410020,
+        "osCodenameAbbreviated": "T",
+        "compilationMode": "speed",
+        "payload": {}
+    },
+    "benchmarks": [
+        {
+            "name": "create_database",
+            "params": {},
+            "className": "at.released.sqlitedriverbenchmark.InterpreterBenchmarksAndroidDriver",
+            "totalRunTimeNs": 11143744111,
+            "metrics": {
+                "timeNs": {
+                    "minimum": 2.36698228E8,
+                    "maximum": 3.05821146E8,
+                    "median": 2.50172344E8,
+                    "coefficientOfVariation": 0.06104300384613997,
+                    "runs": [
+                        2.70045313E8,
+                        2.81222292E8,
+                        2.4800901E8,
+                        2.4380151E8,
+                        2.55709166E8,
+                        2.44894791E8,
+                        2.56483074E8,
+                        2.45355938E8,
+                        2.44491822E8,
+                        2.38317864E8,
+                        2.54748594E8,
+                        2.50172344E8,
+                        2.50416875E8,
+                        2.64558907E8,
+                        2.54787239E8,
+                        2.63123229E8,
+                        2.66435E8,
+                        2.46138074E8,
+                        2.40777186E8,
+                        2.36698228E8,
+                        2.39624011E8,
+                        2.47838645E8,
+                        2.52509531E8,
+                        3.05821146E8,
+                        2.37648541E8
+                    ]
+                },
+                "allocationCount": {
+                    "minimum": 155193.0,
+                    "maximum": 155199.0,
+                    "median": 155199.0,
+                    "coefficientOfVariation": 1.7289497316960277E-5,
+                    "runs": [
+                        155199.0,
+                        155199.0,
+                        155196.0,
+                        155199.0,
+                        155193.0
+                    ]
+                }
+            },
+            "sampledMetrics": {},
+            "warmupIterations": 5,
+            "repeatIterations": 1,
+            "thermalThrottleSleepSeconds": 0,
+            "profilerOutputs": [
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace",
+                    "filename": "InterpreterBenchmarksAndroidDriver_create_database_2025-03-25-13-56-07.perfetto-trace"
+                }
+            ]
+        },
+        {
+            "name": "huge_select",
+            "params": {},
+            "className": "at.released.sqlitedriverbenchmark.InterpreterBenchmarksAndroidDriver",
+            "totalRunTimeNs": 4841023853,
+            "metrics": {
+                "timeNs": {
+                    "minimum": 1.1514910857142856E7,
+                    "maximum": 1.558465042857143E7,
+                    "median": 1.1770773857142856E7,
+                    "coefficientOfVariation": 0.07332689530658039,
+                    "runs": [
+                        1.1514910857142856E7,
+                        1.1703526714285715E7,
+                        1.158770842857143E7,
+                        1.1676265142857144E7,
+                        1.1649412285714285E7,
+                        1.1642276857142856E7,
+                        1.1827581857142856E7,
+                        1.192645842857143E7,
+                        1.1841704E7,
+                        1.1770773857142856E7,
+                        1.558465042857143E7,
+                        1.1640349857142856E7,
+                        1.178354157142857E7,
+                        1.1838935857142856E7,
+                        1.1529054857142856E7,
+                        1.378541657142857E7,
+                        1.1811198E7,
+                        1.177660742857143E7,
+                        1.2842254285714285E7,
+                        1.1720528142857144E7,
+                        1.183894357142857E7,
+                        1.1622142857142856E7,
+                        1.1735149E7,
+                        1.174439E7,
+                        1.186830342857143E7
+                    ]
+                },
+                "allocationCount": {
+                    "minimum": 507.2857142857143,
+                    "maximum": 507.2857142857143,
+                    "median": 507.2857142857143,
+                    "coefficientOfVariation": 1.252802366268407E-16,
+                    "runs": [
+                        507.2857142857143,
+                        507.2857142857143,
+                        507.2857142857143,
+                        507.2857142857143,
+                        507.2857142857143
+                    ]
+                }
+            },
+            "sampledMetrics": {},
+            "warmupIterations": 5,
+            "repeatIterations": 7,
+            "thermalThrottleSleepSeconds": 0,
+            "profilerOutputs": [
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace",
+                    "filename": "InterpreterBenchmarksAndroidDriver_huge_select_2025-03-25-13-56-17.perfetto-trace"
+                }
+            ]
+        },
+        {
+            "name": "select_with_paging",
+            "params": {},
+            "className": "at.released.sqlitedriverbenchmark.InterpreterBenchmarksAndroidDriver",
+            "totalRunTimeNs": 4457279217,
+            "metrics": {
+                "timeNs": {
+                    "minimum": 1.46430624E7,
+                    "maximum": 1.90536456E7,
+                    "median": 1.49458748E7,
+                    "coefficientOfVariation": 0.07052290990043229,
+                    "runs": [
+                        1.48491042E7,
+                        1.5105521E7,
+                        1.48176148E7,
+                        1.46430624E7,
+                        1.47293226E7,
+                        1.90536456E7,
+                        1.5575719E7,
+                        1.56761354E7,
+                        1.60780728E7,
+                        1.49194998E7,
+                        1.53702188E7,
+                        1.47446774E7,
+                        1.48905832E7,
+                        1.49050102E7,
+                        1.49458748E7,
+                        1.48921146E7,
+                        1.48460206E7,
+                        1.50393542E7,
+                        1.82539586E7,
+                        1.49218648E7,
+                        1.49966766E7,
+                        1.49359168E7,
+                        1.60167816E7,
+                        1.5996844E7,
+                        1.66191874E7
+                    ]
+                },
+                "allocationCount": {
+                    "minimum": 2118.4,
+                    "maximum": 2118.4,
+                    "median": 2118.4,
+                    "coefficientOfVariation": 0.0,
+                    "runs": [
+                        2118.4,
+                        2118.4,
+                        2118.4,
+                        2118.4,
+                        2118.4
+                    ]
+                }
+            },
+            "sampledMetrics": {},
+            "warmupIterations": 5,
+            "repeatIterations": 5,
+            "thermalThrottleSleepSeconds": 0,
+            "profilerOutputs": [
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace",
+                    "filename": "InterpreterBenchmarksAndroidDriver_select_with_paging_2025-03-25-13-56-26.perfetto-trace"
+                }
+            ]
+        },
+        {
+            "name": "create_database",
+            "params": {},
+            "className": "at.released.sqlitedriverbenchmark.InterpreterBenchmarksChasmInterpreterDriver",
+            "totalRunTimeNs": 504122687777,
+            "metrics": {
+                "timeNs": {
+                    "minimum": 1.3437077651E10,
+                    "maximum": 1.4418076766E10,
+                    "median": 1.3595305672E10,
+                    "coefficientOfVariation": 0.022863542782302775,
+                    "runs": [
+                        1.4418076766E10,
+                        1.4258893015E10,
+                        1.4272156557E10,
+                        1.4374734266E10,
+                        1.4254591296E10,
+                        1.3957592703E10,
+                        1.4082933693E10,
+                        1.3723460099E10,
+                        1.3598067807E10,
+                        1.3546991975E10,
+                        1.3547763484E10,
+                        1.3577360516E10,
+                        1.3597870724E10,
+                        1.3509826662E10,
+                        1.3576893693E10,
+                        1.357484338E10,
+                        1.355563812E10,
+                        1.3612721662E10,
+                        1.3535891818E10,
+                        1.3580433121E10,
+                        1.3573549578E10,
+                        1.3553172546E10,
+                        1.3595305672E10,
+                        1.3707621141E10,
+                        1.3437077651E10
+                    ]
+                },
+                "allocationCount": {
+                    "minimum": 1.44082592E8,
+                    "maximum": 1.44085097E8,
+                    "median": 1.44082618E8,
+                    "coefficientOfVariation": 7.72986295542934E-6,
+                    "runs": [
+                        1.44082618E8,
+                        1.4408262E8,
+                        1.44082597E8,
+                        1.44085097E8,
+                        1.44082592E8
+                    ]
+                }
+            },
+            "sampledMetrics": {},
+            "warmupIterations": 5,
+            "repeatIterations": 1,
+            "thermalThrottleSleepSeconds": 0,
+            "profilerOutputs": [
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace",
+                    "filename": "InterpreterBenchmarksChasmInterpreterDriver_create_database_2025-03-25-14-04-48.perfetto-trace"
+                }
+            ]
+        },
+        {
+            "name": "huge_select",
+            "params": {},
+            "className": "at.released.sqlitedriverbenchmark.InterpreterBenchmarksChasmInterpreterDriver",
+            "totalRunTimeNs": 285408632078,
+            "metrics": {
+                "timeNs": {
+                    "minimum": 7.741754945E9,
+                    "maximum": 7.856998539E9,
+                    "median": 7.786909528E9,
+                    "coefficientOfVariation": 0.004101900968094184,
+                    "runs": [
+                        7.799619841E9,
+                        7.76489505E9,
+                        7.741754945E9,
+                        7.750427548E9,
+                        7.780942288E9,
+                        7.786909528E9,
+                        7.781072862E9,
+                        7.811241925E9,
+                        7.760901819E9,
+                        7.75879682E9,
+                        7.815664215E9,
+                        7.83517208E9,
+                        7.7708976E9,
+                        7.771564789E9,
+                        7.834985466E9,
+                        7.852641508E9,
+                        7.815833695E9,
+                        7.7769988E9,
+                        7.814829842E9,
+                        7.80567781E9,
+                        7.784933851E9,
+                        7.856998539E9,
+                        7.816816195E9,
+                        7.751809945E9,
+                        7.794476872E9
+                    ]
+                },
+                "allocationCount": {
+                    "minimum": 9.7887261E7,
+                    "maximum": 9.7887299E7,
+                    "median": 9.7887286E7,
+                    "coefficientOfVariation": 1.5093869228283494E-7,
+                    "runs": [
+                        9.7887295E7,
+                        9.7887299E7,
+                        9.7887261E7,
+                        9.7887286E7,
+                        9.7887286E7
+                    ]
+                }
+            },
+            "sampledMetrics": {},
+            "warmupIterations": 5,
+            "repeatIterations": 1,
+            "thermalThrottleSleepSeconds": 0,
+            "profilerOutputs": [
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace",
+                    "filename": "InterpreterBenchmarksChasmInterpreterDriver_huge_select_2025-03-25-14-09-45.perfetto-trace"
+                }
+            ]
+        },
+        {
+            "name": "select_with_paging",
+            "params": {},
+            "className": "at.released.sqlitedriverbenchmark.InterpreterBenchmarksChasmInterpreterDriver",
+            "totalRunTimeNs": 212531219971,
+            "metrics": {
+                "timeNs": {
+                    "minimum": 5.752450258E9,
+                    "maximum": 5.834421248E9,
+                    "median": 5.786556352E9,
+                    "coefficientOfVariation": 0.004042132975835595,
+                    "runs": [
+                        5.789959217E9,
+                        5.795531924E9,
+                        5.834421248E9,
+                        5.798947081E9,
+                        5.831023905E9,
+                        5.824281612E9,
+                        5.823538852E9,
+                        5.773831769E9,
+                        5.816443175E9,
+                        5.775847863E9,
+                        5.752450258E9,
+                        5.812837342E9,
+                        5.772982967E9,
+                        5.761879894E9,
+                        5.794092236E9,
+                        5.784459581E9,
+                        5.779093643E9,
+                        5.780319008E9,
+                        5.786556352E9,
+                        5.757793123E9,
+                        5.769529841E9,
+                        5.762125727E9,
+                        5.782138226E9,
+                        5.797258331E9,
+                        5.807250206E9
+                    ]
+                },
+                "allocationCount": {
+                    "minimum": 7.1427835E7,
+                    "maximum": 7.142786E7,
+                    "median": 7.1427846E7,
+                    "coefficientOfVariation": 1.2584562533483534E-7,
+                    "runs": [
+                        7.1427848E7,
+                        7.1427846E7,
+                        7.1427835E7,
+                        7.142786E7,
+                        7.1427844E7
+                    ]
+                }
+            },
+            "sampledMetrics": {},
+            "warmupIterations": 5,
+            "repeatIterations": 1,
+            "thermalThrottleSleepSeconds": 0,
+            "profilerOutputs": [
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace",
+                    "filename": "InterpreterBenchmarksChasmInterpreterDriver_select_with_paging_2025-03-25-14-13-26.perfetto-trace"
+                }
+            ]
+        },
+        {
+            "name": "create_database",
+            "params": {},
+            "className": "at.released.sqlitedriverbenchmark.InterpreterBenchmarksChasmNoFusionInterpreterDriver",
+            "totalRunTimeNs": 637547109288,
+            "metrics": {
+                "timeNs": {
+                    "minimum": 1.2521520151E10,
+                    "maximum": 2.0329399836E10,
+                    "median": 2.0217255826E10,
+                    "coefficientOfVariation": 0.15971747643151016,
+                    "runs": [
+                        1.2521520151E10,
+                        1.262310364E10,
+                        1.3381248485E10,
+                        1.3905016245E10,
+                        1.4251343224E10,
+                        1.5003716974E10,
+                        1.5818161556E10,
+                        1.6882691556E10,
+                        1.7699699577E10,
+                        1.9286821972E10,
+                        2.0217255826E10,
+                        2.0271043117E10,
+                        2.0068780461E10,
+                        2.0221355356E10,
+                        2.026017796E10,
+                        2.0295901451E10,
+                        2.0301238064E10,
+                        2.0285026815E10,
+                        2.0329399836E10,
+                        2.0326994054E10,
+                        2.0318830878E10,
+                        2.0222003013E10,
+                        2.0275446815E10,
+                        2.0280412284E10,
+                        2.0116221607E10
+                    ]
+                },
+                "allocationCount": {
+                    "minimum": 1.06726512E8,
+                    "maximum": 1.06726622E8,
+                    "median": 1.06726527E8,
+                    "coefficientOfVariation": 4.257307317763054E-7,
+                    "runs": [
+                        1.06726527E8,
+                        1.06726512E8,
+                        1.06726515E8,
+                        1.06726622E8,
+                        1.06726539E8
+                    ]
+                }
+            },
+            "sampledMetrics": {},
+            "warmupIterations": 5,
+            "repeatIterations": 1,
+            "thermalThrottleSleepSeconds": 0,
+            "profilerOutputs": [
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace",
+                    "filename": "InterpreterBenchmarksChasmNoFusionInterpreterDriver_create_database_2025-03-25-14-24-03.perfetto-trace"
+                }
+            ]
+        },
+        {
+            "name": "huge_select",
+            "params": {},
+            "className": "at.released.sqlitedriverbenchmark.InterpreterBenchmarksChasmNoFusionInterpreterDriver",
+            "totalRunTimeNs": 264260787972,
+            "metrics": {
+                "timeNs": {
+                    "minimum": 7.184616039E9,
+                    "maximum": 7.265028851E9,
+                    "median": 7.234711977E9,
+                    "coefficientOfVariation": 0.0030578741319474798,
+                    "runs": [
+                        7.239477133E9,
+                        7.205005414E9,
+                        7.222618436E9,
+                        7.265028851E9,
+                        7.240495154E9,
+                        7.257640623E9,
+                        7.225533696E9,
+                        7.247462237E9,
+                        7.22326505E9,
+                        7.246504216E9,
+                        7.184616039E9,
+                        7.240148226E9,
+                        7.222810623E9,
+                        7.191442341E9,
+                        7.196844634E9,
+                        7.257769008E9,
+                        7.241681612E9,
+                        7.232194737E9,
+                        7.262001456E9,
+                        7.225074528E9,
+                        7.254571924E9,
+                        7.225012029E9,
+                        7.26326859E9,
+                        7.234711977E9,
+                        7.229933174E9
+                    ]
+                },
+                "allocationCount": {
+                    "minimum": 7.7025048E7,
+                    "maximum": 7.7025083E7,
+                    "median": 7.7025067E7,
+                    "coefficientOfVariation": 1.6514186209031657E-7,
+                    "runs": [
+                        7.7025083E7,
+                        7.7025067E7,
+                        7.7025048E7,
+                        7.7025063E7,
+                        7.7025071E7
+                    ]
+                }
+            },
+            "sampledMetrics": {},
+            "warmupIterations": 5,
+            "repeatIterations": 1,
+            "thermalThrottleSleepSeconds": 0,
+            "profilerOutputs": [
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace",
+                    "filename": "InterpreterBenchmarksChasmNoFusionInterpreterDriver_huge_select_2025-03-25-14-28-38.perfetto-trace"
+                }
+            ]
+        },
+        {
+            "name": "select_with_paging",
+            "params": {},
+            "className": "at.released.sqlitedriverbenchmark.InterpreterBenchmarksChasmNoFusionInterpreterDriver",
+            "totalRunTimeNs": 191048159719,
+            "metrics": {
+                "timeNs": {
+                    "minimum": 5.192699113E9,
+                    "maximum": 5.254036924E9,
+                    "median": 5.229425154E9,
+                    "coefficientOfVariation": 0.0026115905052675045,
+                    "runs": [
+                        5.230646769E9,
+                        5.219188019E9,
+                        5.242018852E9,
+                        5.233106873E9,
+                        5.237543643E9,
+                        5.192699113E9,
+                        5.224953279E9,
+                        5.235317757E9,
+                        5.203963279E9,
+                        5.219099529E9,
+                        5.227903175E9,
+                        5.212541248E9,
+                        5.214144686E9,
+                        5.23147229E9,
+                        5.229425154E9,
+                        5.254036924E9,
+                        5.214494529E9,
+                        5.223841716E9,
+                        5.241009166E9,
+                        5.231902446E9,
+                        5.243939581E9,
+                        5.225408332E9,
+                        5.228689478E9,
+                        5.245753018E9,
+                        5.233139112E9
+                    ]
+                },
+                "allocationCount": {
+                    "minimum": 5.4218986E7,
+                    "maximum": 5.4219004E7,
+                    "median": 5.4219E7,
+                    "coefficientOfVariation": 1.2936925062366925E-7,
+                    "runs": [
+                        5.4219E7,
+                        5.4219E7,
+                        5.4219001E7,
+                        5.4219004E7,
+                        5.4218986E7
+                    ]
+                }
+            },
+            "sampledMetrics": {},
+            "warmupIterations": 5,
+            "repeatIterations": 1,
+            "thermalThrottleSleepSeconds": 0,
+            "profilerOutputs": [
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace",
+                    "filename": "InterpreterBenchmarksChasmNoFusionInterpreterDriver_select_with_paging_2025-03-25-14-31-57.perfetto-trace"
+                }
+            ]
+        },
+        {
+            "name": "create_database",
+            "params": {},
+            "className": "at.released.sqlitedriverbenchmark.InterpreterBenchmarksChicoryAotDriver",
+            "totalRunTimeNs": 44641543212,
+            "metrics": {
+                "timeNs": {
+                    "minimum": 1.187708281E9,
+                    "maximum": 1.267373958E9,
+                    "median": 1.210185989E9,
+                    "coefficientOfVariation": 0.011863154753456045,
+                    "runs": [
+                        1.213950052E9,
+                        1.187708281E9,
+                        1.209421041E9,
+                        1.217257448E9,
+                        1.215468125E9,
+                        1.267373958E9,
+                        1.222104896E9,
+                        1.224132291E9,
+                        1.208921563E9,
+                        1.208778541E9,
+                        1.210227396E9,
+                        1.209324166E9,
+                        1.214022291E9,
+                        1.203224947E9,
+                        1.208925625E9,
+                        1.214820156E9,
+                        1.214965208E9,
+                        1.210185989E9,
+                        1.20522026E9,
+                        1.20205026E9,
+                        1.209345E9,
+                        1.205398802E9,
+                        1.211701459E9,
+                        1.239349948E9,
+                        1.209008437E9
+                    ]
+                },
+                "allocationCount": {
+                    "minimum": 726643.0,
+                    "maximum": 726646.0,
+                    "median": 726646.0,
+                    "coefficientOfVariation": 1.846348695663488E-6,
+                    "runs": [
+                        726646.0,
+                        726646.0,
+                        726646.0,
+                        726643.0,
+                        726646.0
+                    ]
+                }
+            },
+            "sampledMetrics": {},
+            "warmupIterations": 5,
+            "repeatIterations": 1,
+            "thermalThrottleSleepSeconds": 0,
+            "profilerOutputs": [
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace",
+                    "filename": "InterpreterBenchmarksChicoryAotDriver_create_database_2025-03-25-14-32-42.perfetto-trace"
+                }
+            ]
+        },
+        {
+            "name": "huge_select",
+            "params": {},
+            "className": "at.released.sqlitedriverbenchmark.InterpreterBenchmarksChicoryAotDriver",
+            "totalRunTimeNs": 149662023068,
+            "metrics": {
+                "timeNs": {
+                    "minimum": 9.82784843E8,
+                    "maximum": 1.170115468E9,
+                    "median": 1.063038073E9,
+                    "coefficientOfVariation": 0.04769241594883782,
+                    "runs": [
+                        9.94765781E8,
+                        9.82784843E8,
+                        9.97159011E8,
+                        1.039148854E9,
+                        1.03963677E9,
+                        1.039438958E9,
+                        1.040742552E9,
+                        1.039311094E9,
+                        1.039747239E9,
+                        1.036597968E9,
+                        1.035454895E9,
+                        1.036722813E9,
+                        1.063038073E9,
+                        1.106597136E9,
+                        1.092514948E9,
+                        1.094811146E9,
+                        1.093660937E9,
+                        1.102235989E9,
+                        1.092814687E9,
+                        1.094439896E9,
+                        1.091289114E9,
+                        1.119885833E9,
+                        1.163891041E9,
+                        1.170115468E9,
+                        1.159840208E9
+                    ]
+                },
+                "allocationCount": {
+                    "minimum": 78178.0,
+                    "maximum": 78178.0,
+                    "median": 78178.0,
+                    "coefficientOfVariation": 0.0,
+                    "runs": [
+                        78178.0,
+                        78178.0,
+                        78178.0,
+                        78178.0,
+                        78178.0
+                    ]
+                }
+            },
+            "sampledMetrics": {},
+            "warmupIterations": 5,
+            "repeatIterations": 1,
+            "thermalThrottleSleepSeconds": 90,
+            "profilerOutputs": [
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace",
+                    "filename": "InterpreterBenchmarksChicoryAotDriver_huge_select_2025-03-25-14-35-17.perfetto-trace"
+                }
+            ]
+        },
+        {
+            "name": "select_with_paging",
+            "params": {},
+            "className": "at.released.sqlitedriverbenchmark.InterpreterBenchmarksChicoryAotDriver",
+            "totalRunTimeNs": 32985088165,
+            "metrics": {
+                "timeNs": {
+                    "minimum": 8.82352188E8,
+                    "maximum": 8.9299526E8,
+                    "median": 8.83493958E8,
+                    "coefficientOfVariation": 0.0030294343541101077,
+                    "runs": [
+                        8.82865626E8,
+                        8.83724582E8,
+                        8.82528438E8,
+                        8.85090781E8,
+                        8.82352188E8,
+                        8.90592343E8,
+                        8.83996094E8,
+                        8.83316406E8,
+                        8.83493958E8,
+                        8.82406874E8,
+                        8.83462448E8,
+                        8.83319478E8,
+                        8.83167187E8,
+                        8.86806876E8,
+                        8.82699532E8,
+                        8.83939792E8,
+                        8.9299526E8,
+                        8.83468645E8,
+                        8.8736724E8,
+                        8.88500261E8,
+                        8.82913489E8,
+                        8.83012448E8,
+                        8.83765729E8,
+                        8.8506052E8,
+                        8.84114375E8
+                    ]
+                },
+                "allocationCount": {
+                    "minimum": 47574.0,
+                    "maximum": 47577.0,
+                    "median": 47574.0,
+                    "coefficientOfVariation": 2.820077912373144E-5,
+                    "runs": [
+                        47574.0,
+                        47574.0,
+                        47577.0,
+                        47574.0,
+                        47574.0
+                    ]
+                }
+            },
+            "sampledMetrics": {},
+            "warmupIterations": 5,
+            "repeatIterations": 1,
+            "thermalThrottleSleepSeconds": 0,
+            "profilerOutputs": [
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace",
+                    "filename": "InterpreterBenchmarksChicoryAotDriver_select_with_paging_2025-03-25-14-35-59.perfetto-trace"
+                }
+            ]
+        },
+        {
+            "name": "create_database",
+            "params": {},
+            "className": "at.released.sqlitedriverbenchmark.InterpreterBenchmarksChicoryByteArrayInterpreterDriver",
+            "totalRunTimeNs": 929420933864,
+            "metrics": {
+                "timeNs": {
+                    "minimum": 2.0921898274E10,
+                    "maximum": 3.4754192122E10,
+                    "median": 2.1044208533E10,
+                    "coefficientOfVariation": 0.19692571525747274,
+                    "runs": [
+                        3.4673587487E10,
+                        3.4754192122E10,
+                        3.3980935039E10,
+                        2.0967701763E10,
+                        2.1025530929E10,
+                        2.1038089575E10,
+                        2.1011882753E10,
+                        2.1050915826E10,
+                        2.1029322075E10,
+                        2.1016716815E10,
+                        2.1011636554E10,
+                        2.1064650826E10,
+                        2.1044208533E10,
+                        2.106652291E10,
+                        2.1075030565E10,
+                        2.1111232701E10,
+                        2.1069079211E10,
+                        2.1047994627E10,
+                        2.106551593E10,
+                        2.092566895E10,
+                        2.0961004887E10,
+                        2.0921898274E10,
+                        2.1033831398E10,
+                        2.0970630252E10,
+                        2.1171910982E10
+                    ]
+                },
+                "allocationCount": {
+                    "minimum": 2.80482207E8,
+                    "maximum": 2.8048512E8,
+                    "median": 2.80482279E8,
+                    "coefficientOfVariation": 4.573633296887565E-6,
+                    "runs": [
+                        2.80482207E8,
+                        2.80482279E8,
+                        2.80482234E8,
+                        2.8048512E8,
+                        2.8048229E8
+                    ]
+                }
+            },
+            "sampledMetrics": {},
+            "warmupIterations": 5,
+            "repeatIterations": 1,
+            "thermalThrottleSleepSeconds": 0,
+            "profilerOutputs": [
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace",
+                    "filename": "InterpreterBenchmarksChicoryByteArrayInterpreterDriver_create_database_2025-03-25-14-51-25.perfetto-trace"
+                }
+            ]
+        },
+        {
+            "name": "huge_select",
+            "params": {},
+            "className": "at.released.sqlitedriverbenchmark.InterpreterBenchmarksChicoryByteArrayInterpreterDriver",
+            "totalRunTimeNs": 652356394022,
+            "metrics": {
+                "timeNs": {
+                    "minimum": 1.4152861921E10,
+                    "maximum": 2.3516392907E10,
+                    "median": 1.4439057443E10,
+                    "coefficientOfVariation": 0.25219905047797325,
+                    "runs": [
+                        2.3418589783E10,
+                        2.3440802438E10,
+                        2.3445439678E10,
+                        2.3514675043E10,
+                        2.3373045877E10,
+                        2.3438378793E10,
+                        2.3400999575E10,
+                        2.3516392907E10,
+                        2.3355490721E10,
+                        1.445230739E10,
+                        1.4361727286E10,
+                        1.4439057443E10,
+                        1.4152861921E10,
+                        1.4335746766E10,
+                        1.4442426818E10,
+                        1.4480455463E10,
+                        1.4376006661E10,
+                        1.4387177754E10,
+                        1.4310839473E10,
+                        1.4361967859E10,
+                        1.4360794994E10,
+                        1.4246315932E10,
+                        1.4373923327E10,
+                        1.4351495879E10,
+                        1.4336336297E10
+                    ]
+                },
+                "allocationCount": {
+                    "minimum": 1.91086745E8,
+                    "maximum": 1.91086857E8,
+                    "median": 1.91086808E8,
+                    "coefficientOfVariation": 2.1464511919878707E-7,
+                    "runs": [
+                        1.91086802E8,
+                        1.91086745E8,
+                        1.91086808E8,
+                        1.91086857E8,
+                        1.91086826E8
+                    ]
+                }
+            },
+            "sampledMetrics": {},
+            "warmupIterations": 5,
+            "repeatIterations": 1,
+            "thermalThrottleSleepSeconds": 0,
+            "profilerOutputs": [
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace",
+                    "filename": "InterpreterBenchmarksChicoryByteArrayInterpreterDriver_huge_select_2025-03-25-15-02-30.perfetto-trace"
+                }
+            ]
+        },
+        {
+            "name": "select_with_paging",
+            "params": {},
+            "className": "at.released.sqlitedriverbenchmark.InterpreterBenchmarksChicoryByteArrayInterpreterDriver",
+            "totalRunTimeNs": 549605191301,
+            "metrics": {
+                "timeNs": {
+                    "minimum": 1.1745051662E10,
+                    "maximum": 1.7497281244E10,
+                    "median": 1.7388276972E10,
+                    "coefficientOfVariation": 0.09539389372929699,
+                    "runs": [
+                        1.3148262703E10,
+                        1.3741707183E10,
+                        1.4826511401E10,
+                        1.5571153432E10,
+                        1.686026791E10,
+                        1.7484912025E10,
+                        1.7480229941E10,
+                        1.7457363743E10,
+                        1.7450544786E10,
+                        1.731640744E10,
+                        1.7420114524E10,
+                        1.7417946504E10,
+                        1.747243317E10,
+                        1.7489595931E10,
+                        1.7458754629E10,
+                        1.7388276972E10,
+                        1.7386501295E10,
+                        1.7452981295E10,
+                        1.7377620253E10,
+                        1.7368173379E10,
+                        1.7497281244E10,
+                        1.7374469838E10,
+                        1.7418283847E10,
+                        1.7365472546E10,
+                        1.1745051662E10
+                    ]
+                },
+                "allocationCount": {
+                    "minimum": 1.42330557E8,
+                    "maximum": 1.423306E8,
+                    "median": 1.42330573E8,
+                    "coefficientOfVariation": 1.1710297236038228E-7,
+                    "runs": [
+                        1.42330563E8,
+                        1.42330557E8,
+                        1.423306E8,
+                        1.42330573E8,
+                        1.42330579E8
+                    ]
+                }
+            },
+            "sampledMetrics": {},
+            "warmupIterations": 5,
+            "repeatIterations": 1,
+            "thermalThrottleSleepSeconds": 0,
+            "profilerOutputs": [
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace",
+                    "filename": "InterpreterBenchmarksChicoryByteArrayInterpreterDriver_select_with_paging_2025-03-25-15-11-46.perfetto-trace"
+                }
+            ]
+        },
+        {
+            "name": "create_database",
+            "params": {},
+            "className": "at.released.sqlitedriverbenchmark.InterpreterBenchmarksChicoryInterpreterDriver",
+            "totalRunTimeNs": 772124524809,
+            "metrics": {
+                "timeNs": {
+                    "minimum": 1.9575324993E10,
+                    "maximum": 2.008636718E10,
+                    "median": 1.9830542179E10,
+                    "coefficientOfVariation": 0.0048142023129755865,
+                    "runs": [
+                        1.9833183638E10,
+                        1.9839075304E10,
+                        1.9819698898E10,
+                        1.9922050149E10,
+                        1.9781384315E10,
+                        1.9788700618E10,
+                        1.9575324993E10,
+                        1.9770987857E10,
+                        1.9949752544E10,
+                        1.9782456712E10,
+                        1.9738024888E10,
+                        1.9831168273E10,
+                        1.9855679054E10,
+                        1.9813361086E10,
+                        1.9798525097E10,
+                        1.9830542179E10,
+                        1.9832906815E10,
+                        1.9838166607E10,
+                        1.9933452701E10,
+                        1.9781741451E10,
+                        1.9835809731E10,
+                        1.9754364159E10,
+                        1.967068442E10,
+                        1.9877483013E10,
+                        2.008636718E10
+                    ]
+                },
+                "allocationCount": {
+                    "minimum": 2.80482222E8,
+                    "maximum": 2.8048513E8,
+                    "median": 2.8048226E8,
+                    "coefficientOfVariation": 4.5854981279842295E-6,
+                    "runs": [
+                        2.80482222E8,
+                        2.8048226E8,
+                        2.80482252E8,
+                        2.8048513E8,
+                        2.80482284E8
+                    ]
+                }
+            },
+            "sampledMetrics": {},
+            "warmupIterations": 5,
+            "repeatIterations": 1,
+            "thermalThrottleSleepSeconds": 0,
+            "profilerOutputs": [
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace",
+                    "filename": "InterpreterBenchmarksChicoryInterpreterDriver_create_database_2025-03-25-15-24-37.perfetto-trace"
+                }
+            ]
+        },
+        {
+            "name": "huge_select",
+            "params": {},
+            "className": "at.released.sqlitedriverbenchmark.InterpreterBenchmarksChicoryInterpreterDriver",
+            "totalRunTimeNs": 603878239196,
+            "metrics": {
+                "timeNs": {
+                    "minimum": 1.308306062E10,
+                    "maximum": 2.1136652751E10,
+                    "median": 1.3258885254E10,
+                    "coefficientOfVariation": 0.23609236101226455,
+                    "runs": [
+                        2.1023569315E10,
+                        2.0929291242E10,
+                        2.0969318638E10,
+                        2.1036309002E10,
+                        2.1136652751E10,
+                        2.1046738795E10,
+                        2.1075372231E10,
+                        2.1037892283E10,
+                        2.1114418638E10,
+                        2.101520322E10,
+                        1.4772936505E10,
+                        1.3223285673E10,
+                        1.3225719839E10,
+                        1.3258885254E10,
+                        1.323439062E10,
+                        1.3179641141E10,
+                        1.3217643172E10,
+                        1.3216196297E10,
+                        1.3266717391E10,
+                        1.3214531921E10,
+                        1.308306062E10,
+                        1.3241440777E10,
+                        1.3191563119E10,
+                        1.3186621088E10,
+                        1.3243917806E10
+                    ]
+                },
+                "allocationCount": {
+                    "minimum": 1.91086798E8,
+                    "maximum": 1.9108683E8,
+                    "median": 1.91086813E8,
+                    "coefficientOfVariation": 6.329821168481754E-8,
+                    "runs": [
+                        1.91086798E8,
+                        1.91086813E8,
+                        1.9108683E8,
+                        1.91086813E8,
+                        1.91086823E8
+                    ]
+                }
+            },
+            "sampledMetrics": {},
+            "warmupIterations": 5,
+            "repeatIterations": 1,
+            "thermalThrottleSleepSeconds": 0,
+            "profilerOutputs": [
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace",
+                    "filename": "InterpreterBenchmarksChicoryInterpreterDriver_huge_select_2025-03-25-15-34-53.perfetto-trace"
+                }
+            ]
+        },
+        {
+            "name": "select_with_paging",
+            "params": {},
+            "className": "at.released.sqlitedriverbenchmark.InterpreterBenchmarksChicoryInterpreterDriver",
+            "totalRunTimeNs": 445560844465,
+            "metrics": {
+                "timeNs": {
+                    "minimum": 9.775917288E9,
+                    "maximum": 1.5831806087E10,
+                    "median": 1.2957945568E10,
+                    "coefficientOfVariation": 0.19029427091881335,
+                    "runs": [
+                        1.0716523797E10,
+                        1.0951571819E10,
+                        1.0898914267E10,
+                        1.1439231037E10,
+                        1.188858088E10,
+                        1.2199615673E10,
+                        1.2363863277E10,
+                        1.2957945568E10,
+                        1.3778032234E10,
+                        1.5074963327E10,
+                        1.5707672286E10,
+                        1.5805676557E10,
+                        1.576698114E10,
+                        1.5785415723E10,
+                        1.5831806087E10,
+                        1.5748341765E10,
+                        1.5766062078E10,
+                        1.5775404837E10,
+                        1.5749327963E10,
+                        1.5696578797E10,
+                        9.809597757E9,
+                        9.775917288E9,
+                        9.789741506E9,
+                        9.824505152E9,
+                        9.799856038E9
+                    ]
+                },
+                "allocationCount": {
+                    "minimum": 1.42330436E8,
+                    "maximum": 1.42330469E8,
+                    "median": 1.42330445E8,
+                    "coefficientOfVariation": 1.009140858266813E-7,
+                    "runs": [
+                        1.42330462E8,
+                        1.42330445E8,
+                        1.4233044E8,
+                        1.42330469E8,
+                        1.42330436E8
+                    ]
+                }
+            },
+            "sampledMetrics": {},
+            "warmupIterations": 5,
+            "repeatIterations": 1,
+            "thermalThrottleSleepSeconds": 0,
+            "profilerOutputs": [
+                {
+                    "type": "PerfettoTrace",
+                    "label": "Trace",
+                    "filename": "InterpreterBenchmarksChicoryInterpreterDriver_select_with_paging_2025-03-25-15-42-26.perfetto-trace"
+                }
+            ]
+        }
+    ]
+}

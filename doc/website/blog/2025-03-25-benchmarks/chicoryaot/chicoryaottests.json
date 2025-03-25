@@ -1,0 +1,85 @@
+{
+    "values": [
+        {
+            "test": "create_database",
+            "group": "ChicoryAotBenchmarks",
+            "driver": "Android",
+            "minimum": 1247164166,
+            "maximum": 1395671927,
+            "median": 1.347546666E9,
+            "coefficientOfVariation": 0.03283803882402668
+        },
+        {
+            "test": "create_database",
+            "group": "ChicoryAotBenchmarks",
+            "driver": "ChicoryAot",
+            "minimum": 6214716611,
+            "maximum": 6418615675,
+            "median": 6.316972759E9,
+            "coefficientOfVariation": 0.009838329319071318
+        },
+        {
+            "test": "create_database",
+            "group": "ChicoryAotBenchmarks",
+            "driver": "ChicoryAotBA",
+            "minimum": 10366278641,
+            "maximum": 10469531194,
+            "median": 1.0401472757E10,
+            "coefficientOfVariation": 0.003180458953293695
+        },
+        {
+            "test": "huge_select",
+            "group": "ChicoryAotBenchmarks",
+            "driver": "Android",
+            "minimum": 11182031,
+            "maximum": 12739546,
+            "median": 1.1639509E7,
+            "coefficientOfVariation": 0.028819206539876324
+        },
+        {
+            "test": "huge_select",
+            "group": "ChicoryAotBenchmarks",
+            "driver": "ChicoryAot",
+            "minimum": 734732031,
+            "maximum": 739612240,
+            "median": 7.35121614E8,
+            "coefficientOfVariation": 0.0017329904486906007
+        },
+        {
+            "test": "huge_select",
+            "group": "ChicoryAotBenchmarks",
+            "driver": "ChicoryAotBA",
+            "minimum": 1528649009,
+            "maximum": 1559413125,
+            "median": 1.531142916E9,
+            "coefficientOfVariation": 0.005078182806660102
+        },
+        {
+            "test": "select_with_paging",
+            "group": "ChicoryAotBenchmarks",
+            "driver": "Android",
+            "minimum": 24290712,
+            "maximum": 24522847,
+            "median": 2.4445382333333332E7,
+            "coefficientOfVariation": 0.002544276998703865
+        },
+        {
+            "test": "select_with_paging",
+            "group": "ChicoryAotBenchmarks",
+            "driver": "ChicoryAot",
+            "minimum": 993175573,
+            "maximum": 1005634531,
+            "median": 9.95349374E8,
+            "coefficientOfVariation": 0.003900737221805049
+        },
+        {
+            "test": "select_with_paging",
+            "group": "ChicoryAotBenchmarks",
+            "driver": "ChicoryAotBA",
+            "minimum": 2002158542,
+            "maximum": 2014936770,
+            "median": 2.004484479E9,
+            "coefficientOfVariation": 0.002203356498167397
+        }
+    ]
+}
