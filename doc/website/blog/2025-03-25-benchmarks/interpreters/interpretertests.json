@@ -1,0 +1,166 @@
+{
+    "values": [
+        {
+            "test": "create_database",
+            "group": "InterpreterBenchmarks",
+            "driver": "Android",
+            "minimum": 236698228,
+            "maximum": 305821146,
+            "median": 2.50172344E8,
+            "coefficientOfVariation": 0.06104300384613997
+        },
+        {
+            "test": "create_database",
+            "group": "InterpreterBenchmarks",
+            "driver": "Chasm",
+            "minimum": 13437077651,
+            "maximum": 14418076766,
+            "median": 1.3595305672E10,
+            "coefficientOfVariation": 0.022863542782302775
+        },
+        {
+            "test": "create_database",
+            "group": "InterpreterBenchmarks",
+            "driver": "ChasmNoFusion",
+            "minimum": 12521520151,
+            "maximum": 20329399836,
+            "median": 2.0217255826E10,
+            "coefficientOfVariation": 0.15971747643151016
+        },
+        {
+            "test": "create_database",
+            "group": "InterpreterBenchmarks",
+            "driver": "Chicory",
+            "minimum": 19575324993,
+            "maximum": 20086367180,
+            "median": 1.9830542179E10,
+            "coefficientOfVariation": 0.0048142023129755865
+        },
+        {
+            "test": "huge_select",
+            "group": "InterpreterBenchmarks",
+            "driver": "Android",
+            "minimum": 11514910,
+            "maximum": 15584650,
+            "median": 1.1770773857142856E7,
+            "coefficientOfVariation": 0.07332689530658039
+        },
+        {
+            "test": "huge_select",
+            "group": "InterpreterBenchmarks",
+            "driver": "Chasm",
+            "minimum": 7741754945,
+            "maximum": 7856998539,
+            "median": 7.786909528E9,
+            "coefficientOfVariation": 0.004101900968094184
+        },
+        {
+            "test": "huge_select",
+            "group": "InterpreterBenchmarks",
+            "driver": "ChasmNoFusion",
+            "minimum": 7184616039,
+            "maximum": 7265028851,
+            "median": 7.234711977E9,
+            "coefficientOfVariation": 0.0030578741319474798
+        },
+        {
+            "test": "huge_select",
+            "group": "InterpreterBenchmarks",
+            "driver": "Chicory",
+            "minimum": 13083060620,
+            "maximum": 21136652751,
+            "median": 1.3258885254E10,
+            "coefficientOfVariation": 0.23609236101226455
+        },
+        {
+            "test": "select_with_paging",
+            "group": "InterpreterBenchmarks",
+            "driver": "Android",
+            "minimum": 14643062,
+            "maximum": 19053645,
+            "median": 1.49458748E7,
+            "coefficientOfVariation": 0.07052290990043229
+        },
+        {
+            "test": "select_with_paging",
+            "group": "InterpreterBenchmarks",
+            "driver": "Chasm",
+            "minimum": 5752450258,
+            "maximum": 5834421248,
+            "median": 5.786556352E9,
+            "coefficientOfVariation": 0.004042132975835595
+        },
+        {
+            "test": "select_with_paging",
+            "group": "InterpreterBenchmarks",
+            "driver": "ChasmNoFusion",
+            "minimum": 5192699113,
+            "maximum": 5254036924,
+            "median": 5.229425154E9,
+            "coefficientOfVariation": 0.0026115905052675045
+        },
+        {
+            "test": "select_with_paging",
+            "group": "InterpreterBenchmarks",
+            "driver": "Chicory",
+            "minimum": 9775917288,
+            "maximum": 15831806087,
+            "median": 1.2957945568E10,
+            "coefficientOfVariation": 0.19029427091881335
+        },
+        {
+            "test": "create_database",
+            "group": "InterpreterBenchmarksChicory",
+            "driver": "ChicoryAot",
+            "minimum": 1187708281,
+            "maximum": 1267373958,
+            "median": 1.210185989E9,
+            "coefficientOfVariation": 0.011863154753456045
+        },
+        {
+            "test": "create_database",
+            "group": "InterpreterBenchmarksChicory",
+            "driver": "ChicoryBA",
+            "minimum": 20921898274,
+            "maximum": 34754192122,
+            "median": 2.1044208533E10,
+            "coefficientOfVariation": 0.19692571525747274
+        },
+        {
+            "test": "huge_select",
+            "group": "InterpreterBenchmarksChicory",
+            "driver": "ChicoryAot",
+            "minimum": 982784843,
+            "maximum": 1170115468,
+            "median": 1.063038073E9,
+            "coefficientOfVariation": 0.04769241594883782
+        },
+        {
+            "test": "huge_select",
+            "group": "InterpreterBenchmarksChicory",
+            "driver": "ChicoryBA",
+            "minimum": 14152861921,
+            "maximum": 23516392907,
+            "median": 1.4439057443E10,
+            "coefficientOfVariation": 0.25219905047797325
+        },
+        {
+            "test": "select_with_paging",
+            "group": "InterpreterBenchmarksChicory",
+            "driver": "ChicoryAot",
+            "minimum": 882352188,
+            "maximum": 892995260,
+            "median": 8.83493958E8,
+            "coefficientOfVariation": 0.0030294343541101077
+        },
+        {
+            "test": "select_with_paging",
+            "group": "InterpreterBenchmarksChicory",
+            "driver": "ChicoryBA",
+            "minimum": 11745051662,
+            "maximum": 17497281244,
+            "median": 1.7388276972E10,
+            "coefficientOfVariation": 0.09539389372929699
+        }
+    ]
+}

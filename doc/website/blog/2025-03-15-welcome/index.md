@@ -1,6 +1,7 @@
 ---
 slug: first-blog-post
 title: First Blog Post
+unlisted: true
 authors: [illarionov]
 ---
 

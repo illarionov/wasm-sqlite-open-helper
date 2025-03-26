@@ -10,6 +10,8 @@ built on SQLite compiled for WebAssembly.
 It allows running small Android unit tests with a SQLite database directly on the JVM, without requiring an Android 
 emulator or the Robolectric framework. In some cases it also works on Android.
 
+Our [Benchmarks](/blog/benchmark) blog post showcases performance tests on an Android device.
+
 ## Requirements
 
 - Java JVM 21+ when used in unit tests on the host
