@@ -19,8 +19,6 @@ of the [SQLiteDriver][androidx.sqlite.SQLiteDriver]:
 
 For the tests, the [rawg-games-dataset] was used as the database splitted into several SQLite tables.
 
-The drivers under test were categorized into three groups:
-
 For each tested SQLiteDriver configuration, three tests were performed:
 
 ##### create_database 
