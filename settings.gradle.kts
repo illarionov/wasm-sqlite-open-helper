@@ -20,7 +20,7 @@ buildscript {
         classpath("com.google.devtools.ksp:symbol-processing-gradle-plugin:2.1.10-1.0.31")
         classpath("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.8")
         classpath("at.released.cassettes:cassettes-plugin:0.1-alpha01")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.1.10")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.1.20")
         classpath("org.jetbrains.kotlinx:atomicfu-gradle-plugin:0.27.0")
     }
 }
