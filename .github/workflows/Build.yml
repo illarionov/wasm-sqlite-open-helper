@@ -19,7 +19,7 @@ env:
   CI: true
   TERM: dumb
   GRADLE_OPTS: >-
-    -Dorg.gradle.jvmargs="-Xmx3G -XX:MaxMetaspaceSize=1G -XX:SoftRefLRUPolicyMSPerMB=10 -XX:+UseParallelGC -XX:NewRatio=1"
+    -Dorg.gradle.jvmargs="-Xmx4G -XX:MaxMetaspaceSize=1G -XX:SoftRefLRUPolicyMSPerMB=10 -XX:+UseParallelGC -XX:NewRatio=1"
     -Dorg.gradle.dependency.verification.console=verbose
   KOTLIN_DAEMON_JVMARGS: >-
     -Xmx3G -XX:MaxMetaspaceSize=320M -XX:SoftRefLRUPolicyMSPerMB=10 -XX:+UseParallelGC -XX:NewRatio=1
