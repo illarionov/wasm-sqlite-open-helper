@@ -1,0 +1,58 @@
+{
+    "values": [
+        {
+            "test": "create_database",
+            "group": "NativeBenchmarks",
+            "driver": "Android",
+            "minimum": 4116314112,
+            "maximum": 4432203488,
+            "median": 4.358786483E9,
+            "coefficientOfVariation": 0.024311909846695037
+        },
+        {
+            "test": "create_database",
+            "group": "NativeBenchmarks",
+            "driver": "Bundled",
+            "minimum": 3002192864,
+            "maximum": 3369639791,
+            "median": 3.139724817E9,
+            "coefficientOfVariation": 0.03253654424197623
+        },
+        {
+            "test": "huge_select",
+            "group": "NativeBenchmarks",
+            "driver": "Android",
+            "minimum": 3552419269,
+            "maximum": 3602724373,
+            "median": 3.5766289305E9,
+            "coefficientOfVariation": 0.0030602917805886997
+        },
+        {
+            "test": "huge_select",
+            "group": "NativeBenchmarks",
+            "driver": "Bundled",
+            "minimum": 2754323696,
+            "maximum": 2804935572,
+            "median": 2.765599165E9,
+            "coefficientOfVariation": 0.003080931167292051
+        },
+        {
+            "test": "select_with_paging",
+            "group": "NativeBenchmarks",
+            "driver": "Android",
+            "minimum": 4230096301,
+            "maximum": 4322797029,
+            "median": 4.297671952E9,
+            "coefficientOfVariation": 0.004947120807951867
+        },
+        {
+            "test": "select_with_paging",
+            "group": "NativeBenchmarks",
+            "driver": "Bundled",
+            "minimum": 3405511301,
+            "maximum": 3513744478,
+            "median": 3.479016248E9,
+            "coefficientOfVariation": 0.006683326143972207
+        }
+    ]
+}
