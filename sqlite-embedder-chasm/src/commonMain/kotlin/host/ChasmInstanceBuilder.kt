@@ -41,6 +41,7 @@ import io.github.charlietap.chasm.runtime.address.Address
 import io.github.charlietap.chasm.runtime.ext.asRange
 import io.github.charlietap.chasm.runtime.ext.table
 import io.github.charlietap.chasm.runtime.ext.toLong
+import io.github.charlietap.chasm.runtime.instance.FunctionInstance
 import io.github.charlietap.chasm.runtime.instance.TableInstance
 import io.github.charlietap.chasm.runtime.value.ReferenceValue
 import io.github.charlietap.chasm.stream.SourceReader
@@ -104,6 +105,8 @@ internal class ChasmInstanceBuilder(
 
         val indirectFunctionTableIndexes = setupIndirectFunctionIndexes(store, instance, sqliteCallbacksHostFunctions)
 
+        fixFunctionRtts(store, instance, sqliteCallbacksHostFunctions)
+
         val emscriptenRuntime = emscriptenInstaller.finalize(instance)
         emscriptenRuntime.initMainThread()
 
@@ -136,7 +139,8 @@ internal class ChasmInstanceBuilder(
         val oldSize = table.elements.size
         table.grow(callbackHostFunctions.size, ReferenceValue.Function(Address.Function(0)))
         val indirectIndexes = callbackHostFunctions.mapIndexed { index: Int, import: ChasmImport ->
-            val hostFunction = SqliteCallbacksModuleFunction.byWasmName.getValue(import.entityName)
+            val hostFunction: SqliteCallbacksModuleFunction =
+                SqliteCallbacksModuleFunction.byWasmName.getValue(import.entityName)
             val indirectIndex = oldSize + index
             val functionAddress = (import.value as Function).reference.address
             table.elements[indirectIndex] = ReferenceValue.Function(functionAddress).toLong()
@@ -144,6 +148,25 @@ internal class ChasmInstanceBuilder(
         }.toMap()
 
         return ChasmSqliteCallbackFunctionIndexes(indirectIndexes)
+    }
+
+    // Updates FunctionInstance.HostFunction.rtt to fix checks of the callback function types.
+    // Required on Chasm 0.9.65
+    @Suppress("INVISIBLE_MEMBER")
+    private fun fixFunctionRtts(
+        store: Store,
+        instance: Instance,
+        callbackHostFunctions: List<ChasmImport>,
+    ) {
+        val storeFunctions: MutableList<FunctionInstance> = store.store.functions
+        val rtts = instance.instance.runtimeTypes
+        callbackHostFunctions.forEach { import: ChasmImport ->
+            val functionAddress = (import.value as Function).reference.address.address
+            val f: FunctionInstance.HostFunction = storeFunctions[functionAddress] as FunctionInstance.HostFunction
+            storeFunctions[functionAddress] = f.copy(
+                rtt = rtts.first { it.type == f.type },
+            )
+        }
     }
 
     private fun TableInstance.grow(
