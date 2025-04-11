@@ -81,7 +81,7 @@ private fun Array<out Any?>.argsToValues(): List<ExecutionValue> {
 }
 
 private fun throwOnError(error: ChasmError.ExecutionError): Nothing =
-    throw ChasmErrorException(error)
+    throw ChasmErrorException(error, "Chasm error `$error`")
 
 private class ChasmErrorException(
     public val error: ChasmError,
