@@ -29,6 +29,7 @@
          <trusted-key id="0D35D3F60078655126908E8AF3D1600878E85A3D" group="io.netty"/>
          <trusted-key id="0F06FF86BEEAF4E71866EE5232EE5355A6BC6E42">
             <trusting group="androidx.collection"/>
+            <trusting group="androidx.core"/>
             <trusting group="androidx.databinding"/>
             <trusting group="androidx.room"/>
             <trusting group="androidx.sqlite"/>
@@ -415,6 +416,11 @@
       </component>
       <component group="org.gradle.kotlin" name="gradle-kotlin-dsl-plugins" version="5.2.0">
          <artifact name="gradle-kotlin-dsl-plugins-5.2.0.jar">
+            <pgp value="1BD97A6A154E7810EE0BC832E2F38302C8075E3D"/>
+         </artifact>
+      </component>
+      <component group="org.gradle.toolchains" name="foojay-resolver" version="0.10.0">
+         <artifact name="foojay-resolver-0.10.0.jar">
             <pgp value="1BD97A6A154E7810EE0BC832E2F38302C8075E3D"/>
          </artifact>
       </component>
