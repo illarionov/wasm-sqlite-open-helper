@@ -13,14 +13,14 @@ SQLite implementation in JVM and Android projects with Room 2.6.x.
 Add the sqlite-open-helper dependency:
 
 ```kotlin
-implementation("at.released.wasm-sqlite-driver:sqlite-open-helper:0.1-beta02")
+implementation("at.released.wasm-sqlite-driver:sqlite-open-helper:0.1-beta03")
 ```
 
 Add a runtime environment for executing SQLite Wasm code. Currently, the primary runtime is based on the [Chicory] library.
 
 ```kotlin
-implementation("at.released.wasm-sqlite-driver:sqlite-embedder-chicory:0.1-beta02")
-implementation("com.dylibso.chicory:runtime:1.1.1")
+implementation("at.released.wasm-sqlite-driver:sqlite-embedder-chicory:0.1-beta03")
+implementation("com.dylibso.chicory:runtime:1.2.1")
 ```
 
 Add the SQLite WebAssembly binary dependency. Although the binary file for SQLite is replaceable,
@@ -72,10 +72,10 @@ though they should be used for experimentation only.
 
 ```kotlin
 // Runtime environment for executing SQLite Wasm code based on GraalVM (Sqlite Embedder)
-implementation("at.released.wasm-sqlite-driver:sqlite-embedder-graalvm:0.1-beta02")
+implementation("at.released.wasm-sqlite-driver:sqlite-embedder-graalvm:0.1-beta03")
 
 // Optional: implementation of the runtime environment based on the Chasm library. 
-implementation("at.released.wasm-sqlite-driver:sqlite-embedder-chasm:0.1-beta02")
+implementation("at.released.wasm-sqlite-driver:sqlite-embedder-chasm:0.1-beta03")
 ```
 
 You can explore all available embedders on the [Embedders](embedders/index.md) page.

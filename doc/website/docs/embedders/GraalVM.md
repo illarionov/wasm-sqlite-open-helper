@@ -19,10 +19,10 @@ Installation:
 
 ```kotlin
 dependencies {
-    testImplementation("at.released.wasm-sqlite-driver:sqlite-embedder-graalvm:0.1-beta02")
+    testImplementation("at.released.wasm-sqlite-driver:sqlite-embedder-graalvm:0.1-beta03")
 
     // Sqlite WebAssembly binary compiled with multithreading enabled 
-    testImplementation("at.released.wasm-sqlite-driver:sqlite-android-wasm-emscripten-icu-mt-pthread-349:0.1-beta02")
+    testImplementation("at.released.wasm-sqlite-driver:sqlite-android-wasm-emscripten-icu-mt-pthread-349:0.7")
 }
 ```
 

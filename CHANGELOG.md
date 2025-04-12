@@ -1,5 +1,19 @@
 # Change Log
 
+## [0.1-beta03] — 2025-04-12
+
+### 🚀 New Feature
+
+- Update Chasm to 0.9.65
+- Update Chicory to 1.2.1
+
+### 🤖 Dependencies
+
+- Bump androidx-sqlite to 2.5.0
+- Bump Kotlin to 2.1.20
+- Bump Wasi-emscripten-host to 0.5
+- Bump other build dependencies
+
 ## [0.1-beta02] — 2025-03-19
 
 ### Added

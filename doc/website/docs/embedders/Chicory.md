@@ -22,8 +22,8 @@ Installation:
 
 ```kotlin
 dependencies {
-    implementation("com.dylibso.chicory:runtime:1.1.1")
-    implementation("at.released.wasm-sqlite-driver:sqlite-embedder-chicory:0.1-beta02")
+    implementation("com.dylibso.chicory:runtime:1.2.1")
+    implementation("at.released.wasm-sqlite-driver:sqlite-embedder-chicory:0.1-beta03")
 }
 ```
 
@@ -50,7 +50,7 @@ Other versions of SQLite can also be used:
 
 ```kotlin
 dependencies {
-    implementation("at.released.wasm-sqlite-driver:sqlite-android-wasm-emscripten-icu-349:0.4")
+    implementation("at.released.wasm-sqlite-driver:sqlite-android-wasm-emscripten-icu-349:0.7")
 }
 ```
 
