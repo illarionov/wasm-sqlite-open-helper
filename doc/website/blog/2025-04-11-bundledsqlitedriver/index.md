@@ -7,7 +7,7 @@ import BundledSQLiteDriverBenchmarkReport from './BundledSQLiteDriverBenchmarkRe
 
 __BundledSQLiteDriver__ is a custom build of SQLite created by the Android Jetpack team to support 
 Kotlin Multiplatform projects.  
-In this article, we will explore its architecture, features, performance improvements, and compatibility trade-offs.  
+In this article, we will explore its architecture, features, performance improvements, and compatibility trade-offs.
 It’s especially relevant for developers looking to build cross-platform apps with unified database behavior and
 access to newer SQLite features.
 
@@ -413,7 +413,7 @@ For tests 2 and 3, the database is prepared on the host using the same code as i
 
 Results:
 
-<BundledSQLiteDriverBenchmarkReport data={ require('./nativetests.json') } ></BundledSQLiteDriverBenchmarkReport>
+<BundledSQLiteDriverBenchmarkReport data={ require('./nativetests.json') } theme={ document.documentElement.getAttribute('data-theme') } ></BundledSQLiteDriverBenchmarkReport>
 
 <details>
 
