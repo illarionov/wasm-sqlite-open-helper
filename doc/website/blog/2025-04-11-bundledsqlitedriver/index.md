@@ -413,7 +413,7 @@ For tests 2 and 3, the database is prepared on the host using the same code as i
 
 Results:
 
-<BundledSQLiteDriverBenchmarkReport data={ require('./nativetests.json') } theme={ document.documentElement.getAttribute('data-theme') } ></BundledSQLiteDriverBenchmarkReport>
+<BundledSQLiteDriverBenchmarkReport data={ require('./nativetests.json') } ></BundledSQLiteDriverBenchmarkReport>
 
 <details>
 
