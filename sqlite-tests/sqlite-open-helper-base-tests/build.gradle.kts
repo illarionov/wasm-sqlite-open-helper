@@ -7,10 +7,9 @@
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 
 plugins {
-    id("com.google.devtools.ksp")
+    kotlin("kapt")
     id("at.released.wasm.sqlite.open.helper.gradle.multiplatform.kotlin")
     id("at.released.wasm.sqlite.open.helper.gradle.multiplatform.android")
-    id("at.released.wasm.sqlite.open.helper.gradle.multiplatform.room26.ksp")
 }
 
 group = "at.released.wasm-sqlite-driver"
@@ -43,5 +42,5 @@ kotlin {
 
 dependencies {
     add("annotationProcessor", libs.androidx.room.compiler26)
-    ksp(libs.androidx.room.compiler26)
+    add("kapt", libs.androidx.room.compiler26)
 }
