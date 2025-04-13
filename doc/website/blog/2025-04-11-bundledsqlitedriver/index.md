@@ -4,6 +4,7 @@ title: BundledSQLiteDriver, A New Look at SQLite in Android and Kotlin Multiplat
 authors: [illarionov]
 ---
 import BundledSQLiteDriverBenchmarkReport from './BundledSQLiteDriverBenchmarkReport';
+import MastodonComments from '@site/src/components/MastodonComments';
 
 __BundledSQLiteDriver__ is a custom build of SQLite created by the Android Jetpack team to support 
 Kotlin Multiplatform projects.  
@@ -446,6 +447,8 @@ You can check out the full results on the [SQLiteDriver benchmarks](benchmark) b
 __BundledSQLiteDriver__ offers advantages for use both in Kotlin Multiplatform projects and in pure Android
 applications. It enables new features and ensures predictable behavior across all devices.
 However, it may not be suitable if localization or application size are critical considerations.
+
+<MastodonComments tootId="114226104035990711" />
 
 [Room 2.7.0]: https://developer.android.com/jetpack/androidx/releases/room#2.7.0
 [SQLCipher]: https://www.zetetic.net/sqlcipher/
