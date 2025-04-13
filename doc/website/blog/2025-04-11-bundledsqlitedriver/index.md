@@ -448,7 +448,7 @@ __BundledSQLiteDriver__ offers advantages for use both in Kotlin Multiplatform p
 applications. It enables new features and ensures predictable behavior across all devices.
 However, it may not be suitable if localization or application size are critical considerations.
 
-<MastodonComments tootId="114226104035990711" />
+<MastodonComments tootId="114330609984441065" />
 
 [Room 2.7.0]: https://developer.android.com/jetpack/androidx/releases/room#2.7.0
 [SQLCipher]: https://www.zetetic.net/sqlcipher/
