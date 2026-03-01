@@ -35,7 +35,7 @@ mockk = "1.14.2"
 node-plugin = "7.0.2"
 spotless = "7.0.3"
 sqlite-wasm-binary = "0.7"
-wasi-emscripten-host = "0.5"
+wasi-emscripten-host = "0.6.0"
 
 [libraries]
 androidx-collection = { group = "androidx.collection", name = "collection", version.ref = "androidx-collection" }
